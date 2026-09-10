@@ -105,3 +105,23 @@ def test_admin_seed(flask_client):
     days = db.get_all_days()
     assert len(days) >= 1
 
+
+def test_admin_streak_update(flask_client):
+    response = flask_client.post(
+        "/streak/update",
+        data={"action": "save", "streak_value": "7"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"Unbroken streak saved to static streak.json (value: 7 days)" in response.data
+    assert db.get_streak_data()["streak"] == 7
+
+    response_reset = flask_client.post(
+        "/streak/update",
+        data={"action": "reset"},
+        follow_redirects=True,
+    )
+    assert response_reset.status_code == 200
+    assert b"Unbroken streak reset to auto-calculated value" in response_reset.data
+    assert db.get_streak_data()["streak"] == db.get_streak_data()["calculated_streak"]
+

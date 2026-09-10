@@ -78,11 +78,11 @@ def build_static(base_path: str = "/5-ideas/"):
         ("/calendar", DIST_DIR / "calendar" / "index.html"),
         ("/stream", DIST_DIR / "stream" / "index.html"),
         ("/design-system", DIST_DIR / "design-system" / "index.html"),
-        ("/interactive/neondj", DIST_DIR / "interactive" / "neondj" / "index.html"),
     ]
 
     # Dynamic day routes
     days = db.get_all_days()
+    all_dates = [d["date"] for d in days]
     for d in days:
         date_str = d["date"]
         routes.append((f"/day/{date_str}", DIST_DIR / "day" / date_str / "index.html"))
@@ -100,6 +100,15 @@ def build_static(base_path: str = "/5-ideas/"):
         with open(out_file, "w", encoding="utf-8") as f:
             f.write(html)
         print(f"  ✓ {route_path} -> {out_file.relative_to(BASE_DIR)}")
+
+    # Copy static streak.json and dates.json into dist
+    streak_src = BASE_DIR / "streak.json"
+    if streak_src.exists():
+        shutil.copyfile(streak_src, DIST_DIR / "streak.json")
+
+    import json
+    with open(DIST_DIR / "dates.json", "w", encoding="utf-8") as f:
+        json.dump(all_dates, f, indent=2)
 
     # GitHub Pages needs .nojekyll
     (DIST_DIR / ".nojekyll").touch()

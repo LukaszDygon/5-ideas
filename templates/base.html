@@ -42,7 +42,7 @@
   <!-- Project Design System CSS -->
   <link rel="stylesheet" href="/static/style.css"/>
 </head>
-<body class="bg-canvas text-ink flex flex-col min-h-screen">
+<body class="bg-canvas text-ink flex flex-col min-h-screen" data-dates='{{ (all_published_dates() if all_published_dates is defined else []) | tojson }}' data-base-path="{% if is_hosted is defined and is_hosted %}/5-ideas/{% else %}/{% endif %}">
 
   <!-- TOP HEADER -->
   <header class="w-full bg-white border-b-[3px] border-ink sticky top-0 z-50">
@@ -101,12 +101,12 @@
         ★ 5 FRESH BRAINWAVES DAILY &nbsp;&nbsp;&nbsp;
         ★ 1 PROTOTYPE SHIPPED BEFORE SUNDOWN &nbsp;&nbsp;&nbsp;
         ★ ZERO FLUFF, 100% PURE HACKING &nbsp;&nbsp;&nbsp;
-        ★ UNBROKEN STREAK: 142 DAYS &nbsp;&nbsp;&nbsp;
+        ★ UNBROKEN STREAK: {{ get_streak() if get_streak is defined else (current_streak if current_streak is defined else 0) }} DAYS &nbsp;&nbsp;&nbsp;
         ★ CODE • POETRY • SYNTHS • GENERATIVE ART &nbsp;&nbsp;&nbsp;
         ★ 5 FRESH BRAINWAVES DAILY &nbsp;&nbsp;&nbsp;
         ★ 1 PROTOTYPE SHIPPED BEFORE SUNDOWN &nbsp;&nbsp;&nbsp;
         ★ ZERO FLUFF, 100% PURE HACKING &nbsp;&nbsp;&nbsp;
-        ★ UNBROKEN STREAK: 142 DAYS &nbsp;&nbsp;&nbsp;
+        ★ UNBROKEN STREAK: {{ get_streak() if get_streak is defined else (current_streak if current_streak is defined else 0) }} DAYS &nbsp;&nbsp;&nbsp;
       </div>
     </div>
   </header>

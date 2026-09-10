@@ -119,10 +119,12 @@
 
       <div class="flex items-center gap-2">
         {% if im.build_type == 'webapp' %}
-        <a href="/interactive/neondj" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
+        {% if im.external_url or (im.content and im.content.startswith('/')) %}
+        <a href="{{ im.external_url or im.content }}" {% if im.external_url %}target="_blank"{% endif %} class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
           <span class="material-symbols-outlined text-sm">open_in_new</span>
           <span>Open Fullscreen</span>
         </a>
+        {% endif %}
         {% elif im.build_type == 'song' %}
         <button onclick="toggleSongPreview(this)" class="neo-btn neo-btn-lime text-xs py-2 px-4 flex items-center gap-1">
           <span class="material-symbols-outlined text-sm">play_arrow</span>

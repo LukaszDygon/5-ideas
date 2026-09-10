@@ -101,3 +101,16 @@ def test_save_day_and_delete(temp_db):
     # Delete day
     db.delete_day(day_id, temp_db)
     assert db.get_day_by_date(test_date, temp_db) is None
+
+
+def test_streak_calculation(temp_db):
+    streak = db.calculate_streak(temp_db)
+    assert streak >= 1
+
+    db.save_streak_data(12, temp_db)
+    assert db.get_streak_data(temp_db)["streak"] == 12
+    assert db.get_streak_data(temp_db)["manual_override"] == 12
+
+    db.save_streak_data(None, temp_db)
+    assert db.get_streak_data(temp_db)["manual_override"] is None
+    assert db.get_streak_data(temp_db)["streak"] == streak

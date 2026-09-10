@@ -66,6 +66,67 @@
     </div>
   </div>
 
+  <!-- UNBROKEN STREAK CONTROLLER (STATIC streak.json) -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-[3px] border-ink pb-3">
+      <div>
+        <div class="inline-flex items-center gap-1.5">
+          <span class="neo-badge bg-tertiary-yellow text-ink text-[10px] font-black">
+            STATIC CONFIG: streak.json
+          </span>
+          {% if streak_data.manual_override is not none %}
+          <span class="neo-badge bg-primary-magenta text-white text-[10px] font-black">
+            MANUAL OVERRIDE ACTIVE
+          </span>
+          {% else %}
+          <span class="neo-badge bg-acid-lime text-ink text-[10px] font-black">
+            AUTO-CALCULATED
+          </span>
+          {% endif %}
+        </div>
+        <h2 class="font-display font-black text-2xl uppercase text-ink mt-0.5 flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary-magenta">local_fire_department</span>
+          <span>Unbroken Streak Manager</span>
+        </h2>
+      </div>
+      <p class="font-body text-xs text-gray-600 max-w-sm">
+        Controls the unbroken streak banner & cards. Auto-calculated using real consecutive days published (excluding today if nothing published yet).
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+      <div class="bg-canvas border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b]">
+        <div class="font-mono text-xs font-bold text-gray-600 uppercase">Current Displayed Streak</div>
+        <div class="font-display font-black text-4xl text-primary-magenta">{{ streak_data.streak }} DAYS</div>
+        <div class="font-mono text-[11px] text-gray-500 mt-1">Saved in <code class="text-ink font-bold">streak.json</code></div>
+      </div>
+
+      <div class="bg-canvas border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b]">
+        <div class="font-mono text-xs font-bold text-gray-600 uppercase">Real Consecutive Days</div>
+        <div class="font-display font-black text-4xl text-ink">{{ streak_data.calculated_streak }} DAYS</div>
+        <div class="font-mono text-[11px] text-gray-500 mt-1">Evaluated dynamically from published days</div>
+      </div>
+
+      <form action="/admin/streak/update" method="POST" class="flex flex-col gap-3">
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Directly Edit Streak Count:</label>
+          <input type="number" name="streak_value" min="0" value="{{ streak_data.streak }}" required class="w-full font-mono text-base font-bold p-2 border-[3px] border-ink bg-white shadow-[3px_3px_0px_#1c1b1b] focus:outline-none focus:ring-2 focus:ring-primary-magenta"/>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="submit" name="action" value="save" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">save</span>
+            <span>Save to streak.json</span>
+          </button>
+          {% if streak_data.manual_override is not none %}
+          <button type="submit" name="action" value="reset" class="neo-btn neo-btn-white text-xs py-2 px-3">
+            Reset to Auto
+          </button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </section>
+
   <!-- IMPLEMENTATION RANKING MANAGER -->
   <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-[3px] border-ink pb-3">

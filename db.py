@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional
 
 DB_FILE = Path(__file__).parent / "ideas.db"
 SEED_FILE = Path(__file__).parent / "ideas.json"
+STREAK_FILE = Path(__file__).parent / "streak.json"
 
 
 
@@ -356,345 +357,83 @@ def delete_day(day_id: int, db_path: Path | str | None = None) -> None:
 
 
 
+def calculate_streak(db_path: Path | str | None = None) -> int:
+    """
+    Calculates consecutive daily streak:
+    - Real number of consecutive days published.
+    - Does NOT count today if nothing was published today.
+    """
+    all_days = get_all_days(db_path)
+    if not all_days:
+        return 0
+
+    published_dates = {d["date"] for d in all_days}
+    today = datetime.now().date()
+    today_str = today.strftime("%Y-%m-%d")
+
+    if today_str in published_dates:
+        check_date = today
+    else:
+        # Not counting today if there was nothing published yet today
+        check_date = today - timedelta(days=1)
+
+    streak = 0
+    while check_date.strftime("%Y-%m-%d") in published_dates:
+        streak += 1
+        check_date -= timedelta(days=1)
+
+    return streak
+
+
+def get_streak_data(db_path: Path | str | None = None) -> Dict[str, Any]:
+    """Reads streak.json and returns streak data with real calculated streak."""
+    manual_override = None
+    if STREAK_FILE.exists():
+        try:
+            with open(STREAK_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                manual_override = data.get("manual_override")
+        except Exception:
+            pass
+
+    calculated = calculate_streak(db_path)
+    current = manual_override if (manual_override is not None and manual_override >= 0) else calculated
+
+    return {
+        "streak": current,
+        "calculated_streak": calculated,
+        "manual_override": manual_override,
+        "last_updated": datetime.now().strftime("%Y-%m-%d"),
+    }
+
+
+def save_streak_data(manual_override: Optional[int], db_path: Path | str | None = None) -> Dict[str, Any]:
+    """Saves streak configuration to streak.json."""
+    calculated = calculate_streak(db_path)
+    current = manual_override if (manual_override is not None and manual_override >= 0) else calculated
+    streak_data = {
+        "streak": current,
+        "calculated_streak": calculated,
+        "manual_override": manual_override,
+        "last_updated": datetime.now().strftime("%Y-%m-%d"),
+    }
+    with open(STREAK_FILE, "w", encoding="utf-8") as f:
+        json.dump(streak_data, f, indent=2)
+    return streak_data
+
+
 def seed_demo_data(db_path: Path | str | None = None) -> None:
-    """Seeds content. If ideas.json exists, loads from ideas.json."""
+    """Seeds content strictly from ideas.json."""
     init_db(db_path)
+    conn = get_db(db_path)
+    with conn:
+        conn.execute("DELETE FROM days;")
+    conn.close()
+
     if SEED_FILE.exists():
-        conn = get_db(db_path)
-        with conn:
-            conn.execute("DELETE FROM days;")
-        conn.close()
         load_from_json(SEED_FILE, db_path=db_path)
-        return
-
-
-    # Day 1: Today - 90s Audio & Hardware Nostalgia (Webapp)
-    day1_date = datetime.now().strftime("%Y-%m-%d")
-    save_day(
-        date_str=day1_date,
-        theme="90s Audio & Hardware Nostalgia",
-        subtitle="Tangible physical knobs, arcade cabinets, and neon cassette soundscapes",
-        streak_count=142,
-        notes="Spawned at 7:15 AM over black coffee and synthwave.",
-        ideas_data=[
-            {
-                "idea_number": 1,
-                "title": "PixelSynth 16-bit",
-                "tagline": "Chiptune tracker in the browser",
-                "description": "Generates retro MIDI riffs and Game Boy sound effects directly in the Web Audio API.",
-                "tags": "Audio, 16-Bit, Chiptune",
-                "icon": "music_note",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 2,
-                "title": "Cassette GPT",
-                "tagline": "Tape-deck memory assistant",
-                "description": "Voice memos rewind with tape screech sound effects and transcribe with punchy 90s zine formatting.",
-                "tags": "Voice, AI, Retro",
-                "icon": "mic",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 3,
-                "title": "NeonDJ: 90s Turntable & Synth Matrix",
-                "tagline": "Dual vinyl scratch deck & generative techno box",
-                "description": "Interactive dual rotating vinyl decks with real pitch shift, tactile 7-band EQ sliders, and generative AI sample prompt triggers.",
-                "tags": "Web Audio, Generative, Vinyl, Canvas",
-                "icon": "album",
-                "is_implemented": True,
-                "implementation": {
-                    "title": "NeonDJ: 90s Turntable & Synth Matrix",
-                    "build_type": "webapp",
-                    "rank": 1,
-                    "summary": "Dual interactive vinyl decks with real Web Audio pitch scratching, responsive 70s/90s EQ visualizer, and promptable AI BPM triggers.",
-                    "content": "/interactive/neondj",
-                    "external_url": "https://github.com/lukaszdygon/5-ideas-neondj",
-                    "time_spent_hours": 4.5,
-                    "ai_tools_used": "Gemini 2.5 Flash, Web Audio API, Canvas 2D, Bricolage Grotesque",
-                    "process_steps": [
-                        {"step": 1, "title": "BPM Clock & Audio Context", "desc": "Wrote precision Web Audio scheduling loop with 120-145 BPM tempo slider."},
-                        {"step": 2, "title": "Interactive Turntable Physics", "desc": "Implemented touch/drag angular momentum physics for vinyl scratching."},
-                        {"step": 3, "title": "Memphis Canvas Equalizer", "desc": "Crafted 7 chunky colored EQ visualizer columns pulsing to synthetic audio peaks."},
-                        {"step": 4, "title": "Live Sample Prompting", "desc": "Hooked synth sound synthesis with preset hotkeys 1-8 for instant breakbeats."}
-                    ],
-                    "what_rocked": [
-                        "Real turntable drag scratching worked without latency using AudioBufferSourceNode.playbackRate.",
-                        "Radical Memphis color scheme made the hardware sliders feel like a real Roland groovebox.",
-                        "Zero external audio libraries required: 100% native browser Web Audio API."
-                    ],
-                    "what_broke": [
-                        "Safari initially muted AudioContext on page load before first explicit pointer gesture.",
-                        "Rotational momentum math clipped on rapid reverse scratching, requiring velocity clamping."
-                    ],
-                    "prompt_transcript": "User: Build me a 90s MTV-style turntable in HTML/JS with playable vinyl and acid neon EQ bars.\nAgent: Implemented Web Audio oscillator nodes and canvas rotational drag..."
-                },
-            },
-            {
-                "idea_number": 4,
-                "title": "FloppyCloud P2P",
-                "tagline": "1.44MB ephemeral micro-sharing",
-                "description": "Send files chunked strictly into 1.44MB virtual floppy disks with retro floppy drive spinning sounds.",
-                "tags": "P2P, WebRTC, Storage",
-                "icon": "save",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 5,
-                "title": "Tamagotchi Commit Bot",
-                "tagline": "Keep your pixel pet alive with git commits",
-                "description": "A desktop pixel critter that thrives on clean git branches and gets hungry if you stop coding for 12 hours.",
-                "tags": "CLI, Pixel Art, Productivity",
-                "icon": "pets",
-                "is_implemented": False,
-            },
-        ],
-        db_path=db_path,
-    )
-
-    # Day 2: Yesterday - Neo-Brutalist Digital Poetry & Zines (Poetry)
-    day2_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-    save_day(
-        date_str=day2_date,
-        theme="Neo-Brutalist Digital Poetry & Zines",
-        subtitle="Raw verses on silicon, coffee, late-night compiles, and prompt fatigue",
-        streak_count=141,
-        notes="Generated at midnight as an antidote to monotone documentation.",
-        ideas_data=[
-            {
-                "idea_number": 1,
-                "title": "Haiku Linter",
-                "tagline": "Syntax errors formatted as 5-7-5 syllables",
-                "description": "Translates compiler errors into calming Japanese poetry.",
-                "tags": "Poetry, Linter",
-                "icon": "edit_note",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 2,
-                "title": "Silicon Sonnets for the Broken Build",
-                "tagline": "An ode to the missing semicolon at 3 AM",
-                "description": "Fourteen-line rhymed poem celebrating the agony and ecstasy of shipping solo code.",
-                "tags": "Poetry, Literature, Zine",
-                "icon": "auto_stories",
-                "is_implemented": True,
-                "implementation": {
-                    "title": "Silicon Sonnets for the Broken Build",
-                    "build_type": "poetry",
-                    "rank": 2,
-                    "summary": "A 14-line neo-brutalist tech sonnet on late-night debugging and ephemeral caffeine clarity.",
-                    "content": """The terminal glows cyan on my face,
-A trailing comma brings the server down.
-Three hundred lines of memory misplaced,
-While midnight settles heavy on the town.
-
-No venture checks will bail out this defect,
-No standup sync will smooth the jagged seam;
-Just raw assembly I forgot to check,
-And floating promises that break the stream.
-
-Yet in the silent crucible of test,
-A single green checkmark ignites the screen.
-The linter quiets down, the threads at rest,
-The fastest binary I've ever seen.
-
-So close the laptop as the sun breaks white:
-We shipped another prototype tonight.""",
-                    "external_url": "",
-                    "time_spent_hours": 1.2,
-                    "ai_tools_used": "Claude 3.7 Sonnet, RhymeZone, Markdown Typography",
-                    "process_steps": [
-                        {"step": 1, "title": "Meter & Rhyme Scheme Selection", "desc": "Chose strict Shakespearean ABAB CDCD EFEF GG iambic pentameter."},
-                        {"step": 2, "title": "Developer Vocabulary Fusion", "desc": "Blended classical poetic imagery with raw developer realities (pointers, linters, green checks)."},
-                        {"step": 3, "title": "Typography Formatting", "desc": "Pared the poem into a heavy black-bordered zine parchment card."}
-                    ],
-                    "what_rocked": ["Iambic pentameter landed cleanly without forced tech jargon."],
-                    "what_broke": ["Initial draft had 11 syllables on line 4, trimmed for cadence."],
-                    "prompt_transcript": "User: Write a 14-line classic sonnet about shipping code alone at 3am."
-                },
-            },
-            {
-                "idea_number": 3,
-                "title": "Ode to the Staged Commit",
-                "tagline": "Elegiac verses for unmerged branches",
-                "description": "Stanzas on features abandoned in stash.",
-                "tags": "Git, Verse",
-                "icon": "code",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 4,
-                "title": "Concrete Typography Terminal",
-                "tagline": "Shape poems built of ASCII code brackets",
-                "description": "Poems arranged as hourglasses and cassette tapes in monospace font.",
-                "tags": "ASCII, Concrete Poetry",
-                "icon": "terminal",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 5,
-                "title": "Zine Generator v1",
-                "tagline": "Foldable 8-page one-sheet printout",
-                "description": "Prints a pocket-sized physical mini-zine from any blog post.",
-                "tags": "Print, Zine, PDF",
-                "icon": "menu_book",
-                "is_implemented": False,
-            },
-        ],
-        db_path=db_path,
-    )
-
-    # Day 3: Two days ago - Generative Visual Toys (Image)
-    day3_date = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
-    save_day(
-        date_str=day3_date,
-        theme="Generative 90s Memphis Poster Studio",
-        subtitle="Asymmetrical pop shapes, confetti sprinkle math, and bold graphic posters",
-        streak_count=140,
-        notes="Explored SVG math for Memphis confetti patterns.",
-        ideas_data=[
-            {
-                "idea_number": 1,
-                "title": "Memphis Squiggle Studio",
-                "tagline": "Algorithmic neo-pop poster generator",
-                "description": "Renders high-resolution vector posters with randomized 90s geometric confetti, squiggles, and 3D isometric cubes.",
-                "tags": "Generative Art, SVG, Memphis",
-                "icon": "brush",
-                "is_implemented": True,
-                "implementation": {
-                    "title": "Memphis Squiggle Studio",
-                    "build_type": "image",
-                    "rank": 3,
-                    "summary": "Procedural Memphis Art poster studio rendering randomized vector squiggles, confetti dots, and neo-pop typography.",
-                    "content": "/static/images/memphis_poster.svg",
-                    "external_url": "",
-                    "time_spent_hours": 3.0,
-                    "ai_tools_used": "Gemini 2.5 Flash, SVG DOM, Math.random() seed",
-                    "process_steps": [
-                        {"step": 1, "title": "Geometric Primitives Generator", "desc": "Calculated Bézier squiggles, triangles, and donut rings."},
-                        {"step": 2, "title": "Palette Harmonizer", "desc": "Locked color randomization to saturated Hot Pink, Electric Cyan, Sunshine Yellow, and Pitch Black."},
-                        {"step": 3, "title": "Vector Export", "desc": "Added instant 4K SVG and PNG download triggers."}
-                    ],
-                    "what_rocked": ["Pure SVG math with zero canvas rasterization dependencies."],
-                    "what_broke": ["Overlapping shapes sometimes created visual mud until distance clamping was added."],
-                    "prompt_transcript": "User: Create a procedural Memphis art generator using SVG."
-                },
-            },
-            {
-                "idea_number": 2,
-                "title": "Halftone Dot Camera",
-                "tagline": "Live comic book camera filter",
-                "description": "WebGL shader converting webcam feed into Lichtenstein comic dots in real time.",
-                "tags": "WebGL, Shader, Comic",
-                "icon": "camera_alt",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 3,
-                "title": "Retro Sticker Machine",
-                "tagline": "Die-cut sticker previewer with holographic foil",
-                "description": "Upload a PNG and see it as a peelable vinyl sticker with shiny metallic specular highlight.",
-                "tags": "3D, Shaders, Stickers",
-                "icon": "loyalty",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 4,
-                "title": "Arcade Cabinet Mockup Rig",
-                "tagline": "Frame screenshots inside an 80s arcade bezel",
-                "description": "Adds CRT scanlines and curved glare to web app screenshots.",
-                "tags": "Mockup, Retro, CRT",
-                "icon": "sports_esports",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 5,
-                "title": "Font Squeezer",
-                "tagline": "Extreme variable typography animator",
-                "description": "Rubber-band physics for letterforms reacting to cursor velocity.",
-                "tags": "Typography, Physics",
-                "icon": "text_fields",
-                "is_implemented": False,
-            },
-        ],
-        db_path=db_path,
-    )
-
-    # Day 4: Three days ago - AI Synth Chiptune Rhythms (Song)
-    day4_date = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
-    save_day(
-        date_str=day4_date,
-        theme="AI Synth Chiptune Rhythms",
-        subtitle="FM synthesis, pulse-width modulation, and 8-bit dance anthems",
-        streak_count=139,
-        notes="Wrote a procedural 4-channel sound synthesizer in pure Python/JS.",
-        ideas_data=[
-            {
-                "idea_number": 1,
-                "title": "GameBoy FM Jammer",
-                "tagline": "Procedural 8-bit boss fight anthem",
-                "description": "Algorithmic chiptune anthem with triangle bassline, 50% pulse lead, and noise snare bursts.",
-                "tags": "Song, Chiptune, FM Synthesis",
-                "icon": "headphones",
-                "is_implemented": True,
-                "implementation": {
-                    "title": "Neon Skyline (8-Bit Summer Anthem)",
-                    "build_type": "song",
-                    "rank": 4,
-                    "summary": "Upbeat 135 BPM retro chiptune song generated with algorithmic FM synthesis and dual pulse-wave leads.",
-                    "content": "AUDIO_SYNTH:BPM135:AMajor:PulseWaveLead",
-                    "external_url": "https://soundcloud.com",
-                    "time_spent_hours": 3.8,
-                    "ai_tools_used": "Web Audio Oscillator Synthesis, Gemini Audio Prompting",
-                    "process_steps": [
-                        {"step": 1, "title": "Harmonic Progression", "desc": "Structured standard Japanese city-pop progression IV-V-iii-vi."},
-                        {"step": 2, "title": "Arpeggiator Engine", "desc": "Built 16th-note arpeggiator clocking at 135 BPM with swing quantization."},
-                        {"step": 3, "title": "Noise Channel Drum Kit", "desc": "Filtered white noise bursts to simulate punchy 8-bit hi-hats and snares."}
-                    ],
-                    "what_rocked": ["Punchy retro sound that runs instantly without loading heavy MP3 assets."],
-                    "what_broke": ["Browser audio autoplay restrictions required explicit user play button."],
-                    "prompt_transcript": "User: Compose an 8-bit city pop chiptune anthem in Web Audio."
-                },
-            },
-            {
-                "idea_number": 2,
-                "title": "Vaporwave Pitch Slower",
-                "tagline": "Slow down any MP3 by 25% with lush reverb",
-                "description": "Instant aesthetic mood transformer.",
-                "tags": "Audio, Vaporwave",
-                "icon": "speed",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 3,
-                "title": "Dial-Up Modem Synthesizer",
-                "tagline": "Handshake protocols as musical notes",
-                "description": "Plays the 56k modem sound mapped to keyboard keys.",
-                "tags": "Nostalgia, Sound",
-                "icon": "dialpad",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 4,
-                "title": "BPM Metronome with Personality",
-                "tagline": "Speaks sassy encouragement on every 4th bar",
-                "description": "A metronome that keeps you on tempo with retro speech synthesis.",
-                "tags": "Music, Practice",
-                "icon": "timer",
-                "is_implemented": False,
-            },
-            {
-                "idea_number": 5,
-                "title": "Floppy Drive Organ",
-                "tagline": "Stepper motor frequencies playing Bach",
-                "description": "Simulator of mechanical stepper motors producing musical pitches.",
-                "tags": "Hardware, Audio",
-                "icon": "memory",
-                "is_implemented": False,
-            },
-        ],
-        db_path=db_path,
-    )
+    # Ensure streak file is updated
+    save_streak_data(None, db_path=db_path)
 
 
 if __name__ == "__main__":

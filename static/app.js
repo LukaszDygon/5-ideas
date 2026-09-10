@@ -117,10 +117,24 @@ function filterStream(type) {
   });
 }
 
-// Surprise me button helper
+// Surprise me button helper - works on both static GitHub Pages and dynamic local server
 function surpriseMe() {
   playRetroClick(660, 'sine', 0.15);
-  window.location.href = '/random';
+  const body = document.body;
+  const basePath = body.dataset.basePath || '/';
+  let dates = [];
+  try {
+    dates = JSON.parse(body.dataset.dates || '[]');
+  } catch (e) {
+    dates = [];
+  }
+  if (dates.length > 0) {
+    const randomDate = dates[Math.floor(Math.random() * dates.length)];
+    const cleanBase = basePath.endsWith('/') ? basePath : basePath + '/';
+    window.location.href = `${cleanBase}day/${randomDate}/`;
+  } else {
+    window.location.href = basePath;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

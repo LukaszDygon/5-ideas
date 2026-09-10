@@ -46,9 +46,19 @@ class _HostedCheck:
         return self.__bool__()
 
 
+def _get_published_dates() -> list[str]:
+    return [d["date"] for d in db.get_all_days()]
+
+
+def _get_active_streak() -> int:
+    return db.get_streak_data()["streak"]
+
+
 # Jinja2 Templates for FastAPI
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["is_hosted"] = _HostedCheck()
+templates.env.globals["all_published_dates"] = _get_published_dates
+templates.env.globals["get_streak"] = _get_active_streak
 
 
 # ---------------------------------------------------------------------------
@@ -104,7 +114,7 @@ async def home_view(request: Request):
             "today_drop": today_drop,
             "ranked_implementations": ranked_impls,
             "all_days": all_days,
-            "current_streak": today_drop["streak_count"] if today_drop else 0,
+            "current_streak": db.get_streak_data()["streak"],
             "total_ideas": sum(len(d.get("ideas", [])) for d in all_days),
             "total_shipped": len(ranked_impls),
         },

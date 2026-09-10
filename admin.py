@@ -18,20 +18,44 @@ admin_app = Flask(
     static_folder="static",
 )
 admin_app.secret_key = "five-ideas-memphis-pop-secret-key"
+admin_app.jinja_env.globals["all_published_dates"] = lambda: [d["date"] for d in db.get_all_days()]
+admin_app.jinja_env.globals["get_streak"] = lambda: db.get_streak_data()["streak"]
+admin_app.jinja_env.globals["is_hosted"] = False
 
 
 @admin_app.route("/")
 def dashboard():
     days = db.get_all_days()
     ranked_impls = db.get_ranked_implementations()
+    streak_data = db.get_streak_data()
     return render_template(
         "admin/index.html",
         days=days,
         ranked_impls=ranked_impls,
+        streak_data=streak_data,
         total_days=len(days),
         total_ideas=sum(len(d.get("ideas", [])) for d in days),
         total_impls=len(ranked_impls),
     )
+
+
+@admin_app.route("/streak/update", methods=["POST"])
+def update_streak():
+    action = request.form.get("action", "save")
+    if action == "reset":
+        db.save_streak_data(None)
+        flash("Unbroken streak reset to auto-calculated value.", "success")
+    else:
+        raw_val = request.form.get("streak_value", "").strip()
+        try:
+            val = int(raw_val)
+            if val < 0:
+                raise ValueError("Streak must be non-negative")
+            db.save_streak_data(val)
+            flash(f"Unbroken streak saved to static streak.json (value: {val} days).", "success")
+        except ValueError:
+            flash("Invalid streak number. Please enter a valid non-negative integer.", "error")
+    return redirect(url_for("dashboard"))
 
 
 @admin_app.route("/rankings/update", methods=["POST"])
