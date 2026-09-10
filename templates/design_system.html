@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}Design System - Radical Memphis Pop{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-10">
+
+  <!-- HEADER -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+    <div class="relative z-10">
+      <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-3 py-1 font-mono text-xs font-black uppercase shadow-[3px_3px_0px_#1c1b1b] -rotate-1 mb-3">
+        RADICAL MEMPHIS POP // GENERAL PURPOSE DESIGN SYSTEM
+      </div>
+      <h1 class="font-display font-black text-3xl sm:text-5xl uppercase leading-none tracking-tight">
+        Reusable UI Design System
+      </h1>
+      <p class="font-body text-base text-white/90 max-w-2xl mt-2">
+        A complete neo-brutalist aesthetic system pairing 1990s MTV-era pop energy, Milan Memphis geometric motifs, 
+        comic-book pitch-black outlines, and tactile zero-blur hard-offset drop shadows. 
+        Render any custom content with these primitives.
+      </p>
+    </div>
+    <div class="w-24 h-24 bg-electric-cyan border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex items-center justify-center -rotate-6 shrink-0">
+      <span class="material-symbols-outlined text-5xl text-ink">palette</span>
+    </div>
+  </div>
+
+  <!-- 1. COLOR PALETTE SWATCHES -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
+    <div class="border-b-[3px] border-ink pb-2 flex items-center justify-between">
+      <h2 class="font-display font-black text-2xl uppercase text-ink">01. Saturated Pop Palette</h2>
+      <span class="font-mono text-xs font-bold text-gray-600">Pure Unmodulated Fills</span>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      
+      <div class="border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] overflow-hidden">
+        <div class="h-20 bg-primary-magenta"></div>
+        <div class="p-2.5 bg-white font-mono text-xs">
+          <div class="font-bold text-ink">Radical Magenta</div>
+          <div class="text-[10px] text-gray-600">#b40065 / primary</div>
+        </div>
+      </div>
+
+      <div class="border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] overflow-hidden">
+        <div class="h-20 bg-electric-cyan"></div>
+        <div class="p-2.5 bg-white font-mono text-xs">
+          <div class="font-bold text-ink">Electric Cyan</div>
+          <div class="text-[10px] text-gray-600">#00e5ff / secondary</div>
+        </div>
+      </div>
+
+      <div class="border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] overflow-hidden">
+        <div class="h-20 bg-tertiary-yellow"></div>
+        <div class="p-2.5 bg-white font-mono text-xs">
+          <div class="font-bold text-ink">Sunshine Yellow</div>
+          <div class="text-[10px] text-gray-600">#fae100 / tertiary</div>
+        </div>
+      </div>
+
+      <div class="border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] overflow-hidden">
+        <div class="h-20 bg-acid-lime"></div>
+        <div class="p-2.5 bg-white font-mono text-xs">
+          <div class="font-bold text-ink">Acid Lime</div>
+          <div class="text-[10px] text-gray-600">#39ff14 / success</div>
+        </div>
+      </div>
+
+      <div class="border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] overflow-hidden">
+        <div class="h-20 bg-vivid-orange"></div>
+        <div class="p-2.5 bg-white font-mono text-xs">
+          <div class="font-bold text-ink">Vivid Orange</div>
+          <div class="text-[10px] text-gray-600">#ff5e00 / accent</div>
+        </div>
+      </div>
+
+      <div class="border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] overflow-hidden">
+        <div class="h-20 bg-ink"></div>
+        <div class="p-2.5 bg-white font-mono text-xs">
+          <div class="font-bold text-ink">Pitch Ink Black</div>
+          <div class="text-[10px] text-gray-600">#1c1b1b / stroke</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 2. TYPOGRAPHY HIERARCHY -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-2 flex items-center justify-between">
+      <h2 class="font-display font-black text-2xl uppercase text-ink">02. Typographic Triad</h2>
+      <span class="font-mono text-xs font-bold text-gray-600">Bricolage • Space • JetBrains</span>
+    </div>
+    <div class="flex flex-col gap-4">
+      <div class="border-2 border-ink p-4 bg-canvas">
+        <span class="font-mono text-xs text-primary-magenta font-bold">DISPLAY HERO (Bricolage Grotesque 800-900)</span>
+        <h1 class="font-display font-black text-4xl sm:text-5xl uppercase text-ink leading-tight mt-1">
+          5 WILD IDEAS DAILY • ZERO FLUFF
+        </h1>
+      </div>
+      <div class="border-2 border-ink p-4 bg-white">
+        <span class="font-mono text-xs text-secondary-cyan font-bold">BODY & IDEATION (Space Grotesk 400-500)</span>
+        <p class="font-body text-base text-ink leading-relaxed mt-1">
+          Unfiltered morning sparks built and deployed with cutting-edge AI stacks before sundown. 
+          High legibility for technical concepts while maintaining distinct 90s geometric rhythm.
+        </p>
+      </div>
+      <div class="border-2 border-ink p-4 bg-yellow-50">
+        <span class="font-mono text-xs text-primary-magenta font-bold">CODE & METADATA (JetBrains Mono 600-700)</span>
+        <div class="font-mono text-sm text-ink font-bold mt-1">
+          BPM: 135 // DURATION: 4.5H // STATUS: SHIPPED_OPERATIONAL
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. BUTTONS & TACTILE MECHANICAL PHYSICS -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-2 flex items-center justify-between">
+      <h2 class="font-display font-black text-2xl uppercase text-ink">03. Tactile Mechanical Buttons</h2>
+      <span class="font-mono text-xs font-bold text-gray-600">Hard Offset 4px -> Hover 6px -> Active Click Collapse</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-4">
+      <button class="neo-btn neo-btn-primary">
+        <span class="material-symbols-outlined">rocket_launch</span>
+        <span>Primary Action</span>
+      </button>
+
+      <button class="neo-btn neo-btn-secondary">
+        <span class="material-symbols-outlined">bolt</span>
+        <span>Electric Cyan</span>
+      </button>
+
+      <button class="neo-btn neo-btn-yellow">
+        <span class="material-symbols-outlined">casino</span>
+        <span>Sunshine Yellow</span>
+      </button>
+
+      <button class="neo-btn neo-btn-lime">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span>Acid Lime</span>
+      </button>
+
+      <button class="neo-btn neo-btn-white">
+        <span class="material-symbols-outlined">tune</span>
+        <span>White Surface</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 4. BADGES & PILLS -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
+    <div class="border-b-[3px] border-ink pb-2">
+      <h2 class="font-display font-black text-2xl uppercase text-ink">04. Chips, Pills & Status Stamps</h2>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <span class="neo-badge bg-primary-magenta text-white">#1 TOP FAVORITE</span>
+      <span class="neo-badge bg-tertiary-yellow text-ink">STREAK #142</span>
+      <span class="neo-badge bg-electric-cyan text-ink">WEB AUDIO API</span>
+      <span class="neo-badge bg-acid-lime text-ink">SHIPPED BEFORE SUNDOWN</span>
+      <span class="neo-badge bg-white text-ink">100% OPERATIONAL</span>
+    </div>
+  </section>
+
+  <!-- 5. FLEXIBLE MEDIA IMPLEMENTATION CONTAINERS -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-2">
+      <h2 class="font-display font-black text-2xl uppercase text-ink">05. Flexible Media Containers</h2>
+      <p class="font-body text-xs text-gray-700 mt-0.5">Render any custom implementation type: WebApps, Poetry Zines, Audio Players, or Posters.</p>
+    </div>
+
+    <!-- Typewriter Zine Container Demo -->
+    <div class="flex flex-col gap-2">
+      <span class="font-mono text-xs font-bold text-ink uppercase">Typewriter Zine Verse:</span>
+      <div class="poetry-box max-w-xl text-xs">
+Three hundred lines of memory misplaced,
+While midnight settles heavy on the town.
+A single green checkmark ignites the screen:
+We shipped another prototype tonight.
+      </div>
+    </div>
+
+    <!-- Retro Cassette Audio Player Demo -->
+    <div class="flex flex-col gap-2">
+      <span class="font-mono text-xs font-bold text-ink uppercase">Cassette Player Container:</span>
+      <div class="cassette-player max-w-xl flex items-center justify-between">
+        <div>
+          <div class="font-display font-black text-lg text-tertiary-yellow">NEON SKYLINE // 135 BPM</div>
+          <div class="font-mono text-xs text-gray-300">Algorithmic FM Synthesis</div>
+        </div>
+        <button onclick="toggleSongPreview(this)" class="neo-btn neo-btn-lime text-xs py-1.5 px-3">
+          <span class="material-symbols-outlined text-sm">play_arrow</span> PLAY
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. LIVE SANDBOX PLAYGROUND -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-2">
+      <h2 class="font-display font-black text-2xl uppercase text-ink">06. Live Content Sandbox</h2>
+      <p class="font-body text-xs text-gray-700 mt-0.5">Test how your custom content looks in the Radical Memphis Pop style.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="flex flex-col gap-3">
+        <label class="font-mono text-xs font-bold text-ink">Custom Title</label>
+        <input type="text" id="sandbox-title" class="neo-input" value="Cassette Tape OS" oninput="updateSandbox()"/>
+
+        <label class="font-mono text-xs font-bold text-ink">Tagline</label>
+        <input type="text" id="sandbox-tagline" class="neo-input" value="Rewindable operating system with tape screech audio" oninput="updateSandbox()"/>
+
+        <label class="font-mono text-xs font-bold text-ink">Description</label>
+        <textarea id="sandbox-desc" class="neo-textarea" rows="3" oninput="updateSandbox()">A personal desktop environment that records your window history as magnetic tape reels and lets you fast-forward to yesterday.</textarea>
+
+        <label class="font-mono text-xs font-bold text-ink">Card Accent Color</label>
+        <select id="sandbox-color" class="neo-select" onchange="updateSandbox()">
+          <option value="primary-magenta">Radical Magenta</option>
+          <option value="electric-cyan">Electric Cyan</option>
+          <option value="tertiary-yellow">Sunshine Yellow</option>
+          <option value="acid-lime">Acid Lime</option>
+          <option value="white">Crisp White</option>
+        </select>
+      </div>
+
+      <!-- Preview Output -->
+      <div class="flex flex-col justify-center">
+        <div id="sandbox-card" class="neo-card p-6 border-[3px] border-ink bg-white">
+          <div class="flex items-center justify-between mb-3">
+            <span id="sandbox-badge" class="neo-badge bg-primary-magenta text-white">#1 CUSTOM SPARK</span>
+            <span class="material-symbols-outlined text-ink">bolt</span>
+          </div>
+          <h3 id="preview-title" class="font-display font-black text-2xl uppercase text-ink leading-tight mb-1">
+            Cassette Tape OS
+          </h3>
+          <div id="preview-tagline" class="font-mono text-xs font-bold text-primary-magenta mb-3">
+            Rewindable operating system with tape screech audio
+          </div>
+          <p id="preview-desc" class="font-body text-sm text-gray-800 leading-relaxed mb-4">
+            A personal desktop environment that records your window history as magnetic tape reels and lets you fast-forward to yesterday.
+          </p>
+          <div class="pt-3 border-t-2 border-ink flex justify-between items-center">
+            <span class="font-mono text-xs font-bold text-gray-600">PREVIEW RENDER</span>
+            <button class="neo-btn neo-btn-primary text-xs py-1 px-3">Interact</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateSandbox() {
+  const title = document.getElementById('sandbox-title').value;
+  const tagline = document.getElementById('sandbox-tagline').value;
+  const desc = document.getElementById('sandbox-desc').value;
+  const color = document.getElementById('sandbox-color').value;
+
+  document.getElementById('preview-title').textContent = title;
+  document.getElementById('preview-tagline').textContent = tagline;
+  document.getElementById('preview-desc').textContent = desc;
+
+  const card = document.getElementById('sandbox-card');
+  const badge = document.getElementById('sandbox-badge');
+
+  card.className = 'neo-card p-6 border-[3px] border-ink';
+  if (color === 'primary-magenta') {
+    card.classList.add('bg-pink-50');
+    badge.className = 'neo-badge bg-primary-magenta text-white';
+  } else if (color === 'electric-cyan') {
+    card.classList.add('bg-cyan-50');
+    badge.className = 'neo-badge bg-electric-cyan text-ink';
+  } else if (color === 'tertiary-yellow') {
+    card.classList.add('bg-yellow-50');
+    badge.className = 'neo-badge bg-tertiary-yellow text-ink';
+  } else if (color === 'acid-lime') {
+    card.classList.add('bg-lime-50');
+    badge.className = 'neo-badge bg-acid-lime text-ink';
+  } else {
+    card.classList.add('bg-white');
+    badge.className = 'neo-badge bg-white text-ink';
+  }
+}
+</script>
+{% endblock %}

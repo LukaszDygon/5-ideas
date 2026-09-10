@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Control Panel - 5 Ideas Daily Showcase{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-8">
+
+  <!-- ADMIN HEADER -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="bg-primary-magenta text-white p-3 border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] -rotate-2">
+        <span class="material-symbols-outlined text-3xl">admin_panel_settings</span>
+      </div>
+      <div>
+        <div class="font-mono text-xs font-bold uppercase text-primary-magenta tracking-wider">
+          FLASK ADMIN DASHBOARD // CONTENT CONTROL
+        </div>
+        <h1 class="font-display font-black text-3xl uppercase text-ink leading-tight">
+          Showcase Content Manager
+        </h1>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex items-center gap-2">
+      <a href="/admin/day/new" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">add_box</span>
+        <span>+ Add New Day</span>
+      </a>
+      <form action="/admin/seed" method="POST" onsubmit="return confirm('Reseed database with original Stitch demo data? Current edits will be replaced.')">
+        <button type="submit" class="neo-btn neo-btn-white text-xs py-2 px-3 text-gray-700">
+          <span class="material-symbols-outlined text-sm">restart_alt</span>
+          <span>Reseed Demo</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FLASH MESSAGES -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flex flex-col gap-2">
+        {% for category, message in messages %}
+          <div class="p-3 border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] font-mono text-xs font-bold flex items-center justify-between {% if category == 'success' %}bg-acid-lime text-ink{% elif category == 'error' %}bg-rose-200 text-ink{% else %}bg-electric-cyan text-ink{% endif %}">
+            <span>{{ message }}</span>
+            <span class="material-symbols-outlined text-sm">check</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- STAT OVERVIEW -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="bg-canvas border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b]">
+      <div class="font-mono text-xs font-bold text-gray-600 uppercase">Days Recorded</div>
+      <div class="font-display font-black text-3xl text-ink">{{ total_days }}</div>
+    </div>
+    <div class="bg-canvas border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b]">
+      <div class="font-mono text-xs font-bold text-gray-600 uppercase">Total Sparks Tracked</div>
+      <div class="font-display font-black text-3xl text-primary-magenta">{{ total_ideas }}</div>
+    </div>
+    <div class="bg-canvas border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b]">
+      <div class="font-mono text-xs font-bold text-gray-600 uppercase">Shipped Prototypes</div>
+      <div class="font-display font-black text-3xl text-secondary-cyan">{{ total_impls }}</div>
+    </div>
+  </div>
+
+  <!-- IMPLEMENTATION RANKING MANAGER -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-[3px] border-ink pb-3">
+      <div>
+        <div class="neo-badge bg-primary-magenta text-white text-[10px] font-black">
+          FRONT PAGE ORDER
+        </div>
+        <h2 class="font-display font-black text-2xl uppercase text-ink mt-0.5">
+          Implementation Rankings (Top Picks)
+        </h2>
+      </div>
+      <p class="font-body text-xs text-gray-600 max-w-sm">
+        Lower numbers appear first on the front page (1 = highest preference). Edit the numbers and click Save.
+      </p>
+    </div>
+
+    <form action="/admin/rankings/update" method="POST">
+      <div class="overflow-x-auto border-2 border-ink">
+        <table class="w-full text-left font-body text-xs">
+          <thead class="bg-canvas font-mono font-bold uppercase border-b-2 border-ink">
+            <tr>
+              <th class="p-3">Rank</th>
+              <th class="p-3">Date</th>
+              <th class="p-3">Theme</th>
+              <th class="p-3">Implementation Title</th>
+              <th class="p-3">Type</th>
+              <th class="p-3">Time</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-ink/20">
+            {% for item in ranked_impls %}
+            <tr class="hover:bg-yellow-50">
+              <td class="p-3 font-mono font-bold w-24">
+                <input type="number" name="rank_{{ item.id }}" value="{{ item.rank }}" class="neo-input text-center w-16 py-1 px-1 font-bold text-xs" min="1" max="999"/>
+              </td>
+              <td class="p-3 font-mono text-gray-700 font-semibold">{{ item.day_date }}</td>
+              <td class="p-3 font-bold text-ink">{{ item.day_theme }}</td>
+              <td class="p-3 font-display font-bold text-sm text-primary-magenta">{{ item.title }}</td>
+              <td class="p-3">
+                <span class="neo-badge bg-canvas text-ink text-[10px]">{{ item.build_type | upper }}</span>
+              </td>
+              <td class="p-3 font-mono text-gray-600">{{ item.time_spent_hours }}h</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <button type="submit" class="neo-btn neo-btn-primary text-xs py-2 px-5">
+          <span class="material-symbols-outlined text-sm">save</span>
+          <span>Save New Rankings</span>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ALL DAYS DIRECTORY -->
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
+    <div class="flex items-center justify-between border-b-[3px] border-ink pb-3">
+      <h2 class="font-display font-black text-2xl uppercase text-ink">
+        Daily Log Archive
+      </h2>
+      <a href="/admin/day/new" class="neo-btn neo-btn-yellow text-xs py-1.5 px-3">
+        + Create Day
+      </a>
+    </div>
+
+    <div class="overflow-x-auto border-2 border-ink">
+      <table class="w-full text-left font-body text-xs">
+        <thead class="bg-canvas font-mono font-bold uppercase border-b-2 border-ink">
+          <tr>
+            <th class="p-3">Date</th>
+            <th class="p-3">Streak</th>
+            <th class="p-3">Theme</th>
+            <th class="p-3">Ideas</th>
+            <th class="p-3">Shipped Prototype</th>
+            <th class="p-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink/20">
+          {% for day in days %}
+          {% set impl = day.implemented_idea %}
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-mono font-bold text-ink">{{ day.date }}</td>
+            <td class="p-3">
+              <span class="neo-badge bg-tertiary-yellow text-ink text-[10px]">#{{ day.streak_count }}</span>
+            </td>
+            <td class="p-3 font-bold text-ink">{{ day.theme }}</td>
+            <td class="p-3 font-mono text-gray-700">{{ day.ideas | length }} ideas</td>
+            <td class="p-3">
+              {% if impl %}
+                <span class="neo-badge bg-acid-lime text-ink text-[10px] font-bold">
+                  ⚡ {{ impl.implementation.title }} ({{ impl.implementation.build_type }})
+                </span>
+              {% else %}
+                <span class="text-gray-400 font-mono">None</span>
+              {% endif %}
+            </td>
+            <td class="p-3 text-right">
+              <div class="inline-flex items-center gap-1.5">
+                <a href="/day/{{ day.date }}" class="neo-btn neo-btn-white text-[11px] py-1 px-2" title="View live page">
+                  View
+                </a>
+                <a href="/admin/day/{{ day.date }}/edit" class="neo-btn neo-btn-yellow text-[11px] py-1 px-2" title="Edit day">
+                  Edit
+                </a>
+                <form action="/admin/day/{{ day.id }}/delete" method="POST" onsubmit="return confirm('Delete day {{ day.date }}?')" class="inline">
+                  <button type="submit" class="neo-btn neo-btn-white text-[11px] py-1 px-2 text-rose-600 hover:bg-rose-100" title="Delete day">
+                    Delete
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

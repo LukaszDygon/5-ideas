@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}5 Ideas Daily Showcase{% endblock %}</title>
+
+  <!-- Google Fonts: Bricolage Grotesque, Space Grotesk, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0" rel="stylesheet"/>
+
+  <!-- Tailwind CDN with 90s Radical Memphis Pop Config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "ink": "#1c1b1b",
+            "canvas": "#f5f3ef",
+            "primary-magenta": "#b40065",
+            "neon-pink": "#ff1493",
+            "secondary-cyan": "#008190",
+            "electric-cyan": "#00e5ff",
+            "tertiary-yellow": "#fae100",
+            "yellow-fixed": "#ffe243",
+            "acid-lime": "#39ff14",
+            "vivid-orange": "#ff5e00",
+          },
+          fontFamily: {
+            "display": ["Bricolage Grotesque", "sans-serif"],
+            "body": ["Space Grotesk", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Project Design System CSS -->
+  <link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body class="bg-canvas text-ink flex flex-col min-h-screen">
+
+  <!-- TOP HEADER -->
+  <header class="w-full bg-white border-b-[3px] border-ink sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      
+      <!-- Logo Branding -->
+      <a href="/" class="flex items-center gap-2 text-decoration-none group">
+        <div class="bg-primary-magenta text-white font-display font-black text-xl px-2.5 py-1 border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] -rotate-2 group-hover:rotate-0 transition-transform">
+          5
+        </div>
+        <div class="flex flex-col">
+          <span class="font-display font-black text-xl tracking-tight text-ink uppercase leading-none">IDEAS DAILY</span>
+          <span class="font-mono text-[10px] font-bold text-primary-magenta tracking-widest uppercase">1 SHIPPED BEFORE SUNDOWN</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-2">
+        <a href="/" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
+          <span class="material-symbols-outlined text-sm">home</span>
+          Top Picks
+        </a>
+        <a href="/calendar" class="neo-btn neo-btn-yellow text-xs py-1.5 px-3">
+          <span class="material-symbols-outlined text-sm">calendar_month</span>
+          Calendar
+        </a>
+        <a href="/stream" class="neo-btn neo-btn-secondary text-xs py-1.5 px-3">
+          <span class="material-symbols-outlined text-sm">view_stream</span>
+          Day-By-Day
+        </a>
+        <a href="/design-system" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
+          <span class="material-symbols-outlined text-sm">palette</span>
+          Design System
+        </a>
+        <a href="/admin" class="neo-btn neo-btn-white text-xs py-1.5 px-3 text-primary-magenta border-primary-magenta">
+          <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
+          Admin
+        </a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button onclick="surpriseMe()" class="neo-btn neo-btn-primary text-xs py-1.5 px-3 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">bolt</span>
+          <span>Surprise Me</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Running Marquee Ticker -->
+    <div class="marquee-container">
+      <div class="marquee-content">
+        ★ 5 FRESH BRAINWAVES DAILY &nbsp;&nbsp;&nbsp;
+        ★ 1 PROTOTYPE SHIPPED BEFORE SUNDOWN &nbsp;&nbsp;&nbsp;
+        ★ ZERO FLUFF, 100% PURE HACKING &nbsp;&nbsp;&nbsp;
+        ★ UNBROKEN STREAK: 142 DAYS &nbsp;&nbsp;&nbsp;
+        ★ CODE • POETRY • SYNTHS • GENERATIVE ART &nbsp;&nbsp;&nbsp;
+        ★ 5 FRESH BRAINWAVES DAILY &nbsp;&nbsp;&nbsp;
+        ★ 1 PROTOTYPE SHIPPED BEFORE SUNDOWN &nbsp;&nbsp;&nbsp;
+        ★ ZERO FLUFF, 100% PURE HACKING &nbsp;&nbsp;&nbsp;
+        ★ UNBROKEN STREAK: 142 DAYS &nbsp;&nbsp;&nbsp;
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEW CONTENT -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="w-full bg-white border-t-[3px] border-ink py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-4 h-4 bg-acid-lime border-2 border-ink"></div>
+        <span class="font-display font-extrabold text-sm uppercase">5 Ideas Daily Showcase // Radical Memphis Pop</span>
+      </div>
+      <div class="font-mono text-xs text-gray-700">
+        Built with Python 3.14 • uv • FastAPI • Flask Admin • SQLite stdlib
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/calendar" class="font-display font-bold text-xs uppercase hover:underline">Calendar</a>
+        <span>•</span>
+        <a href="/stream" class="font-display font-bold text-xs uppercase hover:underline">Stream</a>
+        <span>•</span>
+        <a href="/design-system" class="font-display font-bold text-xs uppercase hover:underline">Design System</a>
+        <span>•</span>
+        <a href="/admin" class="font-display font-bold text-xs uppercase hover:underline text-primary-magenta">Admin Panel</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Project JS -->
+  <script src="/static/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

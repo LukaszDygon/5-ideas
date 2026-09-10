@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Calendar - 5 Ideas Daily Showcase{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-6">
+
+  <!-- CALENDAR HEADER & NAVIGATION -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="bg-tertiary-yellow p-3 border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] -rotate-2">
+        <span class="material-symbols-outlined text-3xl">calendar_month</span>
+      </div>
+      <div>
+        <div class="font-mono text-xs font-bold uppercase text-primary-magenta tracking-wider">
+          THE BIGGEST VIEW // ARCHIVE NAVIGATOR
+        </div>
+        <h1 class="font-display font-black text-3xl sm:text-4xl uppercase text-ink leading-tight">
+          {{ month_name }} {{ year }}
+        </h1>
+      </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="flex items-center gap-2">
+      <a href="/calendar?year={{ prev_year }}&month={{ prev_month }}" class="neo-btn neo-btn-white text-xs py-2 px-3">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        <span>Prev Month</span>
+      </a>
+      <a href="/calendar" class="neo-btn neo-btn-yellow text-xs py-2 px-3">
+        <span>Today</span>
+      </a>
+      <a href="/calendar?year={{ next_year }}&month={{ next_month }}" class="neo-btn neo-btn-white text-xs py-2 px-3">
+        <span>Next Month</span>
+        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- CALENDAR GRID -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-6">
+    
+    <!-- Weekday Header Row -->
+    <div class="grid grid-cols-7 gap-2 mb-2 text-center">
+      {% for day_name in ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] %}
+      <div class="bg-canvas border-2 border-ink py-2 font-display font-black text-xs sm:text-sm text-ink uppercase shadow-[2px_2px_0px_#1c1b1b]">
+        {{ day_name }}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Calendar Day Cells Grid -->
+    <div class="flex flex-col gap-2">
+      {% for week in weeks %}
+      <div class="grid grid-cols-7 gap-2">
+        {% for day_obj in week %}
+          {% set date_str = day_obj.strftime('%Y-%m-%d') %}
+          {% set is_current_month = (day_obj.month == month) %}
+          {% set entry = db_days.get(date_str) %}
+          {% set is_today = (date_str == today_str) %}
+
+          <div class="min-h-[120px] sm:min-h-[150px] p-2 border-[3px] border-ink flex flex-col justify-between transition-all relative
+            {% if not is_current_month %}
+              bg-gray-100 opacity-40
+            {% elif is_today %}
+              bg-amber-50 shadow-[4px_4px_0px_#b40065] ring-2 ring-primary-magenta
+            {% elif entry %}
+              bg-white hover:bg-yellow-50 shadow-[3px_3px_0px_#1c1b1b] hover:-translate-y-1
+            {% else %}
+              bg-canvas/60 opacity-80
+            {% endif %}">
+            
+            <!-- Top Row: Day Number & Badges -->
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <span class="font-display font-black text-base sm:text-lg text-ink {% if is_today %}text-primary-magenta{% endif %}">
+                {{ day_obj.day }}
+              </span>
+              {% if is_today %}
+                <span class="neo-badge bg-primary-magenta text-white text-[9px] px-1 py-0 font-bold">TODAY</span>
+              {% endif %}
+              {% if entry and entry.streak_count %}
+                <span class="neo-badge bg-tertiary-yellow text-ink text-[9px] px-1 py-0 font-bold">
+                  #{{ entry.streak_count }}
+                </span>
+              {% endif %}
+            </div>
+
+            <!-- Content preview if day exists in DB -->
+            {% if entry %}
+              <div class="flex-1 flex flex-col justify-between my-1">
+                <a href="/day/{{ date_str }}" class="font-display font-bold text-xs sm:text-sm text-ink line-clamp-2 leading-tight hover:text-primary-magenta">
+                  {{ entry.theme }}
+                </a>
+
+                <div class="mt-2 flex flex-col gap-1">
+                  <!-- 5 Ideas Dot Indicator -->
+                  <div class="flex items-center gap-1">
+                    {% for n in range(1, 6) %}
+                      <div class="w-2 h-2 rounded-full border border-ink {% if entry.has_implementation and loop.index == 1 %}bg-primary-magenta{% else %}bg-electric-cyan{% endif %}" title="Idea #{{ n }}"></div>
+                    {% endfor %}
+                    <span class="font-mono text-[9px] text-gray-600 font-bold ml-1">5 ideas</span>
+                  </div>
+
+                  <!-- Implemented Build Pill -->
+                  {% if entry.has_implementation %}
+                    <a href="/day/{{ date_str }}" class="neo-badge bg-acid-lime text-ink text-[9px] font-black tracking-tight truncate border-ink">
+                      ⚡ {{ entry.impl_title }} ({{ entry.impl_type }})
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <!-- Quick action link -->
+              <div class="pt-1 border-t border-ink/20 flex justify-end">
+                <a href="/day/{{ date_str }}" class="font-mono text-[10px] font-bold text-primary-magenta hover:underline flex items-center">
+                  <span>Open Day</span>
+                  <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+                </a>
+              </div>
+
+            {% else %}
+              <!-- Empty day slot: quick add link for admin -->
+              <div class="flex-1 flex items-center justify-center">
+                {% if is_current_month %}
+                  <a href="/admin/day/new" class="text-gray-400 hover:text-ink text-xs font-mono font-bold flex items-center gap-1" title="Add 5 ideas for this day">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                  </a>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

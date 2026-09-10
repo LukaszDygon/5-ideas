@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_new %}New Day{% else %}Edit {{ day.date }}{% endif %} - Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto flex flex-col gap-6">
+
+  <!-- HEADER -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex items-center justify-between">
+    <div>
+      <div class="font-mono text-xs font-bold uppercase text-primary-magenta tracking-wider">
+        CONTENT EDITOR
+      </div>
+      <h1 class="font-display font-black text-3xl uppercase text-ink">
+        {% if is_new %}Create New Daily Drop{% else %}Edit Day: {{ day.date }}{% endif %}
+      </h1>
+    </div>
+    <a href="/admin" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
+      Cancel
+    </a>
+  </div>
+
+  <!-- FORM -->
+  <form method="POST" class="flex flex-col gap-6">
+    
+    <!-- 1. DAY METADATA -->
+    <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
+      <h2 class="font-display font-black text-xl uppercase border-b-2 border-ink pb-2 text-ink">
+        1. Day Metadata & Theme
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Date (YYYY-MM-DD)*</label>
+          <input type="date" name="date" value="{{ day.date if day else default_date }}" required class="neo-input font-bold"/>
+        </div>
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Streak Count*</label>
+          <input type="number" name="streak_count" value="{{ day.streak_count if day else 143 }}" required class="neo-input font-bold"/>
+        </div>
+        <div class="sm:col-span-1">
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Theme*</label>
+          <input type="text" name="theme" value="{{ day.theme if day else '' }}" placeholder="e.g. 90s Audio & Hardware Nostalgia" required class="neo-input font-bold"/>
+        </div>
+      </div>
+
+      <div>
+        <label class="font-mono text-xs font-bold text-ink block mb-1">Subtitle / Pitch</label>
+        <input type="text" name="subtitle" value="{{ day.subtitle if day else '' }}" placeholder="e.g. Tangible knobs, arcade cabinets, and neon cassettes" class="neo-input"/>
+      </div>
+
+      <div>
+        <label class="font-mono text-xs font-bold text-ink block mb-1">Morning Sparks / Builder Notes</label>
+        <textarea name="notes" rows="2" placeholder="e.g. Spawned at 7:15 AM over black coffee" class="neo-textarea">{{ day.notes if day else '' }}</textarea>
+      </div>
+    </div>
+
+    <!-- 2. THE 5 IDEAS -->
+    <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-6">
+      <div class="flex items-center justify-between border-b-2 border-ink pb-2">
+        <h2 class="font-display font-black text-xl uppercase text-ink">
+          2. The 5 Morning Sparks
+        </h2>
+        <span class="font-mono text-xs text-primary-magenta font-bold">Pick 1 to mark as Implemented</span>
+      </div>
+
+      {% set existing_ideas = day.ideas if (day and day.ideas) else [] %}
+      {% set impl_idea = day.implemented_idea if day else None %}
+      {% set selected_idx = impl_idea.idea_number if impl_idea else 1 %}
+
+      {% for i in range(1, 6) %}
+        {% set cur_idea = existing_ideas[i-1] if (existing_ideas|length >= i) else None %}
+        <div class="p-4 border-2 border-ink bg-canvas flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="neo-badge bg-primary-magenta text-white text-xs font-black">
+                SPARK #{{ i }}
+              </span>
+              <input type="text" name="idea_{{ i }}_title" value="{{ cur_idea.title if cur_idea else '' }}" placeholder="Idea Title" required class="neo-input font-bold text-sm w-64"/>
+            </div>
+
+            <!-- Radio to choose implemented build -->
+            <label class="flex items-center gap-1.5 cursor-pointer bg-white px-2 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b]">
+              <input type="radio" name="implemented_index" value="{{ i }}" {% if i == selected_idx %}checked{% endif %} class="accent-primary-magenta"/>
+              <span class="font-mono text-xs font-bold uppercase text-ink">Mark Implemented</span>
+            </label>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-mono text-[11px] font-bold text-gray-700 block mb-0.5">Tagline</label>
+              <input type="text" name="idea_{{ i }}_tagline" value="{{ cur_idea.tagline if cur_idea else '' }}" placeholder="Short punchy hook" class="neo-input text-xs"/>
+            </div>
+            <div>
+              <label class="font-mono text-[11px] font-bold text-gray-700 block mb-0.5">Tags (comma-separated)</label>
+              <input type="text" name="idea_{{ i }}_tags" value="{{ cur_idea.tags if cur_idea else '' }}" placeholder="Audio, AI, 16-Bit" class="neo-input text-xs"/>
+            </div>
+          </div>
+
+          <div>
+            <label class="font-mono text-[11px] font-bold text-gray-700 block mb-0.5">Description</label>
+            <textarea name="idea_{{ i }}_desc" rows="2" placeholder="Explain the concept in 1-2 sentences" class="neo-textarea text-xs">{{ cur_idea.description if cur_idea else '' }}</textarea>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- 3. IMPLEMENTATION DETAILS (FOR THE SHIPPED IDEA) -->
+    {% set cur_impl = impl_idea.implementation if impl_idea else None %}
+    <div class="bg-yellow-50 border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
+      <div class="border-b-2 border-ink pb-2 flex items-center justify-between">
+        <h2 class="font-display font-black text-xl uppercase text-ink">
+          3. Shipped Prototype & AI Process Details
+        </h2>
+        <span class="neo-badge bg-acid-lime text-ink text-xs font-black">HERO IMPLEMENTATION</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Build Type*</label>
+          <select name="impl_build_type" class="neo-select font-bold">
+            <option value="webapp" {% if cur_impl and cur_impl.build_type == 'webapp' %}selected{% endif %}>⚡ WebApp (Interactive)</option>
+            <option value="poetry" {% if cur_impl and cur_impl.build_type == 'poetry' %}selected{% endif %}>📜 Poetry / Literature</option>
+            <option value="song" {% if cur_impl and cur_impl.build_type == 'song' %}selected{% endif %}>🎵 Song / Chiptune</option>
+            <option value="image" {% if cur_impl and cur_impl.build_type == 'image' %}selected{% endif %}>🎨 Image / Graphic Poster</option>
+            <option value="interactive" {% if cur_impl and cur_impl.build_type == 'interactive' %}selected{% endif %}>🕹️ Interactive Widget</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Rank (1 = Top Pick)*</label>
+          <input type="number" name="impl_rank" value="{{ cur_impl.rank if cur_impl else 1 }}" min="1" max="999" class="neo-input font-bold"/>
+        </div>
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Time Spent (Hours)</label>
+          <input type="number" step="0.1" name="impl_time_spent" value="{{ cur_impl.time_spent_hours if cur_impl else 4.0 }}" class="neo-input font-bold"/>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">AI Tools / Stack Used</label>
+          <input type="text" name="impl_ai_tools" value="{{ cur_impl.ai_tools_used if cur_impl else '' }}" placeholder="Gemini 2.5 Flash, Web Audio API, Canvas 2D" class="neo-input text-xs"/>
+        </div>
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">External URL / GitHub Repo</label>
+          <input type="text" name="impl_external_url" value="{{ cur_impl.external_url if cur_impl else '' }}" placeholder="https://github.com/..." class="neo-input text-xs"/>
+        </div>
+      </div>
+
+      <div>
+        <label class="font-mono text-xs font-bold text-ink block mb-1">Summary / Hook</label>
+        <input type="text" name="impl_summary" value="{{ cur_impl.summary if cur_impl else '' }}" placeholder="Punchy 1-sentence summary of what works" class="neo-input text-xs"/>
+      </div>
+
+      <div>
+        <label class="font-mono text-xs font-bold text-ink block mb-1">Flexible Content Payload</label>
+        <textarea name="impl_content" rows="4" placeholder="If Poetry: full poem text. If Image: SVG/image path. If Webapp: route or embed code." class="neo-textarea font-mono text-xs">{{ cur_impl.content if cur_impl else '' }}</textarea>
+      </div>
+
+      <div>
+        <label class="font-mono text-xs font-bold text-ink block mb-1">Process Steps (One step per line: `Step Title: Step Description`)</label>
+        {% set steps_text = "" %}
+        {% if cur_impl and cur_impl.process_steps %}
+          {% for s in cur_impl.process_steps %}
+            {% set steps_text = steps_text + s.title + ": " + s.desc + "\n" %}
+          {% endfor %}
+        {% endif %}
+        <textarea name="impl_steps" rows="3" placeholder="BPM Clock: Built Web Audio scheduling loop&#10;Turntable Physics: Added touch drag physics&#10;Equalizer Canvas: Colored 7 spectrum bars" class="neo-textarea text-xs">{{ steps_text }}</textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="font-mono text-xs font-bold text-emerald-800 block mb-1">What Rocked (One bullet per line)</label>
+          {% set rocked_text = (cur_impl.what_rocked | join('\n')) if (cur_impl and cur_impl.what_rocked) else "" %}
+          <textarea name="impl_what_rocked" rows="3" placeholder="Real turntable drag worked with zero latency&#10;Pure browser API with no bloat" class="neo-textarea text-xs">{{ rocked_text }}</textarea>
+        </div>
+        <div>
+          <label class="font-mono text-xs font-bold text-rose-800 block mb-1">What Broke & Fixed (One bullet per line)</label>
+          {% set broke_text = (cur_impl.what_broke | join('\n')) if (cur_impl and cur_impl.what_broke) else "" %}
+          <textarea name="impl_what_broke" rows="3" placeholder="Safari muted audio until first pointer event&#10;Velocity clipping on reverse scratch" class="neo-textarea text-xs">{{ broke_text }}</textarea>
+        </div>
+      </div>
+
+      <div>
+        <label class="font-mono text-xs font-bold text-ink block mb-1">Prompt Transcript / Human + AI Conversation Turns</label>
+        <textarea name="impl_transcript" rows="3" placeholder="User: Build me a 90s MTV-style turntable...&#10;Agent: Generated oscillator nodes..." class="neo-textarea font-mono text-xs">{{ cur_impl.prompt_transcript if cur_impl else '' }}</textarea>
+      </div>
+    </div>
+
+    <!-- SUBMIT BUTTON -->
+    <div class="flex items-center justify-end gap-3">
+      <a href="/admin" class="neo-btn neo-btn-white text-xs py-2 px-4">Cancel</a>
+      <button type="submit" class="neo-btn neo-btn-primary text-sm py-2.5 px-6">
+        <span class="material-symbols-outlined text-sm">save</span>
+        <span>Save Daily Drop</span>
+      </button>
+    </div>
+
+  </form>
+
+</div>
+{% endblock %}

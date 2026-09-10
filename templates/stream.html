@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Day-By-Day Stream - 5 Ideas Daily Showcase{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-8">
+
+  <!-- STREAM HEADER & FILTER CONTROLS -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <div class="font-mono text-xs font-bold uppercase text-primary-magenta tracking-wider">
+        THE MIDDLE VIEW // CONTINUOUS CHRONOLOGICAL SCROLL
+      </div>
+      <h1 class="font-display font-black text-3xl sm:text-4xl uppercase text-ink leading-tight">
+        Day-By-Day Feed
+      </h1>
+      <p class="font-body text-sm text-gray-700 mt-1">
+        Explore morning sparks and flexible shipped prototypes: webapps, poetry zines, 8-bit songs, and generative art.
+      </p>
+    </div>
+
+    <!-- Type Filters -->
+    <div class="flex flex-wrap items-center gap-2">
+      <button onclick="filterStream('all')" data-filter="all" class="filter-pill neo-btn neo-btn-primary text-xs py-1.5 px-3">
+        All Types
+      </button>
+      <button onclick="filterStream('webapp')" data-filter="webapp" class="filter-pill neo-btn neo-btn-white text-xs py-1.5 px-3">
+        ⚡ WebApps
+      </button>
+      <button onclick="filterStream('poetry')" data-filter="poetry" class="filter-pill neo-btn neo-btn-white text-xs py-1.5 px-3">
+        📜 Poetry
+      </button>
+      <button onclick="filterStream('song')" data-filter="song" class="filter-pill neo-btn neo-btn-white text-xs py-1.5 px-3">
+        🎵 Songs
+      </button>
+      <button onclick="filterStream('image')" data-filter="image" class="filter-pill neo-btn neo-btn-white text-xs py-1.5 px-3">
+        🎨 Visuals
+      </button>
+    </div>
+  </div>
+
+  <!-- DAYS STREAM LIST -->
+  <div class="flex flex-col gap-10">
+    {% for day in days %}
+    {% set impl = day.implemented_idea %}
+    <article class="stream-day-card bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-6" data-build-type="{{ impl.implementation.build_type if impl else 'none' }}">
+      
+      <!-- Day Header Strip -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-[3px] border-ink pb-4">
+        <div class="flex items-center gap-3">
+          <div class="bg-tertiary-yellow border-[3px] border-ink p-2.5 font-display font-black text-xl text-ink shadow-[3px_3px_0px_#1c1b1b]">
+            {{ day.date }}
+          </div>
+          <div>
+            <div class="inline-flex items-center gap-2">
+              <span class="neo-badge bg-primary-magenta text-white text-[10px] font-bold">
+                STREAK: {{ day.streak_count }} DAYS
+              </span>
+            </div>
+            <h2 class="font-display font-black text-2xl uppercase text-ink leading-tight mt-0.5">
+              {{ day.theme }}
+            </h2>
+          </div>
+        </div>
+
+        <div>
+          <a href="/day/{{ day.date }}" class="neo-btn neo-btn-yellow text-xs py-1.5 px-3 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">open_in_full</span>
+            <span>Deep-Dive & AI Turn Logs</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 5 Ideas Grid Row -->
+      <div>
+        <div class="font-mono text-xs font-bold text-gray-600 uppercase mb-3 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">bolt</span>
+          <span>THE 5 MORNING SPARKS:</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {% for idea in day.ideas %}
+          <div class="p-3 border-2 border-ink {% if idea.is_implemented %}bg-yellow-100 shadow-[3px_3px_0px_#1c1b1b] ring-2 ring-primary-magenta{% else %}bg-canvas{% endif %} flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono text-[10px] font-bold uppercase {% if idea.is_implemented %}text-primary-magenta{% else %}text-gray-600{% endif %}">
+                  #{{ idea.idea_number }} {% if idea.is_implemented %}★ SHIPPED{% endif %}
+                </span>
+                <span class="material-symbols-outlined text-xs">{{ idea.icon }}</span>
+              </div>
+              <h4 class="font-display font-bold text-sm text-ink leading-tight mb-1">
+                {{ idea.title }}
+              </h4>
+              <p class="font-body text-[11px] text-gray-700 leading-snug">
+                {{ idea.tagline }}
+              </p>
+            </div>
+            <div class="mt-2 pt-1 border-t border-ink/20 font-mono text-[9px] text-gray-500 truncate">
+              {{ idea.tags }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- FLEXIBLE IMPLEMENTATION VIEWER (HERO FOR THIS DAY) -->
+      {% if impl and impl.implementation %}
+      {% set im = impl.implementation %}
+      <div class="border-[3px] border-ink p-6 bg-canvas relative flex flex-col gap-4">
+        
+        <!-- Header Strip -->
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ink pb-3">
+          <div class="flex items-center gap-2">
+            <span class="neo-badge bg-primary-magenta text-white text-xs font-black">
+              ⚡ IMPLEMENTED PROTOTYPE
+            </span>
+            <span class="neo-badge bg-white text-ink text-xs font-bold">
+              TYPE: {{ im.build_type | upper }}
+            </span>
+            <span class="neo-badge bg-acid-lime text-ink text-xs font-black">
+              RANK #{{ im.rank }}
+            </span>
+          </div>
+          <div class="font-mono text-xs text-gray-700 font-bold">
+            Built in {{ im.time_spent_hours }}h with {{ im.ai_tools_used }}
+          </div>
+        </div>
+
+        <!-- Title & Summary -->
+        <div>
+          <h3 class="font-display font-black text-2xl uppercase text-ink leading-tight mb-1">
+            {{ im.title }}
+          </h3>
+          <p class="font-body text-sm text-gray-800">
+            {{ im.summary }}
+          </p>
+        </div>
+
+        <!-- DYNAMIC CONTENT RENDERER BASED ON BUILD TYPE -->
+        <div class="mt-2">
+          
+          <!-- 1. WEBAPP IMPLEMENTATION -->
+          {% if im.build_type == 'webapp' %}
+          <div class="bg-white border-[3px] border-ink p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_#1c1b1b]">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 bg-primary-magenta text-white border-2 border-ink flex items-center justify-center font-display font-black text-2xl">
+                DJ
+              </div>
+              <div>
+                <div class="font-display font-bold text-base text-ink uppercase">Interactive WebApp Build</div>
+                <div class="font-mono text-xs text-gray-600">Dual Web Audio vinyl scratch deck & 7-band Memphis EQ</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <a href="/interactive/neondj" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">open_in_new</span>
+                <span>Launch Live WebApp</span>
+              </a>
+              {% if im.external_url %}
+              <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-white text-xs py-2 px-3">
+                GitHub Repo
+              </a>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- 2. POETRY / LITERATURE IMPLEMENTATION -->
+          {% elif im.build_type == 'poetry' %}
+          <div class="poetry-box font-mono text-sm leading-relaxed">
+{{ im.content }}
+          </div>
+
+          <!-- 3. SONG / AUDIO CHIPTUNE IMPLEMENTATION -->
+          {% elif im.build_type == 'song' %}
+          <div class="cassette-player flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+              <!-- Tape Icon graphic -->
+              <div class="w-16 h-12 bg-tertiary-yellow border-2 border-white flex items-center justify-around px-2">
+                <div class="w-4 h-4 rounded-full border-2 border-ink bg-black animate-spin" style="animation-duration: 4s;"></div>
+                <div class="w-4 h-4 rounded-full border-2 border-ink bg-black animate-spin" style="animation-duration: 4s;"></div>
+              </div>
+              <div>
+                <div class="font-display font-black text-lg text-tertiary-yellow uppercase">
+                  {{ im.title }}
+                </div>
+                <div class="font-mono text-xs text-gray-300">
+                  Status: <span id="song-status" class="text-acid-lime font-bold">READY TO PLAY</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- EQ Spectrum Visualizer Bars -->
+            <div class="flex items-end gap-1.5 h-12">
+              <div class="eq-bar eq-bar-anim h-3 bg-acid-lime"></div>
+              <div class="eq-bar eq-bar-anim h-6 bg-electric-cyan"></div>
+              <div class="eq-bar eq-bar-anim h-4 bg-tertiary-yellow"></div>
+              <div class="eq-bar eq-bar-anim h-8 bg-neon-pink"></div>
+              <div class="eq-bar eq-bar-anim h-5 bg-acid-lime"></div>
+              <div class="eq-bar eq-bar-anim h-2 bg-electric-cyan"></div>
+            </div>
+
+            <!-- Play / Stop Button -->
+            <div>
+              <button onclick="toggleSongPreview(this)" class="neo-btn neo-btn-lime text-xs py-2 px-4 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">play_arrow</span>
+                <span>PLAY CHIPTUNE</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. IMAGE / GENERATIVE POSTER IMPLEMENTATION -->
+          {% elif im.build_type == 'image' %}
+          <div class="bg-white border-[3px] border-ink p-4 flex flex-col items-center gap-4 shadow-[4px_4px_0px_#1c1b1b]">
+            <div class="w-full max-w-md border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] overflow-hidden">
+              <img src="{{ im.content }}" alt="{{ im.title }}" class="w-full h-auto object-cover"/>
+            </div>
+            <div class="flex items-center gap-3">
+              <a href="{{ im.content }}" target="_blank" class="neo-btn neo-btn-white text-xs py-1.5 px-3 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">zoom_in</span>
+                <span>Inspect Full Vector SVG</span>
+              </a>
+              <a href="{{ im.content }}" download="memphis_poster.svg" class="neo-btn neo-btn-primary text-xs py-1.5 px-3 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">download</span>
+                <span>Download SVG</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- 5. INTERACTIVE / OTHER IMPLEMENTATION -->
+          {% else %}
+          <div class="bg-white border-[3px] border-ink p-4 font-mono text-xs">
+            <pre class="whitespace-pre-wrap">{{ im.content }}</pre>
+          </div>
+          {% endif %}
+
+        </div>
+
+      </div>
+      {% endif %}
+
+    </article>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

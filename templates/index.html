@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}5 Ideas Daily Showcase - Top Ranked Builds{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-10">
+
+  <!-- HERO BANNER -->
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+    <!-- Main Pitch Box -->
+    <div class="lg:col-span-8 bg-tertiary-yellow p-6 md:p-8 border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] flex flex-col justify-between relative overflow-hidden">
+      <!-- Decorative Memphis Cutouts -->
+      <div class="absolute -right-8 -top-8 w-28 h-28 bg-electric-cyan border-[3px] border-ink rotate-12 -z-0 opacity-70 pointer-events-none"></div>
+      <div class="absolute right-12 bottom-4 w-8 h-8 rounded-full bg-primary-magenta border-[3px] border-ink pointer-events-none"></div>
+      
+      <div class="relative z-10">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-ink border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] mb-4 -rotate-1">
+          <span class="material-symbols-outlined text-primary-magenta text-sm">electric_bolt</span>
+          <span class="font-mono text-xs font-bold uppercase tracking-wider">DAILY EXPERIMENTAL LAB // LIVE CODE</span>
+        </div>
+        <h1 class="font-display font-black text-3xl sm:text-5xl uppercase leading-none tracking-tight mb-4 text-ink">
+          5 WILD IDEAS EVERY DAY.<br/>
+          <span class="bg-primary-magenta text-white px-2 py-0.5 inline-block shadow-[4px_4px_0px_#1c1b1b] rotate-1 mt-1">
+            1 PROTOTYPE SHIPPED.
+          </span>
+        </h1>
+        <p class="font-body text-base sm:text-lg text-ink max-w-2xl font-medium bg-white/90 p-3 border-[2px] border-ink">
+          Unfiltered morning sparks built and deployed before sundown with AI and human craft. 
+          Webapps, interactive tools, generative art, procedural audio, and zine poetry.
+        </p>
+      </div>
+
+      <div class="relative z-10 pt-6 flex flex-wrap items-center gap-3">
+        <a href="#todays-drop" class="neo-btn neo-btn-primary text-sm py-2 px-4">
+          <span class="material-symbols-outlined">rocket_launch</span>
+          <span>See Today's Drop</span>
+        </a>
+        <a href="/calendar" class="neo-btn neo-btn-white text-sm py-2 px-4">
+          <span class="material-symbols-outlined">calendar_month</span>
+          <span>Explore Calendar</span>
+        </a>
+        <a href="/stream" class="neo-btn neo-btn-secondary text-sm py-2 px-4">
+          <span class="material-symbols-outlined">view_stream</span>
+          <span>Day-By-Day Feed</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Stat Tiles -->
+    <div class="lg:col-span-4 flex flex-col justify-between gap-4">
+      <div class="flex-1 bg-white border-[4px] border-ink shadow-[5px_5px_0px_#1c1b1b] p-5 flex items-center justify-between hover:-translate-y-1 transition-transform">
+        <div>
+          <div class="font-mono text-xs font-bold uppercase tracking-wider text-gray-700">UNBROKEN STREAK</div>
+          <div class="font-display text-4xl font-black text-primary-magenta">{{ current_streak }}</div>
+          <div class="font-mono text-xs font-bold text-ink">DAYS IN A ROW</div>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-primary-magenta">local_fire_department</span>
+      </div>
+
+      <div class="flex-1 bg-electric-cyan border-[4px] border-ink shadow-[5px_5px_0px_#1c1b1b] p-5 flex items-center justify-between hover:-translate-y-1 transition-transform">
+        <div>
+          <div class="font-mono text-xs font-bold uppercase tracking-wider text-ink">TOTAL IDEAS SPARKED</div>
+          <div class="font-display text-4xl font-black text-ink">{{ total_ideas }}</div>
+          <div class="font-mono text-xs font-bold text-gray-800">5 PER THEME</div>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-ink">lightbulb</span>
+      </div>
+
+      <div class="flex-1 bg-acid-lime border-[4px] border-ink shadow-[5px_5px_0px_#1c1b1b] p-5 flex items-center justify-between hover:-translate-y-1 transition-transform">
+        <div>
+          <div class="font-mono text-xs font-bold uppercase tracking-wider text-ink">SHIPPED BUILDS</div>
+          <div class="font-display text-4xl font-black text-ink">{{ total_shipped }}</div>
+          <div class="font-mono text-xs font-bold text-gray-800">100% OPERATIONAL</div>
+        </div>
+        <span class="material-symbols-outlined text-4xl text-ink">check_circle</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RANKED IMPLEMENTATIONS SHOWCASE (HALL OF FAME) -->
+  <section class="flex flex-col gap-5">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b-[3px] border-ink pb-3">
+      <div>
+        <div class="inline-flex items-center gap-1 bg-primary-magenta text-white px-2 py-0.5 font-mono text-xs font-bold uppercase -rotate-1">
+          ★ BUILDER'S FAVORITES
+        </div>
+        <h2 class="font-display text-2xl sm:text-3xl font-black uppercase text-ink mt-1">
+          Top-Ranked Implementations
+        </h2>
+      </div>
+      <p class="font-body text-sm text-gray-700 max-w-md">
+        Ranked in personal preference order. Each day sparks 5 wild ideas, but these are the shipped prototypes I liked the most.
+      </p>
+    </div>
+
+    <!-- Ranked Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% for item in ranked_implementations %}
+      <div class="neo-card flex flex-col justify-between p-5 border-[3px] border-ink bg-white relative">
+        
+        <!-- Rank Pill Badge -->
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <span class="neo-badge {% if item.rank == 1 %}bg-primary-magenta text-white{% elif item.rank == 2 %}bg-tertiary-yellow text-ink{% elif item.rank == 3 %}bg-electric-cyan text-ink{% else %}bg-acid-lime text-ink{% endif %} text-xs font-black">
+            #{{ item.rank }} {% if item.rank == 1 %}★ TOP PICK{% endif %}
+          </span>
+          <span class="neo-badge bg-white text-ink text-[11px]">
+            {{ item.build_type | upper }}
+          </span>
+        </div>
+
+        <!-- Content -->
+        <div>
+          <div class="font-mono text-[11px] text-gray-600 font-bold mb-1">
+            {{ item.day_date }} // {{ item.day_theme }}
+          </div>
+          <h3 class="font-display font-black text-xl text-ink leading-tight mb-2">
+            {{ item.title }}
+          </h3>
+          <p class="font-body text-xs text-gray-800 line-clamp-3 mb-4">
+            {{ item.summary or item.idea_tagline }}
+          </p>
+        </div>
+
+        <!-- Bottom Actions -->
+        <div class="pt-3 border-t-2 border-ink flex items-center justify-between">
+          <span class="font-mono text-[10px] text-gray-600 font-bold flex items-center gap-1">
+            <span class="material-symbols-outlined text-xs">schedule</span>
+            {{ item.time_spent_hours }}h build
+          </span>
+          <a href="/day/{{ item.day_date }}" class="neo-btn neo-btn-primary text-xs py-1 px-2.5">
+            Launch
+          </a>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- TODAY'S 5 IDEAS DROP SECTION -->
+  {% if today_drop %}
+  <section id="todays-drop" class="flex flex-col gap-6 pt-4">
+    <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-[3px] border-ink pb-4 mb-6">
+        <div>
+          <div class="inline-flex items-center gap-2">
+            <span class="neo-badge bg-acid-lime text-ink text-xs font-black">LATEST DROP</span>
+            <span class="font-mono text-xs font-bold text-gray-700">{{ today_drop.date }}</span>
+          </div>
+          <h2 class="font-display text-2xl sm:text-4xl font-black uppercase text-ink mt-1">
+            Theme: {{ today_drop.theme }}
+          </h2>
+          <p class="font-body text-sm text-gray-800 mt-1">
+            {{ today_drop.subtitle }}
+          </p>
+        </div>
+        <div>
+          <a href="/day/{{ today_drop.date }}" class="neo-btn neo-btn-yellow text-xs py-2 px-3 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">open_in_new</span>
+            <span>View Full Day Deep-Dive</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 5 Cards Layout -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for idea in today_drop.ideas %}
+          {% if idea.is_implemented %}
+            <!-- HERO CARD (SHIPPED PROTOTYPE) -->
+            <div class="md:col-span-2 bg-primary-magenta text-white p-6 border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] flex flex-col justify-between relative overflow-hidden">
+              <div class="absolute -right-6 -bottom-6 opacity-20 pointer-events-none">
+                <span class="material-symbols-outlined text-9xl">album</span>
+              </div>
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-3">
+                  <span class="neo-badge bg-tertiary-yellow text-ink text-xs font-black -rotate-1">
+                    ⚡ SHIPPED PROTOTYPE (IDEA #{{ idea.idea_number }})
+                  </span>
+                  <span class="neo-badge bg-white text-ink text-xs font-bold">
+                    {{ idea.implementation.build_type | upper }}
+                  </span>
+                </div>
+                <h3 class="font-display text-2xl sm:text-3xl font-black uppercase tracking-tight text-white mb-2">
+                  {{ idea.title }}
+                </h3>
+                <div class="font-mono text-xs font-bold text-yellow-fixed mb-3">
+                  {{ idea.tagline }}
+                </div>
+                <p class="font-body text-sm text-white/90 max-w-xl mb-4">
+                  {{ idea.description }}
+                </p>
+                <div class="flex flex-wrap gap-1.5 mb-4">
+                  {% for t in idea.tags.split(',') %}
+                    <span class="neo-badge bg-black/40 text-white text-[10px] border-white/60">
+                      {{ t.strip() }}
+                    </span>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="pt-4 border-t-2 border-white/40 flex flex-wrap items-center justify-between gap-3">
+                <span class="font-mono text-xs font-bold text-white/90">
+                  AI Stack: {{ idea.implementation.ai_tools_used }}
+                </span>
+                <a href="/day/{{ today_drop.date }}" class="neo-btn neo-btn-yellow text-xs py-2 px-4">
+                  <span class="material-symbols-outlined text-sm">play_arrow</span>
+                  Launch & View Process
+                </a>
+              </div>
+            </div>
+          {% else %}
+            <!-- STANDARD SPARK IDEA CARD -->
+            <div class="neo-card p-5 border-[3px] border-ink bg-white flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="neo-badge bg-canvas text-ink text-xs font-mono font-bold">
+                    SPARK #{{ idea.idea_number }}
+                  </span>
+                  <span class="material-symbols-outlined text-gray-500">{{ idea.icon }}</span>
+                </div>
+                <h4 class="font-display font-black text-xl text-ink leading-tight mb-1">
+                  {{ idea.title }}
+                </h4>
+                <div class="font-mono text-xs text-primary-magenta font-bold mb-2">
+                  {{ idea.tagline }}
+                </div>
+                <p class="font-body text-xs text-gray-700 leading-relaxed mb-4">
+                  {{ idea.description }}
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-1 pt-3 border-t border-gray-200">
+                {% for t in idea.tags.split(',') %}
+                  <span class="font-mono text-[10px] bg-canvas px-1.5 py-0.5 border border-ink/40 font-semibold">
+                    {{ t.strip() }}
+                  </span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+{% endblock %}
