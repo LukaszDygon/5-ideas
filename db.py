@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 DB_FILE = Path(__file__).parent / "ideas.db"
+SEED_FILE = Path(__file__).parent / "ideas.json"
+
 
 
 def get_db(db_path: Path | str | None = None) -> sqlite3.Connection:
@@ -75,6 +77,44 @@ def init_db(db_path: Path | str | None = None) -> None:
             """
         )
     conn.close()
+
+    # If initializing main DB and empty, load legit content from ideas.json
+    if db_path is None and SEED_FILE.exists():
+        conn = get_db(db_path)
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM days")
+        count = cur.fetchone()[0]
+        conn.close()
+        if count == 0:
+            load_from_json(SEED_FILE)
+
+
+def export_to_json(json_path: Path | str | None = None, db_path: Path | str | None = None) -> None:
+    """Exports all days and ideas to a JSON file."""
+    path = Path(json_path or SEED_FILE)
+    days = get_all_days(db_path)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(days, f, indent=2)
+
+
+def load_from_json(json_path: Path | str | None = None, db_path: Path | str | None = None) -> None:
+    """Loads days and ideas from a JSON file into the database."""
+    path = Path(json_path or SEED_FILE)
+    if not path.exists():
+        return
+    with open(path, "r", encoding="utf-8") as f:
+        days_data = json.load(f)
+    for day in days_data:
+        save_day(
+            date_str=day["date"],
+            theme=day["theme"],
+            subtitle=day.get("subtitle", ""),
+            streak_count=day.get("streak_count", 1),
+            notes=day.get("notes", ""),
+            ideas_data=day.get("ideas", []),
+            db_path=db_path,
+            auto_export=False,
+        )
 
 
 def row_to_dict(row: sqlite3.Row) -> Dict[str, Any]:
@@ -194,6 +234,13 @@ def get_calendar_days(
     return [dict(r) for r in rows]
 
 
+def _can_auto_export(db_path: Path | str | None, auto_export: bool = True) -> bool:
+    import sys
+    if "pytest" in sys.modules:
+        return False
+    return auto_export and (db_path is None or str(db_path) == str(DB_FILE))
+
+
 def save_day(
     date_str: str,
     theme: str,
@@ -202,6 +249,7 @@ def save_day(
     notes: str = "",
     ideas_data: Optional[List[Dict[str, Any]]] = None,
     db_path: Path | str | None = None,
+    auto_export: bool = True,
 ) -> int:
     """Creates or updates a day with its 5 ideas and implementation atomically."""
     conn = get_db(db_path)
@@ -274,6 +322,8 @@ def save_day(
                         ),
                     )
     conn.close()
+    if _can_auto_export(db_path, auto_export):
+        export_to_json()
     return day_id
 
 
@@ -282,6 +332,8 @@ def update_implementation_rank(impl_id: int, new_rank: int, db_path: Path | str 
     with conn:
         conn.execute("UPDATE implementations SET rank = ? WHERE id = ?", (new_rank, impl_id))
     conn.close()
+    if _can_auto_export(db_path):
+        export_to_json()
 
 
 def reorder_ranks(ordered_impl_ids: List[int], db_path: Path | str | None = None) -> None:
@@ -290,6 +342,8 @@ def reorder_ranks(ordered_impl_ids: List[int], db_path: Path | str | None = None
         for index, impl_id in enumerate(ordered_impl_ids, start=1):
             conn.execute("UPDATE implementations SET rank = ? WHERE id = ?", (index, impl_id))
     conn.close()
+    if _can_auto_export(db_path):
+        export_to_json()
 
 
 def delete_day(day_id: int, db_path: Path | str | None = None) -> None:
@@ -297,15 +351,22 @@ def delete_day(day_id: int, db_path: Path | str | None = None) -> None:
     with conn:
         conn.execute("DELETE FROM days WHERE id = ?", (day_id,))
     conn.close()
+    if _can_auto_export(db_path):
+        export_to_json()
+
 
 
 def seed_demo_data(db_path: Path | str | None = None) -> None:
-    """Seeds rich 90s Memphis demo content reflecting the Stitch showcase designs."""
+    """Seeds content. If ideas.json exists, loads from ideas.json."""
     init_db(db_path)
-    conn = get_db(db_path)
-    with conn:
-        conn.execute("DELETE FROM days;")
-    conn.close()
+    if SEED_FILE.exists():
+        conn = get_db(db_path)
+        with conn:
+            conn.execute("DELETE FROM days;")
+        conn.close()
+        load_from_json(SEED_FILE, db_path=db_path)
+        return
+
 
     # Day 1: Today - 90s Audio & Hardware Nostalgia (Webapp)
     day1_date = datetime.now().strftime("%Y-%m-%d")

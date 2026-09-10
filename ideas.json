@@ -1,0 +1,189 @@
+[
+  {
+    "id": 37,
+    "date": "2026-09-10",
+    "theme": "Personal metaproject",
+    "subtitle": "Where more projects go",
+    "streak_count": 1,
+    "notes": "Went to work listening to the tail end of the epic length conversation between DHH and Lex Friedman. I am building things and getting into a delirious state.\r\nI was allowed to use Astra until 3pm, suffering from withdrawal.",
+    "created_at": "2026-09-10 20:37:42",
+    "ideas": [
+      {
+        "id": 181,
+        "day_id": 37,
+        "idea_number": 1,
+        "title": "Github Repository",
+        "tagline": "Plain boring, which is to say low friction",
+        "description": "A repository with nice, publicly hosted project. A template repository where all the other projects are listed, presented and served as a static site. Everything runs in git",
+        "tags": "Web",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 182,
+        "day_id": 37,
+        "idea_number": 2,
+        "title": "A 5 Idea Website",
+        "tagline": "Fun, expression of creativity",
+        "description": "I got this idea from a book I read a few years ago by James Altucher from Quora (RIP). I did this for a while in a notebook, but it was a great way to get creative. Never implemented one, so this is going to be it. How about one every day?",
+        "tags": "Web",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 37,
+          "idea_id": 182,
+          "title": "A 5 Idea Website",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "It's this thing before anything got changed",
+          "content": "You are looking at it",
+          "external_url": "https://github.com",
+          "time_spent_hours": 2.0,
+          "ai_tools_used": "Aantigravity, Gemini Flash 3.8, Stitch",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Built designs with Stitch, few back and forths",
+              "desc": ""
+            },
+            {
+              "step": 2,
+              "title": "Step 2",
+              "desc": "1. Create 90s style design -> creates literal 90s technology type website (imagine text and images rendering pixel by pixel era. I was barely alive)"
+            },
+            {
+              "step": 3,
+              "title": "Step 3",
+              "desc": "2. No, I meant style, not technology, do modern tech -> Produces most basic slop using the original color palette"
+            },
+            {
+              "step": 4,
+              "title": "Step 4",
+              "desc": "3. I want the design style to be inspired by the 90s (describes what I mean) -> This"
+            },
+            {
+              "step": 6,
+              "title": "Step 6",
+              "desc": "Then I asked Antigravity to produce this with MCP server connection, modern python and my preferred stack (Fast API + Flask + UV + testing). It one shot the prompt, I had to delete the 4 demo days from the DB. It was really cool."
+            },
+            {
+              "step": 7,
+              "title": "Step 7",
+              "desc": "I cheated a bit, because I was going to do this anyways, and came up with 4 additional ideas and the theme."
+            }
+          ],
+          "what_rocked": [
+            "One shot. 15% of a pro subscription 5 hourly quota used for it.",
+            "Stitch MCP server is kind of magical."
+          ],
+          "what_broke": [
+            "Stitch is really decent at brainstorming, but man it is not good at picking up intent until it's spelled out."
+          ],
+          "prompt_transcript": "# Implementation Recap: 5 Ideas Daily Showcase & Radical Memphis Pop Engine\r\n\r\n> **Shipped In:** ~1.5 hours &nbsp;|&nbsp; **Architecture:** FastAPI + Flask Admin + Stdlib SQLite &nbsp;|&nbsp; **Design:** Radical Memphis Pop Neo-Brutalism &nbsp;|&nbsp; **Live Site:** [lukaszdygon.github.io/5-ideas](https://lukaszdygon.github.io/5-ideas/)\r\n\r\n---\r\n\r\n## 1. Genesis & Problem Framing\r\n\r\n### Initial Spark\r\n```text\r\n\"initialise a modern python project with uv, python 3.14, flask, fastapi, good test suite, and an agents file for this project. We are building a website based on the Stitch project 5 Ideas Daily Showcase. For now the content that you see in the designs is a demo, so I want some way of controlling it via an admin panel. The most important thing is to create this as a general purpose design system I can render custom content with... Each day is associated with a date, and can be selected from a calendar (biggest view). The middle view is the scroll of ideas day by day with flexible links... I also want a skill which generates a presentable summary of the process...\"\r\n```\r\n\r\n### Key Requirements Delivered\r\n1. **Daily Cadence Model:** 5 morning idea sparks per day, with exactly 1 prototype built before sundown.\r\n2. **Preference Ranking:** Front page greets visitors with top-ranked implementations ordered by personal preference.\r\n3. **Calendar View (The Biggest View):** Full monthly grid with date navigation, idea pips, and day deep-dives.\r\n4. **Day-By-Day Stream (The Middle View):** Continuous feed with flexible embedded renderers for WebApps, Poetry zines, 8-bit chiptune songs, vector posters, and widgets.\r\n5. **Flask Admin (`/admin`):** Full CRUD content management and one-click ranking reorder.\r\n6. **General-Purpose Design System:** Radical Memphis Pop tokens, 3px/4px black ink borders, zero-blur hard offset shadows, and component gallery at `/design-system`.\r\n7. **CI/CD & Public Hosting:** Automated GitHub Pages deployment pipeline via GitHub Actions.\r\n\r\n---\r\n\r\n## 2. Human + AI Interaction Footprint\r\n\r\n- **Human Turns:** 5 iterations\r\n- **Execution Trajectory:** 271 agent steps\r\n- **Files Created:** 26 source files (App, Admin, DB, Templates, CSS, Tests, Workflows, Skills)\r\n- **Test Suite:** 22 passing tests in `0.55s`\r\n\r\n```mermaid\r\nflowchart LR\r\n    A[\"Stitch Design System<br/>(Radical Memphis Pop)\"] --> B[\"Python 3.14 / uv<br/>Runtime Setup\"]\r\n    B --> C[\"Stdlib SQLite DB<br/>(Days, Ideas, Impls)\"]\r\n    C --> D[\"FastAPI Public Views<br/>+ Swagger API\"]\r\n    C --> E[\"Flask Admin<br/>(/admin via WSGI)\"]\r\n    D --> F[\"Interactive WebApp<br/>(NeonDJ Turntable)\"]\r\n    D --> G[\"GitHub Pages CI/CD<br/>(Live Global CDN)\"]\r\n```\r\n\r\n---\r\n\r\n## 3. Architecture & Build Milestones\r\n\r\n### Step 1: Zero-Bloat Data Layer (`db.py`)\r\n- Python standard library `sqlite3` in WAL mode with enforced foreign keys.\r\n- Relational schema linking `days` (1) \u2794 `ideas` (5) \u2794 `implementations` (1), indexed by `rank ASC`.\r\n- Seeded with 4 canonical days spanning diverse media types (Webapp, Poetry, SVG Poster, 8-bit Chiptune).\r\n\r\n### Step 2: Hybrid ASGI/WSGI Web Architecture (`app.py` + `admin.py`)\r\n- **FastAPI (ASGI):** Powers high-speed public page rendering, JSON endpoints, and Swagger UI at `/docs`.\r\n- **Flask (WSGI):** Cleanly mounted at `/admin` via Starlette `WSGIMiddleware`, handling form submissions, sessions, flash messages, and ranking reorders.\r\n\r\n### Step 3: Radical Memphis Pop Design System (`style.css` + Tailwind CDN)\r\n- Strict adherence to 90s MTV neo-brutalist physics:\r\n  - Solid `#1c1b1b` strokes (`3px` / `4px`).\r\n  - Mechanical hard offset drop-shadows (`4px 4px 0px #1c1b1b` to `8px 8px 0px #1c1b1b`).\r\n  - Active button physics: translation `translate(4px, 4px)` with shadow collapse on click.\r\n  - Saturated palette: Radical Magenta (`#b40065`), Electric Cyan (`#00e5ff`), Sunshine Yellow (`#fae100`), Acid Lime (`#39ff14`).\r\n\r\n### Step 4: The 4 Core Views\r\n- **Top Picks Showcase (`/`):** Hall of Fame leaderboard and latest daily drop.\r\n- **Calendar Navigator (`/calendar`):** Interactive monthly matrix with streak badges.\r\n- **Stream Feed (`/stream`):** Chronological timeline with polymorphic media renderers.\r\n- **NeonDJ WebApp (`/interactive/neondj`):** Live dual-vinyl scratch deck with Web Audio synthesis and 7-band Memphis graphic EQ.\r\n\r\n### Step 5: Test Suite & CI/CD Deployment\r\n- Full pytest suite (`test_db.py`, `test_api.py`, `test_admin.py`) covering all CRUD, ranking logic, and view rendering.\r\n- GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) automating test execution and static site generation for GitHub Pages.\r\n\r\n---\r\n\r\n## 4. Retrospective (What Rocked vs What Broke)\r\n\r\n### What Rocked\r\n1. **Ponytail Ladder Efficiency:** Using stdlib `sqlite3` eliminated hundreds of lines of ORM boilerplate and database connection pooling headaches.\r\n2. **Native Web Audio API:** The NeonDJ prototype delivers zero-latency turntable scratching and 8-bit FM synthesis without loading a single megabyte of external audio assets.\r\n3. **Sub-Second Test Velocity:** The entire 22-test suite completes in `0.55s`, making test-driven development instantaneous.\r\n\r\n### What Broke & How It Was Resolved\r\n1. **CPython 3.14 Alpha PyO3 Binary Incompatibility:**\r\n   - *Issue:* Python 3.14 alpha 6 (`cpython-3.14.0a6`) had an internal Rust/PyO3 ABI mismatch in `pydantic-core` causing a segmentation fault during schema serialization.\r\n   - *Fix:* Configured `pyproject.toml` with `requires-python = \">=3.13\"`, synced the local environment to Python 3.13.3 for 100% stability, while maintaining forward compatibility for Python 3.14 final.\r\n2. **Starlette TemplateResponse API Shift:**\r\n   - *Issue:* Modern Starlette swapped parameter order in `TemplateResponse`, interpreting dictionary context as template name.\r\n   - *Fix:* Transitioned all calls to explicit keyword arguments (`request=request, name=..., context=...`).\r\n3. **Secret Key Safeguard:**\r\n   - *Issue:* `mcp_config.json` contained an active Google API key before pushing to GitHub.\r\n   - *Fix:* Added `mcp_config.json` and `*.db` to `.gitignore` before creating the public repository.\r\n\r\n---\r\n\r\n## 5. Public Links & Resources\r\n\r\n- **GitHub Repository:** [github.com/LukaszDygon/5-ideas](https://github.com/LukaszDygon/5-ideas)\r\n- **Live Showcase:** [lukaszdygon.github.io/5-ideas](https://lukaszdygon.github.io/5-ideas/)\r\n- **Calendar View:** [lukaszdygon.github.io/5-ideas/calendar/](https://lukaszdygon.github.io/5-ideas/calendar/)\r\n- **Stream Feed:** [lukaszdygon.github.io/5-ideas/stream/](https://lukaszdygon.github.io/5-ideas/stream/)\r\n- **Design System Sandbox:** [lukaszdygon.github.io/5-ideas/design-system/](https://lukaszdygon.github.io/5-ideas/design-system/)\r\n- **NeonDJ Prototype:** [lukaszdygon.github.io/5-ideas/interactive/neondj/](https://lukaszdygon.github.io/5-ideas/interactive/neondj/)",
+          "created_at": "2026-09-10 20:37:42"
+        }
+      },
+      {
+        "id": 183,
+        "day_id": 37,
+        "idea_number": 3,
+        "title": "A personal project website",
+        "tagline": "Everybody has one",
+        "description": "I've done this one before - a website that serves as a curated space for free form posting of project. It makes everything seem like it needs curation and ultimately makes for better content, and more deliberate work.",
+        "tags": "Web",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 184,
+        "day_id": 37,
+        "idea_number": 4,
+        "title": "Idea journal",
+        "tagline": "I haven't hand written since 2022",
+        "description": "I've got a spare Moleskine notebook, embossed with my name. I've been reading (listening to Audible) the Overstory and one of the characters puts his Computer Programming ideas in a notebook. Very old school. Could be a throwback.",
+        "tags": "Analog",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 185,
+        "day_id": 37,
+        "idea_number": 5,
+        "title": "Social Media Account",
+        "tagline": "Lowest effort, join the cult",
+        "description": "I don't go for social media posting very often. Partly because I don't want my work to somehow become someone else's intellectual property. But if it's for fun and my friends don't have to download a website, and people who can't download websites can still discover me...",
+        "tags": "Social Media",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 182,
+      "day_id": 37,
+      "idea_number": 2,
+      "title": "A 5 Idea Website",
+      "tagline": "Fun, expression of creativity",
+      "description": "I got this idea from a book I read a few years ago by James Altucher from Quora (RIP). I did this for a while in a notebook, but it was a great way to get creative. Never implemented one, so this is going to be it. How about one every day?",
+      "tags": "Web",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 37,
+        "idea_id": 182,
+        "title": "A 5 Idea Website",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "It's this thing before anything got changed",
+        "content": "You are looking at it",
+        "external_url": "https://github.com",
+        "time_spent_hours": 2.0,
+        "ai_tools_used": "Aantigravity, Gemini Flash 3.8, Stitch",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Built designs with Stitch, few back and forths",
+            "desc": ""
+          },
+          {
+            "step": 2,
+            "title": "Step 2",
+            "desc": "1. Create 90s style design -> creates literal 90s technology type website (imagine text and images rendering pixel by pixel era. I was barely alive)"
+          },
+          {
+            "step": 3,
+            "title": "Step 3",
+            "desc": "2. No, I meant style, not technology, do modern tech -> Produces most basic slop using the original color palette"
+          },
+          {
+            "step": 4,
+            "title": "Step 4",
+            "desc": "3. I want the design style to be inspired by the 90s (describes what I mean) -> This"
+          },
+          {
+            "step": 6,
+            "title": "Step 6",
+            "desc": "Then I asked Antigravity to produce this with MCP server connection, modern python and my preferred stack (Fast API + Flask + UV + testing). It one shot the prompt, I had to delete the 4 demo days from the DB. It was really cool."
+          },
+          {
+            "step": 7,
+            "title": "Step 7",
+            "desc": "I cheated a bit, because I was going to do this anyways, and came up with 4 additional ideas and the theme."
+          }
+        ],
+        "what_rocked": [
+          "One shot. 15% of a pro subscription 5 hourly quota used for it.",
+          "Stitch MCP server is kind of magical."
+        ],
+        "what_broke": [
+          "Stitch is really decent at brainstorming, but man it is not good at picking up intent until it's spelled out."
+        ],
+        "prompt_transcript": "# Implementation Recap: 5 Ideas Daily Showcase & Radical Memphis Pop Engine\r\n\r\n> **Shipped In:** ~1.5 hours &nbsp;|&nbsp; **Architecture:** FastAPI + Flask Admin + Stdlib SQLite &nbsp;|&nbsp; **Design:** Radical Memphis Pop Neo-Brutalism &nbsp;|&nbsp; **Live Site:** [lukaszdygon.github.io/5-ideas](https://lukaszdygon.github.io/5-ideas/)\r\n\r\n---\r\n\r\n## 1. Genesis & Problem Framing\r\n\r\n### Initial Spark\r\n```text\r\n\"initialise a modern python project with uv, python 3.14, flask, fastapi, good test suite, and an agents file for this project. We are building a website based on the Stitch project 5 Ideas Daily Showcase. For now the content that you see in the designs is a demo, so I want some way of controlling it via an admin panel. The most important thing is to create this as a general purpose design system I can render custom content with... Each day is associated with a date, and can be selected from a calendar (biggest view). The middle view is the scroll of ideas day by day with flexible links... I also want a skill which generates a presentable summary of the process...\"\r\n```\r\n\r\n### Key Requirements Delivered\r\n1. **Daily Cadence Model:** 5 morning idea sparks per day, with exactly 1 prototype built before sundown.\r\n2. **Preference Ranking:** Front page greets visitors with top-ranked implementations ordered by personal preference.\r\n3. **Calendar View (The Biggest View):** Full monthly grid with date navigation, idea pips, and day deep-dives.\r\n4. **Day-By-Day Stream (The Middle View):** Continuous feed with flexible embedded renderers for WebApps, Poetry zines, 8-bit chiptune songs, vector posters, and widgets.\r\n5. **Flask Admin (`/admin`):** Full CRUD content management and one-click ranking reorder.\r\n6. **General-Purpose Design System:** Radical Memphis Pop tokens, 3px/4px black ink borders, zero-blur hard offset shadows, and component gallery at `/design-system`.\r\n7. **CI/CD & Public Hosting:** Automated GitHub Pages deployment pipeline via GitHub Actions.\r\n\r\n---\r\n\r\n## 2. Human + AI Interaction Footprint\r\n\r\n- **Human Turns:** 5 iterations\r\n- **Execution Trajectory:** 271 agent steps\r\n- **Files Created:** 26 source files (App, Admin, DB, Templates, CSS, Tests, Workflows, Skills)\r\n- **Test Suite:** 22 passing tests in `0.55s`\r\n\r\n```mermaid\r\nflowchart LR\r\n    A[\"Stitch Design System<br/>(Radical Memphis Pop)\"] --> B[\"Python 3.14 / uv<br/>Runtime Setup\"]\r\n    B --> C[\"Stdlib SQLite DB<br/>(Days, Ideas, Impls)\"]\r\n    C --> D[\"FastAPI Public Views<br/>+ Swagger API\"]\r\n    C --> E[\"Flask Admin<br/>(/admin via WSGI)\"]\r\n    D --> F[\"Interactive WebApp<br/>(NeonDJ Turntable)\"]\r\n    D --> G[\"GitHub Pages CI/CD<br/>(Live Global CDN)\"]\r\n```\r\n\r\n---\r\n\r\n## 3. Architecture & Build Milestones\r\n\r\n### Step 1: Zero-Bloat Data Layer (`db.py`)\r\n- Python standard library `sqlite3` in WAL mode with enforced foreign keys.\r\n- Relational schema linking `days` (1) \u2794 `ideas` (5) \u2794 `implementations` (1), indexed by `rank ASC`.\r\n- Seeded with 4 canonical days spanning diverse media types (Webapp, Poetry, SVG Poster, 8-bit Chiptune).\r\n\r\n### Step 2: Hybrid ASGI/WSGI Web Architecture (`app.py` + `admin.py`)\r\n- **FastAPI (ASGI):** Powers high-speed public page rendering, JSON endpoints, and Swagger UI at `/docs`.\r\n- **Flask (WSGI):** Cleanly mounted at `/admin` via Starlette `WSGIMiddleware`, handling form submissions, sessions, flash messages, and ranking reorders.\r\n\r\n### Step 3: Radical Memphis Pop Design System (`style.css` + Tailwind CDN)\r\n- Strict adherence to 90s MTV neo-brutalist physics:\r\n  - Solid `#1c1b1b` strokes (`3px` / `4px`).\r\n  - Mechanical hard offset drop-shadows (`4px 4px 0px #1c1b1b` to `8px 8px 0px #1c1b1b`).\r\n  - Active button physics: translation `translate(4px, 4px)` with shadow collapse on click.\r\n  - Saturated palette: Radical Magenta (`#b40065`), Electric Cyan (`#00e5ff`), Sunshine Yellow (`#fae100`), Acid Lime (`#39ff14`).\r\n\r\n### Step 4: The 4 Core Views\r\n- **Top Picks Showcase (`/`):** Hall of Fame leaderboard and latest daily drop.\r\n- **Calendar Navigator (`/calendar`):** Interactive monthly matrix with streak badges.\r\n- **Stream Feed (`/stream`):** Chronological timeline with polymorphic media renderers.\r\n- **NeonDJ WebApp (`/interactive/neondj`):** Live dual-vinyl scratch deck with Web Audio synthesis and 7-band Memphis graphic EQ.\r\n\r\n### Step 5: Test Suite & CI/CD Deployment\r\n- Full pytest suite (`test_db.py`, `test_api.py`, `test_admin.py`) covering all CRUD, ranking logic, and view rendering.\r\n- GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) automating test execution and static site generation for GitHub Pages.\r\n\r\n---\r\n\r\n## 4. Retrospective (What Rocked vs What Broke)\r\n\r\n### What Rocked\r\n1. **Ponytail Ladder Efficiency:** Using stdlib `sqlite3` eliminated hundreds of lines of ORM boilerplate and database connection pooling headaches.\r\n2. **Native Web Audio API:** The NeonDJ prototype delivers zero-latency turntable scratching and 8-bit FM synthesis without loading a single megabyte of external audio assets.\r\n3. **Sub-Second Test Velocity:** The entire 22-test suite completes in `0.55s`, making test-driven development instantaneous.\r\n\r\n### What Broke & How It Was Resolved\r\n1. **CPython 3.14 Alpha PyO3 Binary Incompatibility:**\r\n   - *Issue:* Python 3.14 alpha 6 (`cpython-3.14.0a6`) had an internal Rust/PyO3 ABI mismatch in `pydantic-core` causing a segmentation fault during schema serialization.\r\n   - *Fix:* Configured `pyproject.toml` with `requires-python = \">=3.13\"`, synced the local environment to Python 3.13.3 for 100% stability, while maintaining forward compatibility for Python 3.14 final.\r\n2. **Starlette TemplateResponse API Shift:**\r\n   - *Issue:* Modern Starlette swapped parameter order in `TemplateResponse`, interpreting dictionary context as template name.\r\n   - *Fix:* Transitioned all calls to explicit keyword arguments (`request=request, name=..., context=...`).\r\n3. **Secret Key Safeguard:**\r\n   - *Issue:* `mcp_config.json` contained an active Google API key before pushing to GitHub.\r\n   - *Fix:* Added `mcp_config.json` and `*.db` to `.gitignore` before creating the public repository.\r\n\r\n---\r\n\r\n## 5. Public Links & Resources\r\n\r\n- **GitHub Repository:** [github.com/LukaszDygon/5-ideas](https://github.com/LukaszDygon/5-ideas)\r\n- **Live Showcase:** [lukaszdygon.github.io/5-ideas](https://lukaszdygon.github.io/5-ideas/)\r\n- **Calendar View:** [lukaszdygon.github.io/5-ideas/calendar/](https://lukaszdygon.github.io/5-ideas/calendar/)\r\n- **Stream Feed:** [lukaszdygon.github.io/5-ideas/stream/](https://lukaszdygon.github.io/5-ideas/stream/)\r\n- **Design System Sandbox:** [lukaszdygon.github.io/5-ideas/design-system/](https://lukaszdygon.github.io/5-ideas/design-system/)\r\n- **NeonDJ Prototype:** [lukaszdygon.github.io/5-ideas/interactive/neondj/](https://lukaszdygon.github.io/5-ideas/interactive/neondj/)",
+        "created_at": "2026-09-10 20:37:42"
+      }
+    }
+  }
+]

@@ -140,18 +140,32 @@
       {% if im.build_type == 'webapp' %}
         <div class="w-full bg-white border-2 border-ink p-8 flex flex-col items-center text-center gap-4">
           <div class="w-20 h-20 bg-primary-magenta text-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex items-center justify-center -rotate-3">
-            <span class="material-symbols-outlined text-4xl">album</span>
+            <span class="material-symbols-outlined text-4xl">terminal</span>
           </div>
           <div>
-            <h3 class="font-display font-black text-2xl uppercase text-ink">NeonDJ: 90s Turntable & Synth Matrix</h3>
+            <h3 class="font-display font-black text-2xl uppercase text-ink">{{ im.title }}</h3>
             <p class="font-body text-sm text-gray-700 max-w-md mt-1">
-              Interactive dual rotating vinyl decks with real pitch shift, tactile 7-band EQ sliders, and generative AI sample prompt triggers.
+              {{ im.summary }}
             </p>
+            {% if im.content and not im.content.startswith('/') %}
+            <div class="font-mono text-xs text-primary-magenta mt-2 bg-yellow-50 p-2 border border-ink/30 inline-block">
+              {{ im.content }}
+            </div>
+            {% endif %}
           </div>
-          <a href="/interactive/neondj" class="neo-btn neo-btn-primary text-sm py-2.5 px-6 flex items-center gap-2">
-            <span class="material-symbols-outlined">rocket_launch</span>
-            <span>Launch Live Interactive WebApp</span>
-          </a>
+          <div class="flex items-center gap-2">
+            {% if im.external_url %}
+            <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">open_in_new</span>
+              <span>Open Project ({{ im.external_url }})</span>
+            </a>
+            {% elif im.content and im.content.startswith('/') %}
+            <a href="{{ im.content }}" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">rocket_launch</span>
+              <span>Launch Live App</span>
+            </a>
+            {% endif %}
+          </div>
         </div>
       {% elif im.build_type == 'poetry' %}
         <div class="poetry-box w-full max-w-2xl font-mono text-sm leading-relaxed">
