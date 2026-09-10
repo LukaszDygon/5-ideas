@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import calendar
 from datetime import datetime
+import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -37,8 +38,17 @@ app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 # Mount Flask Admin at /admin
 app.mount("/admin", WSGIMiddleware(admin_app))
 
+class _HostedCheck:
+    def __bool__(self) -> bool:
+        return os.getenv("HOSTED_STATIC") == "1"
+
+    def __call__(self) -> bool:
+        return self.__bool__()
+
+
 # Jinja2 Templates for FastAPI
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+templates.env.globals["is_hosted"] = _HostedCheck()
 
 
 # ---------------------------------------------------------------------------

@@ -54,6 +54,8 @@ def rewrite_html_links(html: str, base_path: str) -> str:
 
 
 def build_static(base_path: str = "/5-ideas/"):
+    os.environ["HOSTED_STATIC"] = "1"
+
     # Ensure database has demo content
     db.init_db()
     if not db.get_all_days():

@@ -121,7 +121,7 @@
             {% else %}
               <!-- Empty day slot: quick add link for admin -->
               <div class="flex-1 flex items-center justify-center">
-                {% if is_current_month %}
+                {% if is_current_month and not is_hosted %}
                   <a href="/admin/day/new" class="text-gray-400 hover:text-ink text-xs font-mono font-bold flex items-center gap-1" title="Add 5 ideas for this day">
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                   </a>

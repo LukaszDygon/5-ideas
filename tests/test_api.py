@@ -98,3 +98,27 @@ def test_random_redirect(client):
     response = client.get("/random", follow_redirects=False)
     assert response.status_code in (302, 307)
     assert "/day/" in response.headers["location"]
+
+
+def test_admin_visibility_and_transcript_label(client, monkeypatch):
+    # Test local mode: admin links should be present
+    monkeypatch.delenv("HOSTED_STATIC", raising=False)
+    resp = client.get("/")
+    assert resp.status_code == 200
+    assert 'href="/admin"' in resp.text
+
+    day_resp = client.get("/day/2026-09-10")
+    assert day_resp.status_code == 200
+    assert 'href="/admin/day/2026-09-10/edit"' in day_resp.text
+    assert "AI transcript summary" in day_resp.text
+
+    # Test hosted static mode: admin links should be hidden
+    monkeypatch.setenv("HOSTED_STATIC", "1")
+    resp_hosted = client.get("/")
+    assert resp_hosted.status_code == 200
+    assert 'href="/admin"' not in resp_hosted.text
+
+    day_resp_hosted = client.get("/day/2026-09-10")
+    assert day_resp_hosted.status_code == 200
+    assert 'href="/admin/day/2026-09-10/edit"' not in day_resp_hosted.text
+    assert "AI transcript summary" in day_resp_hosted.text

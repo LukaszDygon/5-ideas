@@ -77,10 +77,12 @@
           <span class="material-symbols-outlined text-sm">palette</span>
           Design System
         </a>
+        {% if not is_hosted %}
         <a href="/admin" class="neo-btn neo-btn-white text-xs py-1.5 px-3 text-primary-magenta border-primary-magenta">
           <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
           Admin
         </a>
+        {% endif %}
       </nav>
 
       <!-- Action Buttons -->
@@ -130,8 +132,10 @@
         <a href="/stream" class="font-display font-bold text-xs uppercase hover:underline">Stream</a>
         <span>•</span>
         <a href="/design-system" class="font-display font-bold text-xs uppercase hover:underline">Design System</a>
+        {% if not is_hosted %}
         <span>•</span>
         <a href="/admin" class="font-display font-bold text-xs uppercase hover:underline text-primary-magenta">Admin Panel</a>
+        {% endif %}
       </div>
     </div>
   </footer>
