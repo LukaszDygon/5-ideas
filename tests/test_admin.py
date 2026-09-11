@@ -265,9 +265,12 @@ def test_admin_edit_preserves_steps_in_textarea(flask_client):
     # Process steps should not be empty in the textarea
     impl = day_with_impl["implemented_idea"]["implementation"]
     if impl.get("process_steps"):
+        import html
         first_step = impl["process_steps"][0]
-        step_str = first_step["title"].encode("utf-8")
-        assert step_str in res.data
+        assert (
+            first_step["title"].encode("utf-8") in res.data
+            or html.escape(first_step["title"]).encode("utf-8") in res.data
+        )
 
 
 def test_admin_edit_by_id_route(flask_client):
