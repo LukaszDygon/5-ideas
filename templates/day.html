@@ -119,10 +119,15 @@
 
       <div class="flex items-center gap-2">
         {% if im.build_type == 'webapp' %}
-        {% if im.external_url or (im.content and im.content.startswith('/')) %}
-        <a href="{{ im.external_url or im.content }}" {% if im.external_url %}target="_blank"{% endif %} class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
+        {% if im.content and im.content.startswith('/') %}
+        <a href="{{ im.content }}" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
           <span class="material-symbols-outlined text-sm">open_in_new</span>
           <span>Open Fullscreen</span>
+        </a>
+        {% elif im.external_url %}
+        <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">open_in_new</span>
+          <span>Open Project</span>
         </a>
         {% endif %}
         {% elif im.build_type == 'song' %}
@@ -158,15 +163,21 @@
             {% endif %}
           </div>
           <div class="flex items-center gap-2">
-            {% if im.external_url %}
-            <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">open_in_new</span>
-              <span>Open Project ({{ im.external_url }})</span>
-            </a>
-            {% elif im.content and im.content.startswith('/') %}
+            {% if im.content and im.content.startswith('/') %}
             <a href="{{ im.content }}" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
               <span class="material-symbols-outlined text-sm">rocket_launch</span>
               <span>Launch Live App</span>
+            </a>
+            {% if im.external_url %}
+            <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-white text-sm py-2 px-5 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">code</span>
+              <span>Source Repo</span>
+            </a>
+            {% endif %}
+            {% elif im.external_url %}
+            <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">open_in_new</span>
+              <span>Open Project</span>
             </a>
             {% endif %}
           </div>
