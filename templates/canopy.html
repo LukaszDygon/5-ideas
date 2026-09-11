@@ -1,0 +1,2005 @@
+{% extends "base.html" %}
+
+{% block title %}Canopy Growing Algorithm - 3D Procedural Rooftop Arboretum{% endblock %}
+
+{% block content %}
+<style>
+  #viewport-container:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  #viewport-container:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+</style>
+<div class="flex flex-col gap-4 font-body">
+
+  <!-- TOP RIBBON BAR -->
+  <div class="bg-white border-[3px] border-ink shadow-[5px_5px_0px_#1c1b1b] p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 bg-emerald-800 text-white border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex items-center justify-center -rotate-1 shrink-0 rounded-2xl">
+        <span class="material-symbols-outlined text-2xl">forest</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="neo-badge bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-bold tracking-wider rounded-full px-2.5">
+            DAY #1 SHOWCASE
+          </span>
+          <span class="neo-badge bg-[#f4ede4] text-ink text-[10px] font-bold border border-ink/30 rounded-full px-2.5">
+            GREEN ROOFS
+          </span>
+          <span class="text-xs text-gray-500 font-medium">Dual-Model Botanical Engine</span>
+        </div>
+        <h1 class="font-display font-extrabold text-xl sm:text-2xl text-ink leading-tight mt-0.5 tracking-tight">
+          Canopy Growing Algorithm
+        </h1>
+        <p class="text-xs text-gray-600 font-normal">
+          Light organic interface &bull; Charcoal to botanical green &bull; L-System Fractal & Space Colonization
+        </p>
+      </div>
+    </div>
+
+    <!-- Top Action Buttons -->
+    <div class="flex items-center gap-2 flex-wrap w-full md:w-auto justify-start md:justify-end">
+      <button id="fullscreen-btn" onclick="toggleFullScreen()" class="neo-btn neo-btn-white text-xs py-2 px-3.5 rounded-full flex items-center gap-1.5 shadow-[2px_2px_0px_#1c1b1b]" title="Toggle Full Screen">
+        <span id="fullscreen-icon" class="material-symbols-outlined text-base text-emerald-800">fullscreen</span>
+        <span id="fullscreen-label" class="font-bold text-[#1c2419]">Full Screen</span>
+      </button>
+
+      <button id="audio-toggle-btn" onclick="toggleAudio()" class="neo-btn neo-btn-white text-xs py-2 px-3.5 rounded-full flex items-center gap-1.5 shadow-[2px_2px_0px_#1c1b1b]">
+        <span id="audio-icon" class="material-symbols-outlined text-base text-emerald-800">volume_off</span>
+        <span id="audio-label" class="font-bold text-[#1c2419]">Sound: Off</span>
+      </button>
+
+      <button onclick="resetCamera()" class="neo-btn neo-btn-white text-xs py-2 px-3.5 rounded-full flex items-center gap-1 shadow-[2px_2px_0px_#1c1b1b]">
+        <span class="material-symbols-outlined text-base text-emerald-800">center_focus_strong</span>
+        <span class="font-bold text-[#1c2419]">Reset View</span>
+      </button>
+
+      <a href="/day/2026-09-11" class="neo-btn neo-btn-primary text-xs py-2 px-3.5 rounded-full flex items-center gap-1 shadow-[2px_2px_0px_#1c1b1b]">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span class="font-medium">Back to Day #1</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN 3D VIEWPORT WITH LIGHT BACKGROUND & LIGHT PEBBLE CONTROLS -->
+  <div class="relative w-full h-[700px] lg:h-[780px] bg-[#f4ede4] border-[3px] border-ink shadow-[6px_6px_0px_#1c1b1b] overflow-hidden select-none" id="viewport-container">
+    
+    <!-- Three.js Canvas Container -->
+    <div id="canvas-3d" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+    <!-- TOP-LEFT: LIGHT OVAL STATUS PILL -->
+    <div class="absolute top-4 left-4 z-20 pointer-events-none">
+      <div class="bg-[#f5f1e8] border-2 border-[#cfc5b4] text-[#1c2419] px-4 py-1.5 rounded-full shadow-md pointer-events-auto flex items-center gap-2.5">
+        <span class="text-xs text-[#1b501e] font-bold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-[#1b501e] animate-pulse"></span>
+          <span id="hud-algo-name">L-System Fractal</span>
+        </span>
+        <span class="text-stone-400">&bull;</span>
+        <span id="tree-stats-badge" class="text-xs text-[#1b501e] font-mono font-bold">
+          0 branches &bull; 0 leaves
+        </span>
+        <span class="text-stone-400 hidden sm:inline">&bull;</span>
+        <span class="text-[11px] text-stone-600 font-semibold hidden sm:inline" id="growth-stage-text">
+          Stage 4: Mature Canopy
+        </span>
+      </div>
+    </div>
+
+    <!-- TOP-RIGHT: LIGHT OVAL PRESETS BAR & FULLSCREEN TOGGLE -->
+    <div class="absolute top-4 right-4 z-20 pointer-events-auto flex items-center gap-2">
+      <div class="bg-[#f5f1e8] border-2 border-[#cfc5b4] p-1.5 rounded-full shadow-md flex items-center gap-1 flex-wrap justify-end text-[#1c2419]">
+        <span class="text-[10px] text-stone-600 font-bold uppercase tracking-wider ml-2 mr-1 hidden sm:inline">Presets:</span>
+        <button onclick="applyPreset('sprawling-oak')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Sprawling Oak
+        </button>
+        <button onclick="applyPreset('colonization-oak')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Ancient Oak
+        </button>
+        <button onclick="applyPreset('nordic-pine')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Nordic Pine
+        </button>
+        <button onclick="applyPreset('cherry-blossom')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Cherry Blossom
+        </button>
+        <button onclick="applyPreset('zen-bonsai')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Zen Bonsai
+        </button>
+      </div>
+
+      <button id="floating-fullscreen-btn" onclick="toggleFullScreen()" class="p-2 bg-[#f5f1e8] hover:bg-[#ede6d8] text-[#1c2419] border-2 border-[#cfc5b4] rounded-full flex items-center justify-center transition-all shadow-md active:scale-95 shrink-0" title="Toggle Full Screen">
+        <span id="floating-fullscreen-icon" class="material-symbols-outlined text-base text-[#1b501e]">fullscreen</span>
+      </button>
+    </div>
+
+    <!-- BOTTOM FLOATING DOCK: LIGHT ORGANIC PEBBLE CONTROLS (UNOBSTRUCTIVE) -->
+    <div class="absolute bottom-4 left-4 right-4 z-20 pointer-events-none flex flex-col items-center gap-2">
+      
+      <!-- SLIM LIGHT OVAL SCRUBBER CAPSULE -->
+      <div class="w-full max-w-4xl bg-[#fcfaf6] border-2 border-[#d0c6b5] px-4 py-2 rounded-full shadow-lg pointer-events-auto flex flex-col sm:flex-row items-center gap-3.5 text-[#1c2419]">
+        
+        <!-- Play / Pause / Rewind buttons -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button id="play-pause-btn" onclick="togglePlayGrowth()" class="px-3.5 py-1 bg-[#1b501e] hover:bg-[#153f17] text-white text-xs font-bold rounded-full flex items-center gap-1 transition-all shadow-sm border border-[#133d15]">
+            <span id="play-pause-icon" class="material-symbols-outlined text-sm">play_arrow</span>
+            <span id="play-pause-label">Play</span>
+          </button>
+          <button onclick="rewindGrowth()" class="p-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full flex items-center border border-[#d2c7b5] shadow-xs transition-all" title="Rewind to start">
+            <span class="material-symbols-outlined text-sm">replay</span>
+          </button>
+        </div>
+
+        <!-- Scrubber Slider -->
+        <div class="flex items-center gap-3 w-full">
+          <span class="text-xs font-bold text-[#1b501e] whitespace-nowrap">Growth:</span>
+          <input type="range" id="growth-slider" min="0" max="100" value="100" step="0.5" 
+                 oninput="onScrubGrowth(this.value)" 
+                 class="w-full accent-[#1b501e] h-1.5 bg-[#dcd4c6] rounded-full cursor-pointer"/>
+          <span id="growth-percent-text" class="font-mono text-xs font-extrabold text-[#1c2419] w-10 text-right">
+            100%
+          </span>
+        </div>
+
+        <!-- Speed Selector Pills -->
+        <div class="flex items-center gap-1 shrink-0 text-xs">
+          <button onclick="setSpeed(0.5, this)" class="speed-btn px-2.5 py-0.5 border border-[#d2c7b5] text-[#1c2419] hover:text-black rounded-full transition-colors text-[11px] bg-[#fcfaf6] font-semibold">0.5x</button>
+          <button onclick="setSpeed(1.0, this)" class="speed-btn px-2.5 py-0.5 border border-[#133d15] text-white font-bold bg-[#1b501e] rounded-full transition-colors text-[11px] shadow-sm">1x</button>
+          <button onclick="setSpeed(2.0, this)" class="speed-btn px-2.5 py-0.5 border border-[#d2c7b5] text-[#1c2419] hover:text-black rounded-full transition-colors text-[11px] bg-[#fcfaf6] font-semibold">2x</button>
+        </div>
+
+        <!-- Toggle Controls Drawer Icon Button -->
+        <button onclick="toggleDrawer()" class="p-1.5 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1b501e] border border-[#d2c7b5] rounded-full flex items-center transition-all shrink-0 shadow-xs" title="Toggle Parameter Panels">
+          <span id="drawer-toggle-icon" class="material-symbols-outlined text-base">tune</span>
+        </button>
+      </div>
+
+      <!-- OVAL TABS BAR (OPAQUE SOLID LIGHT PEBBLE TO PREVENT 3D OVERLAP BLEED) -->
+      <div class="bg-[#ede6d8] border-2 border-[#cfc4b0] p-1.5 rounded-full shadow-md pointer-events-auto flex items-center gap-1.5 text-[#1c2419]">
+        <button onclick="switchTab('architecture')" id="tab-btn-architecture" class="tab-btn px-3.5 py-1.5 text-xs font-extrabold rounded-full bg-[#1b501e] text-white shadow-md border-2 border-[#133d15] transition-all">
+          Branch Architecture
+        </button>
+        <button onclick="switchTab('foliage')" id="tab-btn-foliage" class="tab-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-[#fcfaf6] text-[#1c2419] hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all">
+          Foliage & Species
+        </button>
+        <button onclick="switchTab('algorithm')" id="tab-btn-algorithm" class="tab-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-[#fcfaf6] text-[#1c2419] hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all">
+          Model Guide
+        </button>
+        <button onclick="switchTab('sound')" id="tab-btn-sound" class="tab-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-[#fcfaf6] text-[#1c2419] hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all">
+          Soundscape
+        </button>
+        <button onclick="closeDrawer()" class="px-2.5 py-1.5 text-xs font-bold rounded-full bg-[#fcfaf6] text-stone-600 hover:text-black hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all" title="Collapse drawer">
+          <span class="material-symbols-outlined text-xs align-middle">expand_more</span>
+        </button>
+      </div>
+
+      <!-- COMPACT LIGHT PEBBLE DRAWER (OPAQUE SOLID, MAX 200px HEIGHT) -->
+      <div id="controls-drawer" class="w-full max-w-4xl bg-[#fdfbf7] border-2 border-[#d0c6b5] p-4 rounded-3xl shadow-2xl pointer-events-auto text-[#1c2419] max-h-52 overflow-y-auto">
+        
+        <!-- TAB 1: BRANCH ARCHITECTURE -->
+        <div id="tab-panel-architecture" class="tab-panel flex flex-col gap-3">
+          
+          <!-- Model Switcher Pill & Randomise Button -->
+          <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-[#ded5c7] flex-wrap">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[11px] font-bold text-[#1c2419] uppercase tracking-wider">Active Model:</span>
+              <button onclick="selectAlgorithm('fractal')" id="mini-toggle-fractal" class="px-3.5 py-1 text-xs font-bold rounded-full transition-all bg-[#1b501e] text-white shadow-sm border border-[#133d15]">
+                3D Fractal (L-System)
+              </button>
+              <button onclick="selectAlgorithm('colonization')" id="mini-toggle-colonization" class="px-3.5 py-1 text-xs font-semibold rounded-full transition-all bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] shadow-xs">
+                Space Colonization
+              </button>
+              <button onclick="randomizeActiveModel()" id="btn-randomize-model" class="px-3.5 py-1 text-xs font-bold rounded-full transition-all bg-[#e9e1d2] hover:bg-[#dfd5c4] text-[#1c2419] border border-[#c3b6a2] flex items-center gap-1 shadow-sm active:scale-95" title="Randomise current model parameters">
+                <span class="material-symbols-outlined text-sm text-[#1b501e]">casino</span>
+                <span>Randomise Settings</span>
+              </button>
+            </div>
+            <div class="text-[11px] text-[#1b501e] font-bold italic hidden sm:block" id="model-mode-indicator">
+              L-System branching equations
+            </div>
+          </div>
+
+          <!-- 1A: 3D Fractal Parameters (Light Green Tint) -->
+          <div id="panel-fractal-params" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 p-2.5 rounded-2xl border border-emerald-200 bg-[#f2f8f4]">
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Generations:</span>
+                <span id="val-depth" class="text-emerald-800 font-mono font-bold">5</span>
+              </div>
+              <input type="range" id="slider-depth" min="2" max="6" step="1" value="5" oninput="onFractalParamChange('depth', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Splits per Fork:</span>
+                <span id="val-forks" class="text-emerald-800 font-mono font-bold">3</span>
+              </div>
+              <input type="range" id="slider-forks" min="2" max="4" step="1" value="3" oninput="onFractalParamChange('forks', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Branch Angle:</span>
+                <span id="val-angle" class="text-emerald-800 font-mono font-bold">44°</span>
+              </div>
+              <input type="range" id="slider-angle" min="15" max="68" step="1" value="44" oninput="onFractalParamChange('angle', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Length Decay:</span>
+                <span id="val-decay" class="text-emerald-800 font-mono font-bold">0.74</span>
+              </div>
+              <input type="range" id="slider-decay" min="0.55" max="0.85" step="0.01" value="0.74" oninput="onFractalParamChange('decay', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Lateral Shoots:</span>
+                <span id="val-shoots" class="text-emerald-800 font-mono font-bold">40%</span>
+              </div>
+              <input type="range" id="slider-shoots" min="0" max="60" step="5" value="40" oninput="onFractalParamChange('shoots', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+          </div>
+
+          <!-- 1B: Space Colonization Parameters (Light Sage Tint) -->
+          <div id="panel-colonization-params" class="hidden flex-col gap-2.5 p-2.5 rounded-2xl border border-emerald-200 bg-[#f4f7f4]">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-[11px] text-[#1c2419] font-bold mr-1">Envelope:</span>
+              <button onclick="setCrownShape('oak-dome')" id="crown-oak-dome-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm">Oak Dome</button>
+              <button onclick="setCrownShape('pyramid')" id="crown-pyramid-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Conical Spire</button>
+              <button onclick="setCrownShape('umbrella')" id="crown-umbrella-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Savanna Umbrella</button>
+              <button onclick="setCrownShape('sphere')" id="crown-sphere-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Sphere</button>
+              <button onclick="setCrownShape('weeping')" id="crown-weeping-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Weeping</button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1.5 border-t border-[#e2dccd]">
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-gray-700">Attractors:</span>
+                  <span id="val-col-attractors" class="text-emerald-800 font-mono font-bold">500</span>
+                </div>
+                <input type="range" id="slider-col-attractors" min="200" max="800" step="50" value="500" oninput="onColParamChange('attractors', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-gray-700">Internode Step:</span>
+                  <span id="val-col-step" class="text-emerald-800 font-mono font-bold">0.32</span>
+                </div>
+                <input type="range" id="slider-col-step" min="0.20" max="0.50" step="0.02" value="0.32" oninput="onColParamChange('step', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-gray-700">Pruning Radius:</span>
+                  <span id="val-col-kill" class="text-emerald-800 font-mono font-bold">0.42</span>
+                </div>
+                <input type="range" id="slider-col-kill" min="0.25" max="0.70" step="0.02" value="0.42" oninput="onColParamChange('kill', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-gray-700">Phototropic Reach:</span>
+                  <span id="val-col-radius" class="text-emerald-800 font-mono font-bold">2.4</span>
+                </div>
+                <input type="range" id="slider-col-radius" min="1.5" max="3.5" step="0.1" value="2.4" oninput="onColParamChange('radius', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1C: Persistent Shared Parameters -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-1.5 border-t border-[#e2dccd]">
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-600">Trunk Girth:</span>
+                <span id="val-trunk" class="text-gray-900 font-mono font-bold">0.44</span>
+              </div>
+              <input type="range" id="slider-trunk" min="0.15" max="0.65" step="0.01" value="0.44" oninput="onSharedParamChange('trunk', this.value)" class="accent-emerald-700 h-1 bg-[#e0dad0] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-600">Crown Spread:</span>
+                <span id="val-spread" class="text-gray-900 font-mono font-bold">1.5x</span>
+              </div>
+              <input type="range" id="slider-spread" min="0.6" max="2.2" step="0.1" value="1.5" oninput="onSharedParamChange('spread', this.value)" class="accent-emerald-700 h-1 bg-[#e0dad0] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-600">Oak Gnarling:</span>
+                <span id="val-jitter" class="text-gray-900 font-mono font-bold">0.50</span>
+              </div>
+              <input type="range" id="slider-jitter" min="0.0" max="0.8" step="0.05" value="0.50" oninput="onSharedParamChange('jitter', this.value)" class="accent-emerald-700 h-1 bg-[#e0dad0] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-600">Rooftop Wind:</span>
+                <span id="val-wind" class="text-gray-900 font-mono font-bold">Breeze</span>
+              </div>
+              <input type="range" id="slider-wind" min="0.0" max="1.0" step="0.1" value="0.4" oninput="onSharedParamChange('wind', this.value)" class="accent-emerald-700 h-1 bg-[#e0dad0] rounded-full"/>
+            </div>
+
+            <div class="flex items-end gap-1.5">
+              <button onclick="randomizeTree()" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] border border-[#d2c7b5] text-[#1c2419] text-xs rounded-full flex items-center gap-1 transition-all font-bold shadow-xs">
+                <span class="material-symbols-outlined text-sm text-[#1b501e]">shuffle</span>
+                <span>Seed</span>
+              </button>
+              <button onclick="rebuildCurrentTree()" class="px-3 py-1 bg-[#1b501e] hover:bg-[#153f17] text-white text-xs rounded-full flex items-center gap-1 transition-all shadow-sm font-bold border border-[#133d15]">
+                <span class="material-symbols-outlined text-sm">refresh</span>
+                <span>Rebuild</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TAB 2: FOLIAGE & SPECIES -->
+        <div id="tab-panel-foliage" class="tab-panel hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Leaf Clump Morphology:</span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button onclick="setLeafShape('broadleaf')" id="shape-broadleaf-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm">
+                Broadleaf Oak
+              </button>
+              <button onclick="setLeafShape('needle')" id="shape-needle-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">
+                Pine Needles
+              </button>
+              <button onclick="setLeafShape('blossom')" id="shape-blossom-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">
+                Cherry Blossom
+              </button>
+              <button onclick="setLeafShape('faceted')" id="shape-faceted-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">
+                Faceted Cloud
+              </button>
+              <button onclick="setLeafShape('ginkgo')" id="shape-ginkgo-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">
+                Ginkgo Fan
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Seasonal Palette:</span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button onclick="setSeason('spring')" id="season-spring-btn" class="season-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Spring Lime</button>
+              <button onclick="setSeason('summer')" id="season-summer-btn" class="season-btn px-3 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm">Deep Summer</button>
+              <button onclick="setSeason('autumn')" id="season-autumn-btn" class="season-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Autumn Amber</button>
+              <button onclick="setSeason('sakura')" id="season-sakura-btn" class="season-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Sakura Blush</button>
+              <div class="flex items-center gap-1.5 ml-auto">
+                <span class="text-[11px] text-stone-600 font-medium">Scale:</span>
+                <input type="range" id="leaf-scale-slider" min="0.5" max="2.5" step="0.1" value="1.0" oninput="onLeafScaleChange(this.value)" class="w-20 accent-[#1b501e] h-1 bg-[#dcd4c6] rounded-full"/>
+                <span id="leaf-scale-text" class="text-xs font-mono text-[#1b501e] font-bold">1.0x</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: MODEL GUIDE -->
+        <div id="tab-panel-algorithm" class="tab-panel hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Growth Model Architecture:</span>
+            <div class="flex items-center gap-2">
+              <button onclick="selectAlgorithm('fractal')" id="algo-fractal-btn" class="algo-choice-btn px-3.5 py-1.5 rounded-2xl border-2 border-[#1b501e] bg-[#eef7ee] text-[#123814] text-xs text-left shadow-xs">
+                <div class="font-bold text-[#123814]">3D Fractal / L-System</div>
+                <div class="text-[10px] text-stone-600">Recursive branching with stem tapering & lateral shoots</div>
+              </button>
+              <button onclick="selectAlgorithm('colonization')" id="algo-colonization-btn" class="algo-choice-btn px-3.5 py-1.5 rounded-2xl border border-[#d2c7b5] bg-[#fcfaf6] text-[#1c2419] text-xs text-left shadow-xs">
+                <div class="font-bold text-[#1c2419]">Space Colonization</div>
+                <div class="text-[10px] text-stone-600">Attractor cloud envelope modeling phototropism</div>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1 text-xs text-stone-800 leading-relaxed">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Model Dynamics:</span>
+            <p id="algo-desc-text">
+              <strong class="text-[#123814]">Fractal L-System:</strong> Pure geometric recursion. Excellent for heavy branching, lateral interior shoots, and majestic ancient oak crowns.<br/>
+              <strong class="text-[#1b501e]">Space Colonization:</strong> Biological competition for light attractors across user-chosen crown volumes.
+            </p>
+          </div>
+        </div>
+
+        <!-- TAB 4: AMBIENT NATURE SOUNDSCAPE -->
+        <div id="tab-panel-sound" class="tab-panel hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Web Audio Generator:</span>
+              <button onclick="toggleAudio()" class="text-xs px-3 py-1 border border-[#d2c7b5] rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] font-bold shadow-xs">
+                <span id="sound-tab-btn-label">Turn On</span>
+              </button>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-stone-600 font-medium">Volume:</span>
+              <input type="range" id="audio-volume-slider" min="0" max="1" step="0.05" value="0.6" oninput="setAudioVolume(this.value)" class="accent-[#1b501e] w-32 h-1 bg-[#dcd4c6] rounded-full"/>
+              <span id="volume-val-text" class="text-xs font-mono text-[#1b501e] font-bold">60%</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap text-xs">
+            <label class="flex items-center gap-1.5 bg-[#fcfaf6] px-3 py-1 rounded-full border border-[#d2c7b5] cursor-pointer text-[#1c2419] font-semibold shadow-xs">
+              <input type="checkbox" id="layer-chords-chk" checked onchange="toggleAudioLayer('chords', this.checked)" class="accent-[#1b501e]"/>
+              <span>Chords</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-[#fcfaf6] px-3 py-1 rounded-full border border-[#d2c7b5] cursor-pointer text-[#1c2419] font-semibold shadow-xs">
+              <input type="checkbox" id="layer-wind-chk" checked onchange="toggleAudioLayer('wind', this.checked)" class="accent-[#1b501e]"/>
+              <span>Breeze</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-[#fcfaf6] px-3 py-1 rounded-full border border-[#d2c7b5] cursor-pointer text-[#1c2419] font-semibold shadow-xs">
+              <input type="checkbox" id="layer-birds-chk" checked onchange="toggleAudioLayer('birds', this.checked)" class="accent-[#1b501e]"/>
+              <span>Birdsong</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-[#fcfaf6] px-3 py-1 rounded-full border border-[#d2c7b5] cursor-pointer text-[#1c2419] font-semibold shadow-xs">
+              <input type="checkbox" id="layer-leaves-chk" checked onchange="toggleAudioLayer('leaves', this.checked)" class="accent-[#1b501e]"/>
+              <span>Leaf Rustle</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SHOWCASE CONTEXT FOOTER STRIP -->
+  <div class="bg-white border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-700">
+    <div class="flex items-center gap-2">
+      <span class="w-3 h-3 bg-emerald-600 border border-ink rounded-full"></span>
+      <span class="font-bold text-ink uppercase">Rooftop Biosphere // Day #1</span>
+      <span class="text-gray-500 font-normal">| Native Three.js WebGL &bull; Web Audio API &bull; Zero Server Storage</span>
+    </div>
+    <div class="flex items-center gap-3 text-gray-600">
+      <span>Left-Click Drag: Rotate</span>
+      <span>&bull;</span>
+      <span>Right-Click Drag: Pan</span>
+      <span>&bull;</span>
+      <span>Scroll: Zoom</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- THREE.JS & ORBITCONTROLS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<!-- CANOPY BOTANICAL SIMULATION & AUDIO SCRIPT -->
+<script>
+  /* =========================================================================
+     CANOPY BOTANICAL SIMULATION & AMBIENT AUDIO ENGINE
+     - Light off-white architectural background & serene atmospheric daylight
+     - Light pebble controls with charcoal-to-green palette
+     - Collapsible tabbed drawer (unobscured tree view)
+     - Dedicated parameter sets for Fractal L-System and Space Colonization
+     ========================================================================= */
+
+  const state = {
+    algorithm: 'fractal',
+    activeTab: 'architecture',
+
+    // Shared dimensions across both models
+    shared: {
+      trunkGirth: 0.44,
+      crownSpread: 1.5,
+      jitter: 0.50,
+      windIntensity: 0.4,
+      leafScale: 1.0,
+      leafShape: 'broadleaf',
+      season: 'summer',
+    },
+
+    // 3D Fractal L-System specific parameters
+    fractal: {
+      depth: 5,
+      forksPerJoint: 3,
+      angleDeg: 44,
+      lengthDecay: 0.74,
+      lateralShootsPct: 40,
+    },
+
+    // Space Colonization specific parameters
+    colonization: {
+      crownShape: 'oak-dome',
+      numAttractors: 500,
+      branchStepSize: 0.32,
+      killDistance: 0.42,
+      influenceRadius: 2.4,
+    },
+
+    growthProgress: 1.0,
+    isPlaying: false,
+    growthSpeed: 0.004,
+    seed: 88219,
+  };
+
+  let scene, camera, renderer, controls;
+  let treeGroup = null;
+  let buildingGroup = null;
+  let skyMesh = null;
+  let leavesInstancedMesh = null;
+  let dustParticles = null;
+  let branchesData = [];
+  let leavesData = [];
+  let windClock = 0;
+
+  let audioCtx = null;
+  let masterGain = null;
+  let windGain = null;
+  let windFilter = null;
+  let chordsGain = null;
+  let birdsGain = null;
+  let isAudioPlaying = false;
+  let audioTimerId = null;
+  let chordStep = 0;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    initThree();
+    initAtmosphere();
+    initBuilding();
+    rebuildCurrentTree();
+    animate();
+  });
+
+  // =========================================================================
+  // LIGHT ATMOSPHERIC SKY & SCENE
+  // =========================================================================
+  function initAtmosphere() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+
+    const grad = ctx.createLinearGradient(0, 0, 0, 512);
+    grad.addColorStop(0.0, '#dbe7f3'); // Pale morning sky blue
+    grad.addColorStop(0.4, '#eef3f7'); // Light pale haze
+    grad.addColorStop(0.75, '#f5f0e8'); // Warm pearl ivory
+    grad.addColorStop(1.0, '#f9ede0'); // Delicate warm horizon apricot
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 512, 512);
+
+    ctx.fillStyle = '#dcd4c8';
+    ctx.beginPath();
+    ctx.moveTo(0, 512);
+    for (let x = 0; x <= 512; x += 16) {
+      const h = 485 + Math.sin(x * 0.03) * 10 + Math.cos(x * 0.07) * 5;
+      ctx.lineTo(x, h);
+    }
+    ctx.lineTo(512, 512);
+    ctx.closePath();
+    ctx.fill();
+
+    const skyTex = new THREE.CanvasTexture(canvas);
+    const skyGeo = new THREE.SphereGeometry(95, 32, 24);
+    const skyMat = new THREE.MeshBasicMaterial({
+      map: skyTex,
+      side: THREE.BackSide,
+      depthWrite: false,
+    });
+    skyMesh = new THREE.Mesh(skyGeo, skyMat);
+    scene.add(skyMesh);
+
+    const particleCount = 120;
+    const partGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      positions[i] = (Math.random() - 0.5) * 16;
+      positions[i + 1] = 0.5 + Math.random() * 8;
+      positions[i + 2] = (Math.random() - 0.5) * 16;
+    }
+    partGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const partMat = new THREE.PointsMaterial({
+      color: 0xcbb799,
+      size: 0.07,
+      transparent: true,
+      opacity: 0.5,
+      blending: THREE.NormalBlending,
+    });
+    dustParticles = new THREE.Points(partGeo, partMat);
+    scene.add(dustParticles);
+  }
+
+  function initThree() {
+    const container = document.getElementById('canvas-3d');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf2efe9);
+    scene.fog = new THREE.FogExp2(0xf2efe9, 0.015);
+
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 200);
+    camera.position.set(8.5, 6.2, 11);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    container.appendChild(renderer.domElement);
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.minDistance = 2.5;
+    controls.maxDistance = 30;
+    controls.maxPolarAngle = Math.PI / 2 - 0.02;
+    controls.target.set(0, 2.6, 0);
+    controls.update();
+
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xd8d4cd, 0.95);
+    hemiLight.position.set(0, 50, 0);
+    scene.add(hemiLight);
+
+    const dirLight = new THREE.DirectionalLight(0xfff7ea, 1.4);
+    dirLight.position.set(14, 22, 12);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.camera.near = 0.5;
+    dirLight.shadow.camera.far = 50;
+    const d = 9;
+    dirLight.shadow.camera.left = -d;
+    dirLight.shadow.camera.right = d;
+    dirLight.shadow.camera.top = d;
+    dirLight.shadow.camera.bottom = -d;
+    dirLight.shadow.bias = -0.0004;
+    scene.add(dirLight);
+
+    const rimLight = new THREE.DirectionalLight(0xa5c4e2, 0.4);
+    rimLight.position.set(-12, 8, -12);
+    scene.add(rimLight);
+
+    window.addEventListener('resize', onWindowResize);
+  }
+
+  function onWindowResize() {
+    const container = document.getElementById('canvas-3d');
+    if (!container || !renderer || !camera) return;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
+
+  function resetCamera() {
+    controls.target.set(0, 2.6, 0);
+    camera.position.set(8.5, 6.2, 11);
+    controls.update();
+  }
+
+  function toggleFullScreen() {
+    const container = document.getElementById('viewport-container');
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      if (container.requestFullscreen) {
+        container.requestFullscreen().catch(err => console.warn(err));
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(err => console.warn(err));
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+    }
+  }
+
+  function updateFullScreenUI() {
+    const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    const topIcon = document.getElementById('fullscreen-icon');
+    const topLabel = document.getElementById('fullscreen-label');
+    const floatIcon = document.getElementById('floating-fullscreen-icon');
+    const floatBtn = document.getElementById('floating-fullscreen-btn');
+
+    if (topIcon) topIcon.innerText = isFS ? 'fullscreen_exit' : 'fullscreen';
+    if (topLabel) topLabel.innerText = isFS ? 'Exit Full' : 'Full Screen';
+    if (floatIcon) floatIcon.innerText = isFS ? 'fullscreen_exit' : 'fullscreen';
+    if (floatBtn) floatBtn.title = isFS ? 'Exit Full Screen' : 'Enter Full Screen';
+
+    onWindowResize();
+    setTimeout(onWindowResize, 60);
+    setTimeout(onWindowResize, 200);
+  }
+
+  document.addEventListener('fullscreenchange', updateFullScreenUI);
+  document.addEventListener('webkitfullscreenchange', updateFullScreenUI);
+
+  // =========================================================================
+  // LIGHT ARCHITECTURAL ROOFTOP
+  // =========================================================================
+  function initBuilding() {
+    buildingGroup = new THREE.Group();
+
+    const roofSlabMat = new THREE.MeshStandardMaterial({ color: 0xdedad2, roughness: 0.82 });
+    const parapetMat = new THREE.MeshStandardMaterial({ color: 0xc8c3b9, roughness: 0.86 });
+    const planterWoodMat = new THREE.MeshStandardMaterial({ color: 0x6e4a35, roughness: 0.70 });
+    const soilMat = new THREE.MeshStandardMaterial({ color: 0x221711, roughness: 0.95 });
+    const stoneTileMat = new THREE.MeshStandardMaterial({ color: 0xcfc9bf, roughness: 0.65 });
+
+    const roofMesh = new THREE.Mesh(new THREE.BoxGeometry(18, 2, 18), roofSlabMat);
+    roofMesh.position.y = -1;
+    roofMesh.receiveShadow = true;
+    buildingGroup.add(roofMesh);
+
+    const patio = new THREE.Mesh(new THREE.BoxGeometry(8, 0.08, 8), stoneTileMat);
+    patio.position.set(0, 0.04, 0);
+    patio.receiveShadow = true;
+    buildingGroup.add(patio);
+
+    const wallGeoN = new THREE.BoxGeometry(18, 0.95, 0.4);
+    const wallN = new THREE.Mesh(wallGeoN, parapetMat);
+    wallN.position.set(0, 0.47, -8.8);
+    wallN.receiveShadow = true;
+    buildingGroup.add(wallN);
+
+    const wallS = new THREE.Mesh(wallGeoN, parapetMat);
+    wallS.position.set(0, 0.47, 8.8);
+    wallS.receiveShadow = true;
+    buildingGroup.add(wallS);
+
+    const wallGeoW = new THREE.BoxGeometry(0.4, 0.95, 17.2);
+    const wallW = new THREE.Mesh(wallGeoW, parapetMat);
+    wallW.position.set(-8.8, 0.47, 0);
+    wallW.receiveShadow = true;
+    buildingGroup.add(wallW);
+
+    const wallE = new THREE.Mesh(wallGeoW, parapetMat);
+    wallE.position.set(8.8, 0.47, 0);
+    wallE.receiveShadow = true;
+    buildingGroup.add(wallE);
+
+    const planterOuter = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.6, 4.6), planterWoodMat);
+    planterOuter.position.set(0, 0.3, 0);
+    planterOuter.castShadow = true;
+    planterOuter.receiveShadow = true;
+    buildingGroup.add(planterOuter);
+
+    const soil = new THREE.Mesh(new THREE.BoxGeometry(4.3, 0.1, 4.3), soilMat);
+    soil.position.set(0, 0.58, 0);
+    soil.receiveShadow = true;
+    buildingGroup.add(soil);
+
+    scene.add(buildingGroup);
+  }
+
+  // =========================================================================
+  // BOTANICAL ENGINES
+  // =========================================================================
+
+  function pseudoRandom(seed) {
+    let s = seed % 2147483647;
+    if (s <= 0) s += 2147483646;
+    return function() {
+      s = (s * 16807) % 2147483647;
+      return (s - 1) / 2147483646;
+    };
+  }
+
+  function rebuildCurrentTree() {
+    if (treeGroup) {
+      scene.remove(treeGroup);
+      treeGroup.traverse(child => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
+          else child.material.dispose();
+        }
+      });
+    }
+
+    treeGroup = new THREE.Group();
+    branchesData = [];
+    leavesData = [];
+
+    const rng = pseudoRandom(state.seed);
+
+    if (state.algorithm === 'fractal') {
+      generateFractalOak(rng);
+    } else {
+      generateSpaceColonizationTree(rng);
+    }
+
+    buildLeavesInstancedMesh();
+    scene.add(treeGroup);
+
+    updateGrowthSimulation(state.growthProgress);
+
+    document.getElementById('tree-stats-badge').innerText = 
+      `${branchesData.length} branches • ${leavesData.length} leaf clusters`;
+  }
+
+  // --- ALGORITHM 1: 3D FRACTAL L-SYSTEM ---
+  function generateFractalOak(rng) {
+    const rootPos = new THREE.Vector3(0, 0.6, 0);
+    const initialDir = new THREE.Vector3(0, 1, 0);
+    const initialLen = 1.4 + rng() * 0.4;
+    const initialRadius = state.shared.trunkGirth;
+    const angleRad = (state.fractal.angleDeg * Math.PI) / 180;
+
+    const barkMat = new THREE.MeshStandardMaterial({
+      color: 0x4a3728,
+      roughness: 0.88,
+      metalness: 0.05,
+    });
+
+    function spawnFoliage(pos, dir, birthTime) {
+      const isConifer = state.shared.leafShape === 'needle';
+      const count = isConifer ? Math.floor(8 + rng() * 8) : Math.floor(4 + rng() * 4);
+      for (let i = 0; i < count; i++) {
+        const spread = isConifer ? 0.35 : 0.28;
+        const leafPos = pos.clone().add(new THREE.Vector3(
+          (rng() - 0.5) * spread,
+          (rng() - 0.3) * spread,
+          (rng() - 0.5) * spread
+        ));
+        leavesData.push({
+          pos: leafPos,
+          rot: new THREE.Euler(rng() * Math.PI, rng() * Math.PI * 2, rng() * Math.PI),
+          scale: 0.85 + rng() * 0.35,
+          birthTime: Math.min(0.98, birthTime + rng() * 0.08),
+          endTime: 1.0,
+        });
+      }
+    }
+
+    function branch(startPos, dir, len, radius, depth, birthStart, birthEnd) {
+      if (depth >= state.fractal.depth || radius < 0.015) {
+        spawnFoliage(startPos, dir, birthEnd);
+        return;
+      }
+
+      const gnarledVec = new THREE.Vector3(
+        (rng() - 0.5) * state.shared.jitter * 1.2,
+        (rng() - 0.5) * state.shared.jitter * 0.5,
+        (rng() - 0.5) * state.shared.jitter * 1.2
+      );
+      const actualDir = dir.clone().add(gnarledVec).normalize();
+
+      if (depth > 0) {
+        actualDir.x *= state.shared.crownSpread;
+        actualDir.z *= state.shared.crownSpread;
+        actualDir.normalize();
+      }
+
+      const endPos = startPos.clone().addScaledVector(actualDir, len);
+      const nextRadius = radius * state.fractal.lengthDecay * 0.92;
+
+      const branchGeo = new THREE.CylinderGeometry(nextRadius, radius, len, 8);
+      branchGeo.translate(0, len / 2, 0);
+      const branchMesh = new THREE.Mesh(branchGeo, barkMat);
+      branchMesh.castShadow = true;
+      branchMesh.receiveShadow = true;
+
+      branchMesh.position.copy(startPos);
+      const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), actualDir);
+      branchMesh.quaternion.copy(q);
+      treeGroup.add(branchMesh);
+
+      branchesData.push({
+        mesh: branchMesh,
+        birthTime: birthStart,
+        endTime: birthEnd,
+        startRadius: radius,
+        endRadius: nextRadius,
+        length: len,
+        startPos: startPos.clone(),
+        endPos: endPos.clone(),
+      });
+
+      if (depth >= 2 && rng() * 100 < state.fractal.lateralShootsPct) {
+        const shootT = 0.4 + rng() * 0.4;
+        const shootPos = startPos.clone().lerp(endPos, shootT);
+        const lateralDir = new THREE.Vector3((rng() - 0.5), (rng() * 0.5), (rng() - 0.5)).normalize();
+        branch(
+          shootPos,
+          lateralDir,
+          len * 0.45,
+          nextRadius * 0.6,
+          depth + 2,
+          birthStart + (birthEnd - birthStart) * shootT,
+          Math.min(0.85, birthEnd + 0.06)
+        );
+      }
+
+      const numForks = depth === 0 ? Math.max(3, state.fractal.forksPerJoint) : (rng() > 0.4 ? state.fractal.forksPerJoint : 2);
+      const nextLen = len * state.fractal.lengthDecay;
+      const childBirthSpan = (0.85 - birthEnd) / (state.fractal.depth - depth + 1);
+
+      for (let i = 0; i < numForks; i++) {
+        const azimuth = (i * (2 * Math.PI / numForks)) + (rng() - 0.5) * 0.7;
+        const up = actualDir.clone();
+        let arbitrary = Math.abs(up.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
+        const right = new THREE.Vector3().crossVectors(up, arbitrary).normalize();
+        const forward = new THREE.Vector3().crossVectors(right, up).normalize();
+
+        const childDir = up.clone().multiplyScalar(Math.cos(angleRad))
+          .add(right.clone().multiplyScalar(Math.sin(angleRad) * Math.cos(azimuth)))
+          .add(forward.clone().multiplyScalar(Math.sin(angleRad) * Math.sin(azimuth)))
+          .normalize();
+
+        childDir.y += 0.22;
+        childDir.normalize();
+
+        branch(
+          endPos,
+          childDir,
+          nextLen,
+          nextRadius,
+          depth + 1,
+          birthEnd,
+          Math.min(0.85, birthEnd + childBirthSpan)
+        );
+      }
+    }
+
+    branch(rootPos, initialDir, initialLen, initialRadius, 0, 0.0, 0.20);
+  }
+
+  // --- ALGORITHM 2: SPACE COLONIZATION ---
+  function generateSpaceColonizationTree(rng) {
+    const barkMat = new THREE.MeshStandardMaterial({
+      color: 0x403125,
+      roughness: 0.90,
+    });
+
+    const rootPos = new THREE.Vector3(0, 0.6, 0);
+    const crownCenter = new THREE.Vector3(0, 3.8, 0);
+    const crownSpread = state.shared.crownSpread;
+
+    const attractors = [];
+    const numAttractors = state.colonization.numAttractors;
+
+    for (let i = 0; i < numAttractors; i++) {
+      let pt = new THREE.Vector3();
+      const u = rng();
+      const v = rng();
+      const theta = u * 2.0 * Math.PI;
+
+      if (state.colonization.crownShape === 'oak-dome') {
+        const rX = 3.6 * Math.cbrt(rng()) * crownSpread;
+        const rY = 2.2 * Math.sqrt(rng());
+        const rZ = 3.6 * Math.cbrt(rng()) * crownSpread;
+        pt.set(
+          crownCenter.x + rX * Math.cos(theta),
+          crownCenter.y + rY * 0.85,
+          crownCenter.z + rZ * Math.sin(theta)
+        );
+      } else if (state.colonization.crownShape === 'pyramid') {
+        const h = rng() * 4.8;
+        const radiusAtH = (1.0 - (h / 4.8)) * 2.6 * crownSpread;
+        const r = Math.sqrt(rng()) * radiusAtH;
+        pt.set(
+          crownCenter.x + r * Math.cos(theta),
+          crownCenter.y - 0.4 + h,
+          crownCenter.z + r * Math.sin(theta)
+        );
+      } else if (state.colonization.crownShape === 'umbrella') {
+        const r = Math.sqrt(rng()) * 3.8 * crownSpread;
+        pt.set(
+          crownCenter.x + r * Math.cos(theta),
+          crownCenter.y + 1.4 + (rng() - 0.5) * 0.6,
+          crownCenter.z + r * Math.sin(theta)
+        );
+      } else if (state.colonization.crownShape === 'weeping') {
+        const r = Math.sqrt(rng()) * 3.2 * crownSpread;
+        const h = 2.5 * (1.0 - (r / (3.2 * crownSpread))) - (rng() * 0.8);
+        pt.set(
+          crownCenter.x + r * Math.cos(theta),
+          crownCenter.y + h,
+          crownCenter.z + r * Math.sin(theta)
+        );
+      } else { // 'sphere'
+        const r = 2.6 * Math.cbrt(rng());
+        const phi = Math.acos(2.0 * v - 1.0);
+        const sinPhi = Math.sin(phi);
+        pt.set(
+          crownCenter.x + r * sinPhi * Math.cos(theta) * crownSpread,
+          crownCenter.y + r * Math.cos(phi),
+          crownCenter.z + r * sinPhi * Math.sin(theta) * crownSpread
+        );
+      }
+      attractors.push({ pos: pt, reached: false });
+    }
+
+    const nodes = [{
+      pos: rootPos.clone(),
+      parentIndex: -1,
+      dir: new THREE.Vector3(0, 1, 0),
+      count: 0,
+      radius: state.shared.trunkGirth,
+      distance: 0,
+      depth: 0,
+    }];
+
+    const minDistance = state.colonization.killDistance;
+    const maxDistance = state.colonization.influenceRadius;
+    const branchLength = state.colonization.branchStepSize;
+
+    let current = nodes[0];
+    let reachedCrown = false;
+    let trunkIters = 0;
+    while (!reachedCrown && trunkIters < 10) {
+      trunkIters++;
+      for (let a of attractors) {
+        if (current.pos.distanceTo(a.pos) < maxDistance) {
+          reachedCrown = true;
+          break;
+        }
+      }
+      if (!reachedCrown) {
+        const nextPos = current.pos.clone().add(new THREE.Vector3(0, branchLength, 0));
+        const newNode = {
+          pos: nextPos,
+          parentIndex: nodes.length - 1,
+          dir: new THREE.Vector3(0, 1, 0),
+          count: 0,
+          radius: state.shared.trunkGirth * 0.95,
+          distance: current.distance + branchLength,
+          depth: current.depth + 1,
+        };
+        nodes.push(newNode);
+        current = newNode;
+      }
+    }
+
+    let activeAttractors = attractors.slice();
+    let maxIters = 45;
+    while (activeAttractors.length > 20 && maxIters > 0) {
+      maxIters--;
+      for (let n of nodes) {
+        n.dir.set(0, 0, 0);
+        n.count = 0;
+      }
+
+      for (let i = activeAttractors.length - 1; i >= 0; i--) {
+        const a = activeAttractors[i];
+        let closestNode = null;
+        let recordDist = maxDistance;
+
+        for (let n of nodes) {
+          const d = a.pos.distanceTo(n.pos);
+          if (d < minDistance) {
+            activeAttractors.splice(i, 1);
+            closestNode = null;
+            break;
+          } else if (d < recordDist) {
+            recordDist = d;
+            closestNode = n;
+          }
+        }
+
+        if (closestNode) {
+          const pushDir = new THREE.Vector3().subVectors(a.pos, closestNode.pos).normalize();
+          closestNode.dir.add(pushDir);
+          closestNode.count++;
+        }
+      }
+
+      const newNodes = [];
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        if (n.count > 0) {
+          n.dir.divideScalar(n.count).normalize();
+          n.dir.x += (rng() - 0.5) * (state.shared.jitter * 0.6);
+          n.dir.z += (rng() - 0.5) * (state.shared.jitter * 0.6);
+          n.dir.normalize();
+
+          const newPos = n.pos.clone().addScaledVector(n.dir, branchLength);
+          newNodes.push({
+            pos: newPos,
+            parentIndex: i,
+            dir: n.dir.clone(),
+            count: 0,
+            radius: 0.05,
+            distance: n.distance + branchLength,
+            depth: n.depth + 1,
+          });
+        }
+      }
+
+      if (newNodes.length === 0) break;
+      nodes.push(...newNodes);
+    }
+
+    let maxDist = 0.1;
+    for (let n of nodes) {
+      if (n.distance > maxDist) maxDist = n.distance;
+    }
+
+    const childCounts = new Array(nodes.length).fill(0);
+    for (let i = nodes.length - 1; i > 0; i--) {
+      const parentIdx = nodes[i].parentIndex;
+      if (parentIdx >= 0) childCounts[parentIdx] += (childCounts[i] + 1);
+    }
+
+    for (let i = 1; i < nodes.length; i++) {
+      const n = nodes[i];
+      const p = nodes[n.parentIndex];
+      const dist = p.pos.distanceTo(n.pos);
+      if (dist < 0.01) continue;
+
+      const rScale = Math.max(0.04, state.shared.trunkGirth * Math.pow(childCounts[i] / (nodes.length * 0.35), 0.45));
+      const nextRScale = Math.max(0.02, rScale * 0.85);
+
+      const branchGeo = new THREE.CylinderGeometry(nextRScale, rScale, dist, 6);
+      branchGeo.translate(0, dist / 2, 0);
+      const branchMesh = new THREE.Mesh(branchGeo, barkMat);
+      branchMesh.castShadow = true;
+      branchMesh.receiveShadow = true;
+
+      const dir = new THREE.Vector3().subVectors(n.pos, p.pos).normalize();
+      branchMesh.position.copy(p.pos);
+      const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+      branchMesh.quaternion.copy(q);
+      treeGroup.add(branchMesh);
+
+      const birthStart = (p.distance / maxDist) * 0.80;
+      const birthEnd = (n.distance / maxDist) * 0.82;
+
+      branchesData.push({
+        mesh: branchMesh,
+        birthTime: birthStart,
+        endTime: birthEnd,
+        startRadius: rScale,
+        endRadius: nextRScale,
+        length: dist,
+        startPos: p.pos.clone(),
+        endPos: n.pos.clone(),
+      });
+
+      if (childCounts[i] === 0) {
+        const isConifer = state.shared.leafShape === 'needle';
+        const numLeaves = isConifer ? Math.floor(8 + rng() * 8) : Math.floor(4 + rng() * 4);
+        for (let l = 0; l < numLeaves; l++) {
+          leavesData.push({
+            pos: n.pos.clone().add(new THREE.Vector3((rng() - 0.5) * 0.35, (rng() - 0.5) * 0.35, (rng() - 0.5) * 0.35)),
+            rot: new THREE.Euler(rng() * Math.PI, rng() * Math.PI * 2, rng() * Math.PI),
+            scale: 0.85 + rng() * 0.35,
+            birthTime: Math.min(0.98, birthEnd + rng() * 0.08),
+            endTime: 1.0,
+          });
+        }
+      }
+    }
+  }
+
+  // =========================================================================
+  // LEAF GEOMETRIES
+  // =========================================================================
+  function getLeafGeometry(shape) {
+    if (shape === 'needle') {
+      const needleCount = 12;
+      const geometries = [];
+
+      for (let i = 0; i < needleCount; i++) {
+        const needleAngle = (i / needleCount) * Math.PI * 2;
+        const pitch = 0.25 + (i % 3) * 0.18;
+        const needleLen = 0.22 + (i % 2) * 0.06;
+        const needleRadius = 0.005;
+
+        const singleGeo = new THREE.CylinderGeometry(0.002, needleRadius, needleLen, 3);
+        singleGeo.translate(0, needleLen / 2, 0);
+
+        const matrix = new THREE.Matrix4();
+        const rotZ = new THREE.Matrix4().makeRotationZ(pitch);
+        const rotY = new THREE.Matrix4().makeRotationY(needleAngle);
+        matrix.multiply(rotY).multiply(rotZ);
+        singleGeo.applyMatrix4(matrix);
+
+        geometries.push(singleGeo);
+      }
+
+      const merged = mergeBufferGeometries(geometries);
+      return merged || geometries[0];
+    } else if (shape === 'blossom') {
+      const geo = new THREE.CircleGeometry(0.16, 5);
+      return geo;
+    } else if (shape === 'faceted') {
+      const geo = new THREE.IcosahedronGeometry(0.24, 0);
+      return geo;
+    } else if (shape === 'ginkgo') {
+      const geo = new THREE.ConeGeometry(0.22, 0.28, 4, 1, false, 0, Math.PI);
+      return geo;
+    } else {
+      const leafShape = new THREE.Shape();
+      leafShape.moveTo(0, 0);
+      leafShape.quadraticCurveTo(0.16, 0.12, 0.14, 0.26);
+      leafShape.quadraticCurveTo(0.18, 0.32, 0.11, 0.40);
+      leafShape.quadraticCurveTo(0.04, 0.48, 0, 0.54);
+      leafShape.quadraticCurveTo(-0.04, 0.48, -0.11, 0.40);
+      leafShape.quadraticCurveTo(-0.18, 0.32, -0.14, 0.26);
+      leafShape.quadraticCurveTo(-0.16, 0.12, 0, 0);
+      const geo = new THREE.ShapeGeometry(leafShape);
+      geo.center();
+      return geo;
+    }
+  }
+
+  function mergeBufferGeometries(geos) {
+    let totalVerts = 0;
+    let totalIndices = 0;
+    geos.forEach(g => {
+      totalVerts += g.attributes.position.count;
+      if (g.index) totalIndices += g.index.count;
+    });
+
+    const posArray = new Float32Array(totalVerts * 3);
+    const normArray = new Float32Array(totalVerts * 3);
+    const indexArray = totalIndices > 0 ? new Uint32Array(totalIndices) : null;
+
+    let vertOffset = 0;
+    let indexOffset = 0;
+
+    geos.forEach(g => {
+      const pos = g.attributes.position.array;
+      posArray.set(pos, vertOffset * 3);
+
+      if (g.attributes.normal) {
+        const norm = g.attributes.normal.array;
+        normArray.set(norm, vertOffset * 3);
+      }
+
+      if (g.index && indexArray) {
+        const idx = g.index.array;
+        for (let i = 0; i < idx.length; i++) {
+          indexArray[indexOffset + i] = idx[i] + vertOffset;
+        }
+        indexOffset += idx.length;
+      }
+
+      vertOffset += g.attributes.position.count;
+    });
+
+    const merged = new THREE.BufferGeometry();
+    merged.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    merged.setAttribute('normal', new THREE.BufferAttribute(normArray, 3));
+    if (indexArray) merged.setIndex(new THREE.BufferAttribute(indexArray, 1));
+    return merged;
+  }
+
+  function getSeasonColor(season) {
+    switch (season) {
+      case 'summer': return 0x228b40;
+      case 'autumn': return 0xd97706;
+      case 'sakura': return 0xf472b6;
+      case 'spring':
+      default: return 0x76b820;
+    }
+  }
+
+  function buildLeavesInstancedMesh() {
+    if (leavesData.length === 0) return;
+
+    const geo = getLeafGeometry(state.shared.leafShape);
+    const leafColor = getSeasonColor(state.shared.season);
+
+    const mat = new THREE.MeshStandardMaterial({
+      color: leafColor,
+      roughness: 0.58,
+      metalness: 0.06,
+      side: THREE.DoubleSide,
+    });
+
+    leavesInstancedMesh = new THREE.InstancedMesh(geo, mat, leavesData.length);
+    leavesInstancedMesh.castShadow = true;
+    leavesInstancedMesh.receiveShadow = true;
+
+    const dummy = new THREE.Object3D();
+    for (let i = 0; i < leavesData.length; i++) {
+      const leaf = leavesData[i];
+      dummy.position.copy(leaf.pos);
+      dummy.rotation.copy(leaf.rot);
+      dummy.scale.set(0, 0, 0);
+      dummy.updateMatrix();
+      leavesInstancedMesh.setMatrixAt(i, dummy.matrix);
+    }
+    leavesInstancedMesh.instanceMatrix.needsUpdate = true;
+    treeGroup.add(leavesInstancedMesh);
+  }
+
+  // =========================================================================
+  // GROWTH SIMULATION UPDATE
+  // =========================================================================
+  function updateGrowthSimulation(progress) {
+    state.growthProgress = Math.max(0, Math.min(1, progress));
+
+    const slider = document.getElementById('growth-slider');
+    if (slider && Math.abs(parseFloat(slider.value) - (state.growthProgress * 100)) > 0.5) {
+      slider.value = (state.growthProgress * 100).toFixed(1);
+    }
+    const percentText = document.getElementById('growth-percent-text');
+    if (percentText) percentText.innerText = `${Math.round(state.growthProgress * 100)}%`;
+
+    const p = state.growthProgress;
+    let stageStr = "";
+    if (p < 0.20) stageStr = "Stage 1: Seedling Sprout";
+    else if (p < 0.55) stageStr = "Stage 2: Scaffold Branching";
+    else if (p < 0.80) stageStr = "Stage 3: Shoot Bifurcation";
+    else stageStr = "Stage 4: Mature Canopy";
+    document.getElementById('growth-stage-text').innerText = stageStr;
+
+    for (let b of branchesData) {
+      if (p <= b.birthTime) {
+        b.mesh.visible = false;
+        b.mesh.scale.set(0, 0, 0);
+      } else if (p >= b.endTime) {
+        b.mesh.visible = true;
+        b.mesh.scale.set(1, 1, 1);
+      } else {
+        b.mesh.visible = true;
+        const alpha = (p - b.birthTime) / (b.endTime - b.birthTime);
+        b.mesh.scale.set(Math.max(0.1, alpha), alpha, Math.max(0.1, alpha));
+      }
+    }
+
+    if (leavesInstancedMesh) {
+      const dummy = new THREE.Object3D();
+      const currentScale = state.shared.leafScale;
+
+      for (let i = 0; i < leavesData.length; i++) {
+        const leaf = leavesData[i];
+        dummy.position.copy(leaf.pos);
+        dummy.rotation.copy(leaf.rot);
+
+        if (p <= leaf.birthTime) {
+          dummy.scale.set(0, 0, 0);
+        } else {
+          const leafProgress = Math.min(1.0, (p - leaf.birthTime) / 0.08);
+          const s = leafProgress * leaf.scale * currentScale;
+          dummy.scale.set(s, s, s);
+        }
+        dummy.updateMatrix();
+        leavesInstancedMesh.setMatrixAt(i, dummy.matrix);
+      }
+      leavesInstancedMesh.instanceMatrix.needsUpdate = true;
+    }
+  }
+
+  // =========================================================================
+  // ANIMATION LOOP
+  // =========================================================================
+  function animate() {
+    requestAnimationFrame(animate);
+
+    windClock += 0.02 * (1 + state.shared.windIntensity * 2);
+
+    if (state.isPlaying) {
+      state.growthProgress += state.growthSpeed;
+      if (state.growthProgress >= 1.0) {
+        state.growthProgress = 1.0;
+        state.isPlaying = false;
+        updatePlayButtonUI();
+      }
+      updateGrowthSimulation(state.growthProgress);
+    }
+
+    if (dustParticles) {
+      const pos = dustParticles.geometry.attributes.position.array;
+      for (let i = 0; i < pos.length; i += 3) {
+        pos[i] += Math.sin(windClock * 0.5 + i) * 0.004 * state.shared.windIntensity;
+        pos[i + 1] += Math.cos(windClock * 0.3 + i) * 0.0015;
+        if (pos[i + 1] > 9) pos[i + 1] = 0.5;
+      }
+      dustParticles.geometry.attributes.position.needsUpdate = true;
+    }
+
+    if (leavesInstancedMesh && state.growthProgress > 0.75 && state.shared.windIntensity > 0) {
+      const dummy = new THREE.Object3D();
+      const sway = Math.sin(windClock) * 0.06 * state.shared.windIntensity;
+      const currentScale = state.shared.leafScale;
+
+      for (let i = 0; i < leavesData.length; i++) {
+        const leaf = leavesData[i];
+        if (state.growthProgress > leaf.birthTime) {
+          dummy.position.copy(leaf.pos);
+          dummy.rotation.set(
+            leaf.rot.x + sway * 0.5,
+            leaf.rot.y + sway,
+            leaf.rot.z + Math.cos(windClock * 0.8) * 0.04 * state.shared.windIntensity
+          );
+          const leafProgress = Math.min(1.0, (state.growthProgress - leaf.birthTime) / 0.08);
+          const s = leafProgress * leaf.scale * currentScale;
+          dummy.scale.set(s, s, s);
+          dummy.updateMatrix();
+          leavesInstancedMesh.setMatrixAt(i, dummy.matrix);
+        }
+      }
+      leavesInstancedMesh.instanceMatrix.needsUpdate = true;
+    }
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  // =========================================================================
+  // UI HANDLERS & COLLAPSIBLE LIGHT PEBBLE DRAWER
+  // =========================================================================
+  function togglePlayGrowth() {
+    if (state.growthProgress >= 1.0) {
+      state.growthProgress = 0.0;
+    }
+    state.isPlaying = !state.isPlaying;
+    updatePlayButtonUI();
+  }
+
+  function rewindGrowth() {
+    state.isPlaying = false;
+    updatePlayButtonUI();
+    updateGrowthSimulation(0.0);
+  }
+
+  function updatePlayButtonUI() {
+    const icon = document.getElementById('play-pause-icon');
+    const label = document.getElementById('play-pause-label');
+    if (state.isPlaying) {
+      icon.innerText = 'pause';
+      label.innerText = 'Pause';
+    } else {
+      icon.innerText = 'play_arrow';
+      label.innerText = 'Play';
+    }
+  }
+
+  function onScrubGrowth(val) {
+    state.isPlaying = false;
+    updatePlayButtonUI();
+    updateGrowthSimulation(parseFloat(val) / 100);
+  }
+
+  function setSpeed(speed, el) {
+    state.growthSpeed = 0.004 * speed;
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+      btn.className = "speed-btn px-2.5 py-0.5 border border-[#d2c7b5] text-[#1c2419] hover:text-black rounded-full transition-colors text-[11px] bg-[#fcfaf6] font-semibold";
+    });
+    el.className = "speed-btn px-2.5 py-0.5 border border-[#133d15] text-white font-bold bg-[#1b501e] rounded-full transition-colors text-[11px] shadow-sm";
+  }
+
+  // --- COLLAPSIBLE LIGHT PEBBLE DRAWER ---
+  function switchTab(tabId) {
+    const drawer = document.getElementById('controls-drawer');
+    const targetPanel = document.getElementById(`tab-panel-${tabId}`);
+    const targetBtn = document.getElementById(`tab-btn-${tabId}`);
+
+    if (state.activeTab === tabId && !drawer.classList.contains('hidden')) {
+      closeDrawer();
+      return;
+    }
+
+    state.activeTab = tabId;
+    drawer.classList.remove('hidden');
+
+    const TAB_INACTIVE = "tab-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-[#fcfaf6] text-[#1c2419] hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all";
+    const TAB_ACTIVE = "tab-btn px-3.5 py-1.5 text-xs font-extrabold rounded-full bg-[#1b501e] text-white shadow-md border-2 border-[#133d15] transition-all";
+
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.className = TAB_INACTIVE;
+    });
+
+    if (targetPanel) targetPanel.classList.remove('hidden');
+    if (targetBtn) {
+      targetBtn.className = TAB_ACTIVE;
+    }
+  }
+
+  function closeDrawer() {
+    const drawer = document.getElementById('controls-drawer');
+    drawer.classList.add('hidden');
+    state.activeTab = null;
+    const TAB_INACTIVE = "tab-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-[#fcfaf6] text-[#1c2419] hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all";
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.className = TAB_INACTIVE;
+    });
+  }
+
+  function toggleDrawer() {
+    const drawer = document.getElementById('controls-drawer');
+    if (drawer.classList.contains('hidden')) {
+      switchTab('architecture');
+    } else {
+      closeDrawer();
+    }
+  }
+
+  function selectAlgorithm(algo) {
+    state.algorithm = algo;
+
+    const isFractal = algo === 'fractal';
+    const panelFractal = document.getElementById('panel-fractal-params');
+    const panelColonization = document.getElementById('panel-colonization-params');
+    const indicator = document.getElementById('model-mode-indicator');
+    const hudName = document.getElementById('hud-algo-name');
+
+    const MODEL_INACTIVE = "px-3.5 py-1 text-xs font-semibold rounded-full transition-all bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] shadow-xs";
+    const MODEL_ACTIVE = "px-3.5 py-1 text-xs font-bold rounded-full transition-all bg-[#1b501e] text-white shadow-sm border border-[#133d15]";
+
+    if (isFractal) {
+      panelFractal.classList.remove('hidden');
+      panelColonization.classList.add('hidden');
+      indicator.innerText = "L-System branching equations";
+      hudName.innerText = "L-System Fractal";
+
+      document.getElementById('mini-toggle-fractal').className = MODEL_ACTIVE;
+      document.getElementById('mini-toggle-colonization').className = MODEL_INACTIVE;
+
+      document.getElementById('algo-fractal-btn').className = "algo-choice-btn px-3.5 py-1.5 rounded-2xl border-2 border-[#1b501e] bg-[#eef7ee] text-[#123814] text-xs text-left shadow-xs";
+      document.getElementById('algo-colonization-btn').className = "algo-choice-btn px-3.5 py-1.5 rounded-2xl border border-[#d2c7b5] bg-[#fcfaf6] text-[#1c2419] text-xs text-left shadow-xs";
+    } else {
+      panelFractal.classList.add('hidden');
+      panelColonization.classList.remove('hidden');
+      indicator.innerText = "Space Colonization parameters";
+      hudName.innerText = "Space Colonization";
+
+      document.getElementById('mini-toggle-fractal').className = MODEL_INACTIVE;
+      document.getElementById('mini-toggle-colonization').className = MODEL_ACTIVE;
+
+      document.getElementById('algo-fractal-btn').className = "algo-choice-btn px-3.5 py-1.5 rounded-2xl border border-[#d2c7b5] bg-[#fcfaf6] text-[#1c2419] text-xs text-left shadow-xs";
+      document.getElementById('algo-colonization-btn').className = "algo-choice-btn px-3.5 py-1.5 rounded-2xl border-2 border-[#1b501e] bg-[#eef7ee] text-[#123814] text-xs text-left shadow-xs";
+    }
+
+    rebuildCurrentTree();
+  }
+
+  function onSharedParamChange(param, val) {
+    const num = parseFloat(val);
+    switch (param) {
+      case 'trunk':
+        state.shared.trunkGirth = num;
+        document.getElementById('val-trunk').innerText = num.toFixed(2);
+        break;
+      case 'spread':
+        state.shared.crownSpread = num;
+        document.getElementById('val-spread').innerText = `${num.toFixed(1)}x`;
+        break;
+      case 'jitter':
+        state.shared.jitter = num;
+        document.getElementById('val-jitter').innerText = num.toFixed(2);
+        break;
+      case 'wind':
+        state.shared.windIntensity = num;
+        document.getElementById('val-wind').innerText = num > 0.6 ? 'Gusty' : (num > 0.2 ? 'Breeze' : 'Calm');
+        if (windGain && audioCtx) windGain.gain.setValueAtTime(0.08 * state.shared.windIntensity, audioCtx.currentTime);
+        break;
+    }
+    if (param !== 'wind') {
+      rebuildCurrentTree();
+    }
+  }
+
+  function onFractalParamChange(param, val) {
+    const num = parseFloat(val);
+    switch (param) {
+      case 'depth':
+        state.fractal.depth = parseInt(num);
+        document.getElementById('val-depth').innerText = num;
+        break;
+      case 'forks':
+        state.fractal.forksPerJoint = parseInt(num);
+        document.getElementById('val-forks').innerText = num;
+        break;
+      case 'angle':
+        state.fractal.angleDeg = num;
+        document.getElementById('val-angle').innerText = `${num}°`;
+        break;
+      case 'decay':
+        state.fractal.lengthDecay = num;
+        document.getElementById('val-decay').innerText = num.toFixed(2);
+        break;
+      case 'shoots':
+        state.fractal.lateralShootsPct = parseInt(num);
+        document.getElementById('val-shoots').innerText = `${num}%`;
+        break;
+    }
+    rebuildCurrentTree();
+  }
+
+  function onColParamChange(param, val) {
+    const num = parseFloat(val);
+    switch (param) {
+      case 'attractors':
+        state.colonization.numAttractors = parseInt(num);
+        document.getElementById('val-col-attractors').innerText = num;
+        break;
+      case 'step':
+        state.colonization.branchStepSize = num;
+        document.getElementById('val-col-step').innerText = num.toFixed(2);
+        break;
+      case 'kill':
+        state.colonization.killDistance = num;
+        document.getElementById('val-col-kill').innerText = num.toFixed(2);
+        break;
+      case 'radius':
+        state.colonization.influenceRadius = num;
+        document.getElementById('val-col-radius').innerText = num.toFixed(1);
+        break;
+    }
+    rebuildCurrentTree();
+  }
+
+  function setCrownShape(shape) {
+    state.colonization.crownShape = shape;
+    document.querySelectorAll('.crown-shape-btn').forEach(b => {
+      b.className = "crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs";
+    });
+    const active = document.getElementById(`crown-${shape}-btn`);
+    if (active) {
+      active.className = "crown-shape-btn px-2.5 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm";
+    }
+    rebuildCurrentTree();
+  }
+
+  function setLeafShape(shape) {
+    state.shared.leafShape = shape;
+    document.querySelectorAll('.leaf-shape-btn').forEach(b => {
+      b.className = "leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs";
+    });
+    const active = document.getElementById(`shape-${shape}-btn`);
+    if (active) {
+      active.className = "leaf-shape-btn px-3 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm";
+    }
+    rebuildCurrentTree();
+  }
+
+  function setSeason(season) {
+    state.shared.season = season;
+    document.querySelectorAll('.season-btn').forEach(b => {
+      b.className = "season-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs";
+    });
+    const active = document.getElementById(`season-${season}-btn`);
+    if (active) {
+      active.className = "season-btn px-3 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm";
+    }
+    rebuildCurrentTree();
+  }
+
+  function onLeafScaleChange(val) {
+    state.shared.leafScale = parseFloat(val);
+    document.getElementById('leaf-scale-text').innerText = `${state.shared.leafScale.toFixed(1)}x`;
+    updateGrowthSimulation(state.growthProgress);
+  }
+
+  function randomizeActiveModel() {
+    state.seed = Math.floor(Math.random() * 900000) + 10000;
+
+    if (state.algorithm === 'fractal') {
+      state.fractal.depth = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
+      state.fractal.forksPerJoint = Math.floor(Math.random() * 2) + 2; // 2 or 3
+      state.fractal.angleDeg = Math.floor(Math.random() * 38) + 22; // 22° to 60°
+      state.fractal.lengthDecay = parseFloat((Math.random() * 0.18 + 0.64).toFixed(2)); // 0.64 to 0.82
+      state.fractal.lateralShootsPct = Math.floor(Math.random() * 9) * 5 + 10; // 10% to 50%
+    } else {
+      const shapes = ['oak-dome', 'pyramid', 'umbrella', 'sphere', 'weeping'];
+      state.colonization.crownShape = shapes[Math.floor(Math.random() * shapes.length)];
+      state.colonization.numAttractors = Math.floor(Math.random() * 9) * 50 + 300; // 300 to 700
+      state.colonization.branchStepSize = parseFloat((Math.random() * 0.20 + 0.24).toFixed(2)); // 0.24 to 0.44
+      state.colonization.killDistance = parseFloat((Math.random() * 0.26 + 0.32).toFixed(2)); // 0.32 to 0.58
+      state.colonization.influenceRadius = parseFloat((Math.random() * 1.4 + 1.8).toFixed(1)); // 1.8 to 3.2
+    }
+
+    syncAllInputsToState();
+    if (state.algorithm === 'colonization') {
+      setCrownShape(state.colonization.crownShape);
+    }
+    rebuildCurrentTree();
+  }
+
+  function randomizeTree() {
+    state.seed = Math.floor(Math.random() * 999999);
+    rebuildCurrentTree();
+  }
+
+  function applyPreset(type) {
+    if (type === 'sprawling-oak') {
+      state.algorithm = 'fractal';
+      state.shared.leafShape = 'broadleaf';
+      state.shared.season = 'summer';
+      state.shared.trunkGirth = 0.44;
+      state.shared.crownSpread = 1.5;
+      state.shared.jitter = 0.50;
+      state.shared.leafScale = 1.0;
+
+      state.fractal.depth = 5;
+      state.fractal.forksPerJoint = 3;
+      state.fractal.angleDeg = 44;
+      state.fractal.lengthDecay = 0.74;
+      state.fractal.lateralShootsPct = 40;
+    } else if (type === 'colonization-oak') {
+      state.algorithm = 'colonization';
+      state.shared.leafShape = 'broadleaf';
+      state.shared.season = 'summer';
+      state.shared.trunkGirth = 0.46;
+      state.shared.crownSpread = 1.6;
+      state.shared.jitter = 0.52;
+      state.shared.leafScale = 1.0;
+
+      state.colonization.crownShape = 'oak-dome';
+      state.colonization.numAttractors = 600;
+      state.colonization.branchStepSize = 0.30;
+      state.colonization.killDistance = 0.38;
+      state.colonization.influenceRadius = 2.6;
+    } else if (type === 'nordic-pine') {
+      state.algorithm = 'colonization';
+      state.shared.leafShape = 'needle';
+      state.shared.season = 'summer';
+      state.shared.trunkGirth = 0.32;
+      state.shared.crownSpread = 1.0;
+      state.shared.jitter = 0.20;
+      state.shared.leafScale = 1.2;
+
+      state.colonization.crownShape = 'pyramid';
+      state.colonization.numAttractors = 450;
+      state.colonization.branchStepSize = 0.34;
+      state.colonization.killDistance = 0.44;
+      state.colonization.influenceRadius = 2.4;
+    } else if (type === 'cherry-blossom') {
+      state.algorithm = 'fractal';
+      state.shared.leafShape = 'blossom';
+      state.shared.season = 'sakura';
+      state.shared.trunkGirth = 0.34;
+      state.shared.crownSpread = 1.3;
+      state.shared.jitter = 0.45;
+      state.shared.leafScale = 1.1;
+
+      state.fractal.depth = 5;
+      state.fractal.forksPerJoint = 3;
+      state.fractal.angleDeg = 42;
+      state.fractal.lengthDecay = 0.75;
+      state.fractal.lateralShootsPct = 35;
+    } else if (type === 'zen-bonsai') {
+      state.algorithm = 'fractal';
+      state.shared.leafShape = 'faceted';
+      state.shared.season = 'spring';
+      state.shared.trunkGirth = 0.46;
+      state.shared.crownSpread = 1.2;
+      state.shared.jitter = 0.65;
+      state.shared.leafScale = 1.3;
+
+      state.fractal.depth = 4;
+      state.fractal.forksPerJoint = 2;
+      state.fractal.angleDeg = 48;
+      state.fractal.lengthDecay = 0.70;
+      state.fractal.lateralShootsPct = 20;
+    }
+
+    syncAllInputsToState();
+    selectAlgorithm(state.algorithm);
+    if (state.algorithm === 'colonization') {
+      setCrownShape(state.colonization.crownShape);
+    }
+    setLeafShape(state.shared.leafShape);
+    setSeason(state.shared.season);
+  }
+
+  function syncAllInputsToState() {
+    document.getElementById('slider-trunk').value = state.shared.trunkGirth;
+    document.getElementById('val-trunk').innerText = state.shared.trunkGirth.toFixed(2);
+    document.getElementById('slider-spread').value = state.shared.crownSpread;
+    document.getElementById('val-spread').innerText = `${state.shared.crownSpread.toFixed(1)}x`;
+    document.getElementById('slider-jitter').value = state.shared.jitter;
+    document.getElementById('val-jitter').innerText = state.shared.jitter.toFixed(2);
+    document.getElementById('leaf-scale-slider').value = state.shared.leafScale;
+    document.getElementById('leaf-scale-text').innerText = `${state.shared.leafScale.toFixed(1)}x`;
+
+    document.getElementById('slider-depth').value = state.fractal.depth;
+    document.getElementById('val-depth').innerText = state.fractal.depth;
+    document.getElementById('slider-forks').value = state.fractal.forksPerJoint;
+    document.getElementById('val-forks').innerText = state.fractal.forksPerJoint;
+    document.getElementById('slider-angle').value = state.fractal.angleDeg;
+    document.getElementById('val-angle').innerText = `${state.fractal.angleDeg}°`;
+    document.getElementById('slider-decay').value = state.fractal.lengthDecay;
+    document.getElementById('val-decay').innerText = state.fractal.lengthDecay.toFixed(2);
+    document.getElementById('slider-shoots').value = state.fractal.lateralShootsPct;
+    document.getElementById('val-shoots').innerText = `${state.fractal.lateralShootsPct}%`;
+
+    document.getElementById('slider-col-attractors').value = state.colonization.numAttractors;
+    document.getElementById('val-col-attractors').innerText = state.colonization.numAttractors;
+    document.getElementById('slider-col-step').value = state.colonization.branchStepSize;
+    document.getElementById('val-col-step').innerText = state.colonization.branchStepSize.toFixed(2);
+    document.getElementById('slider-col-kill').value = state.colonization.killDistance;
+    document.getElementById('val-col-kill').innerText = state.colonization.killDistance.toFixed(2);
+    document.getElementById('slider-col-radius').value = state.colonization.influenceRadius;
+    document.getElementById('val-col-radius').innerText = state.colonization.influenceRadius.toFixed(1);
+  }
+
+  // =========================================================================
+  // GENERATIVE AMBIENT NATURE & MUSIC ENGINE (WEB AUDIO API)
+  // =========================================================================
+  function initAudioEngine() {
+    if (audioCtx) return;
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext();
+
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+    masterGain.connect(audioCtx.destination);
+
+    initWindLayer();
+    initChordsLayer();
+    initBirdsLayer();
+  }
+
+  function initWindLayer() {
+    const bufferSize = audioCtx.sampleRate * 4;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      b0 = 0.99886 * b0 + white * 0.0555179;
+      b1 = 0.99332 * b1 + white * 0.0750759;
+      b2 = 0.96900 * b2 + white * 0.1538520;
+      b3 = 0.86650 * b3 + white * 0.3104856;
+      b4 = 0.55000 * b4 + white * 0.5329522;
+      b5 = -0.7616 * b5 - white * 0.0168980;
+      output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+      b6 = white * 0.115926;
+    }
+
+    const whiteNoise = audioCtx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+
+    windFilter = audioCtx.createBiquadFilter();
+    windFilter.type = "bandpass";
+    windFilter.frequency.setValueAtTime(450, audioCtx.currentTime);
+    windFilter.Q.setValueAtTime(1.8, audioCtx.currentTime);
+
+    windGain = audioCtx.createGain();
+    windGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+    whiteNoise.connect(windFilter);
+    windFilter.connect(windGain);
+    windGain.connect(masterGain);
+    whiteNoise.start();
+
+    setInterval(() => {
+      if (!audioCtx || !isAudioPlaying) return;
+      const targetFreq = 300 + Math.random() * 450;
+      windFilter.frequency.exponentialRampToValueAtTime(targetFreq, audioCtx.currentTime + 3.0);
+    }, 3500);
+  }
+
+  function initChordsLayer() {
+    chordsGain = audioCtx.createGain();
+    chordsGain.gain.setValueAtTime(0.32, audioCtx.currentTime);
+    chordsGain.connect(masterGain);
+
+    const chordProgressions = [
+      [261.63, 329.63, 392.00, 493.88, 587.33],
+      [220.00, 261.63, 329.63, 392.00, 493.88],
+      [174.61, 261.63, 329.63, 349.23, 440.00],
+      [196.00, 261.63, 293.66, 392.00, 440.00],
+    ];
+
+    function playNextChord() {
+      if (!isAudioPlaying || !audioCtx) return;
+      const notes = chordProgressions[chordStep % chordProgressions.length];
+      chordStep++;
+
+      const now = audioCtx.currentTime;
+      notes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const noteGain = audioCtx.createGain();
+
+        osc.type = idx % 2 === 0 ? "sine" : "triangle";
+        osc.frequency.setValueAtTime(freq, now);
+
+        noteGain.gain.setValueAtTime(0.0001, now);
+        noteGain.gain.linearRampToValueAtTime(0.038, now + 1.8);
+        noteGain.gain.exponentialRampToValueAtTime(0.0001, now + 5.5);
+
+        osc.connect(noteGain);
+        noteGain.connect(chordsGain);
+
+        osc.start(now);
+        osc.stop(now + 6.0);
+      });
+    }
+
+    playNextChord();
+    audioTimerId = setInterval(playNextChord, 5200);
+  }
+
+  function initBirdsLayer() {
+    birdsGain = audioCtx.createGain();
+    birdsGain.gain.setValueAtTime(0.20, audioCtx.currentTime);
+    birdsGain.connect(masterGain);
+
+    function triggerBirdsong() {
+      if (!isAudioPlaying || !audioCtx) return;
+      const numPips = 2 + Math.floor(Math.random() * 3);
+      let t = audioCtx.currentTime;
+
+      for (let i = 0; i < numPips; i++) {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = "sine";
+
+        const startFreq = 2800 + Math.random() * 1200;
+        const endFreq = startFreq + (Math.random() > 0.5 ? 800 : -600);
+
+        osc.frequency.setValueAtTime(startFreq, t);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, t + 0.08);
+
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.035, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+
+        osc.connect(g);
+        g.connect(birdsGain);
+
+        osc.start(t);
+        osc.stop(t + 0.1);
+
+        t += 0.12 + Math.random() * 0.06;
+      }
+
+      const nextDelay = 4500 + Math.random() * 8000;
+      setTimeout(triggerBirdsong, nextDelay);
+    }
+
+    triggerBirdsong();
+  }
+
+  function toggleAudio() {
+    initAudioEngine();
+
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+
+    isAudioPlaying = !isAudioPlaying;
+
+    const icon = document.getElementById('audio-icon');
+    const label = document.getElementById('audio-label');
+    const tabLabel = document.getElementById('sound-tab-btn-label');
+
+    if (isAudioPlaying) {
+      masterGain.gain.setValueAtTime(parseFloat(document.getElementById('audio-volume-slider').value), audioCtx.currentTime);
+      icon.innerText = 'volume_up';
+      label.innerText = 'Sound: On';
+      tabLabel.innerText = 'Turn Off';
+    } else {
+      masterGain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      icon.innerText = 'volume_off';
+      label.innerText = 'Sound: Off';
+      tabLabel.innerText = 'Turn On';
+    }
+  }
+
+  function setAudioVolume(val) {
+    const vol = parseFloat(val);
+    document.getElementById('volume-val-text').innerText = `${Math.round(vol * 100)}%`;
+    if (audioCtx && masterGain && isAudioPlaying) {
+      masterGain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    }
+  }
+
+  function toggleAudioLayer(layer, isChecked) {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    if (layer === 'chords' && chordsGain) {
+      chordsGain.gain.setValueAtTime(isChecked ? 0.32 : 0.0001, now);
+    } else if (layer === 'wind' && windGain) {
+      windGain.gain.setValueAtTime(isChecked ? 0.08 : 0.0001, now);
+    } else if (layer === 'birds' && birdsGain) {
+      birdsGain.gain.setValueAtTime(isChecked ? 0.20 : 0.0001, now);
+    }
+  }
+
+</script>
+{% endblock %}

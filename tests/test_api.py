@@ -66,6 +66,13 @@ def test_interactive_neondj_view(client):
     assert "NeonDJ: 90s Turntable" in response.text
 
 
+def test_interactive_canopy_view(client):
+    response = client.get("/interactive/canopy")
+    assert response.status_code == 200
+    assert "Canopy Growing Algorithm" in response.text
+    assert "Growth Model" in response.text
+
+
 def test_api_get_days(client):
     response = client.get("/api/days")
     assert response.status_code == 200

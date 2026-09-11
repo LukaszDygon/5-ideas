@@ -211,6 +211,16 @@ async def interactive_neondj(request: Request):
     )
 
 
+@app.get("/interactive/canopy", response_class=HTMLResponse)
+async def interactive_canopy(request: Request):
+    """3D procedural rooftop canopy growing algorithm simulation."""
+    return templates.TemplateResponse(
+        request=request,
+        name="canopy.html",
+        context={},
+    )
+
+
 @app.get("/random", response_class=RedirectResponse)
 async def random_day():
     """Jump to a random day or top implementation."""
