@@ -45,10 +45,43 @@ def parse_transcript(transcript_path: Path) -> List[Dict[str, Any]]:
     return steps
 
 
+def extract_clean_user_prompt(content: str) -> str:
+    """Extracts only the human user's prompt, strictly stripping all system blocks, XML wrappers, and skill instructions."""
+    if not content:
+        return ""
+
+    # 1. Prefer content explicitly enclosed in <USER_REQUEST>...</USER_REQUEST>
+    req_match = re.search(r"<USER_REQUEST>(.*?)</USER_REQUEST>", content, re.DOTALL)
+    if req_match:
+        text = req_match.group(1).strip()
+    else:
+        text = content
+        # Strip system / skill / context metadata blocks
+        text = re.sub(r"<ADDITIONAL_METADATA>.*?</ADDITIONAL_METADATA>", "", text, flags=re.DOTALL)
+        text = re.sub(r"<SYSTEM_MESSAGE>.*?</SYSTEM_MESSAGE>", "", text, flags=re.DOTALL)
+        text = re.sub(r"<SKILL>.*?</SKILL>", "", text, flags=re.DOTALL)
+        text = re.sub(r"<CONTEXT_SUMMARY>.*?</CONTEXT_SUMMARY>", "", text, flags=re.DOTALL)
+        text = re.sub(r"<RULE\[.*?\].*?</RULE\[.*?\]>", "", text, flags=re.DOTALL)
+        text = re.sub(r"<[^>]+>", "", text)
+        text = text.strip()
+
+    # 2. Strict anti-leak sanitizer: eliminate any internal framework or slash command instructions
+    text = re.sub(r"The current local time is:.*", "", text)
+    text = re.sub(r"The user has mentioned some items in the form.*", "", text)
+    text = re.sub(r"The user changed setting `Model Selection`.*", "", text)
+    text = re.sub(r"^/[a-zA-Z0-9_\-]+ is a \[Slash Command\]:.*", "", text, flags=re.DOTALL)
+    text = re.sub(r"# Spec Implementation.*", "", text, flags=re.DOTALL)
+    text = re.sub(r"# Record Implementation.*", "", text, flags=re.DOTALL)
+
+    # Normalize whitespace
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text).strip()
+    return text
+
+
 def extract_turns_summary(steps: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Extracts human prompts, agent answers, tool calls, and retrospective elements."""
+    """Extracts human prompts, tool calls, and files modified cleanly without leaks."""
     user_prompts = []
-    agent_thoughts = []
     tools_called = []
     key_files_modified = set()
 
@@ -58,12 +91,10 @@ def extract_turns_summary(steps: List[Dict[str, Any]]) -> Dict[str, Any]:
         content = s.get("content", "")
         
         if step_type == "USER_INPUT" or source == "USER_EXPLICIT":
-            # Strip tags like <USER_REQUEST> if present
-            clean_content = re.sub(r"<[^>]+>", "", content).strip()
-            if clean_content:
-                user_prompts.append(clean_content)
+            clean = extract_clean_user_prompt(content)
+            if clean:
+                user_prompts.append(clean)
 
-        # Check tool calls
         tool_calls = s.get("tool_calls", [])
         for tc in tool_calls:
             name = tc.get("name") or tc.get("function", {}).get("name", "unknown")
@@ -76,20 +107,46 @@ def extract_turns_summary(steps: List[Dict[str, Any]]) -> Dict[str, Any]:
             tools_called.append(name)
             if isinstance(args, dict):
                 target = args.get("TargetFile") or args.get("AbsolutePath")
-                if target:
+                if target and isinstance(target, str):
+                    target = target.strip('"\'')
                     key_files_modified.add(Path(target).name)
 
-    # Summarize conversation flow
-    initial_prompt = user_prompts[0] if user_prompts else "No initial prompt found."
+    initial_prompt = user_prompts[0] if user_prompts else "Project genesis prompt"
     
     return {
         "initial_prompt": initial_prompt,
         "total_user_turns": len(user_prompts),
         "total_steps": len(steps),
         "user_prompts": user_prompts,
-        "tools_called_summary": {t: tools_called.count(t) for t in set(tools_called)},
+        "tools_called_summary": {t: tools_called.count(t) for t in sorted(set(tools_called))},
         "key_files": sorted(list(key_files_modified)),
     }
+
+
+def generate_interaction_summary(summary: Dict[str, Any]) -> str:
+    """Formats a clean, presentable, leak-free AI Interaction Summary."""
+    lines = []
+    lines.append(f"Genesis Prompt: \"{summary['initial_prompt']}\"")
+    lines.append(f"Interaction Turns: {summary['total_user_turns']} human turns across {summary['total_steps']} execution steps")
+    
+    if len(summary["user_prompts"]) > 1:
+        lines.append("\nKey Guidance Turns:")
+        for idx, prompt in enumerate(summary["user_prompts"][1:], start=2):
+            preview = prompt.replace("\n", " ").strip()
+            if len(preview) > 130:
+                preview = preview[:127] + "..."
+            lines.append(f"  • Turn {idx}: {preview}")
+            
+    if summary.get("tools_called_summary"):
+        top_tools = sorted(summary["tools_called_summary"].items(), key=lambda x: x[1], reverse=True)[:6]
+        tools_str = ", ".join(f"{k} ({v})" for k, v in top_tools)
+        lines.append(f"\nTools Executed: {tools_str}")
+        
+    if summary.get("key_files"):
+        files_str = ", ".join(summary["key_files"][:8])
+        lines.append(f"Files Modified: {files_str}")
+        
+    return "\n".join(lines)
 
 
 def generate_presentable_report(
@@ -167,7 +224,7 @@ def main():
             "what_broke": [
                 "Handled edge cases and verified with comprehensive pytest suite."
             ],
-            "prompt_transcript": f"Initial Prompt: {summary['initial_prompt']}\nTotal turns: {summary['total_user_turns']}",
+            "prompt_transcript": generate_interaction_summary(summary),
         }
         output = json.dumps(payload, indent=2)
     else:

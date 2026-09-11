@@ -117,7 +117,7 @@ def test_admin_visibility_and_transcript_label(client, monkeypatch):
     day_resp = client.get("/day/2026-09-10")
     assert day_resp.status_code == 200
     assert 'href="/admin/day/2026-09-10/edit"' in day_resp.text
-    assert "AI transcript summary" in day_resp.text
+    assert "AI Interaction Summary" in day_resp.text
 
     # Test hosted static mode: admin links should be hidden
     monkeypatch.setenv("HOSTED_STATIC", "1")
@@ -128,4 +128,4 @@ def test_admin_visibility_and_transcript_label(client, monkeypatch):
     day_resp_hosted = client.get("/day/2026-09-10")
     assert day_resp_hosted.status_code == 200
     assert 'href="/admin/day/2026-09-10/edit"' not in day_resp_hosted.text
-    assert "AI transcript summary" in day_resp_hosted.text
+    assert "AI Interaction Summary" in day_resp_hosted.text

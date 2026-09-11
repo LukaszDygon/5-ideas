@@ -23,6 +23,7 @@ import db
 from scripts.capture_process import (
     extract_turns_summary,
     find_latest_transcript,
+    generate_interaction_summary,
     parse_transcript,
 )
 
@@ -99,20 +100,13 @@ def save_prototype_implementation(
     if not target_idea:
         raise ValueError(f"Idea #{idea_number} not found for day '{date_str}'. Available ideas: 1 to {len(ideas)}.")
 
-    # Auto-extract from transcript if requested
+    # Auto-extract AI Interaction Summary from transcript if requested
     if auto_extract_transcript and not prompt_transcript:
         t_path = find_latest_transcript()
         if t_path and t_path.exists():
             steps_data = parse_transcript(t_path)
             turn_summary = extract_turns_summary(steps_data)
-            prompt_transcript = (
-                f"Initial Prompt: {turn_summary['initial_prompt']}\n"
-                f"Total Turns: {turn_summary['total_user_turns']}\n"
-                f"Tools Used: {', '.join(f'{k} ({v})' for k, v in turn_summary['tools_called_summary'].items())}\n"
-                f"Files Touched: {', '.join(turn_summary['key_files'])}"
-            )
-            if not summary:
-                summary = turn_summary["initial_prompt"][:200]
+            prompt_transcript = generate_interaction_summary(turn_summary)
 
     # Resolve defaults
     proto_title = title.strip() if (title and title.strip()) else target_idea["title"]
@@ -190,8 +184,8 @@ def main():
     parser.add_argument("--steps", default="", help="Process steps (lines of 'Title: Description' or JSON)")
     parser.add_argument("--rocked", default="", help="What rocked (lines or JSON)")
     parser.add_argument("--broke", default="", help="What broke & fixed (lines or JSON)")
-    parser.add_argument("--transcript", default="", help="Transcript summary")
-    parser.add_argument("--auto-transcript", action="store_true", help="Auto-extract turns and tools from latest transcript")
+    parser.add_argument("--transcript", "--interaction-summary", dest="transcript", default="", help="AI interaction summary (leak-free)")
+    parser.add_argument("--auto-transcript", "--auto-summary", dest="auto_transcript", action="store_true", help="Auto-extract leak-free AI interaction summary from latest transcript")
     parser.add_argument("--json-file", help="Path to JSON file containing implementation fields")
     parser.add_argument("--json", action="store_true", help="Output result as JSON")
 

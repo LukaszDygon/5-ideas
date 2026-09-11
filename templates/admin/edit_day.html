@@ -254,8 +254,8 @@
       </div>
 
       <div>
-        <label class="font-mono text-xs font-bold text-ink block mb-1">Prompt Transcript / Human + AI Conversation Turns</label>
-        <textarea name="impl_transcript" rows="3" placeholder="User: Build me a 90s MTV-style turntable...&#10;Agent: Generated oscillator nodes..." class="neo-textarea font-mono text-xs">{{ cur_impl.prompt_transcript if cur_impl else '' }}</textarea>
+        <label class="font-mono text-xs font-bold text-ink block mb-1">AI Interaction Summary</label>
+        <textarea name="impl_transcript" rows="3" placeholder="Genesis Prompt: &quot;...&quot;&#10;Interaction Turns: 5 human turns across 40 execution steps&#10;Tools Executed: ...&#10;Files Modified: ..." class="neo-textarea font-mono text-xs">{{ cur_impl.prompt_transcript if cur_impl else '' }}</textarea>
       </div>
     </div>
 
