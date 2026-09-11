@@ -53,7 +53,7 @@
         <span class="material-symbols-outlined text-primary-magenta">tips_and_updates</span>
         <span>The 5 Morning Sparks</span>
       </h2>
-      <span class="font-mono text-xs text-gray-600 font-bold">1 Shipped Prototype</span>
+      <span class="font-mono text-xs text-gray-600 font-bold">{% if impl and impl.implementation %}1 Shipped Prototype{% else %}Prototype In Progress{% endif %}</span>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -278,6 +278,29 @@
     </div>
     {% endif %}
 
+  </section>
+  {% else %}
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-8 text-center flex flex-col items-center gap-3">
+    <div class="inline-flex items-center gap-2">
+      <span class="neo-badge bg-tertiary-yellow text-ink text-xs font-black animate-pulse">
+        ⚡ IN PROGRESS
+      </span>
+      <span class="font-mono text-xs font-bold text-gray-600 uppercase">
+        Morning Sparks Logged
+      </span>
+    </div>
+    <h2 class="font-display font-black text-3xl uppercase text-ink">
+      Prototype Not Shipped Yet
+    </h2>
+    <p class="font-body text-sm text-gray-700 max-w-lg">
+      The 5 morning sparks are live for today! One prototype is currently being forged and will be deployed before sundown.
+    </p>
+    {% if not is_hosted %}
+    <a href="/admin/day/{{ day.date }}/edit" class="neo-btn neo-btn-primary text-xs py-2 px-4 mt-2 inline-flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-sm">rocket_launch</span>
+      <span>Implement & Ship Prototype Now</span>
+    </a>
+    {% endif %}
   </section>
   {% endif %}
 

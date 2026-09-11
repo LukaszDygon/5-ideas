@@ -154,6 +154,7 @@
               <th class="p-3">Implementation Title</th>
               <th class="p-3">Type</th>
               <th class="p-3">Time</th>
+              <th class="p-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-ink/20">
@@ -169,6 +170,16 @@
                 <span class="neo-badge bg-canvas text-ink text-[10px]">{{ item.build_type | upper }}</span>
               </td>
               <td class="p-3 font-mono text-gray-600">{{ item.time_spent_hours }}h</td>
+              <td class="p-3 text-right">
+                <div class="inline-flex items-center gap-1.5">
+                  <a href="/day/{{ item.day_date }}" class="neo-btn neo-btn-white text-[11px] py-1 px-2" title="View live page">
+                    View
+                  </a>
+                  <a href="/admin/day/{{ item.day_date }}/edit" class="neo-btn neo-btn-yellow text-[11px] py-1 px-2" title="Edit day and prototype">
+                    Edit
+                  </a>
+                </div>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -223,7 +234,9 @@
                   ⚡ {{ impl.implementation.title }} ({{ impl.implementation.build_type }})
                 </span>
               {% else %}
-                <span class="text-gray-400 font-mono">None</span>
+                <span class="neo-badge bg-tertiary-yellow text-ink text-[10px] font-bold">
+                  ⏳ IN PROGRESS (Sparks Logged)
+                </span>
               {% endif %}
             </td>
             <td class="p-3 text-right">
@@ -231,6 +244,11 @@
                 <a href="/day/{{ day.date }}" class="neo-btn neo-btn-white text-[11px] py-1 px-2" title="View live page">
                   View
                 </a>
+                {% if not impl %}
+                <a href="/admin/day/{{ day.date }}/edit" class="neo-btn neo-btn-primary text-[11px] py-1 px-2" title="Implement and ship prototype">
+                  ⚡ Ship Prototype
+                </a>
+                {% endif %}
                 <a href="/admin/day/{{ day.date }}/edit" class="neo-btn neo-btn-yellow text-[11px] py-1 px-2" title="Edit day">
                   Edit
                 </a>

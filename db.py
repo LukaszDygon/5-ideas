@@ -179,6 +179,31 @@ def get_day_by_date(date_str: str, db_path: Path | str | None = None) -> Optiona
     return day_dict
 
 
+def get_day_by_id(day_id: int, db_path: Path | str | None = None) -> Optional[Dict[str, Any]]:
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM days WHERE id = ?", (day_id,))
+    day_row = cursor.fetchone()
+    if not day_row:
+        conn.close()
+        return None
+
+    day_dict = row_to_dict(day_row)
+    cursor.execute("SELECT * FROM ideas WHERE day_id = ? ORDER BY idea_number ASC", (day_dict["id"],))
+    ideas_rows = cursor.fetchall()
+    ideas = []
+    for i_row in ideas_rows:
+        i_dict = row_to_dict(i_row)
+        cursor.execute("SELECT * FROM implementations WHERE idea_id = ?", (i_dict["id"],))
+        impl_row = cursor.fetchone()
+        i_dict["implementation"] = row_to_dict(impl_row) if impl_row else None
+        ideas.append(i_dict)
+    day_dict["ideas"] = ideas
+    day_dict["implemented_idea"] = next((i for i in ideas if i["is_implemented"] and i["implementation"]), None)
+    conn.close()
+    return day_dict
+
+
 def get_ranked_implementations(db_path: Path | str | None = None) -> List[Dict[str, Any]]:
     """Returns all implementations ordered by rank ascending (1 is best)."""
     conn = get_db(db_path)
@@ -251,25 +276,36 @@ def save_day(
     ideas_data: Optional[List[Dict[str, Any]]] = None,
     db_path: Path | str | None = None,
     auto_export: bool = True,
+    day_id: Optional[int] = None,
 ) -> int:
     """Creates or updates a day with its 5 ideas and implementation atomically."""
     conn = get_db(db_path)
     with conn:
         cursor = conn.cursor()
-        cursor.execute(
-            """
-            INSERT INTO days (date, theme, subtitle, streak_count, notes)
-            VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT(date) DO UPDATE SET
-                theme = excluded.theme,
-                subtitle = excluded.subtitle,
-                streak_count = excluded.streak_count,
-                notes = excluded.notes
-            """,
-            (date_str, theme, subtitle, streak_count, notes),
-        )
-        cursor.execute("SELECT id FROM days WHERE date = ?", (date_str,))
-        day_id = cursor.fetchone()[0]
+        if day_id is not None:
+            cursor.execute(
+                """
+                UPDATE days
+                SET date = ?, theme = ?, subtitle = ?, streak_count = ?, notes = ?
+                WHERE id = ?
+                """,
+                (date_str, theme, subtitle, streak_count, notes, day_id),
+            )
+        else:
+            cursor.execute(
+                """
+                INSERT INTO days (date, theme, subtitle, streak_count, notes)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(date) DO UPDATE SET
+                    theme = excluded.theme,
+                    subtitle = excluded.subtitle,
+                    streak_count = excluded.streak_count,
+                    notes = excluded.notes
+                """,
+                (date_str, theme, subtitle, streak_count, notes),
+            )
+            cursor.execute("SELECT id FROM days WHERE date = ?", (date_str,))
+            day_id = cursor.fetchone()[0]
 
         if ideas_data:
             cursor.execute("DELETE FROM ideas WHERE day_id = ?", (day_id,))

@@ -6,27 +6,49 @@
 <div class="max-w-4xl mx-auto flex flex-col gap-6">
 
   <!-- HEADER -->
-  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex items-center justify-between">
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-      <div class="font-mono text-xs font-bold uppercase text-primary-magenta tracking-wider">
-        CONTENT EDITOR
+      <div class="flex items-center gap-2 mb-1">
+        <span class="font-mono text-xs font-bold uppercase text-primary-magenta tracking-wider">
+          CONTENT EDITOR // 5 IDEAS SHOWCASE
+        </span>
+        {% if not is_new and day %}
+          {% if day.implemented_idea %}
+            <span class="neo-badge bg-acid-lime text-ink text-[10px] font-black">
+              ⚡ PROTOTYPE SHIPPED
+            </span>
+          {% else %}
+            <span class="neo-badge bg-tertiary-yellow text-ink text-[10px] font-black">
+              ⏳ SPARKS LOGGED (IN PROGRESS)
+            </span>
+          {% endif %}
+        {% endif %}
       </div>
       <h1 class="font-display font-black text-3xl uppercase text-ink">
         {% if is_new %}Create New Daily Drop{% else %}Edit Day: {{ day.date }}{% endif %}
       </h1>
     </div>
-    <a href="/admin" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
-      Cancel
-    </a>
+    <div class="flex items-center gap-2">
+      {% if not is_new and day %}
+      <a href="/day/{{ day.date }}" class="neo-btn neo-btn-white text-xs py-1.5 px-3" target="_blank">
+        <span class="material-symbols-outlined text-sm">visibility</span>
+        <span>View Live</span>
+      </a>
+      {% endif %}
+      <a href="/admin" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
+        Cancel
+      </a>
+    </div>
   </div>
 
   <!-- FORM -->
-  <form method="POST" class="flex flex-col gap-6">
+  <form method="POST" class="flex flex-col gap-6" id="dayEditForm">
     
     <!-- 1. DAY METADATA -->
     <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
-      <h2 class="font-display font-black text-xl uppercase border-b-2 border-ink pb-2 text-ink">
-        1. Day Metadata & Theme
+      <h2 class="font-display font-black text-xl uppercase border-b-2 border-ink pb-2 text-ink flex items-center justify-between">
+        <span>1. Day Metadata & Theme</span>
+        <span class="font-mono text-xs text-gray-500 font-bold">CORE INFO</span>
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -36,7 +58,7 @@
         </div>
         <div>
           <label class="font-mono text-xs font-bold text-ink block mb-1">Streak Count*</label>
-          <input type="number" name="streak_count" value="{{ day.streak_count if day else 143 }}" required class="neo-input font-bold"/>
+          <input type="number" name="streak_count" value="{{ day.streak_count if day else 1 }}" required class="neo-input font-bold"/>
         </div>
         <div class="sm:col-span-1">
           <label class="font-mono text-xs font-bold text-ink block mb-1">Theme*</label>
@@ -56,32 +78,57 @@
     </div>
 
     <!-- 2. THE 5 IDEAS -->
+    {% set existing_ideas = day.ideas if (day and day.ideas) else [] %}
+    {% set impl_idea = day.implemented_idea if day else None %}
+    {% set selected_idx = impl_idea.idea_number if impl_idea else 0 %}
+
     <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-6">
-      <div class="flex items-center justify-between border-b-2 border-ink pb-2">
-        <h2 class="font-display font-black text-xl uppercase text-ink">
-          2. The 5 Morning Sparks
-        </h2>
-        <span class="font-mono text-xs text-primary-magenta font-bold">Pick 1 to mark as Implemented</span>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-ink pb-2">
+        <div>
+          <h2 class="font-display font-black text-xl uppercase text-ink">
+            2. The 5 Morning Sparks
+          </h2>
+          <p class="font-body text-xs text-gray-600">
+            Log your ideas in the morning. Select <strong>In Progress</strong> if you haven't built one yet, or choose the Spark to implement.
+          </p>
+        </div>
       </div>
 
-      {% set existing_ideas = day.ideas if (day and day.ideas) else [] %}
-      {% set impl_idea = day.implemented_idea if day else None %}
-      {% set selected_idx = impl_idea.idea_number if impl_idea else 1 %}
+      <!-- MASTER IMPLEMENTATION SELECTOR BAR -->
+      <div class="p-3 bg-canvas border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="font-mono text-xs font-black uppercase text-ink flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-primary-magenta text-base">precision_manufacturing</span>
+          <span>Prototype To Ship:</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-1.5 cursor-pointer bg-white px-2.5 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b] hover:bg-yellow-100 transition-colors">
+            <input type="radio" name="implemented_index" value="0" {% if selected_idx == 0 %}checked{% endif %} class="accent-primary-magenta" onchange="syncImplSelection(0)"/>
+            <span class="font-mono text-xs font-bold text-ink">⏳ In Progress (None yet)</span>
+          </label>
+          {% for j in range(1, 6) %}
+          <label class="flex items-center gap-1.5 cursor-pointer bg-white px-2 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b] hover:bg-yellow-100 transition-colors">
+            <input type="radio" name="implemented_index" value="{{ j }}" {% if selected_idx == j %}checked{% endif %} class="accent-primary-magenta" onchange="syncImplSelection({{ j }})"/>
+            <span class="font-mono text-xs font-bold text-ink">⚡ Spark #{{ j }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
 
+      <!-- 5 SPARK CARDS -->
       {% for i in range(1, 6) %}
         {% set cur_idea = existing_ideas[i-1] if (existing_ideas|length >= i) else None %}
-        <div class="p-4 border-2 border-ink bg-canvas flex flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+        <div class="p-4 border-2 border-ink bg-canvas flex flex-col gap-3 transition-all idea-card" id="idea-card-{{ i }}">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-2 flex-1">
               <span class="neo-badge bg-primary-magenta text-white text-xs font-black">
                 SPARK #{{ i }}
               </span>
-              <input type="text" name="idea_{{ i }}_title" value="{{ cur_idea.title if cur_idea else '' }}" placeholder="Idea Title" required class="neo-input font-bold text-sm w-64"/>
+              <input type="text" name="idea_{{ i }}_title" id="idea_{{ i }}_title" value="{{ cur_idea.title if cur_idea else '' }}" placeholder="Idea #{{ i }} Title" {% if i == 1 %}required{% endif %} class="neo-input font-bold text-sm flex-1"/>
             </div>
 
             <!-- Radio to choose implemented build -->
-            <label class="flex items-center gap-1.5 cursor-pointer bg-white px-2 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b]">
-              <input type="radio" name="implemented_index" value="{{ i }}" {% if i == selected_idx %}checked{% endif %} class="accent-primary-magenta"/>
+            <label class="inline-flex items-center gap-1.5 cursor-pointer bg-white px-2 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b] hover:bg-yellow-100">
+              <input type="radio" name="implemented_index" value="{{ i }}" {% if i == selected_idx %}checked{% endif %} class="accent-primary-magenta" onchange="syncImplSelection({{ i }})"/>
               <span class="font-mono text-xs font-bold uppercase text-ink">Mark Implemented</span>
             </label>
           </div>
@@ -93,7 +140,7 @@
             </div>
             <div>
               <label class="font-mono text-[11px] font-bold text-gray-700 block mb-0.5">Tags (comma-separated)</label>
-              <input type="text" name="idea_{{ i }}_tags" value="{{ cur_idea.tags if cur_idea else '' }}" placeholder="Audio, AI, 16-Bit" class="neo-input text-xs"/>
+              <input type="text" name="idea_{{ i }}_tags" value="{{ cur_idea.tags if cur_idea else '' }}" placeholder="Web, Audio, AI" class="neo-input text-xs"/>
             </div>
           </div>
 
@@ -107,18 +154,50 @@
 
     <!-- 3. IMPLEMENTATION DETAILS (FOR THE SHIPPED IDEA) -->
     {% set cur_impl = impl_idea.implementation if impl_idea else None %}
-    <div class="bg-yellow-50 border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4">
-      <div class="border-b-2 border-ink pb-2 flex items-center justify-between">
-        <h2 class="font-display font-black text-xl uppercase text-ink">
-          3. Shipped Prototype & AI Process Details
-        </h2>
-        <span class="neo-badge bg-acid-lime text-ink text-xs font-black">HERO IMPLEMENTATION</span>
+    <div id="implSection" class="border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-4 transition-all {% if selected_idx > 0 %}bg-yellow-50{% else %}bg-gray-100 opacity-90{% endif %}">
+      
+      <div class="border-b-2 border-ink pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 class="font-display font-black text-xl uppercase text-ink">
+            3. Shipped Prototype & AI Process Details
+          </h2>
+          <p class="font-body text-xs text-gray-600">
+            Log the implementation code, steps, and retrospective for your shipped daily build.
+          </p>
+        </div>
+        <div id="implSectionBadge">
+          {% if selected_idx > 0 %}
+            <span class="neo-badge bg-acid-lime text-ink text-xs font-black">
+              ⚡ HERO IMPLEMENTATION (SPARK #{{ selected_idx }})
+            </span>
+          {% else %}
+            <span class="neo-badge bg-tertiary-yellow text-ink text-xs font-black">
+              ⏳ IN PROGRESS (OPTIONAL NOW)
+            </span>
+          {% endif %}
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- IN PROGRESS HELPER NOTICE -->
+      <div id="implInProgressNotice" class="p-3 bg-tertiary-yellow/40 border-2 border-ink font-mono text-xs {% if selected_idx > 0 %}hidden{% endif %}">
+        <strong>💡 Morning Sparks Mode:</strong> You currently have "In Progress" selected. 
+        You can save right now to record your 5 ideas. When you build the prototype later today, edit this day, choose which Spark you shipped, and fill in the details below!
+      </div>
+
+      <!-- IMPLEMENTATION TITLE & BUILD TYPE -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="sm:col-span-2">
+          <div class="flex items-center justify-between mb-1">
+            <label class="font-mono text-xs font-bold text-ink">Prototype Title</label>
+            <button type="button" onclick="copySelectedSparkTitle()" class="font-mono text-[10px] text-primary-magenta underline font-bold hover:text-ink cursor-pointer">
+              Sync from Spark
+            </button>
+          </div>
+          <input type="text" name="impl_title" id="impl_title" value="{{ cur_impl.title if cur_impl else '' }}" placeholder="e.g. NeonDJ 90s Vinyl Turntable" class="neo-input font-bold text-sm"/>
+        </div>
         <div>
-          <label class="font-mono text-xs font-bold text-ink block mb-1">Build Type*</label>
-          <select name="impl_build_type" class="neo-select font-bold">
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Build Type</label>
+          <select name="impl_build_type" class="neo-select font-bold text-xs">
             <option value="webapp" {% if cur_impl and cur_impl.build_type == 'webapp' %}selected{% endif %}>⚡ WebApp (Interactive)</option>
             <option value="poetry" {% if cur_impl and cur_impl.build_type == 'poetry' %}selected{% endif %}>📜 Poetry / Literature</option>
             <option value="song" {% if cur_impl and cur_impl.build_type == 'song' %}selected{% endif %}>🎵 Song / Chiptune</option>
@@ -127,16 +206,16 @@
           </select>
         </div>
         <div>
-          <label class="font-mono text-xs font-bold text-ink block mb-1">Rank (1 = Top Pick)*</label>
-          <input type="number" name="impl_rank" value="{{ cur_impl.rank if cur_impl else 1 }}" min="1" max="999" class="neo-input font-bold"/>
-        </div>
-        <div>
-          <label class="font-mono text-xs font-bold text-ink block mb-1">Time Spent (Hours)</label>
-          <input type="number" step="0.1" name="impl_time_spent" value="{{ cur_impl.time_spent_hours if cur_impl else 4.0 }}" class="neo-input font-bold"/>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Rank (1 = Top Pick)</label>
+          <input type="number" name="impl_rank" value="{{ cur_impl.rank if cur_impl else 1 }}" min="1" max="999" class="neo-input font-bold text-xs"/>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="font-mono text-xs font-bold text-ink block mb-1">Time Spent (Hours)</label>
+          <input type="number" step="0.1" name="impl_time_spent" value="{{ cur_impl.time_spent_hours if cur_impl else 4.0 }}" class="neo-input font-bold text-xs"/>
+        </div>
         <div>
           <label class="font-mono text-xs font-bold text-ink block mb-1">AI Tools / Stack Used</label>
           <input type="text" name="impl_ai_tools" value="{{ cur_impl.ai_tools_used if cur_impl else '' }}" placeholder="Gemini 2.5 Flash, Web Audio API, Canvas 2D" class="neo-input text-xs"/>
@@ -149,7 +228,7 @@
 
       <div>
         <label class="font-mono text-xs font-bold text-ink block mb-1">Summary / Hook</label>
-        <input type="text" name="impl_summary" value="{{ cur_impl.summary if cur_impl else '' }}" placeholder="Punchy 1-sentence summary of what works" class="neo-input text-xs"/>
+        <input type="text" name="impl_summary" id="impl_summary" value="{{ cur_impl.summary if cur_impl else '' }}" placeholder="Punchy 1-sentence summary of what works" class="neo-input text-xs"/>
       </div>
 
       <div>
@@ -159,25 +238,18 @@
 
       <div>
         <label class="font-mono text-xs font-bold text-ink block mb-1">Process Steps (One step per line: `Step Title: Step Description`)</label>
-        {% set steps_text = "" %}
-        {% if cur_impl and cur_impl.process_steps %}
-          {% for s in cur_impl.process_steps %}
-            {% set steps_text = steps_text + s.title + ": " + s.desc + "\n" %}
-          {% endfor %}
-        {% endif %}
-        <textarea name="impl_steps" rows="3" placeholder="BPM Clock: Built Web Audio scheduling loop&#10;Turntable Physics: Added touch drag physics&#10;Equalizer Canvas: Colored 7 spectrum bars" class="neo-textarea text-xs">{{ steps_text }}</textarea>
+        <textarea name="impl_steps" rows="4" placeholder="BPM Clock: Built Web Audio scheduling loop&#10;Turntable Physics: Added touch drag physics&#10;Equalizer Canvas: Colored 7 spectrum bars" class="neo-textarea text-xs">{% if cur_impl and cur_impl.process_steps %}{% for s in cur_impl.process_steps %}{% if s.title and s.desc %}{{ s.title }}: {{ s.desc }}{% elif s.title %}{{ s.title }}{% else %}{{ s.desc }}{% endif %}{% if not loop.last %}
+{% endif %}{% endfor %}{% endif %}</textarea>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="font-mono text-xs font-bold text-emerald-800 block mb-1">What Rocked (One bullet per line)</label>
-          {% set rocked_text = (cur_impl.what_rocked | join('\n')) if (cur_impl and cur_impl.what_rocked) else "" %}
-          <textarea name="impl_what_rocked" rows="3" placeholder="Real turntable drag worked with zero latency&#10;Pure browser API with no bloat" class="neo-textarea text-xs">{{ rocked_text }}</textarea>
+          <textarea name="impl_what_rocked" rows="3" placeholder="Real turntable drag worked with zero latency&#10;Pure browser API with no bloat" class="neo-textarea text-xs">{% if cur_impl and cur_impl.what_rocked %}{% if cur_impl.what_rocked is string %}{{ cur_impl.what_rocked }}{% else %}{{ cur_impl.what_rocked | join('\n') }}{% endif %}{% endif %}</textarea>
         </div>
         <div>
           <label class="font-mono text-xs font-bold text-rose-800 block mb-1">What Broke & Fixed (One bullet per line)</label>
-          {% set broke_text = (cur_impl.what_broke | join('\n')) if (cur_impl and cur_impl.what_broke) else "" %}
-          <textarea name="impl_what_broke" rows="3" placeholder="Safari muted audio until first pointer event&#10;Velocity clipping on reverse scratch" class="neo-textarea text-xs">{{ broke_text }}</textarea>
+          <textarea name="impl_what_broke" rows="3" placeholder="Safari muted audio until first pointer event&#10;Velocity clipping on reverse scratch" class="neo-textarea text-xs">{% if cur_impl and cur_impl.what_broke %}{% if cur_impl.what_broke is string %}{{ cur_impl.what_broke }}{% else %}{{ cur_impl.what_broke | join('\n') }}{% endif %}{% endif %}</textarea>
         </div>
       </div>
 
@@ -188,15 +260,84 @@
     </div>
 
     <!-- SUBMIT BUTTON -->
-    <div class="flex items-center justify-end gap-3">
-      <a href="/admin" class="neo-btn neo-btn-white text-xs py-2 px-4">Cancel</a>
-      <button type="submit" class="neo-btn neo-btn-primary text-sm py-2.5 px-6">
-        <span class="material-symbols-outlined text-sm">save</span>
-        <span>Save Daily Drop</span>
-      </button>
+    <div class="flex items-center justify-between p-4 bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b]">
+      <div class="font-mono text-xs text-gray-600 font-bold" id="submitSummaryText">
+        {% if selected_idx > 0 %}
+          Ready to save with shipped prototype for Spark #{{ selected_idx }}.
+        {% else %}
+          Ready to save 5 sparks (prototype in progress).
+        {% endif %}
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/admin" class="neo-btn neo-btn-white text-xs py-2 px-4">Cancel</a>
+        <button type="submit" class="neo-btn neo-btn-primary text-sm py-2.5 px-6">
+          <span class="material-symbols-outlined text-sm">save</span>
+          <span>{% if is_new %}Save Daily Drop{% else %}Update Entry{% endif %}</span>
+        </button>
+      </div>
     </div>
 
   </form>
 
 </div>
+
+<script>
+  function getSelectedImplementedIndex() {
+    const radios = document.querySelectorAll('input[name="implemented_index"]:checked');
+    if (radios.length > 0) {
+      return parseInt(radios[0].value) || 0;
+    }
+    return 0;
+  }
+
+  function syncImplSelection(index) {
+    // Keep all radio buttons in sync
+    const allRadios = document.querySelectorAll('input[name="implemented_index"]');
+    allRadios.forEach(r => {
+      r.checked = (parseInt(r.value) === index);
+    });
+
+    const implSection = document.getElementById('implSection');
+    const badge = document.getElementById('implSectionBadge');
+    const notice = document.getElementById('implInProgressNotice');
+    const summaryText = document.getElementById('submitSummaryText');
+    const titleInput = document.getElementById('impl_title');
+
+    if (index > 0) {
+      implSection.classList.remove('bg-gray-100', 'opacity-90');
+      implSection.classList.add('bg-yellow-50');
+      notice.classList.add('hidden');
+      badge.innerHTML = `<span class="neo-badge bg-acid-lime text-ink text-xs font-black">⚡ HERO IMPLEMENTATION (SPARK #${index})</span>`;
+      summaryText.textContent = `Ready to save with shipped prototype for Spark #${index}.`;
+
+      // Auto-fill prototype title if empty
+      const ideaTitleInput = document.getElementById(`idea_${index}_title`);
+      if (ideaTitleInput && (!titleInput.value || titleInput.dataset.autofilled === "true")) {
+        if (ideaTitleInput.value.trim()) {
+          titleInput.value = ideaTitleInput.value.trim();
+          titleInput.dataset.autofilled = "true";
+        }
+      }
+    } else {
+      implSection.classList.remove('bg-yellow-50');
+      implSection.classList.add('bg-gray-100', 'opacity-90');
+      notice.classList.remove('hidden');
+      badge.innerHTML = `<span class="neo-badge bg-tertiary-yellow text-ink text-xs font-black">⏳ IN PROGRESS (OPTIONAL NOW)</span>`;
+      summaryText.textContent = `Ready to save 5 sparks (prototype in progress).`;
+    }
+  }
+
+  function copySelectedSparkTitle() {
+    const index = getSelectedImplementedIndex();
+    const titleInput = document.getElementById('impl_title');
+    if (index > 0) {
+      const ideaTitle = document.getElementById(`idea_${index}_title`);
+      if (ideaTitle && ideaTitle.value.trim()) {
+        titleInput.value = ideaTitle.value.trim();
+      }
+    } else {
+      alert("Select a Spark (1-5) first to copy its title.");
+    }
+  }
+</script>
 {% endblock %}
