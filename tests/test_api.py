@@ -73,6 +73,18 @@ def test_interactive_canopy_view(client):
     assert "Growth Model" in response.text
 
 
+def test_interactive_campfire_view(client):
+    response = client.get("/interactive/campfire")
+    assert response.status_code == 200
+    assert "A Campfire Made Out of LED Blocks" in response.text
+    assert "DARK MATTER BERLIN" in response.text.upper()
+    assert "SOUNDSCAPE_MATRIX" in response.text
+    assert "audio-stem-music" in response.text
+    assert "audio-stem-crackle" in response.text
+
+
+
+
 def test_api_get_days(client):
     response = client.get("/api/days")
     assert response.status_code == 200

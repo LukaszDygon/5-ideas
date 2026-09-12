@@ -1,5 +1,184 @@
 [
   {
+    "id": 52,
+    "date": "2026-09-12",
+    "theme": "Light",
+    "subtitle": "Illuminating things, torches, lightbulbs, campfires",
+    "streak_count": 1,
+    "notes": "It's a fine Saturday morning. Feeling a bit groggy this morning, after a Friday evening, but ideas won't generate themselves.",
+    "created_at": "2026-09-12 10:06:02",
+    "ideas": [
+      {
+        "id": 286,
+        "day_id": 52,
+        "idea_number": 1,
+        "title": "A campfire made out of LED blocks",
+        "tagline": "Cozy warm glow, indoors",
+        "description": "I've seen something like it at Dark Matter, Berlin. It was one of my favourite things, and I thought about it a lot since. Imagine a warm, cozy LED glow as you sit on a recliner. Future of indoor fireplaces.",
+        "tags": "Installation, Art",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 57,
+          "idea_id": 286,
+          "title": "A Campfire Made Out of LED Blocks",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "An interactive Dark Matter Berlin inspired 3D light installation featuring minimalist glowing timber LED modules, procedural wood sap pops, and real-time flame dynamics.",
+          "content": "/interactive/campfire",
+          "external_url": "",
+          "time_spent_hours": 3.0,
+          "ai_tools_used": "Antigravity, Three.js, Web Audio API, FastAPI",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Step 1",
+              "desc": "Built the basic idea around a more detailed prompt"
+            },
+            {
+              "step": 2,
+              "title": "Step 2",
+              "desc": "Lots of adjusting the behaviour: menu looking like AI slop, overall UI bad decisions, music, behaviour of the fire"
+            },
+            {
+              "step": 3,
+              "title": "Step 3",
+              "desc": "Adding keyboard controls"
+            },
+            {
+              "step": 4,
+              "title": "Step 4",
+              "desc": "Tried to introduce gravity and collisions, decided against it"
+            },
+            {
+              "step": 5,
+              "title": "Step 5",
+              "desc": "Improving presets and few more controls for flame simulation"
+            }
+          ],
+          "what_rocked": [
+            "The implementation of the light adjustments was really good on first attempt.",
+            "The presets actually look not dissimilar from a campfire"
+          ],
+          "what_broke": [
+            "Physics were not very good to work with.",
+            "The first attempt resulted in a pitch black screen, so I didn't know if it works or just looks like that."
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 13 human turns across 284 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: yes\n  \u2022 Turn 3: I can't see anything. It's all black, even when I add block, so IDK if it's working as implemented or broken. The UI is definit...\n  \u2022 Turn 4: there should be more variety in block shapes. Also the blocks are not emmitting light. there is some weird particle effect that...\n  \u2022 Turn 5: can we add keyboard controls to move the blocks and rotate them? Also the presets have a lot of blocks that overlap each other....\n  \u2022 Turn 6: the floor looks weird too. It should be mostly opaque. It looks like the shapes have thrustors that go into the floor. They sho...\n  \u2022 Turn 7: the shapes are floating off the floor in presets. No preset is actually good. I wish there was more falling physics and rotatio...\n  \u2022 Turn 8: Campfire formations are not very exciting, they look kind of weird. I wish there were more shapes that are log-like. Log shape ...\n  \u2022 Turn 9: The things are flying off into space lol\n  \u2022 Turn 10: Uh so I think the problem now is that the shapes overlap way too much. The logs are actually too complicated. There are eight s...\n  \u2022 Turn 11: way too bright, but I otherwise like it\n  \u2022 Turn 12: /record-implementation\n  \u2022 Turn 13: 1. - Built the basic idea around a more detailed prompt - Lots of adjusting the behaviour: menu looking like AI slop, overal UI...\n\nTools Executed: run_command (66), view_file (51), grep_search (5), replace_file_content (5), ask_question (2), write_to_file (1)\nFiles Modified: SKILL.md, app.py, base.html, build_static.py, campfire.html, canopy.html, conftest.py, day.html",
+          "created_at": "2026-09-12 11:45:52"
+        }
+      },
+      {
+        "id": 287,
+        "day_id": 52,
+        "idea_number": 2,
+        "title": "Music controlled lights",
+        "tagline": "Probably done 100s of times for music concerts",
+        "description": "Simple idea. You have music playing, the lights respond to the beat, the warmth of the tone, etc. How can we visualise musical dimensions with a LED's parameters?",
+        "tags": "Installation, Art, Networking",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 288,
+        "day_id": 52,
+        "idea_number": 3,
+        "title": "A torch pattern attachment",
+        "tagline": "Make your own bat signal",
+        "description": "I imagine it's not so easy, because torches have multiple sources of light, but lets keep it simple. Remember these cheap 'laser' pointers from early 2000s (I don't remember much before 2000) that had shape attachments? We can manufacture custom ones, maybe.",
+        "tags": "Analog, Hardware",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 289,
+        "day_id": 52,
+        "idea_number": 4,
+        "title": "Light puzzle",
+        "tagline": "Light interacts with light",
+        "description": "Imagine  multiple light sources overlapping to produce a pattern on a surface. It must be possible to make something more interesting than physics instruction video. I am thinking that shape puzzle, Tangram, but with lights.",
+        "tags": "Puzzle, Game, Art",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 290,
+        "day_id": 52,
+        "idea_number": 5,
+        "title": "Interior design lighting",
+        "tagline": "Take a photo, visualise it with better lighting",
+        "description": "It's hard to appreciate the light as the Scandinavians do, and it's sad to live in a badly lit room. AI can't solve the problem fully, it may not know where the cables go, but it may understand how to light a room slightly better for you to imagine it yourself.",
+        "tags": "AI, Architecture",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 286,
+      "day_id": 52,
+      "idea_number": 1,
+      "title": "A campfire made out of LED blocks",
+      "tagline": "Cozy warm glow, indoors",
+      "description": "I've seen something like it at Dark Matter, Berlin. It was one of my favourite things, and I thought about it a lot since. Imagine a warm, cozy LED glow as you sit on a recliner. Future of indoor fireplaces.",
+      "tags": "Installation, Art",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 57,
+        "idea_id": 286,
+        "title": "A Campfire Made Out of LED Blocks",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "An interactive Dark Matter Berlin inspired 3D light installation featuring minimalist glowing timber LED modules, procedural wood sap pops, and real-time flame dynamics.",
+        "content": "/interactive/campfire",
+        "external_url": "",
+        "time_spent_hours": 3.0,
+        "ai_tools_used": "Antigravity, Three.js, Web Audio API, FastAPI",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Step 1",
+            "desc": "Built the basic idea around a more detailed prompt"
+          },
+          {
+            "step": 2,
+            "title": "Step 2",
+            "desc": "Lots of adjusting the behaviour: menu looking like AI slop, overall UI bad decisions, music, behaviour of the fire"
+          },
+          {
+            "step": 3,
+            "title": "Step 3",
+            "desc": "Adding keyboard controls"
+          },
+          {
+            "step": 4,
+            "title": "Step 4",
+            "desc": "Tried to introduce gravity and collisions, decided against it"
+          },
+          {
+            "step": 5,
+            "title": "Step 5",
+            "desc": "Improving presets and few more controls for flame simulation"
+          }
+        ],
+        "what_rocked": [
+          "The implementation of the light adjustments was really good on first attempt.",
+          "The presets actually look not dissimilar from a campfire"
+        ],
+        "what_broke": [
+          "Physics were not very good to work with.",
+          "The first attempt resulted in a pitch black screen, so I didn't know if it works or just looks like that."
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 13 human turns across 284 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: yes\n  \u2022 Turn 3: I can't see anything. It's all black, even when I add block, so IDK if it's working as implemented or broken. The UI is definit...\n  \u2022 Turn 4: there should be more variety in block shapes. Also the blocks are not emmitting light. there is some weird particle effect that...\n  \u2022 Turn 5: can we add keyboard controls to move the blocks and rotate them? Also the presets have a lot of blocks that overlap each other....\n  \u2022 Turn 6: the floor looks weird too. It should be mostly opaque. It looks like the shapes have thrustors that go into the floor. They sho...\n  \u2022 Turn 7: the shapes are floating off the floor in presets. No preset is actually good. I wish there was more falling physics and rotatio...\n  \u2022 Turn 8: Campfire formations are not very exciting, they look kind of weird. I wish there were more shapes that are log-like. Log shape ...\n  \u2022 Turn 9: The things are flying off into space lol\n  \u2022 Turn 10: Uh so I think the problem now is that the shapes overlap way too much. The logs are actually too complicated. There are eight s...\n  \u2022 Turn 11: way too bright, but I otherwise like it\n  \u2022 Turn 12: /record-implementation\n  \u2022 Turn 13: 1. - Built the basic idea around a more detailed prompt - Lots of adjusting the behaviour: menu looking like AI slop, overal UI...\n\nTools Executed: run_command (66), view_file (51), grep_search (5), replace_file_content (5), ask_question (2), write_to_file (1)\nFiles Modified: SKILL.md, app.py, base.html, build_static.py, campfire.html, canopy.html, conftest.py, day.html",
+        "created_at": "2026-09-12 11:45:52"
+      }
+    }
+  },
+  {
     "id": 51,
     "date": "2026-09-11",
     "theme": "Green Roofs",

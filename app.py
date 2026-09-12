@@ -221,6 +221,17 @@ async def interactive_canopy(request: Request):
     )
 
 
+@app.get("/interactive/campfire", response_class=HTMLResponse)
+async def interactive_campfire(request: Request):
+    """3D LED block campfire installation simulation."""
+    return templates.TemplateResponse(
+        request=request,
+        name="campfire.html",
+        context={},
+    )
+
+
+
 @app.get("/random", response_class=RedirectResponse)
 async def random_day():
     """Jump to a random day or top implementation."""

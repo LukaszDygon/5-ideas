@@ -44,6 +44,7 @@ def rewrite_html_links(html: str, base_path: str) -> str:
         ('href="/design-system"', f'href="{base_path}design-system/"'),
         ('href="/interactive/neondj"', f'href="{base_path}interactive/neondj/"'),
         ('href="/interactive/canopy"', f'href="{base_path}interactive/canopy/"'),
+        ('href="/interactive/campfire"', f'href="{base_path}interactive/campfire/"'),
         ('href="/day/', f'href="{base_path}day/'),
         ('href="/static/', f'href="{base_path}static/'),
         ('src="/static/', f'src="{base_path}static/'),
@@ -81,6 +82,7 @@ def build_static(base_path: str = "/5-ideas/"):
         ("/design-system", DIST_DIR / "design-system" / "index.html"),
         ("/interactive/neondj", DIST_DIR / "interactive" / "neondj" / "index.html"),
         ("/interactive/canopy", DIST_DIR / "interactive" / "canopy" / "index.html"),
+        ("/interactive/campfire", DIST_DIR / "interactive" / "campfire" / "index.html"),
     ]
 
     # Dynamic day routes
