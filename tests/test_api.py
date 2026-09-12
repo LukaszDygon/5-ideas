@@ -87,6 +87,8 @@ def test_interactive_campfire_hardware_view(client):
     response = client.get("/interactive/campfire/hardware")
     assert response.status_code == 200
     assert "Physical 3D LED Block Campfire" in response.text
+    assert "Central Electronic Brain" in response.text
+    assert "Full-Surface Optics" in response.text
     assert "1-Wire" in response.text
     assert "Dayton Audio" in response.text
     assert "FastLED" in response.text
