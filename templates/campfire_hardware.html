@@ -1,0 +1,731 @@
+{% extends "base.html" %}
+
+{% block title %}Physical Build Guide // 3D Modular LED Block Campfire{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-10 max-w-6xl mx-auto pb-16">
+
+  <!-- HERO BANNER -->
+  <div class="bg-ink text-white border-[4px] border-ink shadow-[8px_8px_0px_#fae100] p-6 md:p-10 relative overflow-hidden">
+    <!-- Memphis decorative pattern accents -->
+    <div class="absolute -right-8 -top-8 w-36 h-36 bg-primary-magenta border-[3px] border-ink rounded-full opacity-40 pointer-events-none"></div>
+    <div class="absolute right-20 -bottom-10 w-28 h-28 bg-electric-cyan border-[3px] border-ink rotate-45 opacity-30 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex flex-col gap-3">
+        <div class="inline-flex items-center gap-2 bg-acid-lime text-ink px-3 py-1 font-mono text-xs font-black uppercase shadow-[3px_3px_0px_#1c1b1b] -rotate-1 self-start">
+          <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
+          HARDWARE BLUEPRINT & EMBEDDED FIRMWARE SPECIFICATION
+        </div>
+        <h1 class="font-display font-black text-3xl sm:text-5xl uppercase leading-tight tracking-tight">
+          Physical 3D LED Block Campfire
+        </h1>
+        <p class="font-body text-base sm:text-lg text-canvas/90 max-w-3xl leading-relaxed">
+          How to turn our web simulation into a tangible, stackable hearth installation. 
+          Features magnetic polarity-agnostic power couplers, 1-Wire & 6-axis IMU auto-topology discovery, 
+          volumetric 3D Simplex thermal fields, and a tactile acoustic plinth exciter.
+        </p>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0">
+        <a href="/interactive/campfire" class="neo-btn neo-btn-primary text-xs py-2.5 px-4 flex items-center justify-center gap-2 font-bold tracking-wider">
+          <span class="material-symbols-outlined text-base">view_in_ar</span>
+          <span>LAUNCH 3D SIMULATOR</span>
+        </a>
+        <a href="/day/2026-09-12" class="neo-btn neo-btn-white text-xs py-2.5 px-4 flex items-center justify-center gap-2 font-bold">
+          <span class="material-symbols-outlined text-base">arrow_back</span>
+          <span>DAY #1 SHOWCASE</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION TABS / QUICK JUMP -->
+  <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-3 flex items-center gap-2 overflow-x-auto font-mono text-xs">
+    <span class="font-bold uppercase text-gray-500 px-2 shrink-0">INDEX:</span>
+    <a href="#overview" class="hover:bg-tertiary-yellow px-2.5 py-1 border border-transparent hover:border-ink transition-colors shrink-0">01. Architecture</a>
+    <a href="#enclosure" class="hover:bg-tertiary-yellow px-2.5 py-1 border border-transparent hover:border-ink transition-colors shrink-0">02. Enclosure & Optics</a>
+    <a href="#power-coupling" class="hover:bg-tertiary-yellow px-2.5 py-1 border border-transparent hover:border-ink transition-colors shrink-0">03. Magnetic Couplers</a>
+    <a href="#topology" class="hover:bg-tertiary-yellow px-2.5 py-1 border border-transparent hover:border-ink transition-colors shrink-0">04. 3D Topology Auto-Discovery</a>
+    <a href="#firmware-physics" class="hover:bg-tertiary-yellow px-2.5 py-1 border border-transparent hover:border-ink transition-colors shrink-0">05. Volumetric Flame Math</a>
+    <a href="#haptics-audio" class="hover:bg-tertiary-yellow px-2.5 py-1 border border-transparent hover:border-ink transition-colors shrink-0">06. Haptic Exciter Audio</a>
+    <a href="#bom" class="hover:bg-tertiary-yellow px-2.5 py-1 border border-transparent hover:border-ink transition-colors shrink-0">07. Bill of Materials</a>
+    <a href="#schematics" class="hover:bg-tertiary-yellow px-2.5 py-1 border border-transparent hover:border-ink transition-colors shrink-0">08. Schematics & Code</a>
+  </div>
+
+  <!-- 01. SYSTEM ARCHITECTURE & TOPOLOGY OVERVIEW -->
+  <section id="overview" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-tertiary-yellow border-[3px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl">
+          01
+        </div>
+        <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+          High-Level Architecture
+        </h2>
+      </div>
+      <span class="bg-canvas border-2 border-ink px-3 py-1 font-mono text-xs font-bold">
+        Distributed Hardware System
+      </span>
+    </div>
+
+    <p class="font-body text-base text-gray-800 leading-relaxed">
+      A physical LED campfire cannot rely on traditional fixed wiring bundles: logs must be free to be rearranged, picked up, rotated, and rested against one another in any arbitrary geometry. The system operates on a <strong>Base Plinth Master + Autonomous Mesh Node</strong> hierarchy:
+    </p>
+
+    <!-- Architecture Visual Flowchart -->
+    <div class="bg-canvas border-[3px] border-ink p-4 md:p-6 font-mono text-xs overflow-x-auto">
+      <div class="min-w-[650px] flex flex-col gap-4">
+        <div class="grid grid-cols-3 gap-4 text-center">
+          
+          <!-- Master Plinth -->
+          <div class="col-span-3 bg-tertiary-yellow border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b]">
+            <div class="font-display font-black text-lg text-ink uppercase">MASTER HEARTH PLINTH (Base Unit)</div>
+            <div class="text-[11px] text-gray-800 mt-1">
+              ESP32-S3 Dual-Core (240MHz) • Mean Well 12V 10A (120W) PSU • Dayton Audio DAEX25 Soundboard Exciter • BLE / Wi-Fi Gateway
+            </div>
+          </div>
+
+          <div class="col-span-3 flex justify-around items-center text-primary-magenta font-black text-sm">
+            <span>▼ 12V High-Current Bus</span>
+            <span>▼ 1-Wire Topology Ping</span>
+            <span>▼ High-Speed Differential Pixel Stream</span>
+          </div>
+
+          <!-- Tier 1 Logs -->
+          <div class="bg-white border-[3px] border-ink p-3 shadow-[3px_3px_0px_#1c1b1b]">
+            <div class="font-bold text-ink uppercase text-sm">BASE LOG Alpha</div>
+            <div class="text-[10px] text-gray-600 mt-1">Resting on Plinth Dock A</div>
+            <div class="mt-2 bg-acid-lime/20 border border-ink p-1 text-[10px]">
+              IMU Tilt: [0°, 4°, 0°]<br/>
+              Temp Core: 100% Heat
+            </div>
+          </div>
+
+          <div class="bg-white border-[3px] border-ink p-3 shadow-[3px_3px_0px_#1c1b1b]">
+            <div class="font-bold text-ink uppercase text-sm">BASE LOG Beta</div>
+            <div class="text-[10px] text-gray-600 mt-1">Resting on Plinth Dock B</div>
+            <div class="mt-2 bg-acid-lime/20 border border-ink p-1 text-[10px]">
+              IMU Tilt: [0°, 0°, 88°]<br/>
+              Temp Core: 95% Heat
+            </div>
+          </div>
+
+          <div class="bg-white border-[3px] border-ink p-3 shadow-[3px_3px_0px_#1c1b1b]">
+            <div class="font-bold text-ink uppercase text-sm">BASE LOG Gamma</div>
+            <div class="text-[10px] text-gray-600 mt-1">Resting on Plinth Dock C</div>
+            <div class="mt-2 bg-acid-lime/20 border border-ink p-1 text-[10px]">
+              IMU Tilt: [12°, -5°, 0°]<br/>
+              Temp Core: 90% Heat
+            </div>
+          </div>
+
+          <div class="col-span-3 flex justify-center items-center text-primary-magenta font-black text-sm">
+            <span>▼ Bridge Couplers (Faceted Cross-Contact Pogo Points)</span>
+          </div>
+
+          <!-- Tier 2 Logs -->
+          <div class="col-span-3 grid grid-cols-2 gap-4">
+            <div class="bg-primary-magenta text-white border-[3px] border-ink p-3 shadow-[3px_3px_0px_#1c1b1b]">
+              <div class="font-bold uppercase text-sm">LEANING LOG Delta (Tier 2)</div>
+              <div class="text-[10px] text-white/80 mt-1">Spanning Log Alpha & Log Beta (42° incline)</div>
+              <div class="mt-2 bg-black/30 border border-white/40 p-1 text-[10px]">
+                Detected via Adjacency: Alpha.Face3 ⟷ Delta.Face1<br/>
+                Conducted Heat Transfer: 68% • Flame Velocity: +0.45m/s
+              </div>
+            </div>
+
+            <div class="bg-electric-cyan text-ink border-[3px] border-ink p-3 shadow-[3px_3px_0px_#1c1b1b]">
+              <div class="font-bold uppercase text-sm">TOP KINDLING LOG Epsilon (Tier 3)</div>
+              <div class="text-[10px] text-ink/80 mt-1">Perched on Log Delta top facet (68° incline)</div>
+              <div class="mt-2 bg-white/40 border border-ink p-1 text-[10px]">
+                Sparks & Licking Flame Zone • Ambient Temp Licks<br/>
+                Color Temperature: 2200K - 3200K Golden White
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="border-[2px] border-ink p-4 bg-canvas flex flex-col gap-2">
+        <span class="font-display font-black text-primary-magenta text-lg">01. NO WIRES VISIBLE</span>
+        <p class="font-body text-xs text-gray-700">
+          Power and data leap across faceted log surfaces using embedded concentric magnetic ring pogo pins that self-align when placed together.
+        </p>
+      </div>
+      <div class="border-[2px] border-ink p-4 bg-canvas flex flex-col gap-2">
+        <span class="font-display font-black text-electric-cyan text-lg">02. VOLUMETRIC NOISE</span>
+        <p class="font-body text-xs text-gray-700">
+          Individual LEDs are not programmed with static chasing loops. They sample a continuous 3D mathematical flame field propagating through room space.
+        </p>
+      </div>
+      <div class="border-[2px] border-ink p-4 bg-canvas flex flex-col gap-2">
+        <span class="font-display font-black text-tertiary-yellow text-lg">03. ACOUSTIC HEARTH</span>
+        <p class="font-body text-xs text-gray-700">
+          Sub-bass rumblings and tactile wood knocks radiate mechanically through the wooden plinth, physically shaking the tabletop as flames leap.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02. ENCLOSURE & OPTICAL DIFFUSION SANDWICH -->
+  <section id="enclosure" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary-magenta text-white border-[3px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl">
+          02
+        </div>
+        <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+          Enclosure, Weight & Optics Sandwich
+        </h2>
+      </div>
+      <span class="bg-yellow-fixed border-2 border-ink px-3 py-1 font-mono text-xs font-bold text-ink">
+        CNC Hardwood + Cast Acrylic
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <div class="flex flex-col gap-4">
+        <h3 class="font-display font-black text-xl uppercase text-ink">
+          The Problem of "Digital Pepper" (Hotspots)
+        </h3>
+        <p class="font-body text-sm text-gray-800 leading-relaxed">
+          Standard consumer LED fixtures look cheap because human eyes instantly resolve individual LED emitter dies (the "dotted string" effect). 
+          For a believable fire installation, the timber block must appear as a solid glowing volumetric chunk of radiant mineral/wood material.
+        </p>
+        <p class="font-body text-sm text-gray-800 leading-relaxed">
+          To eliminate all hotspot imaging while keeping the outer silhouette crisp, each log employs a <strong>3-stage optical diffusion sandwich</strong>:
+        </p>
+
+        <ul class="flex flex-col gap-3 font-mono text-xs">
+          <li class="p-3 bg-canvas border-2 border-ink flex items-start gap-2">
+            <span class="font-bold text-primary-magenta">1. Core Aluminum Spine:</span>
+            <span>20mm square extruded 6063-T5 aluminum tube acts as the structural spine, grounding wire conduit, and thermal heat sink absorbing 15W per log.</span>
+          </li>
+          <li class="p-3 bg-canvas border-2 border-ink flex items-start gap-2">
+            <span class="font-bold text-electric-cyan">2. Internal Silicone Diffuser:</span>
+            <span>A 2mm translucent high-temp silicone sleeve fits directly over the 4-sided LED arrays, softening the primary 120° beam angle.</span>
+          </li>
+          <li class="p-3 bg-canvas border-2 border-ink flex items-start gap-2">
+            <span class="font-bold text-tertiary-yellow">3. Cast Acrylic Outer Shell:</span>
+            <span>5mm thick cast Plexiglas 0D010 (82% transmission, high diffusion coefficient), sandblasted on both inside and outside surfaces to produce a soft matte frosted velvet finish.</span>
+          </li>
+          <li class="p-3 bg-canvas border-2 border-ink flex items-start gap-2">
+            <span class="font-bold text-ink">4. Tactile Brass Ballast:</span>
+            <span>Real wood logs have mass. Plastic cylinders feel like toys. Solid brass cylindrical slugs are pressed into the end caps to give each 30cm log a heft of <strong>650 grams</strong>.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Cutaway CAD Schematic Diagram -->
+      <div class="bg-ink text-white border-[3px] border-ink p-5 flex flex-col gap-3 shadow-[4px_4px_0px_#1c1b1b]">
+        <div class="flex items-center justify-between border-b border-white/20 pb-2">
+          <span class="font-mono text-xs text-acid-lime font-bold">CAD CUTAWAY // CROSS-SECTION</span>
+          <span class="font-mono text-[10px] text-gray-400">SCALE: 1:1</span>
+        </div>
+        
+        <pre class="font-mono text-[11px] leading-tight text-white/90 overflow-x-auto py-2">
+      ┌──────────────────────────────────────────────┐
+      │   FROSTED CAST ACRYLIC SHELL (5mm Matched)   │
+      │ ┌──────────────────────────────────────────┐ │
+      │ │   INTERNAL SILICONE DIFFUSER SLEEVE      │ │
+      │ │ ┌──────────────────────────────────────┐ │ │
+      │ │ │   SK6812 WWA LED STRIP (North Face)  │ │ │
+      │ │ ├──────────────────────────────────────┤ │ │
+      │ │ │                                      │ │ │
+      │ │ │   EXTRUDED 6063 ALUMINUM SPINE       │ │ │
+      │ │ │   (Heat Sink & Ground Return Plane)  │ │ │
+      │ │ │                                      │ │ │
+      │ │ ├──────────────────────────────────────┤ │ │
+      │ │ │   SK6812 WWA LED STRIP (South Face)  │ │ │
+      │ │ └──────────────────────────────────────┘ │ │
+      │ └──────────────────────────────────────────┘ │
+      │  NEODYMIUM N52 RING + GOLD POGO PIN BUS (x4) │
+      └──────────────────────────────────────────────┘
+               ▲                           ▲
+         Brass Ballast Base          Polarity Diode Bridge
+        </pre>
+
+        <div class="font-mono text-[11px] text-gray-300 bg-white/5 p-3 border border-white/10 flex flex-col gap-1">
+          <div class="text-tertiary-yellow font-bold">DIMENSIONAL STANDARDS:</div>
+          <div>• Standard Log: 320mm length × 65mm width × 65mm height</div>
+          <div>• Chunk Log: 200mm length × 80mm width × 80mm height</div>
+          <div>• Kindling: 260mm length × 35mm width × 35mm height</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03. MAGNETIC POLARITY-AGNOSTIC COUPLING -->
+  <section id="power-coupling" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-electric-cyan text-ink border-[3px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl">
+          03
+        </div>
+        <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+          Polarity-Agnostic Magnetic Coupling
+        </h2>
+      </div>
+      <span class="bg-primary-magenta text-white border-2 border-ink px-3 py-1 font-mono text-xs font-bold">
+        Zero-Worry Stacking
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="flex flex-col gap-3">
+        <h3 class="font-display font-black text-xl uppercase text-ink">
+          The Foolproof Stacking Problem
+        </h3>
+        <p class="font-body text-sm text-gray-800 leading-relaxed">
+          If a user stacks logs backwards or upside-down, a conventional DC connector would reverse polarity (+12V and GND flipped), instantly vaporizing microcontrollers and LED drivers.
+        </p>
+        <p class="font-body text-sm text-gray-800 leading-relaxed">
+          Our design solves this using <strong>Concentric Circular Pogo Pads + Dual Ideal Diode Bridges</strong>:
+        </p>
+        <ol class="list-decimal list-inside font-body text-sm text-gray-700 flex flex-col gap-2">
+          <li><strong>Concentric Ring Geometry:</strong> Center pin (Ring 0) carries Data; Inner ring (Ring 1) carries Pole A; Outer ring (Ring 2) carries Pole B. Because the contacts are circular, rotating the log around its axis never breaks connection.</li>
+          <li><strong>Schottky / Ideal MOSFET Rectifier:</strong> Each log receives power through an onboard low-$R_{DS(on)}$ dual N-channel MOSFET bridge (e.g. Texas Instruments LM74610). Whichever ring is +12V and whichever is GND, current is automatically directed into the correct internal rail with only 0.04V drop!</li>
+          <li><strong>PolySwitch Resettable PTC Protection:</strong> A 3.0A self-resetting polymer PTC fuse disconnects any log instantly in the event of an accidental metallic short across the outer pads.</li>
+        </ol>
+      </div>
+
+      <div class="bg-canvas border-[3px] border-ink p-5 flex flex-col gap-3">
+        <div class="font-mono text-xs font-bold text-ink border-b-2 border-ink pb-2 flex items-center justify-between">
+          <span>PORT PINOUT SPECIFICATION</span>
+          <span class="text-primary-magenta">4-PIN CONCENTRIC POGO</span>
+        </div>
+
+        <div class="flex flex-col gap-2 font-mono text-xs">
+          <div class="flex items-center justify-between p-2 bg-white border border-ink">
+            <span class="font-bold text-primary-magenta">Ring 0 (Center Pin):</span>
+            <span class="text-gray-700">1-Wire Bidirectional Topology Discovery</span>
+          </div>
+          <div class="flex items-center justify-between p-2 bg-white border border-ink">
+            <span class="font-bold text-electric-cyan">Ring 1 (Inner Track):</span>
+            <span class="text-gray-700">Bidirectional DC Rail 1 (Schottky Bridge Input)</span>
+          </div>
+          <div class="flex items-center justify-between p-2 bg-white border border-ink">
+            <span class="font-bold text-tertiary-yellow">Ring 2 (Outer Track):</span>
+            <span class="text-gray-700">Bidirectional DC Rail 2 (Schottky Bridge Input)</span>
+          </div>
+          <div class="flex items-center justify-between p-2 bg-white border border-ink">
+            <span class="font-bold text-ink">Ring 3 (Outer Shell):</span>
+            <span class="text-gray-700">N52 Neodymium Ground Ring (Holding Force ~1.8kgf)</span>
+          </div>
+        </div>
+
+        <div class="mt-2 p-3 bg-yellow-50 border-2 border-dashed border-ink/40 font-mono text-[11px] text-gray-800">
+          <strong>Magnetic Interlock:</strong> High-flux countersunk rare-earth magnets ensure logs "snap" affirmatively into alignment with a crisp mechanical tactile feel, preventing partial contact arcing.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04. 3D TOPOLOGY DISCOVERY & SPATIAL ADDRESSING -->
+  <section id="topology" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-acid-lime text-ink border-[3px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl">
+          04
+        </div>
+        <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+          3D Spatial Topology Discovery
+        </h2>
+      </div>
+      <span class="bg-canvas border-2 border-ink px-3 py-1 font-mono text-xs font-bold text-ink">
+        How the Hearth Knows Where Logs Are
+      </span>
+    </div>
+
+    <p class="font-body text-base text-gray-800 leading-relaxed">
+      In our 3D web simulator, the computer knows the coordinates of every block in software. 
+      In real life, if you pick up Log #3 and lean it diagonally between Log #1 and Log #2, 
+      how does the system know its 3D angle and height so the flame field flows seamlessly through it?
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="border-[3px] border-ink p-5 bg-canvas flex flex-col gap-3">
+        <div class="flex items-center gap-2 text-primary-magenta">
+          <span class="material-symbols-outlined">hub</span>
+          <h4 class="font-display font-black text-lg uppercase text-ink">Step A: 1-Wire Adjacency Tree</h4>
+        </div>
+        <p class="font-body text-xs text-gray-700 leading-relaxed">
+          Every docking face of each log contains a Maxim <strong>DS2401 Silicon Serial Number</strong> chip. 
+          When two faces touch, the master hearth pings the 1-Wire network. 
+          By pulsing pull-up resistors on each port in sequence, the master builds an instantaneous graph adjacency matrix:
+        </p>
+        <div class="bg-white p-3 border border-ink font-mono text-[11px] text-gray-800">
+          HEARTH_DOCK_1 ──> LOG_01 (Face A)<br/>
+          LOG_01 (Face C) ──> LOG_04 (Face B)<br/>
+          LOG_04 (Face D) ──> LOG_06 (Face A)
+        </div>
+        <p class="font-body text-xs text-gray-600">
+          Now the firmware knows the exact hierarchical connectivity tree of who is stacked on top of whom.
+        </p>
+      </div>
+
+      <div class="border-[3px] border-ink p-5 bg-canvas flex flex-col gap-3">
+        <div class="flex items-center gap-2 text-electric-cyan">
+          <span class="material-symbols-outlined">screen_rotation</span>
+          <h4 class="font-display font-black text-lg uppercase text-ink">Step B: 6-Axis Gravitational IMU</h4>
+        </div>
+        <p class="font-body text-xs text-gray-700 leading-relaxed">
+          Each log contains an ultra-low-power I2C 6-axis accelerometer & gyroscope (LSM6DSOX or MPU-6050). 
+          At rest, the accelerometer reads the Earth's gravity vector ($\vec{g} = [g_x, g_y, g_z]$).
+        </p>
+        <div class="bg-white p-3 border border-ink font-mono text-[11px] text-gray-800">
+          Pitch = atan2(-gx, sqrt(gy² + gz²))<br/>
+          Roll  = atan2(gy, gz)<br/>
+          Orientation = Absolute 3D Tilt Angle Vector
+        </div>
+        <p class="font-body text-xs text-gray-600">
+          Combining the <strong>Adjacency Tree</strong> with the <strong>Tilt Vectors</strong> allows forward kinematics to calculate the absolute 3D position $(x, y, z)$ of all 512 individual LED pixels in space!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05. VOLUMETRIC FLAME MATH & FIRMWARE PHYSICS -->
+  <section id="firmware-physics" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-tertiary-yellow text-ink border-[3px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl">
+          05
+        </div>
+        <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+          Volumetric Flame Math & Firmware
+        </h2>
+      </div>
+      <span class="bg-acid-lime border-2 border-ink px-3 py-1 font-mono text-xs font-bold text-ink">
+        ESP32-S3 Dual-Core Pipeline
+      </span>
+    </div>
+
+    <div class="flex flex-col gap-4 font-body text-sm text-gray-800 leading-relaxed">
+      <p>
+        Traditional LED fire effects look repetitive because they scroll a pre-baked 2D flame bitmap. 
+        In our physical installation, every LED is a voxel (volume pixel) sampling an invisible, continuous 
+        3D turbulent convective flow moving up through room space at 60 FPS:
+      </p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 font-mono text-xs">
+        <div class="bg-canvas border-2 border-ink p-4 flex flex-col gap-2">
+          <span class="font-bold text-primary-magenta text-sm">1. Volumetric Simplex Field</span>
+          <p class="text-gray-700">
+            For each LED at coordinate $(x, y, z)$, the thermal intensity $T$ is computed by sampling 3 octaves of Simplex noise:
+          </p>
+          <div class="bg-white p-2 border border-ink font-mono text-[10px]">
+            T(x,y,z,t) = Simplex3D(x*fx, (y - v*t)*fy, z*fz)
+          </div>
+          <p class="text-gray-600 text-[11px]">
+            The upward velocity parameter $v$ creates natural buoyancy where flame eddies rise and curl.
+          </p>
+        </div>
+
+        <div class="bg-canvas border-2 border-ink p-4 flex flex-col gap-2">
+          <span class="font-bold text-electric-cyan text-sm">2. Conductive Heat Simulation</span>
+          <p class="text-gray-700">
+            Each log maintains an internal "core temperature" variable. 
+            When logs touch, heat flows via conductive diffusion:
+          </p>
+          <div class="bg-white p-2 border border-ink font-mono text-[10px]">
+            dH/dt = k * (T_neighbor - T_self) - C_dissipate
+          </div>
+          <p class="text-gray-600 text-[11px]">
+            Placing a cold new log on top causes it to "catch fire" over 3 to 5 seconds as heat conducts into it!
+          </p>
+        </div>
+
+        <div class="bg-canvas border-2 border-ink p-4 flex flex-col gap-2">
+          <span class="font-bold text-tertiary-yellow text-sm">3. Blackbody Color Gradient</span>
+          <p class="text-gray-700">
+            Thermal energy $T$ maps into realistic non-linear Planckian blackbody radiation:
+          </p>
+          <div class="bg-white p-2 border border-ink font-mono text-[10px]">
+            T < 0.35: Deep Carbon Ash (#1a0400)<br/>
+            T = 0.60: Crimson Ember (1800K)<br/>
+            T = 0.85: Radiant Amber (2400K)<br/>
+            T > 0.95: Plasma White Spark (3500K)
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06. HAPTIC SURFACE EXCITER & ACOUSTIC SOUNDBOARD -->
+  <section id="haptics-audio" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-neon-pink text-white border-[3px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl">
+          06
+        </div>
+        <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+          Tactile Haptic Soundboard & Audio Engine
+        </h2>
+      </div>
+      <span class="bg-yellow-fixed border-2 border-ink px-3 py-1 font-mono text-xs font-bold text-ink">
+        Sub-Bass You Can Feel
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+      <div class="flex flex-col gap-4 font-body text-sm text-gray-800 leading-relaxed">
+        <p>
+          Instead of mounting a tiny 1-inch speaker that emits tinny sound, the hearth plinth incorporates a 
+          <strong>Dayton Audio DAEX25 Sound Exciter Transducer</strong> directly coupled to the underside of the hardwood base.
+        </p>
+        <p>
+          An exciter has no speaker cone: it drives acoustic vibrations directly into solid materials, turning the entire wooden hearth and whichever table or floor it sits on into a giant, warm, resonant acoustic soundboard!
+        </p>
+        <div class="p-4 bg-canvas border-2 border-ink flex flex-col gap-2 font-mono text-xs">
+          <div class="font-bold text-primary-magenta">TACTILE ACOUSTIC ENGINE:</div>
+          <div>• <strong>30Hz - 90Hz Structural Thumps:</strong> When a major thermal burst occurs, a low-frequency pulse physically rumbles the wood under your hands.</div>
+          <div>• <strong>Procedural Wood Pops:</strong> Resonant bandpass-filtered noise bursts mimic expanding water vapor exploding resin pockets inside pine timber.</div>
+          <div>• <strong>Synesthetic Flame-Sound Coupling:</strong> Acoustic crackle rate dynamically tracks the derivative of the global flame turbulence ($\frac{d}{dt}\text{Turbulence}$).</div>
+        </div>
+      </div>
+
+      <div class="bg-ink text-white border-[3px] border-ink p-5 flex flex-col gap-3 shadow-[4px_4px_0px_#1c1b1b]">
+        <div class="font-mono text-xs text-acid-lime font-bold uppercase border-b border-white/20 pb-2">
+          PLINTH ACOUSTIC CROSS-SECTION
+        </div>
+        <pre class="font-mono text-[11px] leading-tight text-white/90 overflow-x-auto py-2">
+ ┌────────────────────────────────────────────────────────┐
+ │   SOLID OAK / WALNUT PLINTH SURFACE (30mm Hardwood)    │
+ └───────────────────────┬────────────────────────────────┘
+                         │ Rigid Epoxy Bond
+ ┌───────────────────────┴────────────────────────────────┐
+ │     DAYTON AUDIO DAEX25FHE-4 HAPTIC EXCITER (24W)      │
+ └───────────────────────┬────────────────────────────────┘
+                         │ 4Ω Speaker Lead
+ ┌───────────────────────┴────────────────────────────────┐
+ │  MAX98357A I2S 3.2W CLASS-D MONO AMPLIFIER DAC         │
+ └───────────────────────┬────────────────────────────────┘
+                         │ I2S Audio Bus (BCLK, LRCLK, DIN)
+ ┌───────────────────────┴────────────────────────────────┐
+ │  ESP32-S3 CORE 1 (Real-Time I2S Audio Synthesis DMA)   │
+ └────────────────────────────────────────────────────────┘
+        </pre>
+        <div class="text-[11px] font-mono text-gray-300">
+          Result: Zero visible speaker grilles. The sound and vibration emanate organically from the campfire timber itself.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07. BILL OF MATERIALS (BOM) & COST BREAKDOWN -->
+  <section id="bom" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-electric-cyan text-ink border-[3px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl">
+          07
+        </div>
+        <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+          Bill of Materials (BOM) & Budget
+        </h2>
+      </div>
+      <span class="bg-tertiary-yellow border-2 border-ink px-3 py-1 font-mono text-xs font-bold text-ink">
+        8-Log Hearth System
+      </span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-[3px] border-ink font-mono text-xs text-left">
+        <thead class="bg-ink text-white">
+          <tr>
+            <th class="p-3 border-r border-white/20">Category</th>
+            <th class="p-3 border-r border-white/20">Component / Description</th>
+            <th class="p-3 border-r border-white/20">Part Number / Source</th>
+            <th class="p-3 border-r border-white/20 text-center">Qty</th>
+            <th class="p-3 text-right">Est. Cost (USD)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y-2 divide-ink bg-white">
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-primary-magenta">Microcontroller</td>
+            <td class="p-3 border-r-2 border-ink">ESP32-S3-WROOM-1-N16R8 (16MB Flash, 8MB PSRAM, Wi-Fi / BLE)</td>
+            <td class="p-3 border-r-2 border-ink">Espressif / Adafruit Feather ESP32-S3</td>
+            <td class="p-3 border-r-2 border-ink text-center">1</td>
+            <td class="p-3 text-right font-bold">$12.50</td>
+          </tr>
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-primary-magenta">Power Supply</td>
+            <td class="p-3 border-r-2 border-ink">Mean Well LRS-150-12 (12V DC, 12.5A, 150W Silent Convection)</td>
+            <td class="p-3 border-r-2 border-ink">Mean Well LRS-150-12</td>
+            <td class="p-3 border-r-2 border-ink text-center">1</td>
+            <td class="p-3 text-right font-bold">$22.00</td>
+          </tr>
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-electric-cyan">Addressable LEDs</td>
+            <td class="p-3 border-r-2 border-ink">SK6812 WWA (Warm White 2400K, Cool White 6000K, Amber 1800K) 144 LED/m</td>
+            <td class="p-3 border-r-2 border-ink">BTF-LIGHTING SK6812 WWA 5m spool</td>
+            <td class="p-3 border-r-2 border-ink text-center">1 spool</td>
+            <td class="p-3 text-right font-bold">$38.00</td>
+          </tr>
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-electric-cyan">Magnetic Couplers</td>
+            <td class="p-3 border-r-2 border-ink">4-Pole Concentric Magnetic Pogo Pin Connectors (Gold Plated)</td>
+            <td class="p-3 border-r-2 border-ink">HytePro M411P Magnetic 4-Pin Array</td>
+            <td class="p-3 border-r-2 border-ink text-center">24 pairs</td>
+            <td class="p-3 text-right font-bold">$34.00</td>
+          </tr>
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-tertiary-yellow">Sensors & IMUs</td>
+            <td class="p-3 border-r-2 border-ink">LSM6DSOX 6-Axis Accelerometer / Gyroscope I2C Breakout</td>
+            <td class="p-3 border-r-2 border-ink">STMicroelectronics LSM6DSOX</td>
+            <td class="p-3 border-r-2 border-ink text-center">8</td>
+            <td class="p-3 text-right font-bold">$19.20</td>
+          </tr>
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-tertiary-yellow">Silicon ID ROMs</td>
+            <td class="p-3 border-r-2 border-ink">DS2401 1-Wire Silicon Serial Number 64-bit ROM (TO-92)</td>
+            <td class="p-3 border-r-2 border-ink">Analog Devices / Maxim DS2401+</td>
+            <td class="p-3 border-r-2 border-ink text-center">16</td>
+            <td class="p-3 text-right font-bold">$8.80</td>
+          </tr>
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-neon-pink">Acoustic Exciter</td>
+            <td class="p-3 border-r-2 border-ink">Dayton Audio DAEX25FHE-4 Framed High Efficiency 25mm 24W 4Ω Exciter</td>
+            <td class="p-3 border-r-2 border-ink">Dayton Audio DAEX25FHE-4</td>
+            <td class="p-3 border-r-2 border-ink text-center">1</td>
+            <td class="p-3 text-right font-bold">$14.50</td>
+          </tr>
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-neon-pink">I2S Class-D DAC</td>
+            <td class="p-3 border-r-2 border-ink">MAX98357A I2S 3.2W Mono Audio Amplifier Breakout</td>
+            <td class="p-3 border-r-2 border-ink">Maxim MAX98357A</td>
+            <td class="p-3 border-r-2 border-ink text-center">1</td>
+            <td class="p-3 text-right font-bold">$4.20</td>
+          </tr>
+          <tr class="hover:bg-yellow-50">
+            <td class="p-3 font-bold border-r-2 border-ink text-ink">Housing & Optics</td>
+            <td class="p-3 border-r-2 border-ink">Cast Acrylic Sheet (Frosted 5mm) + 20mm Aluminum Extrusion + Oak Plinth</td>
+            <td class="p-3 border-r-2 border-ink">McMaster-Carr / Local Lumberyard</td>
+            <td class="p-3 border-r-2 border-ink text-center">Batch</td>
+            <td class="p-3 text-right font-bold">$26.00</td>
+          </tr>
+        </tbody>
+        <tfoot class="bg-ink text-white font-bold">
+          <tr>
+            <td colspan="4" class="p-3 text-right uppercase tracking-wider">TOTAL ESTIMATED COST (8-Log System):</td>
+            <td class="p-3 text-right text-acid-lime font-mono text-sm">$179.20 USD</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- 08. SCHEMATICS & FIRMWARE CODE -->
+  <section id="schematics" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col gap-6">
+    <div class="border-b-[3px] border-ink pb-3 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary-magenta text-white border-[3px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl">
+          08
+        </div>
+        <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+          Firmware Core Code (ESP32-S3 C++)
+        </h2>
+      </div>
+      <span class="bg-canvas border-2 border-ink px-3 py-1 font-mono text-xs font-bold text-ink">
+        FastLED + Simplex Volumetric
+      </span>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <p class="font-body text-sm text-gray-800">
+        Here is the production-ready C++ embedded algorithm running on Core 0 of the ESP32-S3. 
+        It samples 3D volumetric Simplex noise for every physical LED coordinate and translates it into blackbody thermal radiation:
+      </p>
+
+      <div class="bg-ink border-[3px] border-ink p-4 text-canvas font-mono text-xs overflow-x-auto shadow-[4px_4px_0px_#1c1b1b]">
+        <div class="flex items-center justify-between text-gray-400 border-b border-white/20 pb-2 mb-3">
+          <span class="text-acid-lime font-bold">CampfirePhysics.cpp</span>
+          <span>Target: ESP32-S3 (Arduino-ESP32 / ESP-IDF)</span>
+        </div>
+<pre><code>#include &lt;FastLED.h&gt;
+#include &lt;SimplexNoise.h&gt; // Fast integer 3D simplex implementation
+
+#define NUM_LOGS 8
+#define LEDS_PER_LOG 64
+#define TOTAL_LEDS (NUM_LOGS * LEDS_PER_LOG)
+
+CRGB leds[TOTAL_LEDS];
+SimplexNoise simplex;
+
+// 3D Physical Spatial Coordinates of each LED voxel (updated by IMU/Topology engine)
+struct VoxelPoint {
+    float x, y, z;      // World space in centimeters
+    float coreHeat;     // Conductive heat accumulator [0.0 - 1.0]
+    uint8_t logId;
+};
+VoxelPoint ledVoxels[TOTAL_LEDS];
+
+// Blackbody radiation color temperature lookup
+CRGB kelvinToCRGB(float kelvin, float intensity) {
+    // 1800K (Crimson Ember) -> 2400K (Warm Amber) -> 3200K (Golden White Flame)
+    float t = constrain((kelvin - 1600.0f) / 1600.0f, 0.0f, 1.0f);
+    uint8_t r = (uint8_t)(255 * intensity);
+    uint8_t g = (uint8_t)(constrain(t * 180.0f, 0.0f, 180.0f) * intensity);
+    uint8_t b = (uint8_t)(constrain(pow(t, 2.5f) * 70.0f, 0.0f, 70.0f) * intensity);
+    return CRGB(r, g, b);
+}
+
+void renderVolumetricFlameFrame(float timestampSeconds) {
+    const float convectionSpeed = 1.4f; // Vertical rise speed (cm/s)
+    const float noiseScale = 0.08f;     // Spatial frequency
+    
+    for (int i = 0; i &lt; TOTAL_LEDS; i++) {
+        VoxelPoint& v = ledVoxels[i];
+        
+        // Compute upward traveling turbulence coordinate
+        float sampleX = v.x * noiseScale;
+        float sampleY = (v.y - (timestampSeconds * convectionSpeed)) * noiseScale;
+        float sampleZ = v.z * noiseScale;
+        
+        // 2-Octave 3D Simplex Turbulence Field
+        float noise = simplex.noise(sampleX, sampleY, sampleZ);
+        noise += 0.5f * simplex.noise(sampleX * 2.1f, sampleY * 2.1f, sampleZ * 2.1f);
+        noise = (noise + 1.5f) / 3.0f; // Normalized [0.0, 1.0]
+        
+        // Base height gradient: Bottom logs maintain dense ember bed; top licks flicker
+        float heightAttenuation = constrain(1.0f - (v.y / 45.0f), 0.15f, 1.0f);
+        float thermalEnergy = noise * heightAttenuation * v.coreHeat;
+        
+        // Map thermal energy to Kelvin blackbody color
+        float kelvin = 1600.0f + (thermalEnergy * 1600.0f);
+        float brightness = constrain(thermalEnergy * 1.3f, 0.05f, 1.0f);
+        
+        leds[i] = kelvinToCRGB(kelvin, brightness);
+    }
+    
+    FastLED.show();
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CALL TO ACTION -->
+  <div class="bg-tertiary-yellow border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex flex-col gap-2">
+      <h3 class="font-display font-black text-2xl uppercase text-ink">
+        Experience The Flame Right Now
+      </h3>
+      <p class="font-body text-sm text-gray-800 max-w-xl">
+        Want to play with the block arrangements, camera orbit, dynamic light bounce, and ambient soundscapes before heating up the soldering iron?
+      </p>
+    </div>
+    <div class="flex items-center gap-3 shrink-0">
+      <a href="/interactive/campfire" class="neo-btn neo-btn-primary py-3 px-6 text-sm font-bold flex items-center gap-2">
+        <span class="material-symbols-outlined text-lg">view_in_ar</span>
+        <span>OPEN 3D INTERACTIVE SIMULATOR</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

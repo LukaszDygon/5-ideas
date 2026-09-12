@@ -83,6 +83,16 @@ def test_interactive_campfire_view(client):
     assert "audio-stem-crackle" in response.text
 
 
+def test_interactive_campfire_hardware_view(client):
+    response = client.get("/interactive/campfire/hardware")
+    assert response.status_code == 200
+    assert "Physical 3D LED Block Campfire" in response.text
+    assert "1-Wire" in response.text
+    assert "Dayton Audio" in response.text
+    assert "FastLED" in response.text
+    assert "Bill of Materials" in response.text
+
+
 
 
 def test_api_get_days(client):

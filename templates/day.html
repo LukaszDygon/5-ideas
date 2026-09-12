@@ -124,6 +124,12 @@
           <span class="material-symbols-outlined text-sm">open_in_new</span>
           <span>Open Fullscreen</span>
         </a>
+        {% if im.content == '/interactive/campfire' %}
+        <a href="/interactive/campfire/hardware" class="neo-btn neo-btn-cyan text-xs py-2 px-4 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
+          <span>Physical Build Guide</span>
+        </a>
+        {% endif %}
         {% elif im.external_url %}
         <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
           <span class="material-symbols-outlined text-sm">open_in_new</span>
@@ -168,6 +174,12 @@
               <span class="material-symbols-outlined text-sm">rocket_launch</span>
               <span>Launch Live App</span>
             </a>
+            {% if im.content == '/interactive/campfire' %}
+            <a href="/interactive/campfire/hardware" class="neo-btn neo-btn-cyan text-sm py-2 px-5 flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
+              <span>Physical Build Guide</span>
+            </a>
+            {% endif %}
             {% if im.external_url %}
             <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-white text-sm py-2 px-5 flex items-center gap-2">
               <span class="material-symbols-outlined text-sm">code</span>

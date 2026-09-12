@@ -231,6 +231,16 @@ async def interactive_campfire(request: Request):
     )
 
 
+@app.get("/interactive/campfire/hardware", response_class=HTMLResponse)
+async def interactive_campfire_hardware(request: Request):
+    """Physical hardware engineering blueprint and build guide for LED block campfire."""
+    return templates.TemplateResponse(
+        request=request,
+        name="campfire_hardware.html",
+        context={},
+    )
+
+
 
 @app.get("/random", response_class=RedirectResponse)
 async def random_day():
