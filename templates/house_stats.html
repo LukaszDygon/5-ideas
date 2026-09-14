@@ -67,25 +67,69 @@
     <div class="flex flex-col gap-6 lg:col-span-1">
       
       <!-- Property Listing Card -->
-      <div class="bg-surface border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col gap-2">
+      <div class="bg-surface border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col gap-3">
         <div class="flex items-center justify-between">
           <span class="font-mono text-[10px] uppercase font-black px-2 py-0.5 bg-accent-orange text-white" id="listing-portal">
-            OnTheMarket
+            Zoopla
           </span>
-          <span class="font-mono text-xs font-bold" id="listing-postcode">SW1E 6AL</span>
+          <span class="font-mono text-xs font-bold" id="listing-postcode">EN5 2EX</span>
         </div>
-        <h2 class="font-display font-black text-xl text-ink leading-tight" id="listing-title">
-          2 Bedroom Penthouse
-        </h2>
-        <div class="font-mono text-2xl font-black text-primary-magenta" id="listing-price">
-          £3,800,000
+
+        <!-- Property Hero Image -->
+        <div id="listing-image-container" class="relative border-2 border-ink shadow-[2px_2px_0px_#1c1b1b] overflow-hidden bg-canvas aspect-[16/10]">
+          <img id="listing-image" src="" alt="Property Photo" class="w-full h-full object-cover">
+          <div class="absolute bottom-2 left-2 bg-ink text-white font-mono text-[10px] font-bold px-2 py-0.5 border border-white" id="listing-tenure-badge">
+            Freehold
+          </div>
         </div>
-        <p class="font-body text-xs text-ink/80" id="listing-address">
-          Wellington House, 70 Buckingham Gate, Westminster, London
-        </p>
+
+        <div>
+          <h2 class="font-display font-black text-xl text-ink leading-tight" id="listing-title">
+            3 Bed Semi-Detached House
+          </h2>
+          <div class="font-mono text-2xl font-black text-primary-magenta mt-0.5" id="listing-price">
+            £700,000
+          </div>
+          <p class="font-body text-xs text-ink/80 mt-1" id="listing-address">
+            Milton Avenue, Barnet EN5
+          </p>
+        </div>
+
+        <!-- Specs & Metadata Grid -->
+        <div class="grid grid-cols-2 gap-2 bg-canvas border-2 border-ink p-2.5 font-mono text-[11px]">
+          <div>
+            <span class="text-ink/60 block text-[9px] uppercase font-bold">Floor Area</span>
+            <strong class="text-ink" id="listing-size">1,044 sq ft (97.0 sq m)</strong>
+          </div>
+          <div>
+            <span class="text-ink/60 block text-[9px] uppercase font-bold">Tenure</span>
+            <strong class="text-ink" id="listing-tenure">Freehold</strong>
+          </div>
+          <div>
+            <span class="text-ink/60 block text-[9px] uppercase font-bold">Council Tax</span>
+            <strong class="text-ink" id="listing-council-tax">Band F</strong>
+          </div>
+          <div>
+            <span class="text-ink/60 block text-[9px] uppercase font-bold">EPC Rating</span>
+            <strong class="text-ink" id="listing-epc">Rating D</strong>
+          </div>
+          <div class="col-span-2 border-t border-ink/20 pt-1 mt-0.5">
+            <span class="text-ink/60 block text-[9px] uppercase font-bold">Estate Agent</span>
+            <strong class="text-ink" id="listing-agent">Barnard Marcus - Whetstone</strong>
+          </div>
+        </div>
+
+        <!-- Key Features Highlights -->
+        <div id="listing-features-box" class="flex flex-col gap-1">
+          <span class="font-mono text-[10px] font-bold uppercase text-ink/70">Key Highlights</span>
+          <div id="listing-features" class="flex flex-wrap gap-1">
+            <!-- Features badges rendered dynamically -->
+          </div>
+        </div>
+
         <div class="border-t-2 border-dashed border-ink/20 pt-2 flex items-center justify-between text-xs font-mono">
-          <span id="listing-specs">2 Beds • 2 Baths • Penthouse</span>
-          <a href="https://www.onthemarket.com/details/17930197/" target="_blank" id="listing-url" class="text-secondary-cyan font-bold underline">
+          <span id="listing-specs">3 Beds • 2 Baths • Semi-Detached</span>
+          <a href="https://www.zoopla.co.uk/for-sale/details/74208604/" target="_blank" id="listing-url" class="text-secondary-cyan font-bold underline">
             View Live Listing ↗
           </a>
         </div>
@@ -289,6 +333,19 @@ const SAMPLES = {
     address: "Milton Avenue, Barnet EN5",
     specs: "3 Beds • 2 Baths • Semi-Detached",
     url: "https://www.zoopla.co.uk/for-sale/details/74208604/?search_identifier=007cc181df1429434e89b0d1921979ab66fe694642d3d7d5d14a60aea0a6efc6",
+    image: "https://lid.zoocdn.com/u/1024/768/08796feec9a25b18f0290515152a514d852aa471.jpg",
+    size: "1,044 sq ft (97.0 sq m)",
+    tenure: "Freehold",
+    councilTax: "Band F",
+    epc: "Rating D",
+    agent: "Barnard Marcus - Whetstone",
+    features: [
+      "Three Bedroom Semi-Detached Family Home",
+      "Driveway For Off Street Parking",
+      "Generous Size Rear Garden",
+      "Garage To Rear",
+      "Close Proximity To High Barnet Tube Station"
+    ],
     walkScore: "76 / 100",
     safetyScore: "50 / 100",
     crimeCount: "233 incidents / month",
@@ -329,6 +386,18 @@ const SAMPLES = {
     address: "Wellington House, 70 Buckingham Gate, Westminster, London",
     specs: "2 Beds • 2 Baths • Penthouse",
     url: "https://www.onthemarket.com/details/17930197/",
+    image: "https://media.onthemarket.com/properties/17930197/1516267866/image-0-1024x1024.jpg",
+    size: "1,850 sq ft (171.9 sq m)",
+    tenure: "Leasehold (995 yrs)",
+    councilTax: "Band H",
+    epc: "Rating B",
+    agent: "Knight Frank - Westminster",
+    features: [
+      "Direct Lift Access",
+      "Private Wrap-around Terrace",
+      "24hr Concierge",
+      "Underground Secure Parking"
+    ],
     walkScore: "92 / 100",
     safetyScore: "85 / 100",
     crimeCount: "20 incidents / month",
@@ -363,6 +432,18 @@ const SAMPLES = {
     address: "St James's, City of Westminster, London",
     specs: "4 Beds • 3 Baths • Period House",
     url: "https://www.rightmove.co.uk/property-for-sale/find.html?searchLocation=SW1A+1AA",
+    image: "https://media.rightmove.co.uk/dir/crop/10:9-16:9/12k/11234/14589234/11234_14589234_IMG_00_0000_max_656x437.jpeg",
+    size: "3,200 sq ft (297.3 sq m)",
+    tenure: "Freehold",
+    councilTax: "Band H",
+    epc: "Rating C",
+    agent: "Savills - Mayfair",
+    features: [
+      "Grade II Listed",
+      "South-facing Courtyard",
+      "Grand Reception Rooms",
+      "Period Cornicing"
+    ],
     walkScore: "94 / 100",
     safetyScore: "25 / 100",
     crimeCount: "3,483 incidents / month",
@@ -396,6 +477,18 @@ const SAMPLES = {
     address: "Piccadilly, City Centre, Manchester",
     specs: "2 Beds • 2 Baths • Warehouse Loft",
     url: "https://www.zoopla.co.uk/for-sale/property/m1-1ae/",
+    image: "https://lid.zoocdn.com/u/1024/768/d8e3d64a02c5fbd139ebc441b80d0d82ff025b39.jpg",
+    size: "850 sq ft (79.0 sq m)",
+    tenure: "Leasehold (115 yrs)",
+    councilTax: "Band D",
+    epc: "Rating B",
+    agent: "Reeds Rains - Manchester",
+    features: [
+      "Exposed Brickwork",
+      "Original Cast Iron Pillars",
+      "Canal Views",
+      "Central Location"
+    ],
     walkScore: "96 / 100",
     safetyScore: "45 / 100",
     crimeCount: "820 incidents / month",
@@ -429,6 +522,32 @@ function renderDossier(data) {
   document.getElementById("listing-address").textContent = data.address;
   document.getElementById("listing-specs").textContent = data.specs;
   document.getElementById("listing-url").href = data.url;
+
+  if (data.image) {
+    document.getElementById("listing-image").src = data.image;
+    document.getElementById("listing-image-container").classList.remove("hidden");
+  } else {
+    document.getElementById("listing-image-container").classList.add("hidden");
+  }
+
+  document.getElementById("listing-size").textContent = data.size || "N/A";
+  document.getElementById("listing-tenure").textContent = data.tenure || "N/A";
+  document.getElementById("listing-tenure-badge").textContent = data.tenure || "Freehold";
+  document.getElementById("listing-council-tax").textContent = data.councilTax || "N/A";
+  document.getElementById("listing-epc").textContent = data.epc || "N/A";
+  document.getElementById("listing-agent").textContent = data.agent || "N/A";
+
+  const featContainer = document.getElementById("listing-features");
+  if (data.features && data.features.length) {
+    document.getElementById("listing-features-box").classList.remove("hidden");
+    featContainer.innerHTML = data.features.map(f => `
+      <span class="bg-canvas border border-ink px-1.5 py-0.5 text-[10px] font-mono text-ink/90">
+        • ${f}
+      </span>
+    `).join("");
+  } else {
+    document.getElementById("listing-features-box").classList.add("hidden");
+  }
 
   document.getElementById("score-walk").textContent = data.walkScore;
   document.getElementById("score-safe").textContent = data.safetyScore;
