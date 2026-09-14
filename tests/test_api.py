@@ -22,7 +22,8 @@ def test_home_view(client):
     assert response.status_code == 200
     assert "IDEAS DAILY" in response.text
     assert "Top-Ranked Implementations" in response.text
-    assert "RADICAL MEMPHIS POP" in response.text or "SHIPPED PROTOTYPE" in response.text
+    assert any(term in response.text for term in ("RADICAL MEMPHIS POP", "SHIPPED PROTOTYPE", "LATEST DROP"))
+
 
 
 def test_calendar_view(client):
@@ -95,6 +96,15 @@ def test_interactive_campfire_hardware_view(client):
     assert "Bill of Materials" in response.text
 
 
+def test_interactive_house_stats_view(client):
+    response = client.get("/interactive/house-stats")
+    assert response.status_code == 200
+    assert "House Statistics & Dossier Generator" in response.text
+    assert "Walkability Index" in response.text
+    assert "Nearby Schools & Ofsted Inspection Ratings" in response.text
+    assert "Criminal Activity Per Capita vs UK Benchmarks" in response.text
+
+
 
 
 def test_api_get_days(client):
@@ -153,3 +163,32 @@ def test_admin_visibility_and_transcript_label(client, monkeypatch):
     assert day_resp_hosted.status_code == 200
     assert 'href="/admin/day/2026-09-10/edit"' not in day_resp_hosted.text
     assert "AI Interaction Summary" in day_resp_hosted.text
+
+
+def test_interactive_slots1v1(client):
+    response = client.get("/interactive/slots1v1")
+    assert response.status_code == 200
+    assert "Slots 1v1: Tactical Reel Arena" in response.text
+    assert "SPIN REELS" in response.text
+    assert "PeerJS" in response.text or "peerjs" in response.text
+    assert "https://github.com/LukaszDygon/slot-battles" in response.text
+
+    day_resp = client.get("/day/2026-09-13")
+    assert day_resp.status_code == 200
+    assert "https://github.com/LukaszDygon/slot-battles" in day_resp.text
+
+
+def test_interactive_house_stats(client):
+    response = client.get("/interactive/house-stats")
+    assert response.status_code == 200
+    assert "House Statistics & Dossier Generator: Home Search Tracker" in response.text
+    assert "Home Search Portfolio" in response.text
+    assert "Heuristic Valuation Engine" in response.text
+    assert "Admin Criteria & Places" in response.text
+    assert "Area Dossier & Walk Routes" in response.text
+    assert "Sold STC" in response.text
+    assert "Under Offer" in response.text
+    assert "Active" in response.text
+    assert "https://github.com/LukaszDygon/house_stats" in response.text
+
+
