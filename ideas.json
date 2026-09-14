@@ -9,7 +9,7 @@
     "created_at": "2026-09-14 08:06:53",
     "ideas": [
       {
-        "id": 326,
+        "id": 331,
         "day_id": 54,
         "idea_number": 1,
         "title": "House Plan from Photos",
@@ -21,7 +21,7 @@
         "implementation": null
       },
       {
-        "id": 327,
+        "id": 332,
         "day_id": 54,
         "idea_number": 2,
         "title": "AI Home redesigner",
@@ -33,7 +33,7 @@
         "implementation": null
       },
       {
-        "id": 328,
+        "id": 333,
         "day_id": 54,
         "idea_number": 3,
         "title": "Smart home inventory",
@@ -45,7 +45,7 @@
         "implementation": null
       },
       {
-        "id": 329,
+        "id": 334,
         "day_id": 54,
         "idea_number": 4,
         "title": "Campter Van fitouts",
@@ -57,7 +57,7 @@
         "implementation": null
       },
       {
-        "id": 330,
+        "id": 335,
         "day_id": 54,
         "idea_number": 5,
         "title": "House statistics",
@@ -67,16 +67,16 @@
         "icon": "lightbulb",
         "is_implemented": 1,
         "implementation": {
-          "id": 63,
-          "idea_id": 330,
-          "title": "House Statistics: Open Data & Walk Routing Engine",
+          "id": 64,
+          "idea_id": 335,
+          "title": "House Statistics: Property Intelligence & Home Search Tracker",
           "build_type": "webapp",
           "rank": 1,
-          "summary": "Asynchronous UK property intelligence, street-level crime per capita, Ofsted school ratings with pupil rolls, and pedestrian walking routes powered by dlt and DuckDB.",
+          "summary": "UK property intelligence, live portal status verification (Active / Sold STC / Under Offer), admin criteria evaluation with custom important places, and an open heuristic valuation engine.",
           "content": "/interactive/house-stats",
           "external_url": "https://github.com/LukaszDygon/house_stats",
-          "time_spent_hours": 3.0,
-          "ai_tools_used": "Antigravity, dlt, DuckDB, Python 3.13, Rich, httpx",
+          "time_spent_hours": 4.5,
+          "ai_tools_used": "Antigravity, dlt, DuckDB, Python 3.13, Rich, httpx, curl_cffi, OSRM",
           "process_steps": [
             {
               "step": 1,
@@ -91,27 +91,34 @@
             {
               "step": 3,
               "title": "Step 3",
-              "desc": "First pass at spinning up the repo, fixing 3.14 segfaults and getting OSRM walking distance working"
+              "desc": "Spun up repo, fixed 3.14 segfaults, and added OSRM walking distance and crime per capita"
             },
             {
               "step": 4,
               "title": "Step 4",
-              "desc": "Added portal link parsing, ofsted ratings, student numbers, and crime per capita"
+              "desc": "Fixed Cloudflare blocks with browser TLS impersonation and extracted full listing metadata"
+            },
+            {
+              "step": 5,
+              "title": "Step 5",
+              "desc": "Added home search portfolio tracker, market status verification, criteria scoring, and heuristic valuation"
             }
           ],
           "what_rocked": [
-            "It span out a new codebase almost instantly, with a decent first pass"
+            "It span out a new codebase almost instantly, with a decent first pass",
+            "Open heuristic valuation and live URL metadata auto-population worked smoothly without heavy dependencies"
           ],
           "what_broke": [
-            "Multiple turns over dlt, not actually using a good structure for dlt"
+            "Multiple turns over dlt, not actually using a good structure for dlt",
+            "Zoopla Cloudflare anti-bot checks blocked standard requests until switching to TLS impersonation"
           ],
-          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 7 human turns across 304 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: python 3.14 please, check the pages on zoopla, rightmove and onthemarket as well (ad hoc, not scarping) Create a new repo for t...\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: I would like to be able to generate a report from a zoopla/onthemarket/rightmove link, so it would pull the data and postcode f...\n  \u2022 Turn 5: 1. [instruction for AI: Record the steps from AI in short, casual tone] 2. It span out a new codebase almost instantly, with a ...\n  \u2022 Turn 6: decrese steps to 4 and make it based on conversational turns, not on agent implementation steps What broke: Multiple turns over...\n  \u2022 Turn 7: ok remove the fluff from steps. Just 4 untitled items, it sounds 7/10 like AI, make it sound 0/10 like AI and more like how oth...\n\nTools Executed: run_command (72), write_to_file (36), view_file (22), replace_file_content (7), ask_question (2), find_by_name (2)\nFiles Modified: .gitignore, README.md, SKILL.md, SW1A_1AA.md, SW1E_6AL.md, __init__.py, amenities.py, app.py",
-          "created_at": "2026-09-14 12:52:16"
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 16 human turns across 1521 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: python 3.14 please, check the pages on zoopla, rightmove and onthemarket as well (ad hoc, not scarping) Create a new repo for t...\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: I would like to be able to generate a report from a zoopla/onthemarket/rightmove link, so it would pull the data and postcode f...\n  \u2022 Turn 5: 1. [instruction for AI: Record the steps from AI in short, casual tone] 2. It span out a new codebase almost instantly, with a ...\n  \u2022 Turn 6: decrese steps to 4 and make it based on conversational turns, not on agent implementation steps What broke: Multiple turns over...\n  \u2022 Turn 7: ok remove the fluff from steps. Just 4 untitled items, it sounds 7/10 like AI, make it sound 0/10 like AI and more like how oth...\n  \u2022 Turn 8: The tool doesn't work with zoopla, because of Cloudflare https://www.zoopla.co.uk/for-sale/details/74208604/?search_identifier=...\n  \u2022 Turn 9: I don't think it works in generating real results for new queries. I queried the above and it comes back with Wesminster City S...\n  \u2022 Turn 10: I can see that the results are not quite right. It misses at least one school - St Cathrine's. Are we getting the data from the...\n  \u2022 Turn 11: extract more infor from the listing. Info like the size in sq feet or sqm, main image link, leasehold information, any other me...\n  \u2022 Turn 12: I don't think the shops are right either. They should have more shops, including big ones that don't appear before ones far away\n  \u2022 Turn 13: I don't think the store search is working as intended. For example this property https://www.zoopla.co.uk/for-sale/details/7263...\n  \u2022 Turn 14: all right. I want to use this for a home search in the future. I want to be able to manage which properties I am tracking, and ...\n  \u2022 Turn 15: can I add things for tracking by URL, which then populates the metadata for the tracked property?\n  \u2022 Turn 16: update today's entry\n\nTools Executed: run_command (349), view_file (199), replace_file_content (58), write_to_file (50), manage_task (30), grep_search (16)\nFiles Modified: .gitignore, EN2_7BT.md, EN5_2EX.md, README.md, SKILL.md, SW1A_1AA.md, SW1E_6AL.md, __init__.py",
+          "created_at": "2026-09-14 14:57:44"
         }
       }
     ],
     "implemented_idea": {
-      "id": 330,
+      "id": 335,
       "day_id": 54,
       "idea_number": 5,
       "title": "House statistics",
@@ -121,16 +128,16 @@
       "icon": "lightbulb",
       "is_implemented": 1,
       "implementation": {
-        "id": 63,
-        "idea_id": 330,
-        "title": "House Statistics: Open Data & Walk Routing Engine",
+        "id": 64,
+        "idea_id": 335,
+        "title": "House Statistics: Property Intelligence & Home Search Tracker",
         "build_type": "webapp",
         "rank": 1,
-        "summary": "Asynchronous UK property intelligence, street-level crime per capita, Ofsted school ratings with pupil rolls, and pedestrian walking routes powered by dlt and DuckDB.",
+        "summary": "UK property intelligence, live portal status verification (Active / Sold STC / Under Offer), admin criteria evaluation with custom important places, and an open heuristic valuation engine.",
         "content": "/interactive/house-stats",
         "external_url": "https://github.com/LukaszDygon/house_stats",
-        "time_spent_hours": 3.0,
-        "ai_tools_used": "Antigravity, dlt, DuckDB, Python 3.13, Rich, httpx",
+        "time_spent_hours": 4.5,
+        "ai_tools_used": "Antigravity, dlt, DuckDB, Python 3.13, Rich, httpx, curl_cffi, OSRM",
         "process_steps": [
           {
             "step": 1,
@@ -145,22 +152,29 @@
           {
             "step": 3,
             "title": "Step 3",
-            "desc": "First pass at spinning up the repo, fixing 3.14 segfaults and getting OSRM walking distance working"
+            "desc": "Spun up repo, fixed 3.14 segfaults, and added OSRM walking distance and crime per capita"
           },
           {
             "step": 4,
             "title": "Step 4",
-            "desc": "Added portal link parsing, ofsted ratings, student numbers, and crime per capita"
+            "desc": "Fixed Cloudflare blocks with browser TLS impersonation and extracted full listing metadata"
+          },
+          {
+            "step": 5,
+            "title": "Step 5",
+            "desc": "Added home search portfolio tracker, market status verification, criteria scoring, and heuristic valuation"
           }
         ],
         "what_rocked": [
-          "It span out a new codebase almost instantly, with a decent first pass"
+          "It span out a new codebase almost instantly, with a decent first pass",
+          "Open heuristic valuation and live URL metadata auto-population worked smoothly without heavy dependencies"
         ],
         "what_broke": [
-          "Multiple turns over dlt, not actually using a good structure for dlt"
+          "Multiple turns over dlt, not actually using a good structure for dlt",
+          "Zoopla Cloudflare anti-bot checks blocked standard requests until switching to TLS impersonation"
         ],
-        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 7 human turns across 304 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: python 3.14 please, check the pages on zoopla, rightmove and onthemarket as well (ad hoc, not scarping) Create a new repo for t...\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: I would like to be able to generate a report from a zoopla/onthemarket/rightmove link, so it would pull the data and postcode f...\n  \u2022 Turn 5: 1. [instruction for AI: Record the steps from AI in short, casual tone] 2. It span out a new codebase almost instantly, with a ...\n  \u2022 Turn 6: decrese steps to 4 and make it based on conversational turns, not on agent implementation steps What broke: Multiple turns over...\n  \u2022 Turn 7: ok remove the fluff from steps. Just 4 untitled items, it sounds 7/10 like AI, make it sound 0/10 like AI and more like how oth...\n\nTools Executed: run_command (72), write_to_file (36), view_file (22), replace_file_content (7), ask_question (2), find_by_name (2)\nFiles Modified: .gitignore, README.md, SKILL.md, SW1A_1AA.md, SW1E_6AL.md, __init__.py, amenities.py, app.py",
-        "created_at": "2026-09-14 12:52:16"
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 16 human turns across 1521 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: python 3.14 please, check the pages on zoopla, rightmove and onthemarket as well (ad hoc, not scarping) Create a new repo for t...\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: I would like to be able to generate a report from a zoopla/onthemarket/rightmove link, so it would pull the data and postcode f...\n  \u2022 Turn 5: 1. [instruction for AI: Record the steps from AI in short, casual tone] 2. It span out a new codebase almost instantly, with a ...\n  \u2022 Turn 6: decrese steps to 4 and make it based on conversational turns, not on agent implementation steps What broke: Multiple turns over...\n  \u2022 Turn 7: ok remove the fluff from steps. Just 4 untitled items, it sounds 7/10 like AI, make it sound 0/10 like AI and more like how oth...\n  \u2022 Turn 8: The tool doesn't work with zoopla, because of Cloudflare https://www.zoopla.co.uk/for-sale/details/74208604/?search_identifier=...\n  \u2022 Turn 9: I don't think it works in generating real results for new queries. I queried the above and it comes back with Wesminster City S...\n  \u2022 Turn 10: I can see that the results are not quite right. It misses at least one school - St Cathrine's. Are we getting the data from the...\n  \u2022 Turn 11: extract more infor from the listing. Info like the size in sq feet or sqm, main image link, leasehold information, any other me...\n  \u2022 Turn 12: I don't think the shops are right either. They should have more shops, including big ones that don't appear before ones far away\n  \u2022 Turn 13: I don't think the store search is working as intended. For example this property https://www.zoopla.co.uk/for-sale/details/7263...\n  \u2022 Turn 14: all right. I want to use this for a home search in the future. I want to be able to manage which properties I am tracking, and ...\n  \u2022 Turn 15: can I add things for tracking by URL, which then populates the metadata for the tracked property?\n  \u2022 Turn 16: update today's entry\n\nTools Executed: run_command (349), view_file (199), replace_file_content (58), write_to_file (50), manage_task (30), grep_search (16)\nFiles Modified: .gitignore, EN2_7BT.md, EN5_2EX.md, README.md, SKILL.md, SW1A_1AA.md, SW1E_6AL.md, __init__.py",
+        "created_at": "2026-09-14 14:57:44"
       }
     }
   },
