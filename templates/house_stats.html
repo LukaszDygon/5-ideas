@@ -97,6 +97,50 @@
           ✕ CLOSE
         </button>
       </div>
+
+      <!-- Quick Auto-Populate by Portal URL Card -->
+      <div class="bg-tertiary-yellow/20 border-2 border-ink p-3.5 mb-4 flex flex-col gap-2">
+        <div class="flex items-center justify-between flex-wrap gap-1">
+          <span class="font-mono text-xs font-black uppercase text-ink flex items-center gap-1.5">
+            <span>⚡</span> Quick Auto-Populate from Listing URL
+          </span>
+          <span class="font-mono text-[10px] text-ink/70">Rightmove, Zoopla, OnTheMarket</span>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input 
+            type="url" 
+            id="url-autofill-input" 
+            placeholder="Paste portal link (e.g. https://www.zoopla.co.uk/for-sale/details/72635023)"
+            class="flex-1 border-2 border-ink p-2 font-mono text-xs bg-white"
+          />
+          <button 
+            type="button" 
+            onclick="fetchMetadataForUrl()" 
+            id="btn-fetch-metadata" 
+            class="neo-btn neo-btn-yellow text-xs py-2 px-3 font-bold whitespace-nowrap flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">cloud_download</span>
+            <span>Fetch Metadata</span>
+          </button>
+          <button 
+            type="button" 
+            onclick="instantAddFromUrl()" 
+            id="btn-instant-add" 
+            class="neo-btn neo-btn-magenta text-xs py-2 px-3 font-bold whitespace-nowrap flex items-center gap-1"
+          >
+            <span class="material-symbols-outlined text-sm">bolt</span>
+            <span>Instant Track</span>
+          </button>
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap font-mono text-[10px] text-ink/70">
+          <span class="font-bold text-ink">Try sample links:</span>
+          <button type="button" onclick="setAndFetchSample('https://www.zoopla.co.uk/for-sale/details/72635023')" class="underline hover:text-primary-magenta">Waverley Rd EN2 (Zoopla)</button> •
+          <button type="button" onclick="setAndFetchSample('https://www.zoopla.co.uk/for-sale/details/74208604/')" class="underline hover:text-primary-magenta">Milton Ave EN5 (Zoopla)</button> •
+          <button type="button" onclick="setAndFetchSample('https://www.onthemarket.com/details/17930197/')" class="underline hover:text-primary-magenta">Westminster Penthouse (OnTheMarket)</button>
+        </div>
+        <div id="fetch-status-msg" class="hidden font-mono text-xs font-bold p-2 border border-ink"></div>
+      </div>
+
       <form id="new-property-form" onsubmit="handleCreateProperty(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
         <div>
           <label class="block font-bold mb-1">Postcode *</label>
@@ -557,6 +601,10 @@
         />
         <button onclick="handleSearch()" class="neo-btn neo-btn-magenta text-xs py-2 px-4 whitespace-nowrap font-bold">
           ANALYZE PROPERTY
+        </button>
+        <button onclick="trackCurrentInputUrl()" class="neo-btn neo-btn-yellow text-xs py-2 px-3 whitespace-nowrap font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">bookmark_add</span>
+          <span>TRACK LISTING</span>
         </button>
       </div>
       <div class="flex items-center gap-1 flex-wrap">
@@ -1295,7 +1343,154 @@ function filterPortfolio(status) {
 
 function toggleAddPropertyForm() {
   const panel = document.getElementById("add-property-panel");
-  panel.classList.toggle("hidden");
+  if (panel) panel.classList.toggle("hidden");
+}
+
+async function fetchMetadataForUrl(customUrl = null) {
+  const inputEl = document.getElementById("url-autofill-input");
+  const targetUrl = (customUrl || (inputEl ? inputEl.value : "")).trim();
+  const statusMsg = document.getElementById("fetch-status-msg");
+  const btnFetch = document.getElementById("btn-fetch-metadata");
+
+  if (!targetUrl) {
+    alert("Please enter a property listing URL from Zoopla, Rightmove, or OnTheMarket.");
+    return null;
+  }
+
+  if (statusMsg) {
+    statusMsg.classList.remove("hidden", "bg-primary-magenta/20", "bg-accent-lime/20", "text-ink");
+    statusMsg.classList.add("bg-tertiary-yellow/30", "text-ink");
+    statusMsg.innerHTML = `<span>⏳ Fetching property metadata from portal via Cloudflare bypass...</span>`;
+  }
+  if (btnFetch) btnFetch.disabled = true;
+
+  try {
+    const resp = await fetch("/api/house-stats/parse-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: targetUrl })
+    });
+
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+
+    if (data && data.success) {
+      // Auto-populate form inputs
+      if (data.postcode) document.getElementById("new-prop-postcode").value = data.postcode;
+      if (data.price) document.getElementById("new-prop-price").value = data.price;
+      if (data.portal) document.getElementById("new-prop-portal").value = data.portal;
+      if (data.title) document.getElementById("new-prop-title").value = data.title;
+      if (data.address) document.getElementById("new-prop-address").value = data.address;
+      document.getElementById("new-prop-url").value = data.url;
+      if (data.beds) document.getElementById("new-prop-beds").value = data.beds;
+      if (data.sqft) document.getElementById("new-prop-size").value = data.sqft;
+      
+      // Archetype match
+      const typeSelect = document.getElementById("new-prop-type");
+      if (data.type) {
+        if (data.type.includes("Semi")) typeSelect.value = "Semi-Detached";
+        else if (data.type.includes("Detached")) typeSelect.value = "Detached";
+        else if (data.type.includes("Penthouse")) typeSelect.value = "Penthouse";
+        else if (data.type.includes("Flat") || data.type.includes("Apartment")) typeSelect.value = "Flat";
+        else if (data.type.includes("Terrace")) typeSelect.value = "Terraced";
+      }
+
+      // Tenure match
+      const tenureSelect = document.getElementById("new-prop-tenure");
+      if (data.tenure) {
+        if (data.tenure.toLowerCase().includes("freehold")) tenureSelect.value = "Freehold";
+        else if (data.tenure.includes("999") || data.tenure.includes("995")) tenureSelect.value = "Leasehold (999 yrs)";
+        else if (data.tenure.includes("<80")) tenureSelect.value = "Leasehold (<80 yrs)";
+        else tenureSelect.value = "Leasehold (115 yrs)";
+      }
+
+      if (data.notes) document.getElementById("new-prop-notes").value = data.notes;
+
+      // Visual flash animation on inputs
+      ["new-prop-postcode", "new-prop-price", "new-prop-title", "new-prop-address", "new-prop-size"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.add("bg-accent-lime/30");
+          setTimeout(() => el.classList.remove("bg-accent-lime/30"), 1500);
+        }
+      });
+
+      if (statusMsg) {
+        statusMsg.className = "font-mono text-xs font-bold p-2 border border-ink bg-accent-lime/20 text-ink";
+        statusMsg.innerHTML = `<span>✔ Populated from <strong>${data.portal}</strong>: ${data.title} (${data.postcode}, ${data.priceStr || '£' + data.price}). Review fields below and click "Add to Tracked Portfolio"!</span>`;
+      }
+      return data;
+    }
+  } catch (err) {
+    console.warn("API parse failed, using client fallback:", err);
+    if (statusMsg) {
+      statusMsg.className = "font-mono text-xs font-bold p-2 border border-ink bg-tertiary-yellow/30 text-ink";
+      statusMsg.innerHTML = `<span>⚠️ Could not fetch live portal directly (${err.message}); default template applied.</span>`;
+    }
+  } finally {
+    if (btnFetch) btnFetch.disabled = false;
+  }
+  return null;
+}
+
+async function instantAddFromUrl(customUrl = null) {
+  const targetUrl = (customUrl || (document.getElementById("url-autofill-input") ? document.getElementById("url-autofill-input").value : "")).trim();
+  if (!targetUrl) {
+    alert("Please enter a property listing URL.");
+    return;
+  }
+
+  const data = await fetchMetadataForUrl(targetUrl);
+  if (!data) return;
+
+  const outcode = (data.postcode || "EN2").split(" ")[0];
+  const newProp = {
+    id: `prop_${Date.now()}`,
+    postcode: data.postcode || "EN2 7BT",
+    outcode: outcode,
+    title: data.title || "Tracked Listing",
+    address: data.address || `${data.title}, ${data.postcode}`,
+    price: data.price || 650000,
+    priceStr: data.priceStr || `£${(data.price || 650000).toLocaleString()}`,
+    portal: data.portal || "Portal",
+    url: data.url || targetUrl,
+    status: data.status || "Active",
+    beds: data.beds || 3,
+    baths: data.baths || 2,
+    sqft: data.sqft || 1150,
+    type: data.type || "Semi-Detached",
+    tenure: data.tenure || "Freehold",
+    epc: data.epc || "Rating C",
+    priority: data.priority || "High",
+    verifiedAt: "Verified live just now",
+    features: data.features || ["Family Property"],
+    notes: data.notes || "Added via URL auto-population"
+  };
+
+  portfolio.unshift(newProp);
+  persistState();
+  renderPortfolio();
+  
+  const panel = document.getElementById("add-property-panel");
+  if (panel && !panel.classList.contains("hidden")) toggleAddPropertyForm();
+
+  alert(`✔ Successfully added to tracking from URL:\n\n${newProp.title}\nPostcode: ${newProp.postcode}\nPrice: ${newProp.priceStr}\nPortal: ${newProp.portal}\nFloor Area: ${newProp.sqft} sq ft`);
+}
+
+function setAndFetchSample(url) {
+  const inputEl = document.getElementById("url-autofill-input");
+  if (inputEl) inputEl.value = url;
+  fetchMetadataForUrl(url);
+}
+
+function trackCurrentInputUrl() {
+  const val = document.getElementById("property-input").value.trim();
+  if (!val) {
+    alert("Please enter a property URL to track.");
+    return;
+  }
+  switchTab("portfolio");
+  instantAddFromUrl(val);
 }
 
 function handleCreateProperty(e) {

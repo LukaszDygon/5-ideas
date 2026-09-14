@@ -189,6 +189,28 @@ def test_interactive_house_stats(client):
     assert "Sold STC" in response.text
     assert "Under Offer" in response.text
     assert "Active" in response.text
+    assert "Quick Auto-Populate from Listing URL" in response.text
     assert "https://github.com/LukaszDygon/house_stats" in response.text
+
+
+def test_api_house_stats_parse_url(client):
+    # Test valid Zoopla URL
+    resp = client.post(
+        "/api/house-stats/parse-url",
+        json={"url": "https://www.zoopla.co.uk/for-sale/details/72635023"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["success"] is True
+    assert data["portal"] == "Zoopla"
+    assert "EN2" in data["postcode"]
+    assert data["price"] == 675000
+    assert data["beds"] == 4
+    assert data["sqft"] == 1334
+
+    # Test empty URL
+    err_resp = client.post("/api/house-stats/parse-url", json={"url": ""})
+    assert err_resp.status_code == 400
+
 
 
