@@ -45,6 +45,9 @@
     </div>
     <div class="flex items-center gap-1 flex-wrap">
       <span class="font-mono text-[11px] font-bold text-ink/70 mr-1">PRESETS:</span>
+      <button onclick="loadSample('en2')" class="neo-btn neo-btn-yellow text-[11px] py-1 px-2.5 font-bold">
+        EN2 (Enfield Zoopla)
+      </button>
       <button onclick="loadSample('en5')" class="neo-btn neo-btn-magenta text-[11px] py-1 px-2.5">
         EN5 (Barnet Zoopla)
       </button>
@@ -325,6 +328,63 @@ uv run house-stats inspect</pre>
 
 <script>
 const SAMPLES = {
+  en2: {
+    portal: "Zoopla",
+    postcode: "EN2 7BT",
+    title: "4 Bed Property For Sale",
+    price: "£675,000",
+    address: "Waverley Road, Enfield EN2",
+    specs: "4 Beds • 2 Baths • Residential Property",
+    url: "https://www.zoopla.co.uk/for-sale/details/72635023",
+    image: "https://lid.zoocdn.com/u/1024/768/7908d2d309a1e73665f9c57d7dd9a5005e8928a2.jpg",
+    size: "1,334 sq ft (123.9 sq m)",
+    tenure: "Freehold",
+    councilTax: "Band F",
+    epc: "Rating C",
+    agent: "Barnfields - Enfield",
+    features: [
+      "Four Good Sized Bedrooms",
+      "En-Suite Bathroom / WC To Master Bedroom",
+      "No Chain",
+      "45' Rear Garden",
+      "Integral Garage & Front Driveway For 2/3 Cars"
+    ],
+    walkScore: "59 / 100",
+    safetyScore: "44 / 100",
+    crimeCount: "344 incidents / month",
+    district: "Enfield",
+    ward: "Ridgeway",
+    lsoa: "Enfield 010A",
+    constituency: "Enfield North",
+    localRate: "129.0 / 1,000",
+    localPct: "12.90% per capita / yr",
+    deltaPct: "+64.3%",
+    deltaText: "High Urban Activity",
+    schools: [
+      { name: "Merryhills Primary School", phase: "Primary • Community School", ofsted: "Good", roll: "320 pupils (4-11)", dur: "21 mins", dist: "1.71 km" },
+      { name: "Enfield County School for Girls", phase: "Secondary • Academy Converter", ofsted: "Outstanding", roll: "1,050 pupils (11-18)", dur: "22 mins", dist: "1.75 km" },
+      { name: "Enfield Grammar School", phase: "Secondary • Grammar School (Selective)", ofsted: "Outstanding", roll: "1,080 pupils (11-18)", dur: "23 mins", dist: "1.87 km" },
+      { name: "St George's Catholic Primary School", phase: "Primary • Voluntary Aided (Faith)", ofsted: "Good", roll: "320 pupils (4-11)", dur: "25 mins", dist: "2.02 km" },
+      { name: "St Andrew's CofE Primary School", phase: "Primary • Voluntary Aided (Faith)", ofsted: "Good", roll: "320 pupils (4-11)", dur: "25 mins", dist: "2.03 km" },
+      { name: "Highlands School", phase: "Secondary • Academy Converter", ofsted: "Good", roll: "1,200 pupils (11-18)", dur: "29 mins", dist: "2.28 km" }
+    ],
+    supermarkets: [
+      { name: "Krishnaas", sub: "Local Convenience / Newsagent", dur: "3 mins", dist: "272 m" },
+      { name: "Waitrose (38-40 Windmill Hill)", sub: "Supermarket (Local)", dur: "4 mins", dist: "296 m" },
+      { name: "Tesco Express (25 Windmill Hill)", sub: "Supermarket (Express)", dur: "5 mins", dist: "408 m" },
+      { name: "Chase Supermarket", sub: "Local Grocery", dur: "6 mins", dist: "458 m" },
+      { name: "Holtwhites Bakery (119a)", sub: "Bakery & Food", dur: "15 mins", dist: "1.19 km" },
+      { name: "Lidl", sub: "Major Supermarket", dur: "19 mins", dist: "1.54 km" },
+      { name: "Marks & Spencer (Palace Gardens - Big Store)", sub: "Major Supermarket", dur: "20 mins", dist: "1.60 km" },
+      { name: "Tesco Superstore (Chalkwell Park Avenue)", sub: "Major Supermarket", dur: "21 mins", dist: "1.68 km" },
+      { name: "Waitrose (Palace Gardens - Big Store)", sub: "Major Supermarket", dur: "24 mins", dist: "1.94 km" }
+    ],
+    transit: [
+      { name: "Enfield Chase (Gresham Close)", mode: "🚆 National Rail", dur: "6 mins", dist: "467 m" },
+      { name: "Enfield Town (Dunstan Mews)", mode: "🚆 National Rail", dur: "19 mins", dist: "1.50 km" },
+      { name: "Grange Park (Brook Park Close)", mode: "🚆 National Rail", dur: "30 mins", dist: "2.42 km" }
+    ]
+  },
   en5: {
     portal: "Zoopla",
     postcode: "EN5 2EX",
