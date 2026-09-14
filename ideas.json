@@ -1,5 +1,335 @@
 [
   {
+    "id": 54,
+    "date": "2026-09-14",
+    "theme": "House",
+    "subtitle": "Someone's home, with roof and a few walls",
+    "streak_count": 1,
+    "notes": "One of those days it's harder to wake up and be awake. Gloomy, and it's Monday. I am sat indoors. The theme is close to the environment I'm in.",
+    "created_at": "2026-09-14 08:06:53",
+    "ideas": [
+      {
+        "id": 326,
+        "day_id": 54,
+        "idea_number": 1,
+        "title": "House Plan from Photos",
+        "tagline": "Democratising house plan generation",
+        "description": "I think this is a difficult project to pull off, but there must be a point at which adding a bit more easy to acquire data allows for creating a decent plan, and combining it with a refinement editor to Polish it off.",
+        "tags": "Physical, Photography, Architecture",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 327,
+        "day_id": 54,
+        "idea_number": 2,
+        "title": "AI Home redesigner",
+        "tagline": "Edit your home with AI",
+        "description": "Either photos or a 3d render of a home from Photos (I've seen someone do this in Astra), combined with AI which can change elements of the environment the user selects.",
+        "tags": "AI, Architecture",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 328,
+        "day_id": 54,
+        "idea_number": 3,
+        "title": "Smart home inventory",
+        "tagline": "Control your smart home from a smart phone",
+        "description": "There is an opportunity for AI in creating skills for the smart home, but the first step is registering the devices and creating a database for them. This idea exists already, I am sure, and this would be an opinionated clone that makes it AI first.",
+        "tags": "Smart Home, Database, Networking",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 329,
+        "day_id": 54,
+        "idea_number": 4,
+        "title": "Campter Van fitouts",
+        "tagline": "Inspiration database for Vanlifers",
+        "description": "Create a scraper for Camper Van photos to inspire and allow exploring. It could be linked to instructions, descriptions, etc and have a vector database to make it a really powerful search engine. Maximum amount of meta tagging and good taxonomies are welcome",
+        "tags": "Data Science, Database, Scraping",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 330,
+        "day_id": 54,
+        "idea_number": 5,
+        "title": "House statistics",
+        "tagline": "Real estate scraper to feed a home search",
+        "description": "A lot of websites repurpose available statistics to sell a product for home buyers. But they don't do it the way I would prefer, even if I pay. So if I am interested in a specific home, can I check it out on property websites, council records, criminal records, school, environmental, etc. to produce a report for me?",
+        "tags": "Scraping, Database, Data Science",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 63,
+          "idea_id": 330,
+          "title": "House Statistics: Open Data & Walk Routing Engine",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "Asynchronous UK property intelligence, street-level crime per capita, Ofsted school ratings with pupil rolls, and pedestrian walking routes powered by dlt and DuckDB.",
+          "content": "/interactive/house-stats",
+          "external_url": "https://github.com/LukaszDygon/house_stats",
+          "time_spent_hours": 3.0,
+          "ai_tools_used": "Antigravity, dlt, DuckDB, Python 3.13, Rich, httpx",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Step 1",
+              "desc": "Chose Idea 5 and fleshed out the spec around scraping and free APIs"
+            },
+            {
+              "step": 2,
+              "title": "Step 2",
+              "desc": "Decided on a standalone repo, dlt, duckdb, and ad hoc portal checks instead of mass scraping"
+            },
+            {
+              "step": 3,
+              "title": "Step 3",
+              "desc": "First pass at spinning up the repo, fixing 3.14 segfaults and getting OSRM walking distance working"
+            },
+            {
+              "step": 4,
+              "title": "Step 4",
+              "desc": "Added portal link parsing, ofsted ratings, student numbers, and crime per capita"
+            }
+          ],
+          "what_rocked": [
+            "It span out a new codebase almost instantly, with a decent first pass"
+          ],
+          "what_broke": [
+            "Multiple turns over dlt, not actually using a good structure for dlt"
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 7 human turns across 304 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: python 3.14 please, check the pages on zoopla, rightmove and onthemarket as well (ad hoc, not scarping) Create a new repo for t...\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: I would like to be able to generate a report from a zoopla/onthemarket/rightmove link, so it would pull the data and postcode f...\n  \u2022 Turn 5: 1. [instruction for AI: Record the steps from AI in short, casual tone] 2. It span out a new codebase almost instantly, with a ...\n  \u2022 Turn 6: decrese steps to 4 and make it based on conversational turns, not on agent implementation steps What broke: Multiple turns over...\n  \u2022 Turn 7: ok remove the fluff from steps. Just 4 untitled items, it sounds 7/10 like AI, make it sound 0/10 like AI and more like how oth...\n\nTools Executed: run_command (72), write_to_file (36), view_file (22), replace_file_content (7), ask_question (2), find_by_name (2)\nFiles Modified: .gitignore, README.md, SKILL.md, SW1A_1AA.md, SW1E_6AL.md, __init__.py, amenities.py, app.py",
+          "created_at": "2026-09-14 12:52:16"
+        }
+      }
+    ],
+    "implemented_idea": {
+      "id": 330,
+      "day_id": 54,
+      "idea_number": 5,
+      "title": "House statistics",
+      "tagline": "Real estate scraper to feed a home search",
+      "description": "A lot of websites repurpose available statistics to sell a product for home buyers. But they don't do it the way I would prefer, even if I pay. So if I am interested in a specific home, can I check it out on property websites, council records, criminal records, school, environmental, etc. to produce a report for me?",
+      "tags": "Scraping, Database, Data Science",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 63,
+        "idea_id": 330,
+        "title": "House Statistics: Open Data & Walk Routing Engine",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "Asynchronous UK property intelligence, street-level crime per capita, Ofsted school ratings with pupil rolls, and pedestrian walking routes powered by dlt and DuckDB.",
+        "content": "/interactive/house-stats",
+        "external_url": "https://github.com/LukaszDygon/house_stats",
+        "time_spent_hours": 3.0,
+        "ai_tools_used": "Antigravity, dlt, DuckDB, Python 3.13, Rich, httpx",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Step 1",
+            "desc": "Chose Idea 5 and fleshed out the spec around scraping and free APIs"
+          },
+          {
+            "step": 2,
+            "title": "Step 2",
+            "desc": "Decided on a standalone repo, dlt, duckdb, and ad hoc portal checks instead of mass scraping"
+          },
+          {
+            "step": 3,
+            "title": "Step 3",
+            "desc": "First pass at spinning up the repo, fixing 3.14 segfaults and getting OSRM walking distance working"
+          },
+          {
+            "step": 4,
+            "title": "Step 4",
+            "desc": "Added portal link parsing, ofsted ratings, student numbers, and crime per capita"
+          }
+        ],
+        "what_rocked": [
+          "It span out a new codebase almost instantly, with a decent first pass"
+        ],
+        "what_broke": [
+          "Multiple turns over dlt, not actually using a good structure for dlt"
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 7 human turns across 304 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: python 3.14 please, check the pages on zoopla, rightmove and onthemarket as well (ad hoc, not scarping) Create a new repo for t...\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: I would like to be able to generate a report from a zoopla/onthemarket/rightmove link, so it would pull the data and postcode f...\n  \u2022 Turn 5: 1. [instruction for AI: Record the steps from AI in short, casual tone] 2. It span out a new codebase almost instantly, with a ...\n  \u2022 Turn 6: decrese steps to 4 and make it based on conversational turns, not on agent implementation steps What broke: Multiple turns over...\n  \u2022 Turn 7: ok remove the fluff from steps. Just 4 untitled items, it sounds 7/10 like AI, make it sound 0/10 like AI and more like how oth...\n\nTools Executed: run_command (72), write_to_file (36), view_file (22), replace_file_content (7), ask_question (2), find_by_name (2)\nFiles Modified: .gitignore, README.md, SKILL.md, SW1A_1AA.md, SW1E_6AL.md, __init__.py, amenities.py, app.py",
+        "created_at": "2026-09-14 12:52:16"
+      }
+    }
+  },
+  {
+    "id": 53,
+    "date": "2026-09-13",
+    "theme": "Slots",
+    "subtitle": "A simple casino game with a surprising number of variants",
+    "streak_count": 1,
+    "notes": "I was picking up my family from the airport in the middle of the night, so slept in today. Had a lazy Sunday. It is 4pm and I am getting to it. The idea for the theme was prompted by playing Yakuza 7. It has slots minigame",
+    "created_at": "2026-09-13 15:26:59",
+    "ideas": [
+      {
+        "id": 306,
+        "day_id": 53,
+        "idea_number": 1,
+        "title": "Classic slots in terminal",
+        "tagline": "Going retro. It's making a comeback",
+        "description": "The classic slots game was originally mechanical, I think. We have a lot of hybrid versions popular today. I haven't seen a classic machine anywhere, but it had to be good at one point. Lets put it into the terminal. Maybe it can have some integration with other tools via CLI",
+        "tags": "Terminal, Game",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 307,
+        "day_id": 53,
+        "idea_number": 2,
+        "title": "Pachinko Slots",
+        "tagline": "A mashup nobody wanted",
+        "description": "Pachinko and slots are two of the pingiest, dingiest games. They have two different mechanisms, so it would be real artistry to put them together in a way that feels okay",
+        "tags": "Game",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 308,
+        "day_id": 53,
+        "idea_number": 3,
+        "title": "Game of Life Slots",
+        "tagline": "Slots with choices and progression",
+        "description": "Game of life is a classic board game, where one can choose to purse different paths on a game board to maximise points. Different decisions progress the character, and evolve their round based money consumption and production (could be spin cost, spin rewards).",
+        "tags": "Game",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 309,
+        "day_id": 53,
+        "idea_number": 4,
+        "title": "Slots 1v1 game",
+        "tagline": "Multipliayer slots",
+        "description": "Simple game, simple idea, but without any addition, slots PvP is just a game of chance. It would be cool to combine it with a game shop to build up a unique slot machine, with different bonuses (attack, defence) and play the enemy over multiple rounds.",
+        "tags": "Game, Multiplayer",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 60,
+          "idea_id": 309,
+          "title": "Slots 1v1: Tactical Reel Arena",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "A 2-player networked and AI-bot tactical 1v1 slot machine arena featuring 3x3 physical continuous reel strips, 5 paylines, reactive rock-paper-scissors counter-combat, and in-shop reel strip modding.",
+          "content": "/interactive/slots1v1",
+          "external_url": "https://github.com/LukaszDygon/slot-battles",
+          "time_spent_hours": 2.0,
+          "ai_tools_used": "Antigravity CLI, Web Audio API, PeerJS, Stitch",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Step 1",
+              "desc": "Back and forth about the ideas for balancing"
+            },
+            {
+              "step": 2,
+              "title": "Step 2",
+              "desc": "Improve UI, because it was Web 2.0 on the first iteration with Ponytail"
+            },
+            {
+              "step": 3,
+              "title": "Step 3",
+              "desc": "Added a bit more balancing to the game. It's not quite Polished, but it's a good PoC"
+            },
+            {
+              "step": 4,
+              "title": "Step 4",
+              "desc": "Improved the whole thing with Stitch designer, balancing and backend anti-cheat."
+            }
+          ],
+          "what_rocked": [
+            "Very fast, easy to iterate"
+          ],
+          "what_broke": [
+            "As usual, the UI sucked. Needs a lot of specific implementation requirements or it looks like slop."
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 7 human turns across 121 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: make sure it is balanced, find a strategy to ensure that there is no snowball effect, just tactics that are reactive (e.g. ther...\n  \u2022 Turn 3: Consider the rock paper scisors utilising the slots mechanisms, e.g. the small chip damage could activate on 2 in a row, but bi...\n  \u2022 Turn 4: /ponytail:ponytail lets proceed\n  \u2022 Turn 5: This looks really bare bones. I want it to have graphics of a real slot machine. Don't use these boring emojis, find some asset...\n  \u2022 Turn 6: /record-implementation\n  \u2022 Turn 7: 1. Back and forth about the ideas for balancing Improve UI, because it was Web 2.0 on the first iteration with Ponytail Added a...\n\nTools Executed: run_command (17), view_file (15), write_to_file (10), list_dir (4), grep_search (3), replace_file_content (3)\nFiles Modified: acid.svg, app.py, base.html, blade.svg, blank.svg, build_static.py, coin.svg, day.html",
+          "created_at": "2026-09-13 17:54:20"
+        }
+      },
+      {
+        "id": 310,
+        "day_id": 53,
+        "idea_number": 5,
+        "title": "Slots FPS",
+        "tagline": "First Person Slots",
+        "description": "First Person Shooter, but you carry a slots machine instead of a gun, that spawns ammunition. The enemies could also spawn out of slots machines. It needs to have a little bit more 'win' conditions, because getting a classic 3 in a row slots win is quite rare, meaning the shooting would be very slow.",
+        "tags": "Game",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 309,
+      "day_id": 53,
+      "idea_number": 4,
+      "title": "Slots 1v1 game",
+      "tagline": "Multipliayer slots",
+      "description": "Simple game, simple idea, but without any addition, slots PvP is just a game of chance. It would be cool to combine it with a game shop to build up a unique slot machine, with different bonuses (attack, defence) and play the enemy over multiple rounds.",
+      "tags": "Game, Multiplayer",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 60,
+        "idea_id": 309,
+        "title": "Slots 1v1: Tactical Reel Arena",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "A 2-player networked and AI-bot tactical 1v1 slot machine arena featuring 3x3 physical continuous reel strips, 5 paylines, reactive rock-paper-scissors counter-combat, and in-shop reel strip modding.",
+        "content": "/interactive/slots1v1",
+        "external_url": "https://github.com/LukaszDygon/slot-battles",
+        "time_spent_hours": 2.0,
+        "ai_tools_used": "Antigravity CLI, Web Audio API, PeerJS, Stitch",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Step 1",
+            "desc": "Back and forth about the ideas for balancing"
+          },
+          {
+            "step": 2,
+            "title": "Step 2",
+            "desc": "Improve UI, because it was Web 2.0 on the first iteration with Ponytail"
+          },
+          {
+            "step": 3,
+            "title": "Step 3",
+            "desc": "Added a bit more balancing to the game. It's not quite Polished, but it's a good PoC"
+          },
+          {
+            "step": 4,
+            "title": "Step 4",
+            "desc": "Improved the whole thing with Stitch designer, balancing and backend anti-cheat."
+          }
+        ],
+        "what_rocked": [
+          "Very fast, easy to iterate"
+        ],
+        "what_broke": [
+          "As usual, the UI sucked. Needs a lot of specific implementation requirements or it looks like slop."
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 7 human turns across 121 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: make sure it is balanced, find a strategy to ensure that there is no snowball effect, just tactics that are reactive (e.g. ther...\n  \u2022 Turn 3: Consider the rock paper scisors utilising the slots mechanisms, e.g. the small chip damage could activate on 2 in a row, but bi...\n  \u2022 Turn 4: /ponytail:ponytail lets proceed\n  \u2022 Turn 5: This looks really bare bones. I want it to have graphics of a real slot machine. Don't use these boring emojis, find some asset...\n  \u2022 Turn 6: /record-implementation\n  \u2022 Turn 7: 1. Back and forth about the ideas for balancing Improve UI, because it was Web 2.0 on the first iteration with Ponytail Added a...\n\nTools Executed: run_command (17), view_file (15), write_to_file (10), list_dir (4), grep_search (3), replace_file_content (3)\nFiles Modified: acid.svg, app.py, base.html, blade.svg, blank.svg, build_static.py, coin.svg, day.html",
+        "created_at": "2026-09-13 17:54:20"
+      }
+    }
+  },
+  {
     "id": 52,
     "date": "2026-09-12",
     "theme": "Light",
@@ -23,7 +353,7 @@
           "idea_id": 291,
           "title": "A Campfire Made Out of LED Blocks",
           "build_type": "webapp",
-          "rank": 1,
+          "rank": 3,
           "summary": "An interactive Dark Matter Berlin inspired 3D light installation featuring minimalist glowing timber LED modules, procedural wood sap pops, and real-time flame dynamics.",
           "content": "/interactive/campfire",
           "external_url": "",
@@ -137,7 +467,7 @@
         "idea_id": 291,
         "title": "A Campfire Made Out of LED Blocks",
         "build_type": "webapp",
-        "rank": 1,
+        "rank": 3,
         "summary": "An interactive Dark Matter Berlin inspired 3D light installation featuring minimalist glowing timber LED modules, procedural wood sap pops, and real-time flame dynamics.",
         "content": "/interactive/campfire",
         "external_url": "",
@@ -260,7 +590,7 @@
           "idea_id": 280,
           "title": "Canopy growing algorithm",
           "build_type": "webapp",
-          "rank": 1,
+          "rank": 10,
           "summary": "In-memory 3D procedural rooftop canopy simulator with dual growth engines (Fractal L-System & Space Colonization), real-time growth scrubber, conifer needle clumps, full-screen mode, and generative ambient nature audio.",
           "content": "/interactive/canopy",
           "external_url": "",
@@ -314,7 +644,7 @@
         "idea_id": 280,
         "title": "Canopy growing algorithm",
         "build_type": "webapp",
-        "rank": 1,
+        "rank": 10,
         "summary": "In-memory 3D procedural rooftop canopy simulator with dual growth engines (Fractal L-System & Space Colonization), real-time growth scrubber, conifer needle clumps, full-screen mode, and generative ambient nature audio.",
         "content": "/interactive/canopy",
         "external_url": "",
@@ -389,7 +719,7 @@
           "idea_id": 247,
           "title": "A 5 Idea Website",
           "build_type": "webapp",
-          "rank": 1,
+          "rank": 100,
           "summary": "It's this thing before anything got changed",
           "content": "You are looking at it",
           "external_url": "https://github.com",
@@ -490,7 +820,7 @@
         "idea_id": 247,
         "title": "A 5 Idea Website",
         "build_type": "webapp",
-        "rank": 1,
+        "rank": 100,
         "summary": "It's this thing before anything got changed",
         "content": "You are looking at it",
         "external_url": "https://github.com",

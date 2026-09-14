@@ -1,0 +1,510 @@
+{% extends "base.html" %}
+
+{% block title %}House Statistics: Property Intelligence & Walking Routes{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-6 max-w-6xl mx-auto pb-12">
+
+  <!-- Hero Header -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-2.5 py-0.5 font-mono text-[11px] font-black uppercase mb-1">
+        🏠 DAY 2026-09-14 PROTOTYPE • OPEN DATA & WALK ROUTING PIPELINE
+      </div>
+      <h1 class="font-display font-black text-2xl sm:text-4xl uppercase text-white leading-none">
+        House Statistics & Dossier Generator
+      </h1>
+      <p class="font-body text-xs sm:text-sm text-white/90 mt-1 max-w-2xl">
+        Asynchronous UK property intelligence, street-level crime per capita, Ofsted school ratings with pupil rolls, and pedestrian walking routes powered by <code class="bg-ink px-1 py-0.5 text-secondary-cyan font-mono">dlt</code> and <code class="bg-ink px-1 py-0.5 text-accent-lime font-mono">DuckDB</code>.
+      </p>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <a href="/day/2026-09-14" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
+        Back to Day
+      </a>
+      <a href="https://github.com/LukaszDygon/house_stats" target="_blank" class="neo-btn neo-btn-yellow text-xs py-1.5 px-3 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">terminal</span>
+        <span>CLI REPO</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Search & Sample Selector Card -->
+  <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+    <div class="flex-1 flex flex-col sm:flex-row gap-2">
+      <input 
+        type="text" 
+        id="property-input" 
+        value="https://www.zoopla.co.uk/for-sale/details/74208604/?search_identifier=007cc181df1429434e89b0d1921979ab66fe694642d3d7d5d14a60aea0a6efc6" 
+        placeholder="Enter UK postcode (e.g. EN5 2EX) or Rightmove / Zoopla / OnTheMarket URL"
+        class="flex-1 border-[3px] border-ink px-3 py-2 font-mono text-xs focus:outline-none focus:bg-tertiary-yellow/10"
+      />
+      <button onclick="handleSearch()" class="neo-btn neo-btn-magenta text-xs py-2 px-4 whitespace-nowrap">
+        ANALYZE PROPERTY
+      </button>
+    </div>
+    <div class="flex items-center gap-1 flex-wrap">
+      <span class="font-mono text-[11px] font-bold text-ink/70 mr-1">PRESETS:</span>
+      <button onclick="loadSample('en5')" class="neo-btn neo-btn-magenta text-[11px] py-1 px-2.5">
+        EN5 (Barnet Zoopla)
+      </button>
+      <button onclick="loadSample('sw1e')" class="neo-btn neo-btn-cyan text-[11px] py-1 px-2.5">
+        SW1E (Penthouse)
+      </button>
+      <button onclick="loadSample('sw1a')" class="neo-btn neo-btn-white text-[11px] py-1 px-2.5">
+        SW1A (Palace)
+      </button>
+      <button onclick="loadSample('m1')" class="neo-btn neo-btn-yellow text-[11px] py-1 px-2.5">
+        M1 (Manchester)
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Dossier Display -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" id="dossier-root">
+    
+    <!-- Left Column: Specs & Scores -->
+    <div class="flex flex-col gap-6 lg:col-span-1">
+      
+      <!-- Property Listing Card -->
+      <div class="bg-surface border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <span class="font-mono text-[10px] uppercase font-black px-2 py-0.5 bg-accent-orange text-white" id="listing-portal">
+            OnTheMarket
+          </span>
+          <span class="font-mono text-xs font-bold" id="listing-postcode">SW1E 6AL</span>
+        </div>
+        <h2 class="font-display font-black text-xl text-ink leading-tight" id="listing-title">
+          2 Bedroom Penthouse
+        </h2>
+        <div class="font-mono text-2xl font-black text-primary-magenta" id="listing-price">
+          £3,800,000
+        </div>
+        <p class="font-body text-xs text-ink/80" id="listing-address">
+          Wellington House, 70 Buckingham Gate, Westminster, London
+        </p>
+        <div class="border-t-2 border-dashed border-ink/20 pt-2 flex items-center justify-between text-xs font-mono">
+          <span id="listing-specs">2 Beds • 2 Baths • Penthouse</span>
+          <a href="https://www.onthemarket.com/details/17930197/" target="_blank" id="listing-url" class="text-secondary-cyan font-bold underline">
+            View Live Listing ↗
+          </a>
+        </div>
+      </div>
+
+      <!-- Performance Scores -->
+      <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col gap-4">
+        <h3 class="font-display font-black text-base uppercase text-ink border-b-2 border-ink pb-1">
+          📊 Area Performance Index
+        </h3>
+        
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-bold text-sm">🚶 Walkability Index</div>
+            <div class="text-[11px] text-ink/70">To schools, shops & transit</div>
+          </div>
+          <div class="font-mono font-black text-xl px-2 py-0.5 bg-accent-lime text-ink border-2 border-ink" id="score-walk">
+            92 / 100
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-bold text-sm">🛡️ Safety Rating</div>
+            <div class="text-[11px] text-ink/70" id="crime-count-text">20 incidents recorded / mo</div>
+          </div>
+          <div class="font-mono font-black text-xl px-2 py-0.5 bg-secondary-cyan text-white border-2 border-ink" id="score-safe">
+            85 / 100
+          </div>
+        </div>
+
+        <!-- Administrative Details -->
+        <div class="bg-canvas border-2 border-ink p-2.5 font-mono text-[11px] flex flex-col gap-1">
+          <div><strong class="text-ink">District:</strong> <span id="admin-district">Westminster</span></div>
+          <div><strong class="text-ink">Ward:</strong> <span id="admin-ward">St James's</span></div>
+          <div><strong class="text-ink">LSOA:</strong> <span id="admin-lsoa">Westminster 020A</span></div>
+          <div><strong class="text-ink">Constituency:</strong> <span id="admin-constituency">Cities of London & Westminster</span></div>
+        </div>
+      </div>
+
+      <!-- CLI Runner Snippet -->
+      <div class="bg-ink text-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4">
+        <div class="font-mono text-[10px] text-accent-lime font-bold uppercase mb-1">
+          ⚡ Run via CLI & DuckDB
+        </div>
+        <pre class="font-mono text-[11px] text-white/90 overflow-x-auto whitespace-pre-wrap">uv run house-stats analyze "SW1E 6AL"
+uv run house-stats inspect</pre>
+      </div>
+
+    </div>
+
+    <!-- Right 2 Columns: Schools, Walking Times & Per-Capita Crime -->
+    <div class="flex flex-col gap-6 lg:col-span-2">
+      
+      <!-- Schools & Ofsted Table -->
+      <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b-2 border-ink pb-2">
+          <h3 class="font-display font-black text-lg uppercase text-ink flex items-center gap-1.5">
+            <span>🏫</span> Nearby Schools & Ofsted Inspection Ratings
+          </h3>
+          <span class="font-mono text-[11px] font-bold text-primary-magenta">
+            Pedestrian Walking Routes
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left font-body text-xs border-collapse">
+            <thead>
+              <tr class="bg-canvas border-b-2 border-ink font-mono text-[11px] uppercase">
+                <th class="p-2">School Name</th>
+                <th class="p-2">Phase & Type</th>
+                <th class="p-2 text-center">Ofsted Rating</th>
+                <th class="p-2 text-center">Roll / Age</th>
+                <th class="p-2 text-right">Walk Time</th>
+                <th class="p-2 text-right">Distance</th>
+              </tr>
+            </thead>
+            <tbody id="schools-tbody" class="divide-y divide-ink/10 font-mono text-xs">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Supermarkets Table -->
+      <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b-2 border-ink pb-2">
+          <h3 class="font-display font-black text-lg uppercase text-ink flex items-center gap-1.5">
+            <span>🛒</span> Supermarkets & Groceries
+          </h3>
+          <span class="font-mono text-[11px] text-ink/70">
+            Pedestrian walking paths via OSRM
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left font-body text-xs border-collapse">
+            <thead>
+              <tr class="bg-canvas border-b-2 border-ink font-mono text-[11px] uppercase">
+                <th class="p-2">Store Name</th>
+                <th class="p-2">Category / Type</th>
+                <th class="p-2 text-right">Walk Time</th>
+                <th class="p-2 text-right">Distance</th>
+              </tr>
+            </thead>
+            <tbody id="supermarkets-tbody" class="divide-y divide-ink/10 font-mono text-xs">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Transport Links Table -->
+      <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b-2 border-ink pb-2">
+          <h3 class="font-display font-black text-lg uppercase text-ink flex items-center gap-1.5">
+            <span>🚇</span> Transport Links (Train & Tube Stations)
+          </h3>
+          <span class="font-mono text-[11px] text-ink/70">
+            Street-network walking distances
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left font-body text-xs border-collapse">
+            <thead>
+              <tr class="bg-canvas border-b-2 border-ink font-mono text-[11px] uppercase">
+                <th class="p-2">Station Name</th>
+                <th class="p-2">Transit Mode</th>
+                <th class="p-2 text-right">Walk Time</th>
+                <th class="p-2 text-right">Distance</th>
+              </tr>
+            </thead>
+            <tbody id="transit-tbody" class="divide-y divide-ink/10 font-mono text-xs">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Per Capita Crime Comparison -->
+      <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b-2 border-ink pb-2">
+          <h3 class="font-display font-black text-lg uppercase text-ink flex items-center gap-1.5">
+            <span>⚖️</span> Criminal Activity Per Capita vs UK Benchmarks
+          </h3>
+          <span class="font-mono text-[11px] bg-tertiary-yellow text-ink px-2 py-0.5 font-bold">
+            Catchment: ~32,000 residents
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="bg-canvas border-2 border-ink p-3 flex flex-col items-center justify-center text-center">
+            <div class="text-[10px] font-mono font-bold uppercase text-ink/70">Local Crime Rate</div>
+            <div class="font-mono font-black text-xl text-primary-magenta mt-1" id="crime-local-rate">7.5 / 1,000</div>
+            <div class="text-[11px] font-mono text-ink/80" id="crime-local-pct">0.75% per capita / yr</div>
+          </div>
+          <div class="bg-canvas border-2 border-ink p-3 flex flex-col items-center justify-center text-center">
+            <div class="text-[10px] font-mono font-bold uppercase text-ink/70">UK National Benchmark</div>
+            <div class="font-mono font-black text-xl text-ink mt-1">78.5 / 1,000</div>
+            <div class="text-[11px] font-mono text-ink/80">7.85% per capita (ONS)</div>
+          </div>
+          <div class="bg-accent-lime/20 border-2 border-ink p-3 flex flex-col items-center justify-center text-center">
+            <div class="text-[10px] font-mono font-bold uppercase text-ink/70">Relative vs National</div>
+            <div class="font-mono font-black text-xl text-accent-lime" id="crime-delta-pct">-90.4%</div>
+            <div class="text-[11px] font-mono font-bold text-ink" id="crime-delta-text">Significantly Safer</div>
+          </div>
+        </div>
+
+        <!-- Portals Links Bar -->
+        <div class="mt-2 pt-2 border-t-2 border-dashed border-ink/20 flex items-center justify-between flex-wrap gap-2">
+          <span class="font-mono text-xs font-bold">Ad-Hoc Portals:</span>
+          <div class="flex items-center gap-2 flex-wrap">
+            <a href="https://www.rightmove.co.uk/property-for-sale/find.html?searchLocation=SW1E+6AL" target="_blank" class="neo-btn neo-btn-cyan text-[11px] py-1 px-2.5">
+              Rightmove ↗
+            </a>
+            <a href="https://www.zoopla.co.uk/for-sale/property/sw1e-6al/" target="_blank" class="neo-btn neo-btn-yellow text-[11px] py-1 px-2.5">
+              Zoopla ↗
+            </a>
+            <a href="https://www.onthemarket.com/for-sale/property/sw1e-6al/" target="_blank" class="neo-btn neo-btn-magenta text-[11px] py-1 px-2.5">
+              OnTheMarket ↗
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const SAMPLES = {
+  en5: {
+    portal: "Zoopla",
+    postcode: "EN5 2EX",
+    title: "3 Bed Semi-Detached House",
+    price: "£700,000",
+    address: "Milton Avenue, Barnet EN5",
+    specs: "3 Beds • 2 Baths • Semi-Detached",
+    url: "https://www.zoopla.co.uk/for-sale/details/74208604/?search_identifier=007cc181df1429434e89b0d1921979ab66fe694642d3d7d5d14a60aea0a6efc6",
+    walkScore: "71 / 100",
+    safetyScore: "50 / 100",
+    crimeCount: "233 incidents / month",
+    district: "Barnet",
+    ward: "Underhill",
+    lsoa: "Barnet 001F",
+    constituency: "Chipping Barnet",
+    localRate: "87.4 / 1,000",
+    localPct: "8.74% per capita / yr",
+    deltaPct: "+11.3%",
+    deltaText: "Moderate Suburban Activity",
+    schools: [
+      { name: "Queen Elizabeth's Girls' School", phase: "Secondary • Academy Converter", ofsted: "Outstanding", roll: "1,050 pupils (11-18)", dur: "7 mins", dist: "523 m" },
+      { name: "Underhill School", phase: "Primary • Community School", ofsted: "Good", roll: "280 pupils (4-11)", dur: "13 mins", dist: "1.08 km" },
+      { name: "The Totteridge Academy", phase: "Secondary • Academy Sponsor Led", ofsted: "Good", roll: "920 pupils (11-18)", dur: "20 mins", dist: "1.58 km" },
+      { name: "Queen Elizabeth's School", phase: "Secondary • Selective Grammar", ofsted: "Outstanding", roll: "1,280 pupils (11-18)", dur: "24 mins", dist: "1.89 km" },
+      { name: "Whitings Hill Primary School", phase: "Primary • Community School", ofsted: "Good", roll: "320 pupils (4-11)", dur: "27 mins", dist: "2.14 km" },
+      { name: "Mount House School", phase: "Primary • Community School", ofsted: "Good", roll: "280 pupils (4-11)", dur: "31 mins", dist: "2.44 km" }
+    ],
+    supermarkets: [
+      { name: "May Lane's Co-op", sub: "Supermarket", dur: "10 mins", dist: "774 m" },
+      { name: "Village Food Centre", sub: "Local Grocery", dur: "11 mins", dist: "842 m" },
+      { name: "M&S", sub: "Supermarket", dur: "30 mins", dist: "2.39 km" },
+      { name: "Aldi", sub: "Supermarket", dur: "36 mins", dist: "2.86 km" },
+      { name: "Waitrose", sub: "Supermarket", dur: "39 mins", dist: "3.13 km" }
+    ],
+    transit: [
+      { name: "High Barnet", mode: "🚇 London Underground", dur: "4 mins", dist: "346 m" },
+      { name: "New Barnet", mode: "🚆 National Rail", dur: "26 mins", dist: "2.05 km" },
+      { name: "Oakleigh Park", mode: "🚆 National Rail", dur: "35 mins", dist: "2.78 km" },
+      { name: "Totteridge & Whetstone", mode: "🚇 London Underground", dur: "39 mins", dist: "3.13 km" }
+    ]
+  },
+  sw1e: {
+    portal: "OnTheMarket",
+    postcode: "SW1E 6AL",
+    title: "2 Bedroom Penthouse Apartment",
+    price: "£3,800,000",
+    address: "Wellington House, 70 Buckingham Gate, Westminster, London",
+    specs: "2 Beds • 2 Baths • Penthouse",
+    url: "https://www.onthemarket.com/details/17930197/",
+    walkScore: "92 / 100",
+    safetyScore: "85 / 100",
+    crimeCount: "20 incidents / month",
+    district: "Westminster",
+    ward: "St James's",
+    lsoa: "Westminster 020A",
+    constituency: "Cities of London and Westminster",
+    localRate: "7.5 / 1,000",
+    localPct: "0.75% per capita / yr",
+    deltaPct: "-90.4%",
+    deltaText: "Significantly Safer",
+    schools: [
+      { name: "Westminster City School", phase: "Secondary • Academy Converter", ofsted: "Good", roll: "860 pupils (11-18)", dur: "8 mins", dist: "620 m" },
+      { name: "St Peter's Eaton Square C of E", phase: "Primary • Voluntary Aided", ofsted: "Outstanding", roll: "348 pupils (3-11)", dur: "10 mins", dist: "822 m" },
+      { name: "The Grey Coat Hospital", phase: "Secondary • Academy Converter", ofsted: "Outstanding", roll: "1,115 pupils (11-18)", dur: "12 mins", dist: "999 m" },
+      { name: "St Vincent de Paul Catholic Primary", phase: "Primary • Voluntary Aided", ofsted: "Outstanding", roll: "218 pupils (4-11)", dur: "16 mins", dist: "1.25 km" }
+    ],
+    supermarkets: [
+      { name: "Sainsbury's Local", sub: "Convenience", dur: "6 mins", dist: "519 m" },
+      { name: "Waitrose & Partners", sub: "Supermarket", dur: "10 mins", dist: "836 m" }
+    ],
+    transit: [
+      { name: "St. James's Park Underground", mode: "🚇 London Underground", dur: "11 mins", dist: "885 m" },
+      { name: "London Victoria Station", mode: "🚆 National Rail / Gatwick Exp.", dur: "23 mins", dist: "1.87 km" }
+    ]
+  },
+  sw1a: {
+    portal: "Rightmove",
+    postcode: "SW1A 1AA",
+    title: "Buckingham Gate Period Residence",
+    price: "£6,500,000",
+    address: "St James's, City of Westminster, London",
+    specs: "4 Beds • 3 Baths • Period House",
+    url: "https://www.rightmove.co.uk/property-for-sale/find.html?searchLocation=SW1A+1AA",
+    walkScore: "94 / 100",
+    safetyScore: "25 / 100",
+    crimeCount: "3,483 incidents / month",
+    district: "Westminster",
+    ward: "St James's",
+    lsoa: "Westminster 018C",
+    constituency: "Cities of London and Westminster",
+    localRate: "130.6 / 1,000",
+    localPct: "13.06% per capita / yr",
+    deltaPct: "+66.4%",
+    deltaText: "High Central Urban Activity",
+    schools: [
+      { name: "St Peter's Eaton Square C of E", phase: "Primary • Voluntary Aided", ofsted: "Outstanding", roll: "348 pupils (3-11)", dur: "12 mins", dist: "934 m" },
+      { name: "Westminster City School", phase: "Secondary • Academy Converter", ofsted: "Good", roll: "860 pupils (11-18)", dur: "13 mins", dist: "1.07 km" },
+      { name: "Millbank Academy", phase: "Primary • Academy Converter", ofsted: "Outstanding", roll: "272 pupils (3-11)", dur: "18 mins", dist: "1.42 km" }
+    ],
+    supermarkets: [
+      { name: "Sainsbury's Local", sub: "Convenience", dur: "5 mins", dist: "361 m" },
+      { name: "Waitrose & Partners", sub: "Supermarket", dur: "15 mins", dist: "1.20 km" }
+    ],
+    transit: [
+      { name: "Green Park Underground", mode: "🚇 London Underground", dur: "4 mins", dist: "335 m" },
+      { name: "London Victoria Station", mode: "🚆 National Rail", dur: "22 mins", dist: "1.78 km" }
+    ]
+  },
+  m1: {
+    portal: "Zoopla",
+    postcode: "M1 1AE",
+    title: "Piccadilly Loft Apartment",
+    price: "£325,000",
+    address: "Piccadilly, City Centre, Manchester",
+    specs: "2 Beds • 2 Baths • Warehouse Loft",
+    url: "https://www.zoopla.co.uk/for-sale/property/m1-1ae/",
+    walkScore: "96 / 100",
+    safetyScore: "45 / 100",
+    crimeCount: "820 incidents / month",
+    district: "Manchester",
+    ward: "Piccadilly",
+    lsoa: "Manchester 054A",
+    constituency: "Manchester Central",
+    localRate: "118.5 / 1,000",
+    localPct: "11.85% per capita / yr",
+    deltaPct: "+51.0%",
+    deltaText: "Metropolitan Average",
+    schools: [
+      { name: "St Philip's C of E Primary School", phase: "Primary • Voluntary Aided", ofsted: "Good", roll: "210 pupils (4-11)", dur: "9 mins", dist: "750 m" },
+      { name: "Manchester Communication Academy", phase: "Secondary • Academy", ofsted: "Good", roll: "1,200 pupils (11-18)", dur: "24 mins", dist: "1.90 km" }
+    ],
+    supermarkets: [
+      { name: "Tesco Express", sub: "Convenience", dur: "2 mins", dist: "180 m" },
+      { name: "M&S Foodhall", sub: "Supermarket", dur: "6 mins", dist: "450 m" }
+    ],
+    transit: [
+      { name: "Manchester Piccadilly Station", mode: "🚆 National Rail / Metrolink", dur: "4 mins", dist: "350 m" }
+    ]
+  }
+};
+
+function renderDossier(data) {
+  document.getElementById("listing-portal").textContent = data.portal;
+  document.getElementById("listing-postcode").textContent = data.postcode;
+  document.getElementById("listing-title").textContent = data.title;
+  document.getElementById("listing-price").textContent = data.price;
+  document.getElementById("listing-address").textContent = data.address;
+  document.getElementById("listing-specs").textContent = data.specs;
+  document.getElementById("listing-url").href = data.url;
+
+  document.getElementById("score-walk").textContent = data.walkScore;
+  document.getElementById("score-safe").textContent = data.safetyScore;
+  document.getElementById("crime-count-text").textContent = data.crimeCount;
+
+  document.getElementById("admin-district").textContent = data.district;
+  document.getElementById("admin-ward").textContent = data.ward;
+  document.getElementById("admin-lsoa").textContent = data.lsoa;
+  document.getElementById("admin-constituency").textContent = data.constituency;
+
+  document.getElementById("crime-local-rate").textContent = data.localRate;
+  document.getElementById("crime-local-pct").textContent = data.localPct;
+  document.getElementById("crime-delta-pct").textContent = data.deltaPct;
+  document.getElementById("crime-delta-text").textContent = data.deltaText;
+
+  // Render schools
+  const schoolsTbody = document.getElementById("schools-tbody");
+  schoolsTbody.innerHTML = data.schools.map(s => `
+    <tr class="hover:bg-canvas/50">
+      <td class="p-2 font-bold">${s.name}</td>
+      <td class="p-2 text-ink/70">${s.phase}</td>
+      <td class="p-2 text-center">
+        <span class="px-2 py-0.5 text-[10px] font-bold ${s.ofsted === 'Outstanding' ? 'bg-accent-lime text-ink border border-ink' : 'bg-secondary-cyan text-white'}">
+          ${s.ofsted}
+        </span>
+      </td>
+      <td class="p-2 text-center text-ink/70">${s.roll}</td>
+      <td class="p-2 text-right font-bold text-accent-lime">${s.dur}</td>
+      <td class="p-2 text-right text-ink/70">${s.dist}</td>
+    </tr>
+  `).join("");
+
+  // Render supermarkets
+  const supermarketsTbody = document.getElementById("supermarkets-tbody");
+  supermarketsTbody.innerHTML = data.supermarkets.map(m => `
+    <tr class="hover:bg-canvas/50">
+      <td class="p-2 font-bold">${m.name}</td>
+      <td class="p-2 text-ink/70">${m.sub}</td>
+      <td class="p-2 text-right font-bold text-accent-lime">${m.dur}</td>
+      <td class="p-2 text-right text-ink/70">${m.dist}</td>
+    </tr>
+  `).join("");
+
+  // Render transport links
+  const transitTbody = document.getElementById("transit-tbody");
+  transitTbody.innerHTML = data.transit.map(t => `
+    <tr class="hover:bg-canvas/50">
+      <td class="p-2 font-bold">${t.name}</td>
+      <td class="p-2 text-ink/70">${t.mode}</td>
+      <td class="p-2 text-right font-bold text-accent-lime">${t.dur}</td>
+      <td class="p-2 text-right text-ink/70">${t.dist}</td>
+    </tr>
+  `).join("");
+}
+
+function loadSample(key) {
+  if (SAMPLES[key]) {
+    renderDossier(SAMPLES[key]);
+  }
+}
+
+function handleSearch() {
+  const val = document.getElementById("property-input").value.trim().toLowerCase();
+  if (val.includes("m1") || val.includes("manchester")) {
+    loadSample("m1");
+  } else if (val.includes("sw1a")) {
+    loadSample("sw1a");
+  } else if (val.includes("sw1e")) {
+    loadSample("sw1e");
+  } else {
+    loadSample("en5");
+  }
+}
+
+// Initialize with EN5 Barnet Zoopla sample
+loadSample("en5");
+</script>
+{% endblock %}

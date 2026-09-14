@@ -239,6 +239,24 @@ async def interactive_campfire_hardware(request: Request):
         name="campfire_hardware.html",
         context={},
     )
+@app.get("/interactive/slots1v1", response_class=HTMLResponse)
+async def interactive_slots1v1(request: Request):
+    """Interactive 1v1 tactical slot machine arena with counter-combat."""
+    return templates.TemplateResponse(
+        request=request,
+        name="slots1v1.html",
+        context={},
+    )
+
+
+@app.get("/interactive/house-stats", response_class=HTMLResponse)
+async def interactive_house_stats(request: Request):
+    """Interactive House Statistics and property intelligence dossier generator."""
+    return templates.TemplateResponse(
+        request=request,
+        name="house_stats.html",
+        context={},
+    )
 
 
 
