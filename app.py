@@ -259,6 +259,16 @@ async def interactive_house_stats(request: Request):
     )
 
 
+@app.get("/interactive/flute", response_class=HTMLResponse)
+async def interactive_flute(request: Request):
+    """Interactive acoustic flute customizer and physical synthesis simulator."""
+    return templates.TemplateResponse(
+        request=request,
+        name="flute.html",
+        context={},
+    )
+
+
 @app.post("/api/house-stats/parse-url")
 async def api_house_stats_parse_url(request: Request):
     """

@@ -1,0 +1,1416 @@
+{% extends "base.html" %}
+
+{% block title %}A Flute: Custom Woodwind Simulator & Acoustic Lab{% endblock %}
+
+{% block content %}
+<style>
+  /* Custom slider styles for Memphis neo-brutalist theme */
+  input[type=range].memphis-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 12px;
+    background: #ffffff;
+    border: 2px solid #1c1b1b;
+    outline: none;
+    box-shadow: 2px 2px 0px #1c1b1b;
+  }
+  input[type=range].memphis-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: #fae100;
+    border: 2px solid #1c1b1b;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #1c1b1b;
+    transition: transform 0.1s;
+  }
+  input[type=range].memphis-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    background: #39ff14;
+  }
+  input[type=range].memphis-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: #fae100;
+    border: 2px solid #1c1b1b;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px #1c1b1b;
+  }
+
+  /* Key button active physics */
+  .key-pad {
+    transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    user-select: none;
+  }
+  .key-pad.closed {
+    background-color: #1c1b1b !important;
+    color: #fae100 !important;
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #1c1b1b !important;
+  }
+
+  /* Canvas styling */
+  #airflow-canvas {
+    pointer-events: none;
+  }
+
+  /* Pulsing wave animation on sound */
+  @keyframes soundRing {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+  .sound-pulse {
+    animation: soundRing 0.8s ease-out infinite;
+  }
+</style>
+
+<div class="flex flex-col gap-6 max-w-7xl mx-auto w-full pb-16">
+
+  <!-- TOP HERO BANNER -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-2.5 py-0.5 font-mono text-xs font-black uppercase mb-2 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+        🪈 DAY 2026-09-15 • PHYSICAL MODELING SYNTHESIS
+      </div>
+      <h1 class="font-display font-black text-2xl sm:text-4xl uppercase text-white leading-tight">
+        A Flute: Custom Woodwind Simulator
+      </h1>
+      <p class="font-body text-xs sm:text-sm text-white/90 max-w-2xl mt-1">
+        Adjust physical tube length, bore diameter, wall thickness, and curvature to simulate real-world woodwind acoustics and procedural Web Audio synthesis.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap">
+      <a href="/day/2026-09-15" class="neo-btn neo-btn-yellow text-xs py-2 px-3 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        <span>Day Showcase</span>
+      </a>
+      <a href="/" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">home</span>
+        <span>All Prototypes</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- PRESET SELECTOR STRIP -->
+  <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div class="flex items-center gap-2">
+      <span class="font-mono text-xs font-black uppercase text-ink bg-electric-cyan px-2 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b]">
+        ACOUSTIC PRESETS
+      </span>
+      <span class="font-body text-xs text-gray-700 hidden lg:inline">Select real-world instrument archetype:</span>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap justify-center">
+      <button onclick="applyPreset('concert')" class="neo-btn neo-btn-white text-[11px] py-1 px-2.5">
+        🎵 Concert C Flute
+      </button>
+      <button onclick="applyPreset('traverso')" class="neo-btn neo-btn-white text-[11px] py-1 px-2.5">
+        🪵 Baroque Traverso
+      </button>
+      <button onclick="applyPreset('shakuhachi')" class="neo-btn neo-btn-white text-[11px] py-1 px-2.5">
+        🎋 Shakuhachi
+      </button>
+      <button onclick="applyPreset('piccolo')" class="neo-btn neo-btn-white text-[11px] py-1 px-2.5">
+        🪈 Piccolo
+      </button>
+      <button onclick="applyPreset('serpent')" class="neo-btn neo-btn-white text-[11px] py-1 px-2.5">
+        🐉 Curved Serpent
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN SIMULATOR STAGE: FLUTE SVG & INTERACTIVE AIRFLOW -->
+  <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-4 sm:p-6 flex flex-col gap-5">
+    
+    <!-- Header of the Stage: Real-time Pitch & Mode HUD -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pb-3 border-b-2 border-ink">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-primary-magenta text-white border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex items-center justify-center font-display font-black text-xl -rotate-2">
+          <span id="hud-note">C5</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-black text-lg text-ink leading-tight" id="hud-freq">523.2 Hz</span>
+            <span id="hud-register" class="neo-badge bg-tertiary-yellow text-ink text-[10px] font-black">
+              REGISTER 1 (FUNDAMENTAL)
+            </span>
+          </div>
+          <div class="font-mono text-[11px] text-gray-600">
+            Acoustic Length: <span id="hud-leff" class="font-bold text-ink">42.5 cm</span> • End Correction: <span id="hud-delta" class="font-bold text-ink">+1.8 cm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Audio Indicator & Play Mode Indicator -->
+      <div class="flex items-center gap-2">
+        <div id="playing-badge" class="font-mono text-xs font-black uppercase px-3 py-1 border-2 border-ink bg-gray-200 text-gray-600 flex items-center gap-1.5 shadow-[2px_2px_0px_#1c1b1b]">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-gray-400" id="audio-indicator-dot"></span>
+          <span id="audio-indicator-text">SILENT / REST</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Morphing Visualizer Container -->
+    <div class="relative w-full bg-yellow-50/50 border-[3px] border-ink p-4 min-h-[300px] flex items-center justify-center overflow-hidden rounded-sm" id="visualizer-container">
+      
+      <!-- Background Memphis Grid Accent -->
+      <div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(#1c1b1b 1px, transparent 1px); background-size: 16px 16px;"></div>
+
+      <!-- Airflow Particle Stream Canvas -->
+      <canvas id="airflow-canvas" class="absolute inset-0 w-full h-full z-10"></canvas>
+
+      <!-- Morphing SVG Flute Diagram -->
+      <svg id="flute-svg" class="w-full h-[260px] relative z-20 select-none overflow-visible" viewBox="0 0 900 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Outer Tube Silver Gradient -->
+          <linearGradient id="metal-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#f0f0f0"/>
+            <stop offset="25%" stop-color="#ffffff"/>
+            <stop offset="50%" stop-color="#d4d4d4"/>
+            <stop offset="75%" stop-color="#a3a3a3"/>
+            <stop offset="100%" stop-color="#737373"/>
+          </linearGradient>
+
+          <!-- Inner Bore Resonator Gradient -->
+          <linearGradient id="bore-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1c1b1b"/>
+            <stop offset="35%" stop-color="#3b0764"/>
+            <stop offset="70%" stop-color="#b40065"/>
+            <stop offset="100%" stop-color="#1c1b1b"/>
+          </linearGradient>
+
+          <!-- Wooden Flute Gradient -->
+          <linearGradient id="wood-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#854d0e"/>
+            <stop offset="30%" stop-color="#ca8a04"/>
+            <stop offset="60%" stop-color="#713f12"/>
+            <stop offset="100%" stop-color="#451a03"/>
+          </linearGradient>
+
+          <!-- Gold / Brass Gradient -->
+          <linearGradient id="brass-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fef08a"/>
+            <stop offset="35%" stop-color="#eab308"/>
+            <stop offset="70%" stop-color="#ca8a04"/>
+            <stop offset="100%" stop-color="#854d0e"/>
+          </linearGradient>
+
+          <!-- Shadow Filter for Neo-Brutalist elements -->
+          <filter id="svg-hard-shadow" x="-5%" y="-5%" width="120%" height="120%">
+            <feDropShadow dx="3" dy="3" stdDeviation="0" flood-color="#1c1b1b"/>
+          </filter>
+        </defs>
+
+        <!-- Dynamic Group populated by JavaScript -->
+        <g id="flute-geometry-group"></g>
+      </svg>
+    </div>
+
+    <!-- TACTILE KEYBOARD & BLOWING CONSOLE -->
+    <div class="bg-canvas border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-4">
+      
+      <!-- Primary Trigger Row: Big Blow Button + Airflow Options -->
+      <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        
+        <!-- Big Blow Button -->
+        <div class="flex items-center gap-3 flex-1">
+          <button id="blow-btn" class="neo-btn neo-btn-primary text-sm sm:text-base py-3 px-6 flex-1 md:flex-initial flex items-center justify-center gap-2 shadow-[5px_5px_0px_#1c1b1b] active:shadow-none select-none">
+            <span class="material-symbols-outlined text-xl">air</span>
+            <span id="blow-btn-text">BLOW FLUTE (SPACEBAR)</span>
+          </button>
+
+          <button id="toggle-hold-btn" onclick="toggleContinuousBlow()" class="neo-btn neo-btn-white text-xs py-3 px-4 flex items-center gap-1.5 shadow-[3px_3px_0px_#1c1b1b]">
+            <span class="material-symbols-outlined text-sm" id="hold-icon">toggle_off</span>
+            <span id="hold-text">HOLD BLOW: OFF</span>
+          </button>
+
+          <button onclick="playAcousticScale()" class="neo-btn neo-btn-lime text-xs py-3 px-4 flex items-center gap-1.5 shadow-[3px_3px_0px_#1c1b1b]">
+            <span class="material-symbols-outlined text-sm">queue_music</span>
+            <span>PLAY SCALE RUN</span>
+          </button>
+        </div>
+
+        <!-- Breath Pressure Gauge -->
+        <div class="flex items-center gap-3 bg-white border-2 border-ink p-2.5 shadow-[3px_3px_0px_#1c1b1b] min-w-[260px]">
+          <span class="font-mono text-[11px] font-black text-ink uppercase">BLOW FORCE:</span>
+          <div class="flex-1 flex flex-col">
+            <div class="flex justify-between font-mono text-[10px] text-gray-600 mb-0.5">
+              <span>Whisper</span>
+              <span class="font-bold text-primary-magenta" id="pressure-level-text">Normal (1.0x)</span>
+              <span>Overblow</span>
+            </div>
+            <div class="w-full bg-gray-200 h-3 border border-ink relative overflow-hidden">
+              <div id="pressure-meter-bar" class="h-full bg-acid-lime border-r border-ink transition-all duration-75" style="width: 50%;"></div>
+              <!-- Overblow threshold tick -->
+              <div class="absolute top-0 bottom-0 left-[65%] w-0.5 bg-red-600" title="Overblowing threshold"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TONE HOLE KEY PADS (6 HOLES) -->
+      <div class="bg-white border-2 border-ink p-4 shadow-[3px_3px_0px_#1c1b1b]">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="font-display font-black text-xs uppercase tracking-wider text-ink bg-tertiary-yellow px-2 py-0.5 border border-ink">
+              TONE HOLE FINGERING MATRIX
+            </span>
+            <span class="font-mono text-[11px] text-gray-600">Toggle keys to shorten/lengthen acoustic air column</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="setAllHoles(false)" class="neo-btn neo-btn-white text-[10px] py-1 px-2">ALL OPEN (HIGH)</button>
+            <button onclick="setAllHoles(true)" class="neo-btn neo-btn-white text-[10px] py-1 px-2">ALL CLOSED (LOW)</button>
+          </div>
+        </div>
+
+        <!-- 6 Tone Holes Grid -->
+        <div class="grid grid-cols-6 gap-2 sm:gap-3" id="key-pads-container">
+          <!-- Hole 1 -->
+          <button class="key-pad p-3 border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center justify-center gap-1 bg-white cursor-pointer" id="pad-0" onclick="toggleHole(0)">
+            <span class="font-mono text-[10px] font-bold text-primary-magenta">HOLE 1</span>
+            <div class="w-5 h-5 rounded-full border-2 border-ink bg-white pad-indicator"></div>
+            <span class="font-display font-black text-xs text-ink">[A]</span>
+            <span class="font-mono text-[9px] text-gray-500 font-bold note-hint">B4</span>
+          </button>
+
+          <!-- Hole 2 -->
+          <button class="key-pad p-3 border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center justify-center gap-1 bg-white cursor-pointer" id="pad-1" onclick="toggleHole(1)">
+            <span class="font-mono text-[10px] font-bold text-primary-magenta">HOLE 2</span>
+            <div class="w-5 h-5 rounded-full border-2 border-ink bg-white pad-indicator"></div>
+            <span class="font-display font-black text-xs text-ink">[S]</span>
+            <span class="font-mono text-[9px] text-gray-500 font-bold note-hint">A4</span>
+          </button>
+
+          <!-- Hole 3 -->
+          <button class="key-pad p-3 border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center justify-center gap-1 bg-white cursor-pointer" id="pad-2" onclick="toggleHole(2)">
+            <span class="font-mono text-[10px] font-bold text-primary-magenta">HOLE 3</span>
+            <div class="w-5 h-5 rounded-full border-2 border-ink bg-white pad-indicator"></div>
+            <span class="font-display font-black text-xs text-ink">[D]</span>
+            <span class="font-mono text-[9px] text-gray-500 font-bold note-hint">G4</span>
+          </button>
+
+          <!-- Hole 4 -->
+          <button class="key-pad p-3 border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center justify-center gap-1 bg-white cursor-pointer" id="pad-3" onclick="toggleHole(3)">
+            <span class="font-mono text-[10px] font-bold text-primary-magenta">HOLE 4</span>
+            <div class="w-5 h-5 rounded-full border-2 border-ink bg-white pad-indicator"></div>
+            <span class="font-display font-black text-xs text-ink">[J]</span>
+            <span class="font-mono text-[9px] text-gray-500 font-bold note-hint">F4</span>
+          </button>
+
+          <!-- Hole 5 -->
+          <button class="key-pad p-3 border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center justify-center gap-1 bg-white cursor-pointer" id="pad-4" onclick="toggleHole(4)">
+            <span class="font-mono text-[10px] font-bold text-primary-magenta">HOLE 5</span>
+            <div class="w-5 h-5 rounded-full border-2 border-ink bg-white pad-indicator"></div>
+            <span class="font-display font-black text-xs text-ink">[K]</span>
+            <span class="font-mono text-[9px] text-gray-500 font-bold note-hint">E4</span>
+          </button>
+
+          <!-- Hole 6 -->
+          <button class="key-pad p-3 border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center justify-center gap-1 bg-white cursor-pointer" id="pad-5" onclick="toggleHole(5)">
+            <span class="font-mono text-[10px] font-bold text-primary-magenta">HOLE 6</span>
+            <div class="w-5 h-5 rounded-full border-2 border-ink bg-white pad-indicator"></div>
+            <span class="font-display font-black text-xs text-ink">[L]</span>
+            <span class="font-mono text-[9px] text-gray-500 font-bold note-hint">D4</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOWER TWO-COLUMN WORKBENCH: ACOUSTIC PARAMETERS vs REAL-TIME SPECTRUM / SCIENCE -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: PHYSICAL GEOMETRY CUSTOMIZER (7 COLUMNS) -->
+    <div class="lg:col-span-7 bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-5 sm:p-6 flex flex-col gap-5">
+      
+      <div class="flex items-center justify-between border-b-2 border-ink pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 bg-primary-magenta border border-ink"></span>
+          <h2 class="font-display font-black text-lg sm:text-xl uppercase text-ink">
+            Acoustic Geometry Parameters
+          </h2>
+        </div>
+        <span class="font-mono text-[11px] text-gray-500 font-bold">PHYSICAL DIMENSIONS</span>
+      </div>
+
+      <!-- Parameter Sliders -->
+      <div class="flex flex-col gap-4">
+
+        <!-- 1. Tube Length L -->
+        <div class="flex flex-col gap-1 bg-canvas p-3 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          <div class="flex justify-between items-center">
+            <label for="param-length" class="font-display font-bold text-xs uppercase text-ink flex items-center gap-1.5">
+              <span>📏 Tube Length (L)</span>
+              <span class="font-mono text-[10px] text-gray-600 font-normal">Controls fundamental wavelength & base pitch</span>
+            </label>
+            <span class="font-mono font-black text-xs text-primary-magenta" id="val-length">67.0 cm</span>
+          </div>
+          <input type="range" id="param-length" min="25" max="120" step="0.5" value="67" class="memphis-slider" oninput="updateParam('length', this.value)"/>
+          <div class="flex justify-between font-mono text-[10px] text-gray-500">
+            <span>25 cm (Piccolo High)</span>
+            <span>67 cm (Concert C)</span>
+            <span>120 cm (Contrabass)</span>
+          </div>
+        </div>
+
+        <!-- 2. Bore Diameter D -->
+        <div class="flex flex-col gap-1 bg-canvas p-3 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          <div class="flex justify-between items-center">
+            <label for="param-bore" class="font-display font-bold text-xs uppercase text-ink flex items-center gap-1.5">
+              <span>🕳️ Bore Diameter (D)</span>
+              <span class="font-mono text-[10px] text-gray-600 font-normal">Acoustic impedance, high overtone damping & cutoff</span>
+            </label>
+            <span class="font-mono font-black text-xs text-primary-magenta" id="val-bore">19.0 mm</span>
+          </div>
+          <input type="range" id="param-bore" min="10" max="36" step="0.5" value="19" class="memphis-slider" oninput="updateParam('bore', this.value)"/>
+          <div class="flex justify-between font-mono text-[10px] text-gray-500">
+            <span>10 mm (Bright, Narrow)</span>
+            <span>19 mm (Standard)</span>
+            <span>36 mm (Deep, Breathy)</span>
+          </div>
+        </div>
+
+        <!-- 3. Wall Thickness T -->
+        <div class="flex flex-col gap-1 bg-canvas p-3 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          <div class="flex justify-between items-center">
+            <label for="param-wall" class="font-display font-bold text-xs uppercase text-ink flex items-center gap-1.5">
+              <span>🛡️ Wall Thickness (T)</span>
+              <span class="font-mono text-[10px] text-gray-600 font-normal">Tone hole chimney inertia & structural damping</span>
+            </label>
+            <span class="font-mono font-black text-xs text-primary-magenta" id="val-wall">1.2 mm</span>
+          </div>
+          <input type="range" id="param-wall" min="0.5" max="5.0" step="0.1" value="1.2" class="memphis-slider" oninput="updateParam('wall', this.value)"/>
+          <div class="flex justify-between font-mono text-[10px] text-gray-500">
+            <span>0.5 mm (Thin Metal)</span>
+            <span>1.2 mm (Silver Flute)</span>
+            <span>5.0 mm (Carved Hardwood)</span>
+          </div>
+        </div>
+
+        <!-- 4. Curviness / Bend Angle -->
+        <div class="flex flex-col gap-1 bg-canvas p-3 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          <div class="flex justify-between items-center">
+            <label for="param-curve" class="font-display font-bold text-xs uppercase text-ink flex items-center gap-1.5">
+              <span>🌀 Curviness / Bend (θ)</span>
+              <span class="font-mono text-[10px] text-gray-600 font-normal">Acoustic wave boundary dispersion & J-headjoint</span>
+            </label>
+            <span class="font-mono font-black text-xs text-primary-magenta" id="val-curve">0° (Straight)</span>
+          </div>
+          <input type="range" id="param-curve" min="0" max="150" step="1" value="0" class="memphis-slider" oninput="updateParam('curve', this.value)"/>
+          <div class="flex justify-between font-mono text-[10px] text-gray-500">
+            <span>0° (Straight Cylinder)</span>
+            <span>75° (J-Headjoint Flute)</span>
+            <span>150° (Serpent S-Curve)</span>
+          </div>
+        </div>
+
+        <!-- 5. Material & Breath Jet Speed -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Material Acoustic Factor -->
+          <div class="bg-canvas p-3 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b] flex flex-col gap-1">
+            <label for="param-material" class="font-display font-bold text-xs uppercase text-ink">
+              🪵 Tube Material / Shell
+            </label>
+            <select id="param-material" onchange="updateParam('material', this.value)" class="border-2 border-ink bg-white font-mono text-xs p-1.5 font-bold shadow-[2px_2px_0px_#1c1b1b] outline-none">
+              <option value="silver">Sterling Silver (Crisp Highs)</option>
+              <option value="wood">African Blackwood (Warm, Woody)</option>
+              <option value="bamboo">Bamboo Madake (Breathy, Organic)</option>
+              <option value="brass">Vintage Brass (Rich Overtones)</option>
+            </select>
+          </div>
+
+          <!-- Embouchure Jet Air Velocity -->
+          <div class="bg-canvas p-3 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b] flex flex-col gap-1">
+            <div class="flex justify-between">
+              <label for="param-breath" class="font-display font-bold text-xs uppercase text-ink">
+                💨 Breath Velocity
+              </label>
+              <span class="font-mono font-black text-xs text-primary-magenta" id="val-breath">1.0x</span>
+            </div>
+            <input type="range" id="param-breath" min="0.2" max="2.0" step="0.05" value="1.0" class="memphis-slider mt-1" oninput="updateParam('breath', this.value)"/>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: REAL-TIME AUDIO SPECTRUM & ACOUSTIC DOSSIER (5 COLUMNS) -->
+    <div class="lg:col-span-5 flex flex-col gap-6">
+
+      <!-- Real-Time Spectrum Analyzer Card -->
+      <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-5 flex flex-col gap-3">
+        <div class="flex items-center justify-between border-b-2 border-ink pb-2">
+          <span class="font-display font-black text-sm uppercase text-ink flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base text-primary-magenta">equalizer</span>
+            <span>Harmonic Spectrum Analyzer</span>
+          </span>
+          <span class="font-mono text-[10px] bg-tertiary-yellow px-1.5 py-0.5 border border-ink font-bold">FFT 2048</span>
+        </div>
+
+        <!-- Oscilloscope & FFT Canvas -->
+        <div class="relative bg-ink border-2 border-ink h-48 overflow-hidden">
+          <canvas id="spectrum-canvas" class="w-full h-full block"></canvas>
+          <div class="absolute bottom-1 right-2 font-mono text-[9px] text-electric-cyan font-bold">
+            0 Hz ──── 5 kHz
+          </div>
+          <div class="absolute top-1 left-2 font-mono text-[9px] text-acid-lime font-bold">
+            OSCILLOSCOPE WAVEFORM
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 text-center pt-1 font-mono text-[10px]">
+          <div class="bg-canvas border border-ink p-1">
+            <span class="text-gray-500 block">HARMONIC 1</span>
+            <span class="font-black text-ink" id="harm-1-freq">-- Hz</span>
+          </div>
+          <div class="bg-canvas border border-ink p-1">
+            <span class="text-gray-500 block">HARMONIC 2</span>
+            <span class="font-black text-ink" id="harm-2-freq">-- Hz</span>
+          </div>
+          <div class="bg-canvas border border-ink p-1">
+            <span class="text-gray-500 block">HARMONIC 3</span>
+            <span class="font-black text-ink" id="harm-3-freq">-- Hz</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Woodwind Acoustic Physics Dossier -->
+      <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-5 flex flex-col gap-3">
+        <div class="flex items-center justify-between border-b-2 border-ink pb-2">
+          <span class="font-display font-black text-sm uppercase text-ink flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base text-secondary-cyan">science</span>
+            <span>Acoustics Dossier</span>
+          </span>
+          <span class="font-mono text-[10px] text-gray-500 font-bold">v = 343.2 m/s</span>
+        </div>
+
+        <div class="flex flex-col gap-2 font-mono text-xs">
+          <div class="flex justify-between items-center py-1 border-b border-gray-200">
+            <span class="text-gray-600">Acoustic Pipe Type:</span>
+            <span class="font-bold text-ink">Open-Open Cylinder</span>
+          </div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200">
+            <span class="text-gray-600">Effective Length (L_eff):</span>
+            <span class="font-bold text-primary-magenta" id="dossier-leff">42.5 cm</span>
+          </div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200">
+            <span class="text-gray-600">End Correction (ΔL):</span>
+            <span class="font-bold text-ink" id="dossier-delta">+1.8 cm</span>
+          </div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200">
+            <span class="text-gray-600">Lattice Cutoff (f_c):</span>
+            <span class="font-bold text-ink" id="dossier-cutoff">3,250 Hz</span>
+          </div>
+          <div class="flex justify-between items-center py-1 border-b border-gray-200">
+            <span class="text-gray-600">Resonant Q Factor:</span>
+            <span class="font-bold text-ink" id="dossier-q">28.4</span>
+          </div>
+          <div class="flex justify-between items-center py-1">
+            <span class="text-gray-600">Overblowing State:</span>
+            <span class="font-bold text-electric-cyan bg-ink px-1.5 py-0.5" id="dossier-overblow">Fundamental</span>
+          </div>
+        </div>
+
+        <div class="p-2.5 bg-yellow-100 border border-ink text-[11px] font-mono leading-relaxed text-ink/90">
+          💡 <strong>Acoustic Insight:</strong> Woodwind fundamental pitch obeys <em>f = v / (2 · L_eff)</em>. Opening tone holes shortens the vibrating air column, while wide bores increase boundary turbulence and attenuate upper harmonics.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- INTERACTIVE WOODWIND ACOUSTICS ENGINE & WEB AUDIO SCRIPT -->
+<script>
+(() => {
+  // -------------------------------------------------------------------------
+  // 1. STATE & PHYSICAL CONSTANTS
+  // -------------------------------------------------------------------------
+  const SOUND_SPEED = 34320; // cm/s in air at 20°C
+
+  // Simulation Parameters
+  const state = {
+    length: 67.0,     // cm (25 to 120)
+    bore: 19.0,       // mm (10 to 36)
+    wall: 1.2,        // mm (0.5 to 5.0)
+    curve: 0,         // degrees (0 to 150)
+    material: 'silver',
+    breath: 1.0,      // factor (0.2 to 2.0)
+    holes: [true, true, true, true, true, true], // 6 holes: true = closed, false = open
+    isBlowing: false,
+    continuousBlow: false,
+    scalePlaying: false,
+  };
+
+  // Tone Hole relative positions along the tube (distance from embouchure / length)
+  // Tuned to produce a diatonic / natural minor flute fingering progression
+  const HOLE_POSITIONS = [0.52, 0.58, 0.65, 0.72, 0.80, 0.88];
+
+  // Note frequency map for closest musical note calculation
+  const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+  function freqToNote(freq) {
+    if (freq <= 0) return { name: "--", octave: "", cents: 0 };
+    const midi = 69 + 12 * Math.log2(freq / 440);
+    const roundedMidi = Math.round(midi);
+    const noteName = NOTE_NAMES[((roundedMidi % 12) + 12) % 12];
+    const octave = Math.floor(roundedMidi / 12) - 1;
+    const cents = Math.round((midi - roundedMidi) * 100);
+    return { name: `${noteName}${octave}`, cents };
+  }
+
+  // -------------------------------------------------------------------------
+  // 2. WEB AUDIO API PROCEDURAL ACOUSTIC SYNTHESIS
+  // -------------------------------------------------------------------------
+  let audioCtx = null;
+  let masterGain = null;
+  let compressor = null;
+  let analyser = null;
+
+  // Exciter nodes
+  let noiseNode = null;
+  let noiseGain = null;
+  let breathFilter = null;
+  let coreOsc = null;
+  let coreOscGain = null;
+  let octaveOsc = null;
+  let octaveOscGain = null;
+
+  // Resonator Filter Bank (Fundamental + Overtones)
+  let resFilters = [];
+  let resGains = [];
+  let materialFilter = null;
+  let curveDispersionFilter = null;
+
+  function initAudio() {
+    if (audioCtx) return;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContextClass();
+
+    // Master bus & compressor
+    compressor = audioCtx.createDynamicsCompressor();
+    compressor.threshold.setValueAtTime(-18, audioCtx.currentTime);
+    compressor.knee.setValueAtTime(12, audioCtx.currentTime);
+    compressor.ratio.setValueAtTime(8, audioCtx.currentTime);
+    compressor.attack.setValueAtTime(0.003, audioCtx.currentTime);
+    compressor.release.setValueAtTime(0.15, audioCtx.currentTime);
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.85;
+
+    masterGain = audioCtx.createGain();
+    masterGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+
+    masterGain.connect(compressor);
+    compressor.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    // 1. Noise Exciter (Pink/White Breath Buffer)
+    const bufferSize = audioCtx.sampleRate * 2;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      // Pink noise approximation
+      b0 = 0.99886 * b0 + white * 0.0555179;
+      b1 = 0.99332 * b1 + white * 0.0750759;
+      b2 = 0.96900 * b2 + white * 0.1538520;
+      b3 = 0.86650 * b3 + white * 0.3104856;
+      b4 = 0.55000 * b4 + white * 0.5329522;
+      b5 = -0.7616 * b5 - white * 0.0168980;
+      output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+      b6 = white * 0.115926;
+    }
+
+    noiseNode = audioCtx.createBufferSource();
+    noiseNode.buffer = noiseBuffer;
+    noiseNode.loop = true;
+    noiseNode.start(0);
+
+    breathFilter = audioCtx.createBiquadFilter();
+    breathFilter.type = 'bandpass';
+    breathFilter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+    breathFilter.Q.setValueAtTime(2.0, audioCtx.currentTime);
+
+    noiseGain = audioCtx.createGain();
+    noiseGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+
+    noiseNode.connect(breathFilter);
+    breathFilter.connect(noiseGain);
+
+    // 2. Core Air-Column Resonance (Oscillator Blend for Solid Standing Wave)
+    coreOsc = audioCtx.createOscillator();
+    coreOsc.type = 'triangle';
+    coreOsc.frequency.setValueAtTime(523, audioCtx.currentTime);
+    coreOsc.start(0);
+
+    coreOscGain = audioCtx.createGain();
+    coreOscGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+    coreOsc.connect(coreOscGain);
+
+    octaveOsc = audioCtx.createOscillator();
+    octaveOsc.type = 'sine';
+    octaveOsc.frequency.setValueAtTime(1046, audioCtx.currentTime);
+    octaveOsc.start(0);
+
+    octaveOscGain = audioCtx.createGain();
+    octaveOscGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+    octaveOsc.connect(octaveOscGain);
+
+    // 3. Resonant Filter Bank (Fundamental, 2nd, 3rd harmonics)
+    const exciterBus = audioCtx.createGain();
+    noiseGain.connect(exciterBus);
+    coreOscGain.connect(exciterBus);
+    octaveOscGain.connect(exciterBus);
+
+    resFilters = [];
+    resGains = [];
+    const harmonicRatios = [1, 2, 3, 4];
+    for (let h = 0; h < 4; h++) {
+      const flt = audioCtx.createBiquadFilter();
+      flt.type = 'bandpass';
+      flt.frequency.setValueAtTime(523 * harmonicRatios[h], audioCtx.currentTime);
+      flt.Q.setValueAtTime(25 - h * 4, audioCtx.currentTime);
+
+      const gn = audioCtx.createGain();
+      gn.gain.setValueAtTime(1.0 / (h + 1), audioCtx.currentTime);
+
+      exciterBus.connect(flt);
+      flt.connect(gn);
+      gn.connect(masterGain);
+
+      resFilters.push(flt);
+      resGains.push(gn);
+    }
+
+    // Material tone coloring
+    materialFilter = audioCtx.createBiquadFilter();
+    materialFilter.type = 'lowpass';
+    materialFilter.frequency.setValueAtTime(7000, audioCtx.currentTime);
+
+    curveDispersionFilter = audioCtx.createBiquadFilter();
+    curveDispersionFilter.type = 'peaking';
+    curveDispersionFilter.frequency.setValueAtTime(450, audioCtx.currentTime);
+    curveDispersionFilter.gain.setValueAtTime(0, audioCtx.currentTime);
+  }
+
+  // -------------------------------------------------------------------------
+  // 3. ACOUSTIC CALCULATIONS (PHYSICAL MODEL)
+  // -------------------------------------------------------------------------
+  function calculateAcoustics() {
+    const rBore = (state.bore / 10) / 2; // radius in cm
+    const tWall = state.wall / 10;       // wall thickness in cm
+
+    // Find first open hole (from embouchure)
+    let firstOpenIdx = -1;
+    for (let i = 0; i < state.holes.length; i++) {
+      if (!state.holes[i]) {
+        firstOpenIdx = i;
+        break;
+      }
+    }
+
+    // End corrections:
+    // Open bell end correction: ΔL_bell ≈ 0.61 * r_bore
+    // Embouchure end correction: ΔL_emb ≈ 1.6 cm (scaled by bore)
+    const deltaEmb = 1.6 * (rBore / 0.95);
+    const deltaBell = 0.61 * rBore;
+
+    let effectiveL;
+    if (firstOpenIdx === -1) {
+      // All holes closed: full acoustic pipe length
+      effectiveL = state.length + deltaEmb + deltaBell;
+    } else {
+      // First open hole determines effective length plus open tone hole chimney correction
+      const holeFrac = HOLE_POSITIONS[firstOpenIdx];
+      const holeDist = state.length * holeFrac;
+      const holeRadius = (state.bore * 0.35) / 20; // cm
+      const deltaHole = (Math.pow(rBore, 2) / Math.pow(holeRadius, 2)) * (tWall + 1.4 * holeRadius);
+      effectiveL = holeDist + deltaEmb + Math.min(deltaHole, 5.0);
+    }
+
+    // Fundamental Frequency: f0 = v / (2 * L_eff) for an open cylinder
+    let f0 = SOUND_SPEED / (2 * effectiveL);
+
+    // Overblowing register check based on breath pressure:
+    // Flute edge tone speed threshold:
+    // If breath > 1.3 -> 2nd harmonic (octave jump)
+    // If breath > 1.8 -> 3rd harmonic (12th jump)
+    let register = 1;
+    let playedFreq = f0;
+    if (state.breath >= 1.6) {
+      register = 3;
+      playedFreq = f0 * 3;
+    } else if (state.breath >= 1.15) {
+      register = 2;
+      playedFreq = f0 * 2;
+    }
+
+    // Acoustic cutoff frequency: f_c ≈ 0.18 * v / r_bore
+    const fc = (0.18 * SOUND_SPEED) / rBore;
+
+    // Resonant Q factor influenced by wall thickness and material
+    let matQ = 24.0;
+    if (state.material === 'silver') matQ = 30.0;
+    if (state.material === 'wood') matQ = 22.0;
+    if (state.material === 'bamboo') matQ = 18.0;
+    if (state.material === 'brass') matQ = 28.0;
+
+    const qFactor = matQ * (1 + (state.wall - 1.2) * 0.15) * (1 - (state.curve / 150) * 0.25);
+
+    return {
+      f0,
+      playedFreq,
+      effectiveL,
+      deltaL: deltaEmb + (firstOpenIdx === -1 ? deltaBell : 0.8),
+      register,
+      fc,
+      qFactor,
+    };
+  }
+
+  // -------------------------------------------------------------------------
+  // 4. AUDIO PARAMETER UPDATES
+  // -------------------------------------------------------------------------
+  function applyAudioParameters() {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const acoustics = calculateAcoustics();
+
+    // Master gain envelope
+    const isPlaying = state.isBlowing || state.continuousBlow;
+    const targetGain = isPlaying ? Math.min(0.85, 0.45 * state.breath) : 0.0;
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setTargetAtTime(targetGain, now, isPlaying ? 0.03 : 0.06);
+
+    // Breath exciter filter & gain
+    const breathCenter = Math.max(300, acoustics.playedFreq * 1.8);
+    breathFilter.frequency.setTargetAtTime(breathCenter, now, 0.03);
+    breathFilter.Q.setTargetAtTime(Math.max(1.0, 3.5 - (state.bore / 12)), now, 0.03);
+
+    // Noise ratio: wider bore has more breath noise (shakuhachi style)
+    const noiseLevel = isPlaying ? (0.35 + (state.bore / 50) * 0.4) * state.breath : 0.0;
+    noiseGain.gain.setTargetAtTime(noiseLevel, now, 0.03);
+
+    // Core tone oscillator frequencies & gains
+    coreOsc.frequency.setTargetAtTime(acoustics.f0, now, 0.02);
+    octaveOsc.frequency.setTargetAtTime(acoustics.f0 * 2, now, 0.02);
+
+    // Balance between fundamental and overblowing
+    if (acoustics.register === 1) {
+      coreOscGain.gain.setTargetAtTime(0.38, now, 0.03);
+      octaveOscGain.gain.setTargetAtTime(0.08, now, 0.03);
+    } else if (acoustics.register === 2) {
+      coreOscGain.gain.setTargetAtTime(0.12, now, 0.03);
+      octaveOscGain.gain.setTargetAtTime(0.42, now, 0.03);
+    } else {
+      coreOscGain.gain.setTargetAtTime(0.05, now, 0.03);
+      octaveOscGain.gain.setTargetAtTime(0.20, now, 0.03);
+    }
+
+    // Resonant Filter Bank
+    const harmonics = [1, 2, 3, 4];
+    for (let h = 0; h < 4; h++) {
+      const harmFreq = Math.min(20000, acoustics.playedFreq * harmonics[h]);
+      resFilters[h].frequency.setTargetAtTime(harmFreq, now, 0.02);
+
+      // Higher harmonics damped faster on wide bores and curved tubes
+      const curveDamping = 1 - (state.curve / 150) * 0.4 * (h > 0 ? 1 : 0);
+      const boreDamping = Math.max(0.1, 1 - (state.bore / 40) * 0.5 * (h > 1 ? 1 : 0));
+      const harmGain = (1.0 / (h + 1)) * curveDamping * boreDamping;
+
+      resGains[h].gain.setTargetAtTime(harmGain, now, 0.03);
+      resFilters[h].Q.setTargetAtTime(acoustics.qFactor / (1 + h * 0.4), now, 0.03);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // 5. HUD & DOM UI UPDATES
+  // -------------------------------------------------------------------------
+  function updateHUD() {
+    const acoustics = calculateAcoustics();
+    const noteInfo = freqToNote(acoustics.playedFreq);
+
+    document.getElementById('hud-note').textContent = noteInfo.name;
+    document.getElementById('hud-freq').textContent = `${acoustics.playedFreq.toFixed(1)} Hz`;
+    document.getElementById('hud-leff').textContent = `${acoustics.effectiveL.toFixed(1)} cm`;
+    document.getElementById('hud-delta').textContent = `+${acoustics.deltaL.toFixed(1)} cm`;
+
+    // Overblowing register badge
+    const regBadge = document.getElementById('hud-register');
+    if (acoustics.register === 1) {
+      regBadge.textContent = 'REGISTER 1 (FUNDAMENTAL)';
+      regBadge.className = 'neo-badge bg-tertiary-yellow text-ink text-[10px] font-black';
+      document.getElementById('dossier-overblow').textContent = 'Fundamental (1st Mode)';
+    } else if (acoustics.register === 2) {
+      regBadge.textContent = 'REGISTER 2 (OCTAVE OVERBLOWN)';
+      regBadge.className = 'neo-badge bg-electric-cyan text-ink text-[10px] font-black';
+      document.getElementById('dossier-overblow').textContent = 'Octave Jump (2nd Harmonic)';
+    } else {
+      regBadge.textContent = 'REGISTER 3 (12TH OVERBLOWN)';
+      regBadge.className = 'neo-badge bg-primary-magenta text-white text-[10px] font-black';
+      document.getElementById('dossier-overblow').textContent = 'Twelfth Jump (3rd Harmonic)';
+    }
+
+    // Audio status indicator
+    const isPlaying = state.isBlowing || state.continuousBlow;
+    const indText = document.getElementById('audio-indicator-text');
+    const indDot = document.getElementById('audio-indicator-dot');
+    const indBadge = document.getElementById('playing-badge');
+
+    if (isPlaying) {
+      indText.textContent = `PLAYING ${noteInfo.name}`;
+      indDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-acid-lime animate-ping';
+      indBadge.className = 'font-mono text-xs font-black uppercase px-3 py-1 border-2 border-ink bg-acid-lime text-ink flex items-center gap-1.5 shadow-[2px_2px_0px_#1c1b1b]';
+    } else {
+      indText.textContent = 'SILENT / REST';
+      indDot.className = 'inline-block w-2.5 h-2.5 rounded-full bg-gray-400';
+      indBadge.className = 'font-mono text-xs font-black uppercase px-3 py-1 border-2 border-ink bg-gray-200 text-gray-600 flex items-center gap-1.5 shadow-[2px_2px_0px_#1c1b1b]';
+    }
+
+    // Dossier values
+    document.getElementById('dossier-leff').textContent = `${acoustics.effectiveL.toFixed(1)} cm`;
+    document.getElementById('dossier-delta').textContent = `+${acoustics.deltaL.toFixed(1)} cm`;
+    document.getElementById('dossier-cutoff').textContent = `${Math.round(acoustics.fc)} Hz`;
+    document.getElementById('dossier-q').textContent = acoustics.qFactor.toFixed(1);
+
+    // Harmonic frequencies in spectrum card
+    document.getElementById('harm-1-freq').textContent = `${Math.round(acoustics.playedFreq)} Hz`;
+    document.getElementById('harm-2-freq').textContent = `${Math.round(acoustics.playedFreq * 2)} Hz`;
+    document.getElementById('harm-3-freq').textContent = `${Math.round(acoustics.playedFreq * 3)} Hz`;
+
+    // Tone hole pad indicators in DOM
+    for (let i = 0; i < state.holes.length; i++) {
+      const padBtn = document.getElementById(`pad-${i}`);
+      const indicator = padBtn.querySelector('.pad-indicator');
+      if (state.holes[i]) {
+        // Closed
+        padBtn.classList.add('closed');
+        indicator.className = 'w-5 h-5 rounded-full border-2 border-white bg-tertiary-yellow pad-indicator';
+      } else {
+        // Open
+        padBtn.classList.remove('closed');
+        indicator.className = 'w-5 h-5 rounded-full border-2 border-ink bg-white pad-indicator';
+      }
+    }
+
+    // Breath pressure meter & label
+    const breathPct = Math.min(100, Math.round((state.breath / 2.0) * 100));
+    const meterBar = document.getElementById('pressure-meter-bar');
+    meterBar.style.width = `${breathPct}%`;
+    if (state.breath >= 1.6) {
+      meterBar.className = 'h-full bg-primary-magenta border-r border-ink transition-all duration-75';
+      document.getElementById('pressure-level-text').textContent = '12th Overblow! (High)';
+    } else if (state.breath >= 1.15) {
+      meterBar.className = 'h-full bg-electric-cyan border-r border-ink transition-all duration-75';
+      document.getElementById('pressure-level-text').textContent = 'Octave Overblow!';
+    } else {
+      meterBar.className = 'h-full bg-acid-lime border-r border-ink transition-all duration-75';
+      document.getElementById('pressure-level-text').textContent = `Normal (${state.breath.toFixed(1)}x)`;
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // 6. DYNAMIC SVG MORPHING GEOMETRY
+  // -------------------------------------------------------------------------
+  function renderFluteSVG() {
+    const group = document.getElementById('flute-geometry-group');
+    if (!group) return;
+
+    // Dimensions in SVG space (ViewBox: 0 0 900 240)
+    // Flute length mapped: 25cm -> 380px, 120cm -> 760px
+    const startX = 70;
+    const startY = 120;
+    const tubeLenPx = 380 + ((state.length - 25) / (120 - 25)) * 380;
+    const endX = startX + tubeLenPx;
+
+    // Bore & Wall thickness scaled in SVG pixels
+    const borePx = 14 + ((state.bore - 10) / (36 - 10)) * 24; // 14 to 38 px
+    const wallPx = 2 + ((state.wall - 0.5) / (5.0 - 0.5)) * 6; // 2 to 8 px
+    const outerDia = borePx + wallPx * 2;
+
+    // Curviness / Bend:
+    // Bend angle in degrees (0 to 150)
+    // When curved, the path bends downward and backwards like a J-tube or serpent
+    const curveDeg = state.curve;
+    const curveRad = (curveDeg * Math.PI) / 180;
+
+    // Choose material gradient
+    let gradFill = 'url(#metal-grad)';
+    if (state.material === 'wood') gradFill = 'url(#wood-grad)';
+    if (state.material === 'bamboo') gradFill = 'url(#wood-grad)';
+    if (state.material === 'brass') gradFill = 'url(#brass-grad)';
+
+    let svgHtml = '';
+
+    // Calculate curve control points
+    if (curveDeg === 0) {
+      // STRAIGHT FLUTE CYLINDER
+      const halfOuter = outerDia / 2;
+      const halfBore = borePx / 2;
+
+      // Outer Shell
+      svgHtml += `
+        <!-- Outer Flute Body -->
+        <rect x="${startX}" y="${startY - halfOuter}" width="${tubeLenPx}" height="${outerDia}" rx="4" fill="${gradFill}" stroke="#1c1b1b" stroke-width="3" filter="url(#svg-hard-shadow)" />
+
+        <!-- Inner Bore Resonance Cutaway Guide (Subtle glow) -->
+        <rect x="${startX + 12}" y="${startY - halfBore}" width="${tubeLenPx - 14}" height="${borePx}" fill="url(#bore-grad)" opacity="0.65" stroke="#1c1b1b" stroke-dasharray="3,3" stroke-width="1.5" />
+
+        <!-- Flute Headjoint Crown & Cork -->
+        <rect x="${startX - 18}" y="${startY - halfOuter * 0.85}" width="18" height="${outerDia * 0.85}" rx="3" fill="#1c1b1b" stroke="#1c1b1b" stroke-width="2" />
+        <circle cx="${startX - 18}" cy="${startY}" r="5" fill="#fae100" stroke="#1c1b1b" stroke-width="1.5" />
+
+        <!-- Embouchure Hole & Lip Plate -->
+        <g id="embouchure-marker">
+          <ellipse cx="${startX + 42}" cy="${startY - halfOuter}" rx="14" ry="4" fill="#1c1b1b" stroke="#00e5ff" stroke-width="2" />
+          <ellipse cx="${startX + 42}" cy="${startY - halfOuter}" rx="8" ry="2.5" fill="#00e5ff" />
+          <!-- Air Jet Arrow when blowing -->
+          ${(state.isBlowing || state.continuousBlow) ? `
+            <path d="M ${startX + 42} ${startY - halfOuter - 35} L ${startX + 42} ${startY - halfOuter - 8}" stroke="#39ff14" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)" />
+            <circle cx="${startX + 42}" cy="${startY - halfOuter - 6}" r="3" fill="#39ff14" class="sound-pulse" />
+          ` : `
+            <text x="${startX + 42}" y="${startY - halfOuter - 14}" font-family="JetBrains Mono" font-size="9" font-weight="bold" fill="#b40065" text-anchor="middle">BLOW HERE</text>
+          `}
+        </g>
+      `;
+
+      // 6 Tone Holes along the straight pipe
+      for (let i = 0; i < 6; i++) {
+        const holeFrac = HOLE_POSITIONS[i];
+        const holeX = startX + tubeLenPx * holeFrac;
+        const isClosed = state.holes[i];
+        const holeR = 6 + (state.bore / 36) * 3;
+
+        svgHtml += `
+          <g class="tone-hole-svg cursor-pointer" onclick="window.fluteSimToggleHole(${i})">
+            <!-- Tone Hole Chimney Wall -->
+            <rect x="${holeX - holeR}" y="${startY - halfOuter - wallPx}" width="${holeR * 2}" height="${wallPx + 2}" fill="#1c1b1b" />
+            
+            ${isClosed ? `
+              <!-- Closed Hole Pad Down -->
+              <ellipse cx="${holeX}" cy="${startY - halfOuter - 2}" rx="${holeR + 2}" ry="4" fill="#b40065" stroke="#1c1b1b" stroke-width="2" />
+              <rect x="${holeX - 2}" y="${startY - halfOuter - 14}" width="4" height="12" fill="#1c1b1b" />
+              <circle cx="${holeX}" cy="${startY - halfOuter - 14}" r="5" fill="#fae100" stroke="#1c1b1b" stroke-width="2" />
+            ` : `
+              <!-- Open Hole with Sound Emission Wave -->
+              <ellipse cx="${holeX}" cy="${startY - halfOuter}" rx="${holeR}" ry="3" fill="#ffffff" stroke="#1c1b1b" stroke-width="2" />
+              <rect x="${holeX - 2}" y="${startY - halfOuter - 22}" width="4" height="18" fill="#1c1b1b" />
+              <circle cx="${holeX}" cy="${startY - halfOuter - 22}" r="5" fill="#00e5ff" stroke="#1c1b1b" stroke-width="2" />
+              <!-- Acoustic radiation waves when sound is active -->
+              ${(state.isBlowing || state.continuousBlow) ? `
+                <circle cx="${holeX}" cy="${startY - halfOuter - 6}" r="8" fill="none" stroke="#39ff14" stroke-width="1.5" opacity="0.8" class="sound-pulse" />
+              ` : ''}
+            `}
+            <text x="${holeX}" y="${startY + halfOuter + 16}" font-family="Bricolage Grotesque" font-size="10" font-weight="800" fill="#1c1b1b" text-anchor="middle">#${i + 1}</text>
+          </g>
+        `;
+      }
+
+      // Bell End Flange
+      svgHtml += `
+        <ellipse cx="${endX}" cy="${startY}" rx="5" ry="${halfOuter * 1.1}" fill="#1c1b1b" />
+        <ellipse cx="${endX}" cy="${startY}" rx="3" ry="${halfBore}" fill="#fae100" />
+      `;
+
+    } else {
+      // CURVED FLUTE / SERPENT BEND
+      // We draw a cubic Bezier curve that dips and curls backwards as curve increases
+      const ctrl1X = startX + tubeLenPx * 0.45;
+      const ctrl1Y = startY - (curveDeg * 0.3);
+      const ctrl2X = startX + tubeLenPx * 0.85;
+      const ctrl2Y = startY + (curveDeg * 0.95);
+      const curvedEndX = endX - (curveDeg * 0.8);
+      const curvedEndY = startY + (curveDeg * 0.7);
+
+      const pathData = `M ${startX} ${startY} C ${ctrl1X} ${ctrl1Y}, ${ctrl2X} ${ctrl2Y}, ${curvedEndX} ${curvedEndY}`;
+
+      svgHtml += `
+        <!-- Curved Flute Outer Wall Body -->
+        <path d="${pathData}" fill="none" stroke="#1c1b1b" stroke-width="${outerDia + 6}" stroke-linecap="round" />
+        <path d="${pathData}" fill="none" stroke="${gradFill}" stroke-width="${outerDia}" stroke-linecap="round" />
+        <path d="${pathData}" fill="none" stroke="#b40065" stroke-width="${borePx}" stroke-dasharray="4,4" opacity="0.6" />
+
+        <!-- Headjoint on curved pipe -->
+        <circle cx="${startX - 10}" cy="${startY}" r="12" fill="#1c1b1b" />
+        <ellipse cx="${startX + 35}" cy="${startY - outerDia/2 + 2}" rx="10" ry="4" fill="#00e5ff" stroke="#1c1b1b" stroke-width="2" />
+
+        <!-- Curved Bell Opening -->
+        <circle cx="${curvedEndX}" cy="${curvedEndY}" r="${outerDia / 2 + 2}" fill="#1c1b1b" />
+        <circle cx="${curvedEndX}" cy="${curvedEndY}" r="${borePx / 2}" fill="#fae100" />
+      `;
+
+      // Draw interactive holes at approximated curve points
+      for (let i = 0; i < 6; i++) {
+        const t = HOLE_POSITIONS[i];
+        // Cubic bezier point calculation
+        const cx = Math.pow(1 - t, 3) * startX + 3 * Math.pow(1 - t, 2) * t * ctrl1X + 3 * (1 - t) * Math.pow(t, 2) * ctrl2X + Math.pow(t, 3) * curvedEndX;
+        const cy = Math.pow(1 - t, 3) * startY + 3 * Math.pow(1 - t, 2) * t * ctrl1Y + 3 * (1 - t) * Math.pow(t, 2) * ctrl2Y + Math.pow(t, 3) * curvedEndY;
+
+        const isClosed = state.holes[i];
+        svgHtml += `
+          <g class="tone-hole-svg cursor-pointer" onclick="window.fluteSimToggleHole(${i})">
+            <circle cx="${cx}" cy="${cy}" r="9" fill="${isClosed ? '#b40065' : '#00e5ff'}" stroke="#1c1b1b" stroke-width="2.5" />
+            <text x="${cx}" y="${cy + 3.5}" font-family="Bricolage Grotesque" font-size="9" font-weight="900" fill="${isClosed ? '#ffffff' : '#1c1b1b'}" text-anchor="middle">${i + 1}</text>
+          </g>
+        `;
+      }
+    }
+
+    group.innerHTML = svgHtml;
+  }
+
+  // Expose toggle hole to window for SVG inline onclick
+  window.fluteSimToggleHole = (index) => {
+    toggleHole(index);
+  };
+
+  // -------------------------------------------------------------------------
+  // 7. PARTICLES & SPECTRUM VISUALIZER ANIMATION LOOP
+  // -------------------------------------------------------------------------
+  const particles = [];
+  const airflowCanvas = document.getElementById('airflow-canvas');
+  const airflowCtx = airflowCanvas.getContext('2d');
+
+  const spectrumCanvas = document.getElementById('spectrum-canvas');
+  const spectrumCtx = spectrumCanvas.getContext('2d');
+
+  function resizeCanvases() {
+    const container = document.getElementById('visualizer-container');
+    if (container) {
+      airflowCanvas.width = container.clientWidth;
+      airflowCanvas.height = container.clientHeight;
+    }
+    const specParent = spectrumCanvas.parentElement;
+    if (specParent) {
+      spectrumCanvas.width = specParent.clientWidth;
+      spectrumCanvas.height = specParent.clientHeight;
+    }
+  }
+  window.addEventListener('resize', resizeCanvases);
+
+  function animationLoop() {
+    requestAnimationFrame(animationLoop);
+
+    const isPlaying = state.isBlowing || state.continuousBlow;
+
+    // --- A. Airflow Particles ---
+    airflowCtx.clearRect(0, 0, airflowCanvas.width, airflowCanvas.height);
+
+    if (isPlaying) {
+      // Spawn new particles at embouchure (approximate coordinates relative to SVG)
+      const rect = airflowCanvas.getBoundingClientRect();
+      const originX = airflowCanvas.width * 0.12;
+      const originY = airflowCanvas.height * 0.48;
+
+      const pCount = Math.floor(2 + state.breath * 3);
+      for (let p = 0; p < pCount; p++) {
+        particles.push({
+          x: originX + (Math.random() * 8 - 4),
+          y: originY + (Math.random() * 8 - 4),
+          vx: 3 + Math.random() * 4 * state.breath,
+          vy: (Math.random() - 0.5) * 2.5,
+          life: 1.0,
+          decay: 0.015 + Math.random() * 0.02,
+          size: 2 + Math.random() * 3,
+          color: state.breath > 1.2 ? '#00e5ff' : '#39ff14',
+        });
+      }
+    }
+
+    // Update & draw particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= p.decay;
+
+      if (p.life <= 0 || p.x > airflowCanvas.width) {
+        particles.splice(i, 1);
+        continue;
+      }
+
+      airflowCtx.fillStyle = p.color;
+      airflowCtx.globalAlpha = p.life;
+      airflowCtx.beginPath();
+      airflowCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      airflowCtx.fill();
+    }
+    airflowCtx.globalAlpha = 1.0;
+
+    // --- B. Real-time Spectrum Analyzer & Oscilloscope ---
+    if (!analyser) return;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const timeData = new Uint8Array(bufferLength);
+    const freqData = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(timeData);
+    analyser.getByteFrequencyData(freqData);
+
+    const w = spectrumCanvas.width;
+    const h = spectrumCanvas.height;
+
+    spectrumCtx.fillStyle = '#1c1b1b';
+    spectrumCtx.fillRect(0, 0, w, h);
+
+    // 1. Draw Frequency Spectrum Bars
+    const barWidth = (w / 64) - 1;
+    let barX = 0;
+    for (let i = 0; i < 64; i++) {
+      const barHeight = (freqData[i * 4] / 255) * (h * 0.7);
+      spectrumCtx.fillStyle = i % 2 === 0 ? '#fae100' : '#b40065';
+      spectrumCtx.fillRect(barX, h - barHeight, barWidth, barHeight);
+      barX += barWidth + 1;
+    }
+
+    // 2. Draw Oscilloscope Waveform Overlay
+    spectrumCtx.lineWidth = 2.5;
+    spectrumCtx.strokeStyle = '#39ff14';
+    spectrumCtx.beginPath();
+
+    const sliceWidth = w / bufferLength;
+    let x = 0;
+    for (let i = 0; i < bufferLength; i++) {
+      const v = timeData[i] / 128.0;
+      const y = (v * h) / 2;
+      if (i === 0) spectrumCtx.moveTo(x, y);
+      else spectrumCtx.lineTo(x, y);
+      x += sliceWidth;
+    }
+    spectrumCtx.stroke();
+  }
+
+  // -------------------------------------------------------------------------
+  // 8. INTERACTIVE EVENT HANDLERS & PRESETS
+  // -------------------------------------------------------------------------
+  window.updateParam = (param, value) => {
+    initAudio();
+    if (param === 'length') {
+      state.length = parseFloat(value);
+      document.getElementById('val-length').textContent = `${state.length.toFixed(1)} cm`;
+    } else if (param === 'bore') {
+      state.bore = parseFloat(value);
+      document.getElementById('val-bore').textContent = `${state.bore.toFixed(1)} mm`;
+    } else if (param === 'wall') {
+      state.wall = parseFloat(value);
+      document.getElementById('val-wall').textContent = `${state.wall.toFixed(1)} mm`;
+    } else if (param === 'curve') {
+      state.curve = parseInt(value, 10);
+      document.getElementById('val-curve').textContent = `${state.curve}° ${state.curve === 0 ? '(Straight)' : ''}`;
+    } else if (param === 'material') {
+      state.material = value;
+    } else if (param === 'breath') {
+      state.breath = parseFloat(value);
+      document.getElementById('val-breath').textContent = `${state.breath.toFixed(1)}x`;
+    }
+
+    renderFluteSVG();
+    applyAudioParameters();
+    updateHUD();
+  };
+
+  window.toggleHole = (index) => {
+    initAudio();
+    state.holes[index] = !state.holes[index];
+    renderFluteSVG();
+    applyAudioParameters();
+    updateHUD();
+  };
+
+  window.setAllHoles = (closed) => {
+    initAudio();
+    state.holes = [closed, closed, closed, closed, closed, closed];
+    renderFluteSVG();
+    applyAudioParameters();
+    updateHUD();
+  };
+
+  window.toggleContinuousBlow = () => {
+    initAudio();
+    state.continuousBlow = !state.continuousBlow;
+    const holdBtn = document.getElementById('toggle-hold-btn');
+    const holdIcon = document.getElementById('hold-icon');
+    const holdText = document.getElementById('hold-text');
+
+    if (state.continuousBlow) {
+      holdBtn.className = 'neo-btn neo-btn-lime text-xs py-3 px-4 flex items-center gap-1.5 shadow-[3px_3px_0px_#1c1b1b]';
+      holdIcon.textContent = 'toggle_on';
+      holdText.textContent = 'HOLD BLOW: ON';
+    } else {
+      holdBtn.className = 'neo-btn neo-btn-white text-xs py-3 px-4 flex items-center gap-1.5 shadow-[3px_3px_0px_#1c1b1b]';
+      holdIcon.textContent = 'toggle_off';
+      holdText.textContent = 'HOLD BLOW: OFF';
+    }
+
+    applyAudioParameters();
+    updateHUD();
+  };
+
+  window.applyPreset = (name) => {
+    initAudio();
+    if (name === 'concert') {
+      state.length = 67.0;
+      state.bore = 19.0;
+      state.wall = 1.2;
+      state.curve = 0;
+      state.material = 'silver';
+      state.breath = 1.0;
+    } else if (name === 'traverso') {
+      state.length = 61.0;
+      state.bore = 16.0;
+      state.wall = 3.5;
+      state.curve = 0;
+      state.material = 'wood';
+      state.breath = 0.95;
+    } else if (name === 'shakuhachi') {
+      state.length = 54.0;
+      state.bore = 26.0;
+      state.wall = 4.2;
+      state.curve = 0;
+      state.material = 'bamboo';
+      state.breath = 1.1;
+    } else if (name === 'piccolo') {
+      state.length = 32.0;
+      state.bore = 11.0;
+      state.wall = 1.0;
+      state.curve = 0;
+      state.material = 'silver';
+      state.breath = 1.15;
+    } else if (name === 'serpent') {
+      state.length = 110.0;
+      state.bore = 30.0;
+      state.wall = 2.8;
+      state.curve = 120;
+      state.material = 'brass';
+      state.breath = 1.25;
+    }
+
+    // Sync UI inputs
+    document.getElementById('param-length').value = state.length;
+    document.getElementById('param-bore').value = state.bore;
+    document.getElementById('param-wall').value = state.wall;
+    document.getElementById('param-curve').value = state.curve;
+    document.getElementById('param-material').value = state.material;
+    document.getElementById('param-breath').value = state.breath;
+
+    document.getElementById('val-length').textContent = `${state.length.toFixed(1)} cm`;
+    document.getElementById('val-bore').textContent = `${state.bore.toFixed(1)} mm`;
+    document.getElementById('val-wall').textContent = `${state.wall.toFixed(1)} mm`;
+    document.getElementById('val-curve').textContent = `${state.curve}° ${state.curve === 0 ? '(Straight)' : ''}`;
+    document.getElementById('val-breath').textContent = `${state.breath.toFixed(1)}x`;
+
+    renderFluteSVG();
+    applyAudioParameters();
+    updateHUD();
+  };
+
+  window.playAcousticScale = () => {
+    initAudio();
+    if (state.scalePlaying) return;
+    state.scalePlaying = true;
+    state.continuousBlow = true;
+    applyAudioParameters();
+
+    // Diatonic fingering sequence: 6 closed -> 1 open each step
+    const steps = [
+      [true, true, true, true, true, true],
+      [true, true, true, true, true, false],
+      [true, true, true, true, false, false],
+      [true, true, true, false, false, false],
+      [true, true, false, false, false, false],
+      [true, false, false, false, false, false],
+      [false, false, false, false, false, false],
+    ];
+
+    let idx = 0;
+    const interval = setInterval(() => {
+      if (idx >= steps.length) {
+        clearInterval(interval);
+        state.scalePlaying = false;
+        state.continuousBlow = false;
+        state.holes = [true, true, true, true, true, true];
+        applyAudioParameters();
+        updateHUD();
+        renderFluteSVG();
+        return;
+      }
+      state.holes = steps[idx];
+      renderFluteSVG();
+      applyAudioParameters();
+      updateHUD();
+      idx++;
+    }, 450);
+  };
+
+  // -------------------------------------------------------------------------
+  // 9. TACTILE BLOW BUTTON & KEYBOARD BINDINGS
+  // -------------------------------------------------------------------------
+  const blowBtn = document.getElementById('blow-btn');
+
+  function startBlowing(e) {
+    if (e) e.preventDefault();
+    initAudio();
+    state.isBlowing = true;
+    blowBtn.classList.add('translate-x-1', 'translate-y-1', 'shadow-none');
+    applyAudioParameters();
+    updateHUD();
+  }
+
+  function stopBlowing(e) {
+    if (e) e.preventDefault();
+    state.isBlowing = false;
+    blowBtn.classList.remove('translate-x-1', 'translate-y-1', 'shadow-none');
+    applyAudioParameters();
+    updateHUD();
+  }
+
+  blowBtn.addEventListener('mousedown', startBlowing);
+  window.addEventListener('mouseup', stopBlowing);
+  blowBtn.addEventListener('touchstart', startBlowing, { passive: false });
+  window.addEventListener('touchend', stopBlowing);
+
+  // Keyboard shortcut support:
+  // Space: Blow
+  // A, S, D, J, K, L: Holes 1 - 6
+  window.addEventListener('keydown', (e) => {
+    // Ignore when user typing into inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (!state.isBlowing) startBlowing();
+      return;
+    }
+
+    const key = e.key.toLowerCase();
+    const keyMap = { 'a': 0, 's': 1, 'd': 2, 'j': 3, 'k': 4, 'l': 5 };
+    if (keyMap.hasOwnProperty(key)) {
+      toggleHole(keyMap[key]);
+    }
+  });
+
+  window.addEventListener('keyup', (e) => {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      stopBlowing();
+    }
+  });
+
+  // -------------------------------------------------------------------------
+  // 10. INITIALIZATION
+  // -------------------------------------------------------------------------
+  window.addEventListener('DOMContentLoaded', () => {
+    resizeCanvases();
+    renderFluteSVG();
+    updateHUD();
+    requestAnimationFrame(animationLoop);
+  });
+})();
+</script>
+{% endblock %}

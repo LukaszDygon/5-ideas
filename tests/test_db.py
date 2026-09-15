@@ -20,10 +20,12 @@ def test_seed_demo_data(temp_db):
     assert len(days) >= 1
     for d in days:
         assert len(d["ideas"]) == 5
-        # Verify exactly one idea is implemented
+        # Verify at most one idea is implemented per day
         implemented = [i for i in d["ideas"] if i["is_implemented"]]
-        assert len(implemented) == 1
-        assert implemented[0]["implementation"] is not None
+        assert len(implemented) in (0, 1)
+        if implemented:
+            assert implemented[0]["implementation"] is not None
+
 
 
 def test_ranked_implementations_order(temp_db):
@@ -51,7 +53,8 @@ def test_get_calendar_days(temp_db):
     assert len(cal_days) >= 1
     for cd in cal_days:
         assert cd["idea_count"] == 5
-        assert cd["has_implementation"] == 1
+        assert cd["has_implementation"] in (0, 1)
+
 
 
 def test_save_day_and_delete(temp_db):

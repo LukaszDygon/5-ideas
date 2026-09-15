@@ -156,6 +156,12 @@
                 <span class="material-symbols-outlined text-sm">rocket_launch</span>
                 <span>Launch App</span>
               </a>
+              {% if im.external_url %}
+              <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">code</span>
+                <span>Repo</span>
+              </a>
+              {% endif %}
               {% elif im.external_url %}
               <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-xs py-2 px-3 flex items-center gap-1">
                 <span class="material-symbols-outlined text-sm">open_in_new</span>
