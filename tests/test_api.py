@@ -222,4 +222,13 @@ def test_api_house_stats_parse_url(client):
     assert err_resp.status_code == 400
 
 
+def test_interactive_water_calories(client):
+    response = client.get("/interactive/water-calories")
+    assert response.status_code == 200
+    assert "HydroCal Zero™" in response.text
+    assert "Certificate of Caloric Void" in response.text
+    assert "0.00000" in response.text
+
+
+
 

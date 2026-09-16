@@ -1,0 +1,1372 @@
+{% extends "base.html" %}
+
+{% block title %}HydroCal Zero™: Water Calorie Counter & Molecular Calorimetry Lab{% endblock %}
+
+{% block content %}
+<style>
+  /* Memphis CRT scanline effect */
+  .crt-scanlines {
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%, 
+      rgba(0, 0, 0, 0.28) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+
+  /* Laser scanner sweep line */
+  @keyframes deliberateLaserSweep {
+    0% { top: 0%; opacity: 0.9; }
+    50% { top: 100%; opacity: 1; }
+    100% { top: 0%; opacity: 0.9; }
+  }
+  .laser-line-deliberate {
+    animation: deliberateLaserSweep 3.5s ease-in-out infinite;
+  }
+
+  /* Slow deliberate radar sweep */
+  @keyframes radarSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .radar-sweep-beam {
+    transform-origin: 50% 50%;
+    animation: radarSpin 4s linear infinite;
+  }
+
+  /* Stamp slam animation */
+  @keyframes stampSlam {
+    0% {
+      opacity: 0;
+      transform: scale(3.8) rotate(-20deg);
+    }
+    70% {
+      opacity: 1;
+      transform: scale(0.92) rotate(4deg);
+    }
+    85% {
+      transform: scale(1.05) rotate(-2deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+  .stamp-animate {
+    animation: stampSlam 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
+  /* Screen rumble */
+  @keyframes screenRumble {
+    0% { transform: translate(0, 0); }
+    15% { transform: translate(-5px, 4px) rotate(-0.5deg); }
+    30% { transform: translate(5px, -3px) rotate(0.5deg); }
+    50% { transform: translate(-4px, -4px); }
+    70% { transform: translate(4px, 3px); }
+    100% { transform: translate(0, 0); }
+  }
+  .rumble {
+    animation: screenRumble 0.5s ease-out;
+  }
+
+  /* Reticles and framing */
+  .corner-reticle {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: #00e5ff;
+    pointer-events: none;
+  }
+
+  /* Terminal log scroll */
+  #terminal-log {
+    scrollbar-width: thin;
+    scrollbar-color: #39ff14 #1c1b1b;
+  }
+  #terminal-log::-webkit-scrollbar {
+    width: 6px;
+  }
+  #terminal-log::-webkit-scrollbar-thumb {
+    background: #39ff14;
+  }
+  #terminal-log::-webkit-scrollbar-track {
+    background: #1c1b1b;
+  }
+
+  /* Pulsing step indicator */
+  @keyframes stepPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+  .step-active-pulse {
+    animation: stepPulse 1.2s ease-in-out infinite;
+  }
+</style>
+
+<div class="flex flex-col gap-5 max-w-6xl mx-auto" id="hydrocal-root">
+
+  <!-- TOP HERO BANNER -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-2.5 py-0.5 font-mono text-[11px] font-black uppercase mb-1.5 shadow-[2px_2px_0px_#1c1b1b]">
+        💧 DAY 2026-09-16 PROTOTYPE • QUANTUM CALORIMETRY RIG
+      </div>
+      <h1 class="font-display font-black text-2xl sm:text-4xl uppercase text-white leading-tight tracking-tight">
+        HydroCal Zero™
+      </h1>
+      <p class="font-body text-xs sm:text-sm text-white/95 mt-1 max-w-2xl">
+        Ultra-high precision dihydrogen monoxide thermodynamic analysis. A multi-phase cryogenic laboratory protocol to rigorously isolate and calculate the caloric enthalpy of pure H₂O.
+      </p>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="sound-toggle" onclick="toggleAudio()" class="neo-btn neo-btn-yellow text-xs py-2 px-3 flex items-center gap-1.5" title="Toggle audio feedback">
+        <span class="material-symbols-outlined text-base" id="sound-icon">volume_up</span>
+        <span id="sound-text">AUDIO ON</span>
+      </button>
+      <a href="/day/2026-09-16" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span>Day Sparks</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- LAB STATUS & SPEC BADGES -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center font-mono text-[11px]">
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Standard</div>
+      <div class="font-black text-secondary-cyan">ISO-H2O-9001:2026</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Cryo System</div>
+      <div class="font-black text-primary-magenta" id="banner-cryo">LIQUID HELIUM READY</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">FTIR Optics</div>
+      <div class="font-black text-ink">DUAL-BEAM 3657 cm⁻¹</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Verification Body</div>
+      <div class="font-black text-acid-lime bg-ink px-1">IHSB GENEVA</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: INGESTION CHAMBER (UPLOAD ONLY) -->
+  <div id="upload-panel" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-5 sm:p-7">
+    <div class="flex items-center justify-between border-b-[3px] border-ink pb-3 mb-5 flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <span class="w-3.5 h-3.5 rounded-full bg-secondary-cyan border-2 border-ink inline-block"></span>
+        <h2 class="font-display font-black text-xl uppercase tracking-tight text-ink">
+          Specimen Ingestion Chamber
+        </h2>
+      </div>
+      <span class="font-mono text-xs font-bold bg-tertiary-yellow px-2 py-0.5 border-2 border-ink">
+        IMAGE SPECIMEN REQUIRED
+      </span>
+    </div>
+
+    <!-- Drag & Drop Zone -->
+    <div id="drop-zone" 
+         class="relative border-[3px] border-dashed border-ink bg-canvas/60 hover:bg-canvas p-6 sm:p-10 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center min-h-[280px] group"
+         onclick="triggerFileSelect()">
+      <input type="file" id="file-input" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
+      
+      <!-- Four Memphis Reticle Corners -->
+      <div class="corner-reticle top-2 left-2 border-t-4 border-l-4"></div>
+      <div class="corner-reticle top-2 right-2 border-t-4 border-r-4"></div>
+      <div class="corner-reticle bottom-2 left-2 border-b-4 border-l-4"></div>
+      <div class="corner-reticle bottom-2 right-2 border-b-4 border-r-4"></div>
+
+      <!-- Empty State -->
+      <div id="drop-empty-state" class="flex flex-col items-center gap-3">
+        <div class="w-16 h-16 bg-tertiary-yellow rounded-full border-[3px] border-ink flex items-center justify-center shadow-[4px_4px_0px_#1c1b1b] group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-3xl text-ink">photo_camera</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="font-display font-black text-lg sm:text-2xl uppercase text-ink">
+            Mount Drink Photograph
+          </span>
+          <span class="font-mono text-xs text-ink/70 mt-1">
+            Drop drink photo here or click to open file browser / camera
+          </span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 bg-ink text-white font-mono text-[11px] font-bold px-3 py-1.5 border border-ink mt-2">
+          <span class="material-symbols-outlined text-sm text-acid-lime">science</span>
+          <span>COMPATIBLE WITH: TAP WATER, SPARKLING, ICE, TEA, COFFEE, MINERAL WATER</span>
+        </div>
+      </div>
+
+      <!-- Loaded Preview State -->
+      <div id="drop-loaded-state" class="hidden flex-col items-center gap-4 w-full max-w-md">
+        <div class="relative border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] overflow-hidden bg-ink w-full max-h-[320px] flex items-center justify-center">
+          <img id="preview-image" src="" alt="Specimen Preview" class="max-h-[300px] w-auto object-contain">
+          <div class="crt-scanlines absolute inset-0"></div>
+          <div class="absolute bottom-2 left-2 bg-ink/90 text-acid-lime font-mono text-[10px] px-2 py-0.5 border border-ink">
+            SPECIMEN OPTICALLY SECURED
+          </div>
+        </div>
+        <div class="font-mono text-xs font-bold text-ink bg-tertiary-yellow px-3 py-1.5 border-2 border-ink w-full flex justify-between items-center shadow-[2px_2px_0px_#1c1b1b]">
+          <span id="specimen-meta">SPECIMEN: ready.jpg</span>
+          <span id="specimen-size">0.0 MB</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chamber Action Controls -->
+    <div class="flex items-center justify-between mt-5 pt-4 border-t-[3px] border-ink flex-wrap gap-3">
+      <button id="clear-btn" onclick="clearSpecimen()" class="neo-btn neo-btn-white text-xs py-2 px-4 hidden">
+        <span class="material-symbols-outlined text-sm">restart_alt</span>
+        Clear Specimen
+      </button>
+      <div class="flex-1"></div>
+      <button id="analyze-btn" onclick="startAnalysis()" disabled class="neo-btn neo-btn-primary text-sm py-3.5 px-7 opacity-40 cursor-not-allowed flex items-center gap-2">
+        <span class="material-symbols-outlined text-xl">biotech</span>
+        <span>Initiate 5-Phase Quantum Calorimetry</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: THE QUANTUM ANALYSIS THEATER (DELIBERATE & LABORIOUS) -->
+  <div id="analysis-theater" class="hidden bg-ink text-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-5 sm:p-7 relative overflow-hidden flex-col gap-5">
+    <!-- CRT Overlay -->
+    <div class="crt-scanlines absolute inset-0 pointer-events-none"></div>
+
+    <!-- Theater Header & Pacing Control -->
+    <div class="flex items-center justify-between border-b-2 border-white/20 pb-3 flex-wrap gap-3 relative z-10">
+      <div class="flex items-center gap-3">
+        <span class="w-3.5 h-3.5 rounded-full bg-acid-lime animate-ping inline-block"></span>
+        <div>
+          <span class="font-display font-black text-lg sm:text-2xl uppercase tracking-tight text-white block">
+            Spectrometric Calorimetry Chamber // RUNNING
+          </span>
+          <span class="font-mono text-[11px] text-white/70">
+            Rigorous thermodynamic calibration in progress. Please do not disturb sample.
+          </span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="expedite-btn" onclick="toggleExpedite()" class="neo-btn neo-btn-yellow text-[11px] py-1.5 px-3 flex items-center gap-1 shadow-none">
+          <span class="material-symbols-outlined text-sm">speed</span>
+          <span id="expedite-text">⚡ I'M THIRSTY: EXPEDITE SCAN</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 5-PHASE STEP PROGRESS BAR -->
+    <div class="relative z-10 bg-black/70 border-[3px] border-white/30 p-3 flex flex-col gap-2">
+      <div class="flex justify-between items-center text-xs font-mono font-bold text-white/90">
+        <span class="text-tertiary-yellow flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">hourglass_top</span>
+          <span id="active-phase-name">PHASE 1: OPTICAL CALIBRATION & MENISCUS MAPPING</span>
+        </span>
+        <span class="text-acid-lime font-mono" id="master-progress-pct">0%</span>
+      </div>
+
+      <!-- Master Progress Bar Container -->
+      <div class="w-full h-4 bg-white/10 border-2 border-white/40 overflow-hidden relative">
+        <div id="master-progress-fill" class="h-full bg-gradient-to-r from-secondary-cyan via-tertiary-yellow to-acid-lime transition-all duration-300" style="width: 0%;"></div>
+      </div>
+
+      <!-- Phase Badges Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-center font-mono text-[10px] mt-1">
+        <div id="step-badge-1" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [1] OPTICAL ALIGN
+        </div>
+        <div id="step-badge-2" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [2] VACUUM PUMP
+        </div>
+        <div id="step-badge-3" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [3] RAMAN SPECTRA
+        </div>
+        <div id="step-badge-4" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [4] ENTHALPY SOLVE
+        </div>
+        <div id="step-badge-5" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [5] IHSB SIGNING
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Stage Detail Hero Card -->
+    <div id="stage-detail-box" class="relative z-10 bg-canvas/10 border-[3px] border-tertiary-yellow p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-tertiary-yellow text-ink border-2 border-ink flex items-center justify-center font-display font-black text-xl shrink-0" id="phase-icon-box">
+          1
+        </div>
+        <div>
+          <div class="font-mono text-xs font-black text-tertiary-yellow uppercase" id="phase-title">
+            Phase 1: Sub-Pixel Surface & Refractive Meniscus Geometry
+          </div>
+          <div class="font-body text-xs text-white/80 mt-0.5" id="phase-description">
+            Scanning optical boundaries to differentiate ambient beverage volume from glassware reflection.
+          </div>
+        </div>
+      </div>
+      <div class="font-mono text-[11px] bg-black/80 text-acid-lime border border-white/30 px-2.5 py-1 shrink-0" id="phase-substatus">
+        STATUS: CRAWLING PIXEL PLANE
+      </div>
+    </div>
+
+    <!-- Main Visualizer Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 relative z-10">
+      
+      <!-- Left: Specimen Laser Scan Chamber -->
+      <div class="lg:col-span-6 flex flex-col gap-3">
+        <div class="font-mono text-xs font-bold text-white/80 flex items-center justify-between">
+          <span>SPECIMEN APERTURE HUD</span>
+          <span class="text-acid-lime font-mono text-[10px]" id="laser-fps">FTIR SCANNING 3657 cm⁻¹</span>
+        </div>
+        
+        <div class="relative bg-black border-[3px] border-white/40 h-[340px] flex items-center justify-center overflow-hidden" id="aperture-box">
+          <canvas id="specimen-canvas" class="w-full h-full object-contain"></canvas>
+          
+          <!-- Laser Scan Line -->
+          <div id="laser-bar" class="laser-line-deliberate absolute left-0 right-0 h-1.5 bg-electric-cyan shadow-[0_0_14px_#00e5ff,0_0_28px_#39ff14] border-t border-white pointer-events-none"></div>
+          
+          <!-- Moving Targeting Grid Box -->
+          <div id="scanning-reticle-box" class="absolute border-2 border-dashed border-acid-lime pointer-events-none transition-all duration-700 w-32 h-32 flex items-center justify-center" style="top: 25%; left: 25%;">
+            <div class="w-2 h-2 bg-acid-lime rounded-full"></div>
+            <span class="absolute -top-5 left-0 font-mono text-[9px] bg-ink text-acid-lime px-1" id="reticle-label">MENISCUS #01</span>
+          </div>
+
+          <!-- Crosshair and HUD elements -->
+          <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <div class="absolute top-3 left-3 font-mono text-[9px] text-white/70 bg-black/70 p-1 border border-white/20">
+              TARGET: H₂O COVALENT CLUSTERS<br>
+              SURFACE TENSION: 72.8 mN/m<br>
+              REFRACTIVE INDEX: 1.3330
+            </div>
+            <div class="absolute bottom-3 right-3 font-mono text-[9px] text-electric-cyan bg-black/70 p-1 border border-white/20 text-right">
+              CHAMBER PRESSURE: <span id="gauge-pressure" class="text-white font-bold">101.325 kPa</span><br>
+              VACUUM STATUS: <span id="gauge-vac-status" class="text-acid-lime font-bold">STABLE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Real-Time Dials & The Stepped Calorie Deconvolution Meter -->
+      <div class="lg:col-span-6 flex flex-col gap-4">
+        
+        <!-- The Calorie Deconvolution Meter -->
+        <div class="bg-white text-ink border-[3px] border-ink shadow-[4px_4px_0px_#fae100] p-4 flex flex-col items-center justify-center relative overflow-hidden" id="meter-container">
+          <div class="font-mono text-[11px] font-black uppercase tracking-wider text-ink/70 flex items-center gap-1">
+            <span class="material-symbols-outlined text-base text-primary-magenta">calculate</span>
+            <span>MEASURED H₂O CALORIC ENTHALPY</span>
+          </div>
+          
+          <!-- Huge Numeric Readout -->
+          <div class="font-display font-black text-3xl sm:text-5xl text-primary-magenta tracking-tight my-1 transition-all" id="ticker-number">
+            1428.50000
+          </div>
+
+          <div class="font-mono text-xs font-bold text-ink/80 flex items-center gap-2">
+            <span class="bg-tertiary-yellow px-2 py-0.5 border border-ink">KILOCALORIES (kcal)</span>
+            <span>•</span>
+            <span id="ticker-status" class="text-primary-magenta font-black">EXTRACTING GROSS ENERGY</span>
+          </div>
+
+          <!-- Live Subtraction Banner -->
+          <div id="subtraction-banner" class="mt-2 font-mono text-[11px] text-ink/80 bg-canvas px-2.5 py-1 border border-ink w-full text-center">
+            Baseline thermodynamic gross mass before quantum deconvolution
+          </div>
+        </div>
+
+        <!-- Oscilloscope / Radar Canvas -->
+        <div class="bg-black/80 border-[3px] border-white/30 p-3 flex flex-col gap-2">
+          <div class="font-mono text-xs font-bold text-tertiary-yellow flex justify-between items-center">
+            <span>RAMAN RESONANCE SPECTROGRAM</span>
+            <span class="text-acid-lime font-mono text-[10px]" id="spectral-band-indicator">BAND: 3657 cm⁻¹</span>
+          </div>
+          <div class="h-28 w-full bg-black relative border border-white/20 overflow-hidden">
+            <canvas id="radar-canvas" class="w-full h-full"></canvas>
+          </div>
+        </div>
+
+        <!-- Telemetry Gauges Grid -->
+        <div class="grid grid-cols-3 gap-2 text-center font-mono text-[10px]">
+          <div class="bg-black/80 border border-white/20 p-2">
+            <div class="text-white/60">TEMPERATURE</div>
+            <div class="text-acid-lime font-bold text-xs" id="gauge-temp">293.15 K</div>
+          </div>
+          <div class="bg-black/80 border border-white/20 p-2">
+            <div class="text-white/60">O-H BONDS COUNTED</div>
+            <div class="text-electric-cyan font-bold text-xs" id="gauge-bonds">0</div>
+          </div>
+          <div class="bg-black/80 border border-white/20 p-2">
+            <div class="text-white/60">CRYPTO HASH PROOF</div>
+            <div class="text-tertiary-yellow font-bold text-xs truncate" id="gauge-hash">STANDBY</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Scrolling Telemetry Terminal Console -->
+    <div class="pt-3 border-t-2 border-white/20 relative z-10 flex flex-col gap-1.5">
+      <div class="flex items-center justify-between">
+        <span class="font-mono text-xs text-acid-lime font-bold flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">terminal</span>
+          REAL-TIME DIAGNOSTIC TELEMETRY LOG
+        </span>
+        <span class="font-mono text-[10px] text-white/50">CALORIMETRY ENGINE v4.2.1 • VERBOSE</span>
+      </div>
+      <div id="terminal-log" class="bg-black border border-white/30 p-3 font-mono text-xs text-acid-lime h-36 overflow-y-auto flex flex-col gap-1">
+        <!-- Lines appended by script -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: THE MONUMENTAL ZERO CERTIFICATE (REVEAL) -->
+  <div id="certificate-panel" class="hidden flex-col gap-5">
+    
+    <!-- Top Result Banner -->
+    <div class="bg-tertiary-yellow border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-primary-magenta text-white border-[3px] border-ink flex items-center justify-center shadow-[3px_3px_0px_#1c1b1b] shrink-0">
+          <span class="material-symbols-outlined text-3xl">verified</span>
+        </div>
+        <div>
+          <h2 class="font-display font-black text-xl sm:text-2xl uppercase text-ink leading-tight">
+            Comprehensive Analysis Concluded & Sealed
+          </h2>
+          <p class="font-mono text-xs text-ink/80 font-bold">
+            All 5 thermodynamic phases complete. Zero metabolic energy confirmed.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="copyShareLink()" class="neo-btn neo-btn-primary text-xs py-2 px-3.5 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">share</span>
+          <span id="copy-btn-text">Copy Share Link</span>
+        </button>
+        <button onclick="resetLab()" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">refresh</span>
+          <span>New Specimen</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- The Official Certificate Card -->
+    <div id="official-certificate" class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-6 sm:p-10 relative overflow-hidden">
+      
+      <!-- Top Decorative Memphis Pattern Stripes -->
+      <div class="h-3 w-full bg-gradient-to-r from-primary-magenta via-tertiary-yellow to-secondary-cyan border-b-2 border-ink -mt-6 -mx-6 sm:-mt-10 sm:-mx-10 mb-6 sm:mb-8" style="width: calc(100% + 3rem + 2px);"></div>
+
+      <!-- Certificate Header -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-[3px] border-ink pb-4 mb-6 gap-3">
+        <div>
+          <span class="font-mono text-xs font-black text-primary-magenta uppercase tracking-widest">
+            ACCREDITED PHYSICAL DOSSIER • IHSB PROTOCOL 1989-A
+          </span>
+          <h3 class="font-display font-black text-2xl sm:text-4xl text-ink uppercase tracking-tight">
+            Certificate of Caloric Void
+          </h3>
+          <p class="font-body text-xs text-ink/70 mt-0.5">
+            International Hydro-Calorimetric Standards Board • Geneva Bureau of Thermodynamic Verification
+          </p>
+        </div>
+        <div class="font-mono text-xs font-bold bg-canvas border-2 border-ink p-2 self-stretch sm:self-auto text-left sm:text-right">
+          <div>SPECIMEN REF: <span id="cert-id" class="text-primary-magenta">#H2O-88421</span></div>
+          <div>TIMESTAMP: <span id="cert-date" class="text-ink">2026-09-16</span></div>
+          <div class="text-[10px] text-secondary-cyan">HASH: <span id="cert-hash" class="font-mono">7f4e89...</span></div>
+        </div>
+      </div>
+
+      <!-- Center Monumental Zero Stamp Display -->
+      <div class="my-6 sm:my-8 flex flex-col items-center justify-center p-6 sm:p-8 bg-canvas border-[3px] border-ink relative">
+        
+        <!-- Large Rubber Stamp Badge -->
+        <div id="stamp-container" class="stamp-animate flex flex-col items-center justify-center border-[4px] border-primary-magenta bg-white p-6 sm:p-8 shadow-[6px_6px_0px_#b40065] -rotate-2 max-w-lg w-full text-center">
+          <div class="font-mono text-xs font-black tracking-widest text-primary-magenta uppercase mb-1">
+            ★ VERIFIED ABSOLUTE METABOLIC ENTHALPY ★
+          </div>
+          
+          <div class="font-display font-black text-5xl sm:text-7xl text-ink leading-none tracking-tight my-2" id="monumental-val">
+            0.00000
+          </div>
+
+          <div class="inline-flex items-center gap-1.5 font-mono font-black text-sm uppercase bg-tertiary-yellow text-ink px-3 py-1 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+            <span id="unit-label">KILOCALORIES (kcal)</span>
+            <button onclick="toggleUnits()" class="ml-2 underline text-[11px] font-bold text-primary-magenta hover:text-ink">
+              [SWITCH TO kJ]
+            </button>
+          </div>
+
+          <p class="font-mono text-[11px] text-ink/70 mt-3 max-w-sm">
+            5 rigorous phases confirmed zero energetic yield. The covalent bonds of H₂O cannot be hydrolyzed into biological adenosine triphosphate (ATP).
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Detailed Breakdown Table -->
+      <div class="border-[3px] border-ink bg-white mb-6">
+        <div class="bg-ink text-white font-mono text-xs font-bold px-4 py-2 flex justify-between">
+          <span>5-PHASE DECONVOLUTION LEDGER</span>
+          <span>CALORIC CONTRIBUTION</span>
+        </div>
+        <div class="divide-y-2 divide-ink font-mono text-xs">
+          <div class="px-4 py-2.5 flex justify-between items-center hover:bg-canvas/50">
+            <div>
+              <span class="font-bold">Phase 1: Pure Dihydrogen Monoxide (H₂O) Content</span>
+              <div class="text-[11px] text-ink/60">Covalent H-O sigma bonds (460 kJ/mol) — metabolically inert</div>
+            </div>
+            <span class="font-bold text-ink">0.00000 kcal</span>
+          </div>
+          <div class="px-4 py-2.5 flex justify-between items-center hover:bg-canvas/50">
+            <div>
+              <span class="font-bold">Phase 2: Vacuum-Deconvoluted Atmospheric Gases</span>
+              <div class="text-[11px] text-ink/60">Dissolved N₂, O₂, Ar traces evacuated to 0.002 kPa</div>
+            </div>
+            <span class="font-bold text-ink">0.00000 kcal</span>
+          </div>
+          <div class="px-4 py-2.5 flex justify-between items-center hover:bg-canvas/50">
+            <div>
+              <span class="font-bold">Phase 3: Raman Bond Harmonic Overtones</span>
+              <div class="text-[11px] text-ink/60">970 nm, 1450 nm & 3657 cm⁻¹ photon resonance absorption</div>
+            </div>
+            <span class="font-bold text-ink">0.00000 kcal</span>
+          </div>
+          <div class="px-4 py-2.5 flex justify-between items-center hover:bg-canvas/50">
+            <div>
+              <span class="font-bold">Phase 4: Esophageal Gulp Work (Metabolic Swallowing)</span>
+              <div class="text-[11px] text-ink/60">Peristaltic muscle contraction expenditure</div>
+            </div>
+            <span class="font-bold text-primary-magenta">-0.00000 kcal</span>
+          </div>
+          <div class="px-4 py-3 flex justify-between items-center bg-tertiary-yellow font-black text-sm">
+            <span>NET BIOLOGICAL CALORIES DELIVERED TO CONSUMER</span>
+            <span class="text-base text-ink">0.00000 kcal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verdict Callout -->
+      <div class="bg-canvas border-[3px] border-ink p-4 flex items-start gap-3">
+        <span class="material-symbols-outlined text-2xl text-secondary-cyan mt-0.5">psychology</span>
+        <div class="font-body text-xs text-ink leading-relaxed">
+          <strong>Official IHSB Verdict:</strong> After protracted optical alignment, vacuum chamber de-pressurization, Raman spectroscopy, iterative enthalpy deconvolution, and Geneva verification, this specimen contains strictly zero calories. Any bodily mass increase following consumption is purely hydrostatic water weight that will be naturally repatriated.
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="flex items-center justify-between mt-6 pt-4 border-t-[3px] border-ink flex-wrap gap-3">
+        <button onclick="downloadBadge()" class="neo-btn neo-btn-white text-xs py-2 px-4 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Download Certificate Card
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="copyShareLink()" class="neo-btn neo-btn-secondary text-xs py-2 px-4 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">link</span>
+            <span>Share This Analysis</span>
+          </button>
+          <button onclick="resetLab()" class="neo-btn neo-btn-primary text-xs py-2 px-5 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">biotech</span>
+            <span>Analyze Another Drink</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- HIDDEN CANVAS FOR BADGE DOWNLOAD -->
+  <canvas id="export-canvas" class="hidden" width="800" height="500"></canvas>
+
+</div>
+
+<script>
+/* =========================================================================
+   HYDROCAL ZERO™ LABORIOUS MULTI-PHASE ENGINE
+   ========================================================================= */
+
+let audioEnabled = true;
+let audioCtx = null;
+let uploadedImage = null;
+let currentUnits = 'kcal'; // 'kcal' or 'kJ'
+let activeAnimationId = null;
+let isExpedited = false;
+
+// Speed multiplier (1 = normal elaborate ~22s, 0.25 = expedited ~6s)
+let speedMultiplier = 1.0;
+
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function toggleAudio() {
+  audioEnabled = !audioEnabled;
+  const icon = document.getElementById('sound-icon');
+  const text = document.getElementById('sound-text');
+  const btn = document.getElementById('sound-toggle');
+  
+  if (audioEnabled) {
+    initAudio();
+    icon.innerText = 'volume_up';
+    text.innerText = 'AUDIO ON';
+    btn.className = 'neo-btn neo-btn-yellow text-xs py-2 px-3 flex items-center gap-1.5';
+    playTone(880, 0.1, 'sine');
+  } else {
+    icon.innerText = 'volume_off';
+    text.innerText = 'AUDIO MUTED';
+    btn.className = 'neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1.5';
+  }
+}
+
+function playTone(freq = 600, duration = 0.08, type = 'sine', gainVal = 0.12) {
+  if (!audioEnabled) return;
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch (e) {
+    console.warn('Audio error:', e);
+  }
+}
+
+function playPumpSound() {
+  if (!audioEnabled) return;
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+    osc.frequency.linearRampToValueAtTime(45, audioCtx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.3);
+  } catch (e) {
+    console.warn(e);
+  }
+}
+
+function playWarningAlarm() {
+  if (!audioEnabled) return;
+  playTone(980, 0.12, 'square', 0.15);
+  setTimeout(() => playTone(650, 0.18, 'sawtooth', 0.15), 140);
+}
+
+function playSlamSound() {
+  if (!audioEnabled) return;
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(32, audioCtx.currentTime + 0.5);
+    gain.gain.setValueAtTime(0.45, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.55);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.55);
+    playTone(1400, 0.06, 'square', 0.25);
+  } catch (e) {
+    console.warn(e);
+  }
+}
+
+function toggleExpedite() {
+  isExpedited = !isExpedited;
+  speedMultiplier = isExpedited ? 0.25 : 1.0;
+  const btnText = document.getElementById('expedite-text');
+  const btn = document.getElementById('expedite-btn');
+  if (isExpedited) {
+    btnText.innerText = '⚡ HYPER-SPEED ACTIVE (PRECISION DOWN)';
+    btn.className = 'neo-btn neo-btn-primary text-[11px] py-1.5 px-3 flex items-center gap-1 shadow-none';
+    playTone(1200, 0.1, 'sine');
+  } else {
+    btnText.innerText = '⚡ I\'M THIRSTY: EXPEDITE SCAN';
+    btn.className = 'neo-btn neo-btn-yellow text-[11px] py-1.5 px-3 flex items-center gap-1 shadow-none';
+    playTone(500, 0.1, 'sine');
+  }
+}
+
+/* =========================================================================
+   FILE SELECTION & PREVIEW
+   ========================================================================= */
+
+function triggerFileSelect() {
+  document.getElementById('file-input').click();
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files && event.target.files[0];
+  if (file) {
+    processUploadedFile(file);
+  }
+}
+
+// Drag-and-drop
+const dropZone = document.getElementById('drop-zone');
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.add('bg-tertiary-yellow/20', 'border-primary-magenta');
+  });
+});
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropZone.classList.remove('bg-tertiary-yellow/20', 'border-primary-magenta');
+  });
+});
+dropZone.addEventListener('drop', (e) => {
+  const dt = e.dataTransfer;
+  const file = dt && dt.files && dt.files[0];
+  if (file && file.type.startsWith('image/')) {
+    processUploadedFile(file);
+  }
+});
+
+function processUploadedFile(file) {
+  initAudio();
+  playTone(520, 0.1, 'sine');
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      uploadedImage = img;
+      
+      document.getElementById('preview-image').src = e.target.result;
+      document.getElementById('drop-empty-state').classList.add('hidden');
+      document.getElementById('drop-loaded-state').classList.remove('hidden');
+      document.getElementById('drop-loaded-state').classList.add('flex');
+      document.getElementById('clear-btn').classList.remove('hidden');
+
+      document.getElementById('specimen-meta').innerText = `SPECIMEN: ${file.name.substring(0, 24)}`;
+      document.getElementById('specimen-size').innerText = `${(file.size / 1024).toFixed(1)} KB`;
+
+      const btn = document.getElementById('analyze-btn');
+      btn.disabled = false;
+      btn.classList.remove('opacity-40', 'cursor-not-allowed');
+      btn.classList.add('hover:scale-105');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearSpecimen() {
+  uploadedImage = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('preview-image').src = '';
+  document.getElementById('drop-empty-state').classList.remove('hidden');
+  document.getElementById('drop-loaded-state').classList.add('hidden');
+  document.getElementById('drop-loaded-state').classList.remove('flex');
+  document.getElementById('clear-btn').classList.add('hidden');
+
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  btn.classList.add('opacity-40', 'cursor-not-allowed');
+  btn.classList.remove('hover:scale-105');
+  playTone(340, 0.08, 'triangle');
+}
+
+/* =========================================================================
+   STAGE 2: ELABORATE 5-PHASE LABORIOUS CALORIMETRY ENGINE
+   ========================================================================= */
+
+// Master schedule of detailed diagnostic sub-steps
+const LABORIOUS_DIAGNOSTICS = [
+  // --- PHASE 1: OPTICAL CALIBRATION (0% - 20%) ---
+  {
+    phase: 1,
+    name: "PHASE 1: OPTICAL CALIBRATION & MENISCUS MAPPING",
+    title: "Phase 1: Sub-Pixel Surface & Refractive Meniscus Geometry",
+    desc: "Scanning optical boundaries to differentiate ambient beverage volume from glassware reflection.",
+    substatus: "CALIBRATING MULTI-SPECTRUM MENISCUS",
+    progress: 4,
+    reticle: { top: "35%", left: "40%", w: "120px", h: "120px", label: "MENISCUS BOUNDARY" },
+    log: "[OPT-01] Aperture shutter opened. Ingesting high-resolution photon array...",
+    tickerVal: "1428.50000",
+    tickerSub: "Gross photon energy count across raw pixels",
+    subtraction: "Raw uncalibrated optical photon energy",
+    time: 500
+  },
+  {
+    phase: 1,
+    progress: 10,
+    reticle: { top: "20%", left: "25%", w: "90px", h: "90px", label: "REFRACTIVE INDEX" },
+    log: "[OPT-02] Calculating Snell's law refraction: n = 1.3330 confirmed for liquid plane...",
+    time: 1600
+  },
+  {
+    phase: 1,
+    progress: 18,
+    reticle: { top: "50%", left: "55%", w: "140px", h: "110px", label: "EXCLUDING AMBIENT REFLECTION" },
+    log: "[OPT-03] Subtracting specular room light highlights (-412.000 kcal)...",
+    tickerVal: "1016.50000",
+    subtraction: "-412.000 kcal (ambient room lighting)",
+    time: 2900
+  },
+  {
+    phase: 1,
+    progress: 20,
+    log: "[OPT-04] Optical aperture locked. Meniscus curvature validated at R = 4.2mm.",
+    time: 4200
+  },
+
+  // --- PHASE 2: CRYOGENIC VACUUM EVACUATION (20% - 42%) ---
+  {
+    phase: 2,
+    name: "PHASE 2: CRYOGENIC VACUUM CHAMBER EVACUATION",
+    title: "Phase 2: Turbomolecular Vacuum Evacuation & Sensor Chill",
+    desc: "Depressurizing the chamber to remove atmospheric interference and cooling bolometers to 4.2 K.",
+    substatus: "TURBOMOLECULAR PUMP AT 72,000 RPM",
+    progress: 25,
+    pressure: "42.100 kPa",
+    temp: "198.40 K",
+    reticle: { top: "30%", left: "30%", w: "180px", h: "180px", label: "VACUUM CHAMBER EVACUATION" },
+    log: "[VAC-01] Turbomolecular pump active. Evacuating ambient nitrogen & oxygen...",
+    tickerVal: "842.11020",
+    subtraction: "-174.389 kcal (atmospheric air molecule energy)",
+    time: 5200,
+    action: () => playPumpSound()
+  },
+  {
+    phase: 2,
+    progress: 32,
+    pressure: "8.400 kPa",
+    temp: "77.30 K",
+    log: "[VAC-02] Nitrogen condensation threshold passed. Secondary ion getter engaged...",
+    subtraction: "-312.440 kcal (liquid nitrogen phase subtraction)",
+    tickerVal: "529.67020",
+    time: 6800,
+    action: () => playPumpSound()
+  },
+  {
+    phase: 2,
+    progress: 38,
+    pressure: "0.012 kPa",
+    temp: "14.50 K",
+    log: "[CRYO-03] Liquid Helium-4 injected. Bolometer array reaching superconductive state...",
+    time: 8400
+  },
+  {
+    phase: 2,
+    progress: 42,
+    pressure: "0.002 kPa",
+    temp: "4.20 K",
+    log: "[CRYO-04] Ultra-high vacuum achieved: 0.002 kPa at 4.20 K. Ready for bond spectrometry.",
+    time: 9800
+  },
+
+  // --- PHASE 3: RAMAN & FTIR BOND SPECTROMETRY (42% - 66%) ---
+  {
+    phase: 3,
+    name: "PHASE 3: DUAL-BEAM RAMAN & FTIR SPECTROMETRY",
+    title: "Phase 3: Molecular Hydrogen Bond Harmonic Analysis",
+    desc: "Targeting the fundamental covalent and hydrogen bond vibrations of the H₂O matrix.",
+    substatus: "FTIR SPECTROMETER SWEEPING 3657 cm⁻¹",
+    progress: 48,
+    bonds: "428,000,000",
+    spectralBand: "BAND: 970 nm (OVERTONE)",
+    reticle: { top: "40%", left: "35%", w: "100px", h: "100px", label: "O-H SYMMETRIC STRETCH" },
+    log: "[RAMAN-01] Emitting 532 nm green laser beam. Probing v₁ symmetric O-H stretching...",
+    tickerVal: "142.10090",
+    subtraction: "-387.569 kcal (non-covalent thermal phonons)",
+    time: 11000
+  },
+  {
+    phase: 3,
+    progress: 54,
+    bonds: "1,290,000,000",
+    spectralBand: "BAND: 1450 nm (COMBINATION)",
+    log: "[RAMAN-02] Isolating asymmetric stretching mode (v₃ = 3756 cm⁻¹)...",
+    tickerVal: "38.44100",
+    subtraction: "-103.659 kcal (vibrational rotational modes)",
+    time: 12600
+  },
+  {
+    phase: 3,
+    progress: 60,
+    bonds: "3,840,000,000",
+    spectralBand: "BAND: 3657 cm⁻¹ (H-BOND MATRIX)",
+    log: "[RAMAN-03] Measuring hydrogen bond enthalpy: ΔH_HB = 21 kJ/mol (non-digestible)...",
+    tickerVal: "3.80140",
+    subtraction: "-34.639 kcal (intermolecular hydrogen bond network)",
+    time: 14200
+  },
+  {
+    phase: 3,
+    progress: 66,
+    bonds: "9,999,999,999+",
+    log: "[RAMAN-04] Bond enumeration complete. 100% of liquid confirmed to be H₂O clusters.",
+    time: 15600
+  },
+
+  // --- PHASE 4: ENTHALPY SOLVER & SUSPECTED ANOMALY (66% - 88%) ---
+  {
+    phase: 4,
+    name: "PHASE 4: QUANTUM ENTHALPY SOLVER & ANOMALY RESOLVER",
+    title: "Phase 4: High-Order Thermodynamic Deconvolution",
+    desc: "Solving the Gibbs-Helmholtz equations to compute net biological caloric assimilation.",
+    substatus: "SOLVING GIBBS EQUATION: ΔG = ΔH - TΔS",
+    progress: 72,
+    log: "[THERM-01] Computing mammalian digestive metabolism yield for dihydrogen monoxide...",
+    tickerVal: "0.41840",
+    subtraction: "-3.383 kcal (solute hydration enthalpy)",
+    time: 17000
+  },
+  {
+    phase: 4,
+    progress: 78,
+    log: "[THERM-02] Accounting for kinetic work of drinking: esophagus peristalsis (-0.418 kcal)...",
+    tickerVal: "0.00008",
+    subtraction: "WARNING: Responding to 0.00008 kcal trace anomaly",
+    time: 18400,
+    action: () => {
+      playWarningAlarm();
+      const meter = document.getElementById('meter-container');
+      meter.classList.add('bg-tertiary-yellow/20');
+      document.getElementById('ticker-status').innerText = '⚠️ STRAY ANOMALY DETECTED';
+      document.getElementById('ticker-status').className = 'text-primary-magenta font-black animate-pulse';
+    }
+  },
+  {
+    phase: 4,
+    progress: 82,
+    substatus: "DECONVOLUTING 0.00008 kcal RESIDUE",
+    log: "[ALERT-03] Suspected caloric anomaly (0.00008 kcal). Running 64-pass Fourier filter...",
+    time: 19800
+  },
+  {
+    phase: 4,
+    progress: 88,
+    log: "[RESOLVED-04] Anomaly cleared: stray photon reflection off glass. Value snaps to EXACT ZERO.",
+    tickerVal: "0.00000",
+    subtraction: "Absolute convergence: 0.00000 kcal",
+    time: 21200,
+    action: () => {
+      const meter = document.getElementById('meter-container');
+      meter.classList.remove('bg-tertiary-yellow/20');
+      document.getElementById('ticker-status').innerText = 'CONVERGENCE: EXACT ZERO';
+      document.getElementById('ticker-status').className = 'text-acid-lime bg-ink px-2 font-black';
+      playTone(1050, 0.15, 'sine');
+    }
+  },
+
+  // --- PHASE 5: IHSB GENEVA CRYPTO-ACCREDITATION (88% - 100%) ---
+  {
+    phase: 5,
+    name: "PHASE 5: IHSB GENEVA VERIFICATION & CRYPTO SEAL",
+    title: "Phase 5: Bureaucratic Standards Accreditation",
+    desc: "Submitting proof of zero calories to Geneva IHSB server and generating cryptographic wax seal.",
+    substatus: "AWAITING IHSB DIGITAL WAX SEAL",
+    progress: 92,
+    hash: "0x7f4e89a2bc...",
+    log: "[IHSB-01] Generating SHA-256 thermodynamic telemetry proof: 7f4e89a2bc993e11...",
+    time: 22600
+  },
+  {
+    phase: 5,
+    progress: 97,
+    hash: "0x7f4e89a2bc993e11f8...",
+    log: "[IHSB-02] Geneva IHSB signature received. Certificate serial #H2O verified.",
+    time: 23800
+  },
+  {
+    phase: 5,
+    progress: 100,
+    log: "[IHSB-03] PROTOCOL COMPLETE. ZERO CALORIES SCIENTIFICALLY SEALED.",
+    time: 24800
+  }
+];
+
+let currentDiagnosticTimeouts = [];
+
+function startAnalysis() {
+  if (!uploadedImage) return;
+  initAudio();
+  playTone(700, 0.15, 'sine', 0.25);
+
+  // Transition views
+  document.getElementById('upload-panel').classList.add('hidden');
+  const theater = document.getElementById('analysis-theater');
+  theater.classList.remove('hidden');
+  theater.classList.add('flex');
+  document.getElementById('certificate-panel').classList.add('hidden');
+
+  // Prepare canvas for specimen scanning
+  const canvas = document.getElementById('specimen-canvas');
+  canvas.width = uploadedImage.width || 400;
+  canvas.height = uploadedImage.height || 300;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(uploadedImage, 0, 0, canvas.width, canvas.height);
+
+  // Reset Terminal & Radar
+  document.getElementById('terminal-log').innerHTML = '';
+  setupRadar();
+
+  // Run the laborious schedule
+  executeLaboriousSchedule();
+}
+
+function executeLaboriousSchedule() {
+  // Clear any existing timeouts
+  currentDiagnosticTimeouts.forEach(t => clearTimeout(t));
+  currentDiagnosticTimeouts = [];
+
+  const startTime = Date.now();
+  const totalScheduleDuration = LABORIOUS_DIAGNOSTICS[LABORIOUS_DIAGNOSTICS.length - 1].time;
+
+  LABORIOUS_DIAGNOSTICS.forEach(step => {
+    const scaledTime = step.time * speedMultiplier;
+    const timeout = setTimeout(() => {
+      applyDiagnosticStep(step);
+    }, scaledTime);
+    currentDiagnosticTimeouts.push(timeout);
+  });
+
+  // Finish analysis and reveal
+  const finishTimeout = setTimeout(() => {
+    finishAnalysis();
+  }, (totalScheduleDuration + 800) * speedMultiplier);
+  currentDiagnosticTimeouts.push(finishTimeout);
+}
+
+function applyDiagnosticStep(step) {
+  // Update Master Progress Bar
+  const progressFill = document.getElementById('master-progress-fill');
+  const progressPct = document.getElementById('master-progress-pct');
+  progressFill.style.width = `${step.progress}%`;
+  progressPct.innerText = `${step.progress}%`;
+
+  // Update Active Phase Badge Highlighting
+  for (let i = 1; i <= 5; i++) {
+    const badge = document.getElementById(`step-badge-${i}`);
+    if (i === step.phase) {
+      badge.className = 'p-1.5 border-2 border-tertiary-yellow bg-tertiary-yellow text-ink font-black step-active-pulse shadow-[2px_2px_0px_#1c1b1b]';
+    } else if (i < step.phase) {
+      badge.className = 'p-1.5 border border-acid-lime bg-acid-lime/20 text-acid-lime font-bold';
+      badge.innerHTML = `✓ [${i}] COMPLETED`;
+    } else {
+      badge.className = 'p-1.5 border border-white/20 bg-white/5 text-white/50 font-normal';
+    }
+  }
+
+  // Update Hero Detail Box if provided
+  if (step.name) document.getElementById('active-phase-name').innerText = step.name;
+  if (step.title) document.getElementById('phase-title').innerText = step.title;
+  if (step.desc) document.getElementById('phase-description').innerText = step.desc;
+  if (step.substatus) document.getElementById('phase-substatus').innerText = `STATUS: ${step.substatus}`;
+  if (step.phase) document.getElementById('phase-icon-box').innerText = step.phase;
+
+  // Move Reticle Box
+  if (step.reticle) {
+    const ret = document.getElementById('scanning-reticle-box');
+    ret.style.top = step.reticle.top;
+    ret.style.left = step.reticle.left;
+    ret.style.width = step.reticle.w;
+    ret.style.height = step.reticle.h;
+    if (step.reticle.label) document.getElementById('reticle-label').innerText = step.reticle.label;
+  }
+
+  // Update Telemetry & Gauges
+  if (step.pressure) document.getElementById('gauge-pressure').innerText = step.pressure;
+  if (step.temp) document.getElementById('gauge-temp').innerText = step.temp;
+  if (step.bonds) document.getElementById('gauge-bonds').innerText = step.bonds;
+  if (step.spectralBand) document.getElementById('spectral-band-indicator').innerText = step.spectralBand;
+  if (step.hash) document.getElementById('gauge-hash').innerText = step.hash;
+
+  // Ticker Number
+  if (step.tickerVal) {
+    document.getElementById('ticker-number').innerText = step.tickerVal;
+  }
+  if (step.subtraction) {
+    document.getElementById('subtraction-banner').innerText = step.subtraction;
+  }
+
+  // Append Log Line
+  if (step.log) {
+    const term = document.getElementById('terminal-log');
+    const line = document.createElement('div');
+    line.className = 'leading-tight';
+    line.innerText = step.log;
+    term.appendChild(line);
+    term.scrollTop = term.scrollHeight;
+    playTone(420 + Math.random() * 300, 0.04, 'square', 0.08);
+  }
+
+  // Custom step action hook
+  if (step.action) {
+    step.action();
+  }
+}
+
+function finishAnalysis() {
+  if (activeAnimationId) {
+    cancelAnimationFrame(activeAnimationId);
+  }
+
+  // Sound and visual slam
+  playSlamSound();
+
+  // Hide theater, reveal certificate
+  document.getElementById('analysis-theater').classList.add('hidden');
+  document.getElementById('analysis-theater').classList.remove('flex');
+  const certPanel = document.getElementById('certificate-panel');
+  certPanel.classList.remove('hidden');
+  certPanel.classList.add('flex');
+
+  // Trigger screen rumble
+  const root = document.getElementById('hydrocal-root');
+  root.classList.add('rumble');
+  setTimeout(() => root.classList.remove('rumble'), 500);
+
+  // Assign fresh specimen ref, date, and crypto proof
+  const randomRef = 'H2O-' + Math.floor(10000 + Math.random() * 90000);
+  document.getElementById('cert-id').innerText = '#' + randomRef;
+  const todayStr = new Date().toISOString().split('T')[0];
+  document.getElementById('cert-date').innerText = todayStr;
+  const shortHash = '0x' + Math.random().toString(16).substring(2, 10) + '...';
+  document.getElementById('cert-hash').innerText = shortHash;
+
+  // Update URL history for shareability
+  const url = new URL(window.location);
+  url.searchParams.set('cert', randomRef);
+  url.searchParams.set('ts', todayStr);
+  window.history.replaceState({}, '', url);
+}
+
+/* =========================================================================
+   STAGE 3: CERTIFICATE & EXPORT
+   ========================================================================= */
+
+function toggleUnits() {
+  const valEl = document.getElementById('monumental-val');
+  const unitEl = document.getElementById('unit-label');
+  
+  if (currentUnits === 'kcal') {
+    currentUnits = 'kJ';
+    valEl.innerText = '0.00000';
+    unitEl.innerText = 'KILOJOULES (kJ)';
+  } else {
+    currentUnits = 'kcal';
+    valEl.innerText = '0.00000';
+    unitEl.innerText = 'KILOCALORIES (kcal)';
+  }
+  playTone(640, 0.08, 'sine');
+}
+
+function copyShareLink() {
+  initAudio();
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    const btnText = document.getElementById('copy-btn-text');
+    const originalText = btnText.innerText;
+    btnText.innerText = 'LINK COPIED! ✓';
+    playTone(880, 0.1, 'sine', 0.2);
+    setTimeout(() => {
+      btnText.innerText = originalText;
+    }, 2000);
+  }).catch(err => {
+    alert('Share URL: ' + url);
+  });
+}
+
+function resetLab() {
+  clearSpecimen();
+  document.getElementById('certificate-panel').classList.add('hidden');
+  document.getElementById('certificate-panel').classList.remove('flex');
+  document.getElementById('upload-panel').classList.remove('hidden');
+  
+  // Clear URL params
+  const url = new URL(window.location);
+  url.searchParams.delete('cert');
+  url.searchParams.delete('ts');
+  window.history.replaceState({}, '', url.pathname);
+}
+
+/* =========================================================================
+   CANVAS RADAR & SPECTROGRAM VISUALIZER
+   ========================================================================= */
+
+function setupRadar() {
+  const canvas = document.getElementById('radar-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth || 300;
+  canvas.height = canvas.parentElement.clientHeight || 112;
+
+  let angle = 0;
+  const numBars = 36;
+  const barHeights = new Array(numBars).fill(0);
+
+  function draw() {
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const midY = canvas.height / 2;
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(57, 255, 20, 0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 0; x < canvas.width; x += 20) {
+      ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height);
+    }
+    for (let y = 0; y < canvas.height; y += 20) {
+      ctx.moveTo(0, y); ctx.lineTo(canvas.width, y);
+    }
+    ctx.stroke();
+
+    // Frequency bars
+    const barWidth = canvas.width / numBars;
+    for (let i = 0; i < numBars; i++) {
+      barHeights[i] += (Math.random() * canvas.height * 0.7 - barHeights[i]) * 0.15;
+      ctx.fillStyle = (i % 3 === 0) ? '#00e5ff' : (i % 3 === 1) ? '#39ff14' : '#fae100';
+      ctx.fillRect(i * barWidth, canvas.height - barHeights[i], barWidth - 2, barHeights[i]);
+    }
+
+    // Oscillating sine wave overlay
+    ctx.strokeStyle = '#ff1493';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x < canvas.width; x += 3) {
+      const y = midY + Math.sin((x + angle * 25) * 0.06) * 18 * Math.cos(angle * 1.5);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    angle += 0.04;
+    activeAnimationId = requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
+/* =========================================================================
+   CERTIFICATE CARD DOWNLOAD (CANVAS COMPOSITOR)
+   ========================================================================= */
+
+function downloadBadge() {
+  initAudio();
+  playTone(750, 0.1, 'sine');
+
+  const canvas = document.getElementById('export-canvas');
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#f5f3ef';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Outer border & shadow
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = '#1c1b1b';
+  ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+  // Top color bar
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  grad.addColorStop(0, '#b40065');
+  grad.addColorStop(0.5, '#fae100');
+  grad.addColorStop(1, '#008190');
+  ctx.fillStyle = grad;
+  ctx.fillRect(10, 10, canvas.width - 20, 16);
+
+  // Header Title
+  ctx.fillStyle = '#b40065';
+  ctx.font = '900 13px "JetBrains Mono", monospace';
+  ctx.fillText('INTERNATIONAL HYDRO-CALORIMETRIC STANDARDS BOARD (GENEVA)', 35, 58);
+
+  ctx.fillStyle = '#1c1b1b';
+  ctx.font = '900 30px "Bricolage Grotesque", sans-serif';
+  ctx.fillText('CERTIFICATE OF CALORIC VOID', 35, 96);
+
+  // Specimen Ref & Date
+  const refText = document.getElementById('cert-id').innerText;
+  const dateText = document.getElementById('cert-date').innerText;
+  ctx.font = '700 13px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#1c1b1b';
+  ctx.fillText(`SPECIMEN: ${refText}  |  DATE: ${dateText}  |  5-PHASE STATUS: VERIFIED`, 35, 126);
+
+  // Center Big Stamp Box
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(100, 155, canvas.width - 200, 195);
+  ctx.strokeStyle = '#b40065';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(100, 155, canvas.width - 200, 195);
+
+  ctx.fillStyle = '#b40065';
+  ctx.font = '900 12px "JetBrains Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('★ MOLECULAR ENTHALPY OF DIHYDROGEN MONOXIDE ★', canvas.width / 2, 188);
+
+  ctx.fillStyle = '#1c1b1b';
+  ctx.font = '900 64px "Bricolage Grotesque", sans-serif';
+  ctx.fillText('0.00000', canvas.width / 2, 262);
+
+  ctx.fillStyle = '#fae100';
+  ctx.fillRect(canvas.width / 2 - 110, 285, 220, 32);
+  ctx.strokeRect(canvas.width / 2 - 110, 285, 220, 32);
+  ctx.fillStyle = '#1c1b1b';
+  ctx.font = '900 14px "JetBrains Mono", monospace';
+  ctx.fillText('KILOCALORIES (kcal)', canvas.width / 2, 307);
+
+  // Footer Verdict
+  ctx.textAlign = 'left';
+  ctx.font = '600 13px "Space Grotesk", sans-serif';
+  ctx.fillStyle = '#1c1b1b';
+  ctx.fillText('Exhaustive 5-phase quantum calorimetry confirms zero caloric yield. 100% guilt-free hydration.', 35, 395);
+
+  ctx.font = '700 11px "JetBrains Mono", monospace';
+  ctx.fillStyle = '#008190';
+  ctx.fillText('5 IDEAS DAILY SHOWCASE // HYDROCAL ZERO™ // radicals.memphis.engine', 35, 435);
+
+  // Trigger Download
+  const link = document.createElement('a');
+  link.download = `HydroCal-Zero-${refText.replace('#', '')}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+/* =========================================================================
+   ON LOAD: CHECK FOR SHARED CERTIFICATE URL PARAMS
+   ========================================================================= */
+
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const sharedCert = urlParams.get('cert');
+  const sharedTs = urlParams.get('ts');
+
+  if (sharedCert) {
+    document.getElementById('upload-panel').classList.add('hidden');
+    const certPanel = document.getElementById('certificate-panel');
+    certPanel.classList.remove('hidden');
+    certPanel.classList.add('flex');
+    document.getElementById('cert-id').innerText = '#' + sharedCert;
+    if (sharedTs) {
+      document.getElementById('cert-date').innerText = sharedTs;
+    }
+  }
+});
+</script>
+{% endblock %}

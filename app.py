@@ -269,6 +269,17 @@ async def interactive_flute(request: Request):
     )
 
 
+@app.get("/interactive/water-calories", response_class=HTMLResponse)
+async def interactive_water_calories(request: Request):
+    """Interactive HydroCal Zero water calorie counter & quantum calorimetry laboratory."""
+    return templates.TemplateResponse(
+        request=request,
+        name="water_calories.html",
+        context={},
+    )
+
+
+
 @app.post("/api/house-stats/parse-url")
 async def api_house_stats_parse_url(request: Request):
     """
