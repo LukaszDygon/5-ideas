@@ -271,7 +271,7 @@ async def interactive_flute(request: Request):
 
 @app.get("/interactive/water-calories", response_class=HTMLResponse)
 async def interactive_water_calories(request: Request):
-    """Interactive HydroCal Zero water calorie counter & quantum calorimetry laboratory."""
+    """Interactive Aqueous Caloric Spectrometer & molecular calorimetry laboratory."""
     return templates.TemplateResponse(
         request=request,
         name="water_calories.html",
