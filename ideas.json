@@ -9,7 +9,7 @@
     "created_at": "2026-09-17 07:30:01",
     "ideas": [
       {
-        "id": 366,
+        "id": 376,
         "day_id": 57,
         "idea_number": 1,
         "title": "AI driven Habitica",
@@ -21,7 +21,7 @@
         "implementation": null
       },
       {
-        "id": 367,
+        "id": 377,
         "day_id": 57,
         "idea_number": 2,
         "title": "Board game instruction chat",
@@ -33,7 +33,7 @@
         "implementation": null
       },
       {
-        "id": 368,
+        "id": 378,
         "day_id": 57,
         "idea_number": 3,
         "title": "Macau strategy RL",
@@ -43,52 +43,70 @@
         "icon": "lightbulb",
         "is_implemented": 1,
         "implementation": {
-          "id": 69,
-          "idea_id": 368,
-          "title": "Macau RL Arena",
+          "id": 71,
+          "idea_id": 378,
+          "title": "Macau Strategy RL Arena",
           "build_type": "webapp",
-          "rank": 75,
-          "summary": "Apple Silicon M1 Metal accelerated deep reinforcement learning agent and interactive web arena for the Polish Makao card game.",
-          "content": "/static/images/macau_game.png, /static/images/macau_training.png",
+          "rank": 1,
+          "summary": "High-performance Polish Makao card game with Pure Zero-Sum PPO, Information Set MCTS, and unified simulation engine on Apple Silicon M1.",
+          "content": "",
           "external_url": "https://github.com/LukaszDygon/macau-rl",
-          "time_spent_hours": 2.0,
-          "ai_tools_used": "PyTorch (MPS), FastAPI, Playwright, Tailwind CSS, Rich",
+          "time_spent_hours": 4.0,
+          "ai_tools_used": "PyTorch, FastAPI, M1 Metal (MPS), Playwright, Rich",
           "process_steps": [
             {
               "step": 1,
               "title": "Step 1",
-              "desc": "Formulated full Polish Makao rules engine with multi-card drops, Jack/Ace counters, and 2/3/K attack chaining in macau_env.py"
+              "desc": "Clarified Makao rules, dropped the queen rule, and spun up the repo and web app with training view"
             },
             {
               "step": 2,
               "title": "Step 2",
-              "desc": "Implemented PyTorch Deep Q-Network (MacauNet) with Apple Silicon M1 MPS self-play training and Rich CLI inspector"
+              "desc": "Playtested the game and fixed core rules like Ace suit selection and multi-card combos"
             },
             {
               "step": 3,
               "title": "Step 3",
-              "desc": "Built Neo-Brutalist web app with real-time bot decision explanation, X-Ray hand inspection, and live training telemetry"
+              "desc": "Discovered RL agent was degrading against the heuristic bot by learning bad card-dumping habits"
             },
             {
               "step": 4,
               "title": "Step 4",
-              "desc": "Captured automated Playwright UI screenshots and linked standalone repo"
+              "desc": "Added an MCTS agent with belief-state sampling for imperfect information"
+            },
+            {
+              "step": 5,
+              "title": "Step 5",
+              "desc": "Fixed broken best-of-5 stats in the UI, added MCTS parameter controls, and cleaned up the README"
+            },
+            {
+              "step": 6,
+              "title": "Step 6",
+              "desc": "Replaced broken Q-learning with pure zero-sum PPO with terminal-only rewards"
+            },
+            {
+              "step": 7,
+              "title": "Step 7",
+              "desc": "Fixed the missing voluntary draw mechanic ('dobieram') so bots can hold onto defensive shields"
+            },
+            {
+              "step": 8,
+              "title": "Step 8",
+              "desc": "Refactored into one file per agent, centralized configs, and unified simulation logic across the project"
             }
           ],
           "what_rocked": [
-            "M1 MPS Metal acceleration enabled high-throughput training (2.7 eps/s) that scaled win rates from 0% to 100% vs Random and 60% vs Heuristic Master",
-            "Rich explainability and X-Ray toggle provide crystal-clear visibility into neural network Q-values and tactical decisions"
+            "The bots were learning straight away, and MCTS suggestion was really good"
           ],
           "what_broke": [
-            "Resolved linear layer dimension mismatch (74 vs 120 features) in MacauNet state encoder",
-            "Fixed Starlette TemplateResponse signature in web_app.py for compatibility with modern Starlette"
+            "The rules between the training and simulation not synching. The biggest issue was programs degrading many times when improvements were suggested with AI thinking it did a great job. It also made some bad assumptions and tried to convince me that I can't be right"
           ],
-          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 6 human turns across 149 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Remove the queen rule. Also, verify the rules about playing cards. A player should be able to play any number of cards of the s...\n  \u2022 Turn 3: can we also get a training view in the Web UI\n  \u2022 Turn 4: the 5-ideas app only needs to create a link to the Git Repo and a screenshot or two of the actual UI (use Playwright)\n  \u2022 Turn 5: yes\n  \u2022 Turn 6: the readme is empty\n\nTools Executed: run_command (21), view_file (11), write_to_file (11), manage_task (8), replace_file_content (5), grep_search (4)\nFiles Modified: README.md, RULES.md, SKILL.md, agents.py, app.py, capture_screenshots.py, day.html, db.py",
-          "created_at": "2026-09-17 07:48:18"
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 31 human turns across 2189 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Remove the queen rule. Also, verify the rules about playing cards. A player should be able to play any number of cards of the s...\n  \u2022 Turn 3: can we also get a training view in the Web UI\n  \u2022 Turn 4: the 5-ideas app only needs to create a link to the Git Repo and a screenshot or two of the actual UI (use Playwright)\n  \u2022 Turn 5: yes\n  \u2022 Turn 6: the readme is empty\n  \u2022 Turn 7: I can see issues with the rules already after playing. Ace doesn't work. It doesn't let me change suit. The 3 was played on 2 o...\n  \u2022 Turn 8: Does the algorithm play against itself?\n  \u2022 Turn 9: 60% win rate against heuristic agent is pretty bad. It should be close to 96% on best of 5, which 60% would not indicate\n  \u2022 Turn 10: I can see in training that the agent win % against the heuristic steadily decreases over steps. It looks suspiciously like the ...\n  \u2022 Turn 11: dumping a multi-card combo is not perfect arithmetic, it's a strategy that is actually not that good. No player misses a defenc...\n  \u2022 Turn 12: do this, and reason also about whether this is a complete set of state that can be tracked. I assume the stack is being tracked...\n  \u2022 Turn 13: so it got worse\n  \u2022 Turn 14: The argument that because there are games that can not be won means that 10% edge is reasonable is a big leap in logic. If you ...\n  \u2022 Turn 15: oh and 9 vs 3 cards is not a losing game if the 3 card player can't play a counter on a follow up or has to draw\n  \u2022 Turn 16: yes fix this\n  \u2022 Turn 17: so it's worse than originally still\n  \u2022 Turn 18: yeah lets do that. Don't worry about how long it takes, as long as it's within a realm of viable execution on the M1 chip\n  \u2022 Turn 19: the best of 5 on the webpage is broken. Also the table with training results is very confusing. It shows very low win% and erra...\n  \u2022 Turn 20: \u2605 PROJECTED BEST-OF-5 RATE undefined% also against heuristic the training data is quite significantly off the 100 match simulat...\n  \u2022 Turn 21: the readme is missing docs for running the new training. Overall make it user friendly no emojis, just clear explanation of wha...\n  \u2022 Turn 22: can I control the parameters on the MCTs?\n  \u2022 Turn 23: It seems to me like the Q-learning one is still misaligned. I like the speed, so I want to get it better. It currently loses qu...\n  \u2022 Turn 24: resume\n  \u2022 Turn 25: can we make it work in general, lets say when I train it for 10000 steps? I want to be able to see the plateau\n  \u2022 Turn 26: are you sure you are correct and that we aren't optimising for plateau, rather than fixing a well built rl task? The win rate a...\n  \u2022 Turn 27: Approach B is more interesting\n  \u2022 Turn 28: I also found that even the MCTS program doesn't consider drawing when it has an option to play a card\n  \u2022 Turn 29: Can you refactor the code into a better structure, commonize the game and simulation logic rules etc. I think there is a misali...\n  \u2022 Turn 30: /capture-implementation\n  \u2022 Turn 31: The steps should be based on the whole interaction. Any turn of my instructions should be included and condensed into 8 steps 2...\n\nTools Executed: view_file (415), run_command (297), replace_file_content (125), manage_task (75), write_to_file (42), grep_search (33)\nFiles Modified: README.md, RULES.md, SKILL.md, __init__.py, agents.py, analyze_losses.py, app.py, base.py",
+          "created_at": "2026-09-17 17:13:40"
         }
       },
       {
-        "id": 369,
+        "id": 379,
         "day_id": 57,
         "idea_number": 4,
         "title": "Board game themer",
@@ -100,7 +118,7 @@
         "implementation": null
       },
       {
-        "id": 370,
+        "id": 380,
         "day_id": 57,
         "idea_number": 5,
         "title": "City guide trail",
@@ -113,7 +131,7 @@
       }
     ],
     "implemented_idea": {
-      "id": 368,
+      "id": 378,
       "day_id": 57,
       "idea_number": 3,
       "title": "Macau strategy RL",
@@ -123,48 +141,66 @@
       "icon": "lightbulb",
       "is_implemented": 1,
       "implementation": {
-        "id": 69,
-        "idea_id": 368,
-        "title": "Macau RL Arena",
+        "id": 71,
+        "idea_id": 378,
+        "title": "Macau Strategy RL Arena",
         "build_type": "webapp",
-        "rank": 75,
-        "summary": "Apple Silicon M1 Metal accelerated deep reinforcement learning agent and interactive web arena for the Polish Makao card game.",
-        "content": "/static/images/macau_game.png, /static/images/macau_training.png",
+        "rank": 1,
+        "summary": "High-performance Polish Makao card game with Pure Zero-Sum PPO, Information Set MCTS, and unified simulation engine on Apple Silicon M1.",
+        "content": "",
         "external_url": "https://github.com/LukaszDygon/macau-rl",
-        "time_spent_hours": 2.0,
-        "ai_tools_used": "PyTorch (MPS), FastAPI, Playwright, Tailwind CSS, Rich",
+        "time_spent_hours": 4.0,
+        "ai_tools_used": "PyTorch, FastAPI, M1 Metal (MPS), Playwright, Rich",
         "process_steps": [
           {
             "step": 1,
             "title": "Step 1",
-            "desc": "Formulated full Polish Makao rules engine with multi-card drops, Jack/Ace counters, and 2/3/K attack chaining in macau_env.py"
+            "desc": "Clarified Makao rules, dropped the queen rule, and spun up the repo and web app with training view"
           },
           {
             "step": 2,
             "title": "Step 2",
-            "desc": "Implemented PyTorch Deep Q-Network (MacauNet) with Apple Silicon M1 MPS self-play training and Rich CLI inspector"
+            "desc": "Playtested the game and fixed core rules like Ace suit selection and multi-card combos"
           },
           {
             "step": 3,
             "title": "Step 3",
-            "desc": "Built Neo-Brutalist web app with real-time bot decision explanation, X-Ray hand inspection, and live training telemetry"
+            "desc": "Discovered RL agent was degrading against the heuristic bot by learning bad card-dumping habits"
           },
           {
             "step": 4,
             "title": "Step 4",
-            "desc": "Captured automated Playwright UI screenshots and linked standalone repo"
+            "desc": "Added an MCTS agent with belief-state sampling for imperfect information"
+          },
+          {
+            "step": 5,
+            "title": "Step 5",
+            "desc": "Fixed broken best-of-5 stats in the UI, added MCTS parameter controls, and cleaned up the README"
+          },
+          {
+            "step": 6,
+            "title": "Step 6",
+            "desc": "Replaced broken Q-learning with pure zero-sum PPO with terminal-only rewards"
+          },
+          {
+            "step": 7,
+            "title": "Step 7",
+            "desc": "Fixed the missing voluntary draw mechanic ('dobieram') so bots can hold onto defensive shields"
+          },
+          {
+            "step": 8,
+            "title": "Step 8",
+            "desc": "Refactored into one file per agent, centralized configs, and unified simulation logic across the project"
           }
         ],
         "what_rocked": [
-          "M1 MPS Metal acceleration enabled high-throughput training (2.7 eps/s) that scaled win rates from 0% to 100% vs Random and 60% vs Heuristic Master",
-          "Rich explainability and X-Ray toggle provide crystal-clear visibility into neural network Q-values and tactical decisions"
+          "The bots were learning straight away, and MCTS suggestion was really good"
         ],
         "what_broke": [
-          "Resolved linear layer dimension mismatch (74 vs 120 features) in MacauNet state encoder",
-          "Fixed Starlette TemplateResponse signature in web_app.py for compatibility with modern Starlette"
+          "The rules between the training and simulation not synching. The biggest issue was programs degrading many times when improvements were suggested with AI thinking it did a great job. It also made some bad assumptions and tried to convince me that I can't be right"
         ],
-        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 6 human turns across 149 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Remove the queen rule. Also, verify the rules about playing cards. A player should be able to play any number of cards of the s...\n  \u2022 Turn 3: can we also get a training view in the Web UI\n  \u2022 Turn 4: the 5-ideas app only needs to create a link to the Git Repo and a screenshot or two of the actual UI (use Playwright)\n  \u2022 Turn 5: yes\n  \u2022 Turn 6: the readme is empty\n\nTools Executed: run_command (21), view_file (11), write_to_file (11), manage_task (8), replace_file_content (5), grep_search (4)\nFiles Modified: README.md, RULES.md, SKILL.md, agents.py, app.py, capture_screenshots.py, day.html, db.py",
-        "created_at": "2026-09-17 07:48:18"
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 31 human turns across 2189 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Remove the queen rule. Also, verify the rules about playing cards. A player should be able to play any number of cards of the s...\n  \u2022 Turn 3: can we also get a training view in the Web UI\n  \u2022 Turn 4: the 5-ideas app only needs to create a link to the Git Repo and a screenshot or two of the actual UI (use Playwright)\n  \u2022 Turn 5: yes\n  \u2022 Turn 6: the readme is empty\n  \u2022 Turn 7: I can see issues with the rules already after playing. Ace doesn't work. It doesn't let me change suit. The 3 was played on 2 o...\n  \u2022 Turn 8: Does the algorithm play against itself?\n  \u2022 Turn 9: 60% win rate against heuristic agent is pretty bad. It should be close to 96% on best of 5, which 60% would not indicate\n  \u2022 Turn 10: I can see in training that the agent win % against the heuristic steadily decreases over steps. It looks suspiciously like the ...\n  \u2022 Turn 11: dumping a multi-card combo is not perfect arithmetic, it's a strategy that is actually not that good. No player misses a defenc...\n  \u2022 Turn 12: do this, and reason also about whether this is a complete set of state that can be tracked. I assume the stack is being tracked...\n  \u2022 Turn 13: so it got worse\n  \u2022 Turn 14: The argument that because there are games that can not be won means that 10% edge is reasonable is a big leap in logic. If you ...\n  \u2022 Turn 15: oh and 9 vs 3 cards is not a losing game if the 3 card player can't play a counter on a follow up or has to draw\n  \u2022 Turn 16: yes fix this\n  \u2022 Turn 17: so it's worse than originally still\n  \u2022 Turn 18: yeah lets do that. Don't worry about how long it takes, as long as it's within a realm of viable execution on the M1 chip\n  \u2022 Turn 19: the best of 5 on the webpage is broken. Also the table with training results is very confusing. It shows very low win% and erra...\n  \u2022 Turn 20: \u2605 PROJECTED BEST-OF-5 RATE undefined% also against heuristic the training data is quite significantly off the 100 match simulat...\n  \u2022 Turn 21: the readme is missing docs for running the new training. Overall make it user friendly no emojis, just clear explanation of wha...\n  \u2022 Turn 22: can I control the parameters on the MCTs?\n  \u2022 Turn 23: It seems to me like the Q-learning one is still misaligned. I like the speed, so I want to get it better. It currently loses qu...\n  \u2022 Turn 24: resume\n  \u2022 Turn 25: can we make it work in general, lets say when I train it for 10000 steps? I want to be able to see the plateau\n  \u2022 Turn 26: are you sure you are correct and that we aren't optimising for plateau, rather than fixing a well built rl task? The win rate a...\n  \u2022 Turn 27: Approach B is more interesting\n  \u2022 Turn 28: I also found that even the MCTS program doesn't consider drawing when it has an option to play a card\n  \u2022 Turn 29: Can you refactor the code into a better structure, commonize the game and simulation logic rules etc. I think there is a misali...\n  \u2022 Turn 30: /capture-implementation\n  \u2022 Turn 31: The steps should be based on the whole interaction. Any turn of my instructions should be included and condensed into 8 steps 2...\n\nTools Executed: view_file (415), run_command (297), replace_file_content (125), manage_task (75), write_to_file (42), grep_search (33)\nFiles Modified: README.md, RULES.md, SKILL.md, __init__.py, agents.py, analyze_losses.py, app.py, base.py",
+        "created_at": "2026-09-17 17:13:40"
       }
     }
   },
