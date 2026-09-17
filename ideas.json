@@ -1,5 +1,174 @@
 [
   {
+    "id": 57,
+    "date": "2026-09-17",
+    "theme": "Analog Games",
+    "subtitle": "Any games that is non-digital first",
+    "streak_count": 1,
+    "notes": "Woke up with tired legs. I ran about 9km last evening. I got into that state where you feel like you can just keep running. Adrenaline I believe. Just making my morning coffee.",
+    "created_at": "2026-09-17 07:30:01",
+    "ideas": [
+      {
+        "id": 366,
+        "day_id": 57,
+        "idea_number": 1,
+        "title": "AI driven Habitica",
+        "tagline": "Treat your life like a game and level it up",
+        "description": "Habitica is an app I tried using in the past. It allows completing habit based real life tasks to improve the in-game character. You can set your own goals, tasks, etc. Then you can join skill guilds and spend coin on items in-game to flex the real life habit progress. What was missing is the a more seamless experience that an AI could provide.",
+        "tags": "App, Lifestyle, AI, Game",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 367,
+        "day_id": 57,
+        "idea_number": 2,
+        "title": "Board game instruction chat",
+        "tagline": "If you have a rule question, ask instead of searching",
+        "description": "Sometimes the rules are unclear on the first read, sometimes we argue over the rules. What if there was an authority with perfect knowledge of the rules and references to show them? I imagine some RAG based system so the question can be vague-ish. Focus on text rules, not the images.",
+        "tags": "Game, Database",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 368,
+        "day_id": 57,
+        "idea_number": 3,
+        "title": "Macau strategy RL",
+        "tagline": "Reinforcement learning for the Macau card game",
+        "description": "Macau is a card game I played a lot as a kid. It has simple enough rules, but high complexity that is hard to comprehend. I want to try find a good strategy for playing the game. There are some guides online, but Reinforcement Learning could probably optimise it. A bot I can test myself against would be great.",
+        "tags": "Game, ML",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 69,
+          "idea_id": 368,
+          "title": "Macau RL Arena",
+          "build_type": "webapp",
+          "rank": 75,
+          "summary": "Apple Silicon M1 Metal accelerated deep reinforcement learning agent and interactive web arena for the Polish Makao card game.",
+          "content": "/static/images/macau_game.png, /static/images/macau_training.png",
+          "external_url": "https://github.com/LukaszDygon/macau-rl",
+          "time_spent_hours": 2.0,
+          "ai_tools_used": "PyTorch (MPS), FastAPI, Playwright, Tailwind CSS, Rich",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Step 1",
+              "desc": "Formulated full Polish Makao rules engine with multi-card drops, Jack/Ace counters, and 2/3/K attack chaining in macau_env.py"
+            },
+            {
+              "step": 2,
+              "title": "Step 2",
+              "desc": "Implemented PyTorch Deep Q-Network (MacauNet) with Apple Silicon M1 MPS self-play training and Rich CLI inspector"
+            },
+            {
+              "step": 3,
+              "title": "Step 3",
+              "desc": "Built Neo-Brutalist web app with real-time bot decision explanation, X-Ray hand inspection, and live training telemetry"
+            },
+            {
+              "step": 4,
+              "title": "Step 4",
+              "desc": "Captured automated Playwright UI screenshots and linked standalone repo"
+            }
+          ],
+          "what_rocked": [
+            "M1 MPS Metal acceleration enabled high-throughput training (2.7 eps/s) that scaled win rates from 0% to 100% vs Random and 60% vs Heuristic Master",
+            "Rich explainability and X-Ray toggle provide crystal-clear visibility into neural network Q-values and tactical decisions"
+          ],
+          "what_broke": [
+            "Resolved linear layer dimension mismatch (74 vs 120 features) in MacauNet state encoder",
+            "Fixed Starlette TemplateResponse signature in web_app.py for compatibility with modern Starlette"
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 6 human turns across 149 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Remove the queen rule. Also, verify the rules about playing cards. A player should be able to play any number of cards of the s...\n  \u2022 Turn 3: can we also get a training view in the Web UI\n  \u2022 Turn 4: the 5-ideas app only needs to create a link to the Git Repo and a screenshot or two of the actual UI (use Playwright)\n  \u2022 Turn 5: yes\n  \u2022 Turn 6: the readme is empty\n\nTools Executed: run_command (21), view_file (11), write_to_file (11), manage_task (8), replace_file_content (5), grep_search (4)\nFiles Modified: README.md, RULES.md, SKILL.md, agents.py, app.py, capture_screenshots.py, day.html, db.py",
+          "created_at": "2026-09-17 07:48:18"
+        }
+      },
+      {
+        "id": 369,
+        "day_id": 57,
+        "idea_number": 4,
+        "title": "Board game themer",
+        "tagline": "Retheme a board game",
+        "description": "Some board games get multiple themes, some board games have none. Can we get a system that takes in the board game rules and helps ideate over the thematic update to the mechanics and game elements? Both visually, and flavorwise in the rules text and box.",
+        "tags": "AI, Design",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 370,
+        "day_id": 57,
+        "idea_number": 5,
+        "title": "City guide trail",
+        "tagline": "Real life game to learn about the city",
+        "description": "Real Life games are kind of a thing now. There is interaction with various people along the way, which would be the hard part, but the most important is to make the trip feel worth it. If someone is being yanked around random places, it feels bad. If it's effort put into seeing and doing cool stuff, it's great. Puzzles, historical facts, strong overarching themes welcome.",
+        "tags": "",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 368,
+      "day_id": 57,
+      "idea_number": 3,
+      "title": "Macau strategy RL",
+      "tagline": "Reinforcement learning for the Macau card game",
+      "description": "Macau is a card game I played a lot as a kid. It has simple enough rules, but high complexity that is hard to comprehend. I want to try find a good strategy for playing the game. There are some guides online, but Reinforcement Learning could probably optimise it. A bot I can test myself against would be great.",
+      "tags": "Game, ML",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 69,
+        "idea_id": 368,
+        "title": "Macau RL Arena",
+        "build_type": "webapp",
+        "rank": 75,
+        "summary": "Apple Silicon M1 Metal accelerated deep reinforcement learning agent and interactive web arena for the Polish Makao card game.",
+        "content": "/static/images/macau_game.png, /static/images/macau_training.png",
+        "external_url": "https://github.com/LukaszDygon/macau-rl",
+        "time_spent_hours": 2.0,
+        "ai_tools_used": "PyTorch (MPS), FastAPI, Playwright, Tailwind CSS, Rich",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Step 1",
+            "desc": "Formulated full Polish Makao rules engine with multi-card drops, Jack/Ace counters, and 2/3/K attack chaining in macau_env.py"
+          },
+          {
+            "step": 2,
+            "title": "Step 2",
+            "desc": "Implemented PyTorch Deep Q-Network (MacauNet) with Apple Silicon M1 MPS self-play training and Rich CLI inspector"
+          },
+          {
+            "step": 3,
+            "title": "Step 3",
+            "desc": "Built Neo-Brutalist web app with real-time bot decision explanation, X-Ray hand inspection, and live training telemetry"
+          },
+          {
+            "step": 4,
+            "title": "Step 4",
+            "desc": "Captured automated Playwright UI screenshots and linked standalone repo"
+          }
+        ],
+        "what_rocked": [
+          "M1 MPS Metal acceleration enabled high-throughput training (2.7 eps/s) that scaled win rates from 0% to 100% vs Random and 60% vs Heuristic Master",
+          "Rich explainability and X-Ray toggle provide crystal-clear visibility into neural network Q-values and tactical decisions"
+        ],
+        "what_broke": [
+          "Resolved linear layer dimension mismatch (74 vs 120 features) in MacauNet state encoder",
+          "Fixed Starlette TemplateResponse signature in web_app.py for compatibility with modern Starlette"
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 6 human turns across 149 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Remove the queen rule. Also, verify the rules about playing cards. A player should be able to play any number of cards of the s...\n  \u2022 Turn 3: can we also get a training view in the Web UI\n  \u2022 Turn 4: the 5-ideas app only needs to create a link to the Git Repo and a screenshot or two of the actual UI (use Playwright)\n  \u2022 Turn 5: yes\n  \u2022 Turn 6: the readme is empty\n\nTools Executed: run_command (21), view_file (11), write_to_file (11), manage_task (8), replace_file_content (5), grep_search (4)\nFiles Modified: README.md, RULES.md, SKILL.md, agents.py, app.py, capture_screenshots.py, day.html, db.py",
+        "created_at": "2026-09-17 07:48:18"
+      }
+    }
+  },
+  {
     "id": 56,
     "date": "2026-09-16",
     "theme": "Water",
@@ -47,7 +216,7 @@
           "idea_id": 358,
           "title": "Aqueous Caloric Spectrometer",
           "build_type": "webapp",
-          "rank": 1,
+          "rank": 80,
           "summary": "Dual-beam FTIR and Raman molecular calorimetry system that measures vibrational modes and enthalpy to determine metabolizable caloric content in aqueous solutions.",
           "content": "/interactive/water-calories",
           "external_url": "",
@@ -115,7 +284,7 @@
         "idea_id": 358,
         "title": "Aqueous Caloric Spectrometer",
         "build_type": "webapp",
-        "rank": 1,
+        "rank": 80,
         "summary": "Dual-beam FTIR and Raman molecular calorimetry system that measures vibrational modes and enthalpy to determine metabolizable caloric content in aqueous solutions.",
         "content": "/interactive/water-calories",
         "external_url": "",

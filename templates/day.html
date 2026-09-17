@@ -175,7 +175,7 @@
             {% endif %}
           </div>
           <div class="flex items-center gap-2">
-            {% if im.content and im.content.startswith('/') %}
+            {% if im.content and im.content.startswith('/') and not '.png' in im.content %}
             <a href="{{ im.content }}" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
               <span class="material-symbols-outlined text-sm">rocket_launch</span>
               <span>Launch Live App</span>
@@ -194,11 +194,20 @@
             {% endif %}
             {% elif im.external_url %}
             <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">open_in_new</span>
-              <span>Open Project</span>
+              <span class="material-symbols-outlined text-sm">code</span>
+              <span>Source Repo</span>
             </a>
             {% endif %}
           </div>
+          {% if im.content and ('.png' in im.content or '.jpg' in im.content or '.webp' in im.content) %}
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 w-full max-w-5xl">
+            {% for img_path in im.content.split(',') %}
+            <div class="border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] bg-white p-2">
+              <img src="{{ img_path.strip() }}" alt="UI Screenshot" class="w-full h-auto border border-ink" />
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
       {% elif im.build_type == 'poetry' %}
         <div class="poetry-box w-full max-w-2xl font-mono text-sm leading-relaxed">
