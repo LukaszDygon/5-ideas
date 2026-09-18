@@ -116,6 +116,15 @@ def test_interactive_flute_view(client):
 
 
 
+def test_interactive_fractiles_view(client):
+    response = client.get("/interactive/fractiles")
+    assert response.status_code == 200
+    assert "FRACTILES" in response.text
+    assert "Aperiodic Prime Spiral" in response.text
+    assert "PORTO AZULEJO PROTOCOL" in response.text
+    assert "fractile-canvas" in response.text
+
+
 def test_api_get_days(client):
     response = client.get("/api/days")
     assert response.status_code == 200

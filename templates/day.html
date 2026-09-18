@@ -118,7 +118,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        {% if im.build_type == 'webapp' %}
+        {% if im.build_type in ('webapp', 'interactive') %}
         {% if im.content and im.content.startswith('/') %}
         <a href="{{ im.content }}" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
           <span class="material-symbols-outlined text-sm">open_in_new</span>
@@ -158,7 +158,7 @@
 
     <!-- Live Preview Container -->
     <div class="border-[3px] border-ink bg-canvas p-6 flex flex-col items-center justify-center">
-      {% if im.build_type == 'webapp' %}
+      {% if im.build_type in ('webapp', 'interactive') %}
         <div class="w-full bg-white border-2 border-ink p-8 flex flex-col items-center text-center gap-4">
           <div class="w-20 h-20 bg-primary-magenta text-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex items-center justify-center -rotate-3">
             <span class="material-symbols-outlined text-4xl">terminal</span>

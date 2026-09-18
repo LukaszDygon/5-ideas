@@ -1,5 +1,190 @@
 [
   {
+    "id": 58,
+    "date": "2026-09-18",
+    "theme": "Tiles",
+    "subtitle": "Fitting because Porto is a city famous for its tiles",
+    "streak_count": 1,
+    "notes": "Travelled to Porto today. In an AirBnB. Birthday",
+    "created_at": "2026-09-18 13:49:55",
+    "ideas": [
+      {
+        "id": 396,
+        "day_id": 58,
+        "idea_number": 1,
+        "title": "Design your own tile shop",
+        "tagline": "Design your own tile shop",
+        "description": "Allows creating tile arrangements from multiple patterns, creating tesselation between different designs. The tiles on offer can be preset but when user chooses an arrangement, a pattern matching is applied to the edges, such that their edges align.",
+        "tags": "Shop, Prototype, Art",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 397,
+        "day_id": 58,
+        "idea_number": 2,
+        "title": "Tesselation",
+        "tagline": "Design a tesselated pattern",
+        "description": "A simple design tool, with a nice color palette preset (based on a theme). It should allow designing a single tile and seeing how it fits with the same tile around it. Multiple different shapes allowed (and include option to have 2 shape pattern that tesselate. The filler pattern should be derivative of the main one)",
+        "tags": "Art",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 398,
+        "day_id": 58,
+        "idea_number": 3,
+        "title": "Window tiling on MacOS",
+        "tagline": "Tiling is cool but it's broken on MacOS",
+        "description": "How do I get tiling working well on Mac? I have it set up kind of but it sucks, and the shortcuts in Raycast don't work. How can I fix it. Make a guide to set it up",
+        "tags": "Tools, OS",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 399,
+        "day_id": 58,
+        "idea_number": 4,
+        "title": "Parquet designer",
+        "tagline": "Choose a wood color and design parquets",
+        "description": "Parquet is a bit old school, there are lots of different patterns too. Can I have a tool that allows me to input dimensions of a floor and arrange parquet on it, calculating the number of required tiles, etc. Do some research so the tolerances, gaps and such are taken into account",
+        "tags": "CAD, Architecture",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 400,
+        "day_id": 58,
+        "idea_number": 5,
+        "title": "Fractiles",
+        "tagline": "Tiling that creates fractal patterns",
+        "description": "Not all tiles must be rectangular, or symmetric. Lets design one that lets me spin out into a spiral that has some never repeating patterns, like the digits of pi. Not exactly: Let me set up properties that follow prime numbers, overlapping sometimes to create intersection patterns.",
+        "tags": "",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 74,
+          "idea_id": 400,
+          "title": "Fractiles: Aperiodic Prime Spiral Tessellation",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "Space-filling aperiodic ceramic tile tessellation driven by prime spiral divergence, recursive fractal subdivisions, and Web Audio acoustics.",
+          "content": "/interactive/fractiles",
+          "external_url": "/interactive/fractiles",
+          "time_spent_hours": 2.5,
+          "ai_tools_used": "Antigravity CLI, Gemini 3.8 Flash, Canvas2D, Web Audio API",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Spec & Requirements Framing",
+              "desc": "Selected Idea #5 (Fractiles) from today's Porto Tiles theme and confirmed the spec for a prime-driven spiral generator."
+            },
+            {
+              "step": 2,
+              "title": "The Gap & Repetition Problem",
+              "desc": "Originally, the tiling didn't work at all. It was just a bunch of tile shapes with gaps, overlapping in a repeating sunflower pattern rather than matching tessellation."
+            },
+            {
+              "step": 3,
+              "title": "True Space-Filling Tessellation",
+              "desc": "Rebuilt the engine into a continuous Archimedean ribbon where inner and outer curves match identically with zero gaps. Modulated tile arc lengths by prime factors and added 2x2 and 3x3 recursive fractal subdivisions on prime keystones."
+            },
+            {
+              "step": 4,
+              "title": "Arbitrary Tile Limits & Presets",
+              "desc": "Added direct numeric input to allow expanding tile counts up to arbitrary numbers (up to 50,000), paired with quick presets, instant fill, and auto-fit viewport zoom."
+            },
+            {
+              "step": 5,
+              "title": "Voronoi Border Fix",
+              "desc": "The Voronoi pattern broke on refinement after ~100 steps at the border because of an arbitrary distance cull. Fixed via distance-sorted nearest neighbor clipping and local bounding capsules."
+            },
+            {
+              "step": 6,
+              "title": "Uncapped Deep Zoom",
+              "desc": "Removed the 35% zoom-out floor, enabling smooth cursor-centered continuous zoom down to 0.5% with level-of-detail rendering for thousands of tiles."
+            }
+          ],
+          "what_rocked": [
+            "It created a pretty nice set of tiles and presets unprompted."
+          ],
+          "what_broke": [
+            "The voronoi broke on refinement. Originally, the tiling didn't work at all. It was just a bunch of tile shapes with gaps, overlapping in a spiral pattern."
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 10 human turns across 243 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: yes\n  \u2022 Turn 3: I thought they would be matching and tesselated. It doesn't look like a tiling pattern, and it looks like it's repeating\n  \u2022 Turn 4: can we increase tile limit to an arbitrary number?\n  \u2022 Turn 5: the voronoi pattern breaks after about 100 steps unfortunately as well. I think it's when it reaches the border\n  \u2022 Turn 6: let me keep zooming out\n  \u2022 Turn 7: /capture-implementation\n  \u2022 Turn 8: 1. Use my interactions as steps. Make the tone aligned with previous entries. 2. It created a pretty nice set of tiles and pres...\n  \u2022 Turn 9: can you removed anything you added besides what I wronte for 2 and 3\n  \u2022 Turn 10: add an actual link to the entry. Currently the page displays a relative path, unlike on other days. Also push\n\nTools Executed: view_file (52), run_command (33), replace_file_content (15), grep_search (6), find_by_name (3), ask_question (2)\nFiles Modified: SKILL.md, app.py, build_static.py, day.html, db.py, design_system.html, fractiles.html, index.html",
+          "created_at": "2026-09-18 14:18:56"
+        }
+      }
+    ],
+    "implemented_idea": {
+      "id": 400,
+      "day_id": 58,
+      "idea_number": 5,
+      "title": "Fractiles",
+      "tagline": "Tiling that creates fractal patterns",
+      "description": "Not all tiles must be rectangular, or symmetric. Lets design one that lets me spin out into a spiral that has some never repeating patterns, like the digits of pi. Not exactly: Let me set up properties that follow prime numbers, overlapping sometimes to create intersection patterns.",
+      "tags": "",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 74,
+        "idea_id": 400,
+        "title": "Fractiles: Aperiodic Prime Spiral Tessellation",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "Space-filling aperiodic ceramic tile tessellation driven by prime spiral divergence, recursive fractal subdivisions, and Web Audio acoustics.",
+        "content": "/interactive/fractiles",
+        "external_url": "/interactive/fractiles",
+        "time_spent_hours": 2.5,
+        "ai_tools_used": "Antigravity CLI, Gemini 3.8 Flash, Canvas2D, Web Audio API",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Spec & Requirements Framing",
+            "desc": "Selected Idea #5 (Fractiles) from today's Porto Tiles theme and confirmed the spec for a prime-driven spiral generator."
+          },
+          {
+            "step": 2,
+            "title": "The Gap & Repetition Problem",
+            "desc": "Originally, the tiling didn't work at all. It was just a bunch of tile shapes with gaps, overlapping in a repeating sunflower pattern rather than matching tessellation."
+          },
+          {
+            "step": 3,
+            "title": "True Space-Filling Tessellation",
+            "desc": "Rebuilt the engine into a continuous Archimedean ribbon where inner and outer curves match identically with zero gaps. Modulated tile arc lengths by prime factors and added 2x2 and 3x3 recursive fractal subdivisions on prime keystones."
+          },
+          {
+            "step": 4,
+            "title": "Arbitrary Tile Limits & Presets",
+            "desc": "Added direct numeric input to allow expanding tile counts up to arbitrary numbers (up to 50,000), paired with quick presets, instant fill, and auto-fit viewport zoom."
+          },
+          {
+            "step": 5,
+            "title": "Voronoi Border Fix",
+            "desc": "The Voronoi pattern broke on refinement after ~100 steps at the border because of an arbitrary distance cull. Fixed via distance-sorted nearest neighbor clipping and local bounding capsules."
+          },
+          {
+            "step": 6,
+            "title": "Uncapped Deep Zoom",
+            "desc": "Removed the 35% zoom-out floor, enabling smooth cursor-centered continuous zoom down to 0.5% with level-of-detail rendering for thousands of tiles."
+          }
+        ],
+        "what_rocked": [
+          "It created a pretty nice set of tiles and presets unprompted."
+        ],
+        "what_broke": [
+          "The voronoi broke on refinement. Originally, the tiling didn't work at all. It was just a bunch of tile shapes with gaps, overlapping in a spiral pattern."
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 10 human turns across 243 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: yes\n  \u2022 Turn 3: I thought they would be matching and tesselated. It doesn't look like a tiling pattern, and it looks like it's repeating\n  \u2022 Turn 4: can we increase tile limit to an arbitrary number?\n  \u2022 Turn 5: the voronoi pattern breaks after about 100 steps unfortunately as well. I think it's when it reaches the border\n  \u2022 Turn 6: let me keep zooming out\n  \u2022 Turn 7: /capture-implementation\n  \u2022 Turn 8: 1. Use my interactions as steps. Make the tone aligned with previous entries. 2. It created a pretty nice set of tiles and pres...\n  \u2022 Turn 9: can you removed anything you added besides what I wronte for 2 and 3\n  \u2022 Turn 10: add an actual link to the entry. Currently the page displays a relative path, unlike on other days. Also push\n\nTools Executed: view_file (52), run_command (33), replace_file_content (15), grep_search (6), find_by_name (3), ask_question (2)\nFiles Modified: SKILL.md, app.py, build_static.py, day.html, db.py, design_system.html, fractiles.html, index.html",
+        "created_at": "2026-09-18 14:18:56"
+      }
+    }
+  },
+  {
     "id": 57,
     "date": "2026-09-17",
     "theme": "Analog Games",

@@ -280,6 +280,17 @@ async def interactive_water_calories(request: Request):
 
 
 
+@app.get("/interactive/fractiles", response_class=HTMLResponse)
+async def interactive_fractiles(request: Request):
+    """Interactive Fractiles prime spiral generative tiling laboratory."""
+    return templates.TemplateResponse(
+        request=request,
+        name="fractiles.html",
+        context={},
+    )
+
+
+
 @app.post("/api/house-stats/parse-url")
 async def api_house_stats_parse_url(request: Request):
     """
