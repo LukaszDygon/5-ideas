@@ -125,6 +125,17 @@ def test_interactive_fractiles_view(client):
     assert "fractile-canvas" in response.text
 
 
+def test_interactive_mcnuggets_view(client):
+    response = client.get("/interactive/mcnuggets")
+    assert response.status_code == 200
+    assert "Pasta McNuggetini" in response.text
+    assert "WIKIPASTA" in response.text
+    assert "Lo Stivale" in response.text
+    assert "LA GAZZETTA DELLA PASTA" in response.text
+    assert "mcnugget_pasta_shapes.jpg" in response.text
+    assert "mcnugget_pasta_dish.jpg" in response.text
+
+
 def test_api_get_days(client):
     response = client.get("/api/days")
     assert response.status_code == 200

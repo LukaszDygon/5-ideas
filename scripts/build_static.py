@@ -50,6 +50,7 @@ def rewrite_html_links(html: str, base_path: str) -> str:
         ('href="/interactive/flute"', f'href="{base_path}interactive/flute/"'),
         ('href="/interactive/water-calories"', f'href="{base_path}interactive/water-calories/"'),
         ('href="/interactive/fractiles"', f'href="{base_path}interactive/fractiles/"'),
+        ('href="/interactive/mcnuggets"', f'href="{base_path}interactive/mcnuggets/"'),
         ('href="/day/', f'href="{base_path}day/'),
         ('href="/static/', f'href="{base_path}static/'),
         ('src="/static/', f'src="{base_path}static/'),
@@ -93,6 +94,7 @@ def build_static(base_path: str = "/5-ideas/"):
         ("/interactive/flute", DIST_DIR / "interactive" / "flute" / "index.html"),
         ("/interactive/water-calories", DIST_DIR / "interactive" / "water-calories" / "index.html"),
         ("/interactive/fractiles", DIST_DIR / "interactive" / "fractiles" / "index.html"),
+        ("/interactive/mcnuggets", DIST_DIR / "interactive" / "mcnuggets" / "index.html"),
     ]
 
     # Dynamic day routes

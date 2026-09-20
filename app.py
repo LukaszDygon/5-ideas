@@ -290,6 +290,16 @@ async def interactive_fractiles(request: Request):
     )
 
 
+@app.get("/interactive/mcnuggets", response_class=HTMLResponse)
+async def interactive_mcnuggets(request: Request):
+    """Interactive WikiPasta encyclopedia & shape hydrodynamics lab for McNuggets pasta."""
+    return templates.TemplateResponse(
+        request=request,
+        name="mcnuggets.html",
+        context={},
+    )
+
+
 
 @app.post("/api/house-stats/parse-url")
 async def api_house_stats_parse_url(request: Request):

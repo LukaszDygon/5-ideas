@@ -1,0 +1,789 @@
+{% extends "base.html" %}
+
+{% block title %}Pasta McNuggetini // L'Enciclopedia Libera della Pasta (WikiPasta){% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-8 max-w-6xl mx-auto pb-20">
+
+  <!-- TOP WIKI MASTHEAD / HERO BANNER -->
+  <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#fae100] p-5 sm:p-8 relative overflow-hidden">
+    <!-- Memphis Pop geometric decals -->
+    <div class="absolute -right-8 -top-8 w-36 h-36 bg-tertiary-yellow border-[3px] border-ink rounded-full opacity-30 pointer-events-none"></div>
+    <div class="absolute right-32 -bottom-10 w-28 h-28 bg-electric-cyan border-[3px] border-ink rotate-45 opacity-25 pointer-events-none"></div>
+    
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-wrap items-center gap-2 font-mono text-xs font-bold uppercase">
+          <span class="bg-ink text-white px-2.5 py-1 border border-ink shadow-[2px_2px_0px_#ff1493]">
+            WIKIPASTA // THE FREE ENCYCLOPEDIA
+          </span>
+          <span class="bg-acid-lime text-ink px-2.5 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b] -rotate-1">
+            ⭐ FEATURED ARTICLE (DOCG PARODY)
+          </span>
+          <span class="text-gray-500 hidden sm:inline">Article ID: #005-MCNUGGETINI</span>
+        </div>
+
+        <h1 class="font-display font-black text-3xl sm:text-5xl uppercase tracking-tight text-ink mt-1">
+          Pasta McNuggetini
+        </h1>
+        <p class="font-mono text-xs sm:text-sm text-gray-700 italic">
+          From WikiPasta, the radical encyclopedia of unhinged geometric gastronomy. (Italian: <span class="font-bold">Maccheroni alla Pepita</span>, Latin: <span class="font-bold">Pasta Gallinacea Geometria</span>)
+        </p>
+      </div>
+
+      <!-- Quick Action Controls -->
+      <div class="flex flex-wrap sm:flex-nowrap md:flex-col gap-2 shrink-0">
+        <a href="/day/2026-09-20" class="neo-btn neo-btn-white text-xs py-2 px-3.5 flex items-center justify-center gap-1.5 font-bold">
+          <span class="material-symbols-outlined text-base">calendar_today</span>
+          <span>DAY 2026-09-20 DROP</span>
+        </a>
+        <button onclick="window.print()" class="neo-btn neo-btn-yellow text-xs py-2 px-3.5 flex items-center justify-center gap-1.5 font-bold">
+          <span class="material-symbols-outlined text-base">print</span>
+          <span>PRINT WIKI ENTRY</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE WIKI PORTAL TABS -->
+  <div class="bg-canvas border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-2 flex flex-wrap gap-2 font-mono text-xs font-bold sticky top-16 z-40 bg-white/95 backdrop-blur-sm">
+    <span class="self-center px-2 text-gray-500 uppercase tracking-wider hidden md:inline">PORTAL:</span>
+    <button id="tab-btn-article" onclick="switchTab('article')" class="wiki-tab-btn active-tab px-4 py-2 bg-primary-magenta text-white border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b] flex items-center gap-1.5 transition-all">
+      <span class="material-symbols-outlined text-sm">menu_book</span>
+      <span>01. MAIN ENCYCLOPEDIA ARTICLE</span>
+    </button>
+    <button id="tab-btn-archive" onclick="switchTab('archive')" class="wiki-tab-btn px-4 py-2 bg-white text-ink border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b] hover:bg-yellow-fixed flex items-center gap-1.5 transition-all">
+      <span class="material-symbols-outlined text-sm">newspaper</span>
+      <span>02. 1983 BOLOGNA PRESS SCANDAL</span>
+    </button>
+    <button id="tab-btn-recipe" onclick="switchTab('recipe')" class="wiki-tab-btn px-4 py-2 bg-white text-ink border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b] hover:bg-yellow-fixed flex items-center gap-1.5 transition-all">
+      <span class="material-symbols-outlined text-sm">restaurant</span>
+      <span>03. MASTER RECIPE & PAIRINGS</span>
+    </button>
+    <button id="tab-btn-anatomy" onclick="switchTab('anatomy')" class="wiki-tab-btn px-4 py-2 bg-white text-ink border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b] hover:bg-yellow-fixed flex items-center gap-1.5 transition-all">
+      <span class="material-symbols-outlined text-sm">science</span>
+      <span>04. 4-SHAPE HYDRODYNAMICS LAB</span>
+    </button>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- TAB 1: MAIN ENCYCLOPEDIA ARTICLE                                       -->
+  <!-- ===================================================================== -->
+  <div id="view-article" class="wiki-view-panel flex flex-col lg:flex-row gap-8 items-start">
+    
+    <!-- LEFT / MAIN BODY COLUMN -->
+    <div class="flex-1 flex flex-col gap-6 bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 sm:p-8">
+      
+      <!-- Disambiguation & Meta Banner -->
+      <div class="bg-gray-100 border-l-[4px] border-primary-magenta p-3 text-xs font-mono text-gray-700 leading-relaxed">
+        This article is about the bronze-die extruded durum wheat pasta shape. For the deep-fried battered poultry product introduced in 1983, see <em>Fast Food McNuggets</em>. For the contentious 1984 Modena culinary tribunal, see <em>The Sauce Dipping Accords</em>.
+      </div>
+
+      <!-- Lead Paragraph -->
+      <div class="font-body text-base sm:text-lg text-ink leading-relaxed space-y-4">
+        <p>
+          <strong class="font-bold">Pasta McNuggetini</strong> (colloquially <em>Pastanuggets</em>, or in Italian, <em>Maccheroni alla Pepita</em>) is a variety of extruded durum wheat semolina pasta characterized by its four strictly standardized non-Euclidean geometries: the <strong>Boot</strong> (<em>Lo Stivale</em>), the <strong>Bell</strong> (<em>La Campana</em>), the <strong>Ball</strong> (<em>La Sfera</em>), and the <strong>Bone</strong> (<em>L'Osso</em> or <em>La Farfalla Solida</em>)<a href="#ref-1" class="font-mono text-xs font-bold text-primary-magenta hover:underline">[1]</a>.
+        </p>
+        <p>
+          Engineered during an unauthorized cross-pollination between Illinois industrial food science and Emilia-Romagna bronze-die extrusion workshops in 1983, the shape was developed to maximize surface tension, viscous sauce clinging, and dual-sauce dip retention<a href="#ref-2" class="font-mono text-xs font-bold text-primary-magenta hover:underline">[2]</a>. While initially branded as culinary sacrilege by the Accademia Italiana della Cucina, modern gastronomic rheologists praise the four geometries for their exceptional sauce-to-starch hydrodynamics.
+        </p>
+      </div>
+
+      <!-- TABLE OF CONTENTS (Wiki style with Memphis pop) -->
+      <div class="bg-canvas border-[3px] border-ink p-4 self-start w-full sm:w-80 shadow-[3px_3px_0px_#1c1b1b]">
+        <div class="font-mono text-xs font-black uppercase text-ink flex items-center justify-between border-b-2 border-ink pb-1 mb-2">
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">format_list_bulleted</span>
+            Contents
+          </span>
+          <span class="text-[10px] text-gray-500">[hide]</span>
+        </div>
+        <ol class="font-mono text-xs space-y-1.5 text-gray-800 list-decimal list-inside pl-1">
+          <li><a href="#sec-history" class="hover:text-primary-magenta hover:underline font-medium">History & The Modena Incident</a></li>
+          <li><a href="#sec-geometries" class="hover:text-primary-magenta hover:underline font-medium">The Four Canonical Geometries</a>
+            <ol class="pl-4 list-decimal list-inside text-gray-600 text-[11px] space-y-0.5">
+              <li><a href="#sec-boot" class="hover:underline">Lo Stivale (The Boot)</a></li>
+              <li><a href="#sec-bell" class="hover:underline">La Campana (The Bell)</a></li>
+              <li><a href="#sec-ball" class="hover:underline">La Sfera (The Ball)</a></li>
+              <li><a href="#sec-bone" class="hover:underline">L'Osso (The Bone)</a></li>
+            </ol>
+          </li>
+          <li><a href="#sec-hydrodynamics" class="hover:text-primary-magenta hover:underline font-medium">Hydrodynamics & Sauce Cling</a></li>
+          <li><a href="#sec-controversy" class="hover:text-primary-magenta hover:underline font-medium">The 1983 Bologna Controversy</a></li>
+          <li><a href="#sec-culinary" class="hover:text-primary-magenta hover:underline font-medium">Culinary Pairing & Service</a></li>
+          <li><a href="#sec-references" class="hover:text-primary-magenta hover:underline font-medium">Notes & References</a></li>
+        </ol>
+      </div>
+
+      <!-- SECTION 1: HISTORY -->
+      <section id="sec-history" class="space-y-3 pt-4 border-t-2 border-dashed border-gray-300">
+        <h2 class="font-display font-black text-2xl uppercase tracking-tight text-ink flex items-center gap-2 border-b-[3px] border-ink pb-1">
+          <span class="bg-primary-magenta text-white px-2 py-0.5 text-sm font-mono">1</span>
+          History & The Modena Incident (1983)
+        </h2>
+        <div class="font-body text-ink space-y-3 leading-relaxed text-sm sm:text-base">
+          <p>
+            In the autumn of 1982, food technologist Dr. Renzo MacNair, then working as an independent contractor for an American restaurant conglomerate in Oak Brook, Illinois, observed that standard pasta shapes (penne rigate, farfalle, orecchiette) suffered from "unidirectional sauce bias." While penne collected sauce internally and farfalle held sauce in its central knot, neither shape possessed the perimeter-to-volume ratio engineered into the newly invented poultry nugget.
+          </p>
+          <p>
+            MacNair traveled clandestinely to Modena, leasing three days of machine time at the artisanal pasta workshop of <em>Fratelli Bonfanti</em>. Utilizing custom hand-milled bronze dies (<em>trafile al bronzo</em>), the team extruded high-protein coarse durum wheat semolina into the exact silhouettes of the four McDonald's nugget patents<a href="#ref-3" class="font-mono text-xs font-bold text-primary-magenta hover:underline">[3]</a>. 
+          </p>
+          <p>
+            The resulting pasta, when boiled for 10 minutes in salted spring water, retained remarkable structural integrity, with the rough bronze-machined micro-ridges trapping sauces at an unprecedented rate. When sample crates were displayed at the 1983 <em>Salone del Gusto</em> in Bologna, a minor riot ensued, leading local municipal gendarmes to impound 400 kilograms of raw pasta under suspicion of "Anglo-Saxon culinary contraband."
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION 2: THE FOUR CANONICAL GEOMETRIES -->
+      <section id="sec-geometries" class="space-y-4 pt-4 border-t-2 border-dashed border-gray-300">
+        <h2 class="font-display font-black text-2xl uppercase tracking-tight text-ink flex items-center gap-2 border-b-[3px] border-ink pb-1">
+          <span class="bg-electric-cyan text-ink px-2 py-0.5 text-sm font-mono">2</span>
+          The Four Canonical Geometries
+        </h2>
+        <p class="font-body text-sm sm:text-base text-ink leading-relaxed">
+          Standardized in the 1984 <em>Codex Maccheronicus</em>, authentic McNuggetini must consist of an equal 25% distribution of all four shapes per carton. Each shape addresses a discrete hydrodynamic and masticatory requirement:
+        </p>
+
+        <!-- The 4 shape cards grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+          
+          <!-- Boot -->
+          <div id="sec-boot" class="bg-yellow-fixed/20 border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b] flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-display font-black text-lg uppercase text-ink">1. Lo Stivale (The Boot)</span>
+                <span class="bg-ink text-white font-mono text-xs px-2 py-0.5">HEEL RETENTION</span>
+              </div>
+              <p class="font-body text-xs text-gray-800 leading-relaxed">
+                Featuring a 90-degree ankle-to-toe scoop. The deep interior heel pocket acts as a physical ladle, trapping chunky San Marzano pomodoro chunks or minced pancetta during fork ascent.
+              </p>
+            </div>
+            <div class="font-mono text-[11px] text-gray-700 mt-3 pt-2 border-t border-ink/20 flex justify-between">
+              <span>Fork Purchase: <strong>9.8/10</strong></span>
+              <span>Primary Dip: <strong>Honey Mustard</strong></span>
+            </div>
+          </div>
+
+          <!-- Bell -->
+          <div id="sec-bell" class="bg-electric-cyan/20 border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b] flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-display font-black text-lg uppercase text-ink">2. La Campana (The Bell)</span>
+                <span class="bg-ink text-white font-mono text-xs px-2 py-0.5">CAPILLARY DRAW</span>
+              </div>
+              <p class="font-body text-xs text-gray-800 leading-relaxed">
+                A flared conical base and crowned apex create a natural vacuum funnel. When dipped into warm emulsions (butter, olive oil, sweet & sour reduction), surface tension pulls sauce inward.
+              </p>
+            </div>
+            <div class="font-mono text-[11px] text-gray-700 mt-3 pt-2 border-t border-ink/20 flex justify-between">
+              <span>Capillary Draw: <strong>9.2/10</strong></span>
+              <span>Primary Dip: <strong>Sweet & Sour</strong></span>
+            </div>
+          </div>
+
+          <!-- Ball -->
+          <div id="sec-ball" class="bg-tertiary-yellow/40 border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b] flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-display font-black text-lg uppercase text-ink">3. La Sfera (The Ball)</span>
+                <span class="bg-ink text-white font-mono text-xs px-2 py-0.5">AL DENTE SUPREMO</span>
+              </div>
+              <p class="font-body text-xs text-gray-800 leading-relaxed">
+                A dense, spherical core with minimal surface deformation. Acts as the masticatory benchmark of the bowl, offering maximum tooth resistance (*al dente*) and rolling texture.
+              </p>
+            </div>
+            <div class="font-mono text-[11px] text-gray-700 mt-3 pt-2 border-t border-ink/20 flex justify-between">
+              <span>Chew Resistance: <strong>9.9/10</strong></span>
+              <span>Primary Dip: <strong>Tangy BBQ</strong></span>
+            </div>
+          </div>
+
+          <!-- Bone -->
+          <div id="sec-bone" class="bg-primary-magenta/20 border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b] flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-display font-black text-lg uppercase text-ink">4. L'Osso (The Bone)</span>
+                <span class="bg-ink text-white font-mono text-xs px-2 py-0.5">DUAL-DIP AXIS</span>
+              </div>
+              <p class="font-body text-xs text-gray-800 leading-relaxed">
+                Bilateral dumbbell morphology featuring two bulbous extremities connected by a narrowed bridge. Allows simultaneous double-dipping: marinara on the left lobe, mustard reduction on the right.
+              </p>
+            </div>
+            <div class="font-mono text-[11px] text-gray-700 mt-3 pt-2 border-t border-ink/20 flex justify-between">
+              <span>Dual-Dipping: <strong>10.0/10</strong></span>
+              <span>Primary Dip: <strong>Spicy Buffalo</strong></span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 3: HYDRODYNAMICS & COATING -->
+      <section id="sec-hydrodynamics" class="space-y-3 pt-4 border-t-2 border-dashed border-gray-300">
+        <h2 class="font-display font-black text-2xl uppercase tracking-tight text-ink flex items-center gap-2 border-b-[3px] border-ink pb-1">
+          <span class="bg-acid-lime text-ink px-2 py-0.5 text-sm font-mono">3</span>
+          Hydrodynamics & Sauce Adherence
+        </h2>
+        <div class="font-body text-sm sm:text-base text-ink space-y-3 leading-relaxed">
+          <p>
+            In a 2019 rheological study published by the <em>Polytechnic University of Milan</em>, researchers evaluated 12 standard pasta shapes alongside McNuggetini against a 65% viscosity San Marzano pomodoro sauce<a href="#ref-4" class="font-mono text-xs font-bold text-primary-magenta hover:underline">[4]</a>. 
+          </p>
+          <div class="bg-ink text-white p-4 font-mono text-xs border-[3px] border-ink shadow-[4px_4px_0px_#fae100] space-y-1">
+            <div class="text-acid-lime font-bold">// VISCOUS SAUCE ADHERENCE INDEX (Mcnuggetini vs Traditional)</div>
+            <div>Penne Rigate:       ██████████░░░░░░░░░░  52% retention</div>
+            <div>Rigatoni:           ████████████░░░░░░░░  61% retention</div>
+            <div>Farfalle:           █████████████░░░░░░░  68% retention</div>
+            <div>Fusilli Bucati:     ███████████████░░░░░  76% retention</div>
+            <div class="text-tertiary-yellow font-bold">McNuggetini (Quad):  ███████████████████░  94.2% retention (WINNER)</div>
+          </div>
+          <p>
+            The researchers concluded that the irregular perimeter of the four shapes disrupts boundary-layer fluid shear, preventing sauce slippage during the 0.8-second transit between bowl and mouth.
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION 4: REFERENCES & FOOTNOTES -->
+      <section id="sec-references" class="space-y-3 pt-4 border-t-2 border-dashed border-gray-300">
+        <h2 class="font-display font-black text-xl uppercase tracking-tight text-ink flex items-center gap-2 border-b-[3px] border-ink pb-1">
+          <span class="material-symbols-outlined text-lg">bookmark</span>
+          Notes & References
+        </h2>
+        <ol class="font-mono text-xs space-y-2 text-gray-700 list-decimal list-inside">
+          <li id="ref-1">
+            <strong>MacNair, R. & Bonfanti, E. (1984)</strong>. <em>"Trafilatura Geometrica: The Durum Wheat Translation of American Quick-Service Iconography"</em>. Quaderni di Gastronomia Industriale, Vol. 14, Fascicolo 3, pp. 112–129.
+          </li>
+          <li id="ref-2">
+            <strong>Accademia dei Maccheroni (1985)</strong>. <em>"Delitto e Castigo del Nuggetino: Sull'Invasione di Sagome Aliene nella Pentola Bolognese"</em>. Atti dell'Accademia, Bologna: Edizioni Zucchini.
+          </li>
+          <li id="ref-3">
+            <strong>United States Patent & Trademark Office</strong>. <em>Design Patent D268,241 (1983)</em>: "Food Product Configuration Representing Four Distinct Polyhedral Geometries".
+          </li>
+          <li id="ref-4">
+            <strong>Rossi, G. et al. (2019)</strong>. <em>"Boundary Layer Fluid Dynamics and Emulsion Retention of Irregular Non-Euclidean Bronze-Extruded Pasta"</em>. Italian Journal of Food Rheology, 44(2): 89–104.
+          </li>
+        </ol>
+      </section>
+
+    </div>
+
+    <!-- RIGHT / WIKIPEDIA INFOBOX (Radical Memphis Pop styling) -->
+    <aside class="w-full lg:w-96 shrink-0 bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-4 flex flex-col gap-4 sticky top-28">
+      
+      <!-- Infobox Header -->
+      <div class="bg-primary-magenta text-white p-3 border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] text-center">
+        <h3 class="font-display font-black text-xl uppercase tracking-tight">Pasta McNuggetini</h3>
+        <span class="font-mono text-[11px] font-bold tracking-widest uppercase text-yellow-fixed block">
+          Maccheroni alla Pepita d'Oro
+        </span>
+      </div>
+
+      <!-- Raw Shapes Image with caption -->
+      <div class="border-[3px] border-ink bg-canvas overflow-hidden shadow-[3px_3px_0px_#1c1b1b]">
+        <img src="/static/images/mcnugget_pasta_shapes.jpg" alt="Four raw bronze-extruded McNugget pasta shapes" class="w-full h-auto object-cover border-b-[3px] border-ink hover:scale-105 transition-transform duration-300"/>
+        <div class="p-2.5 font-mono text-[11px] text-ink bg-white leading-tight">
+          <strong>Fig 1.</strong> The four canonical extruded durum semolina shapes (<em>Boot, Bell, Ball, Bone</em>) dusted in coarse semolina flour on slate.
+        </div>
+      </div>
+
+      <!-- Infobox Key Specs Table -->
+      <table class="w-full font-mono text-xs border-collapse">
+        <tbody>
+          <tr class="border-b-2 border-ink">
+            <th class="text-left font-bold p-1.5 bg-yellow-fixed/30 w-2/5">Type</th>
+            <td class="p-1.5 text-gray-800">Extruded durum pasta (<em>trafilata al bronzo</em>)</td>
+          </tr>
+          <tr class="border-b-2 border-ink">
+            <th class="text-left font-bold p-1.5 bg-yellow-fixed/30">Origin</th>
+            <td class="p-1.5 text-gray-800">Modena, Italy / Oak Brook, IL (1983)</td>
+          </tr>
+          <tr class="border-b-2 border-ink">
+            <th class="text-left font-bold p-1.5 bg-yellow-fixed/30">Canonical Shapes</th>
+            <td class="p-1.5 text-gray-800 font-bold text-primary-magenta">4 (Boot, Bell, Ball, Bone)</td>
+          </tr>
+          <tr class="border-b-2 border-ink">
+            <th class="text-left font-bold p-1.5 bg-yellow-fixed/30">Boiling Time</th>
+            <td class="p-1.5 text-gray-800">
+              <span class="font-bold text-ink">9–11 mins</span> (Al Dente)<br/>
+              <span class="text-gray-500 text-[10px]">12 mins for soft chew</span>
+            </td>
+          </tr>
+          <tr class="border-b-2 border-ink">
+            <th class="text-left font-bold p-1.5 bg-yellow-fixed/30">Sauce Affinity</th>
+            <td class="p-1.5 text-gray-800 font-bold text-ink">9.4 / 10 (Very High)</td>
+          </tr>
+          <tr class="border-b-2 border-ink">
+            <th class="text-left font-bold p-1.5 bg-yellow-fixed/30">Key Ingredients</th>
+            <td class="p-1.5 text-gray-800">100% Durum semolina, spring water</td>
+          </tr>
+          <tr class="border-b-2 border-ink">
+            <th class="text-left font-bold p-1.5 bg-yellow-fixed/30">Traditional Dip</th>
+            <td class="p-1.5 text-gray-800">San Marzano sugo + Mostarda Mielata</td>
+          </tr>
+          <tr>
+            <th class="text-left font-bold p-1.5 bg-yellow-fixed/30">Status</th>
+            <td class="p-1.5 text-gray-800 font-bold text-acid-lime bg-ink">DOCG PARODIA</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Quick Interactive Switcher inside Infobox -->
+      <div class="bg-electric-cyan/20 border-[3px] border-ink p-3 text-center space-y-2">
+        <span class="font-mono text-xs font-bold block uppercase text-ink">Taste The Geometry</span>
+        <button onclick="switchTab('recipe')" class="neo-btn neo-btn-primary w-full text-xs py-2 font-bold tracking-wide">
+          VIEW MASTER RECIPE &rarr;
+        </button>
+      </div>
+
+    </aside>
+
+  </div>
+
+
+  <!-- ===================================================================== -->
+  <!-- TAB 2: 1983 BOLOGNA PRESS SCANDAL ARCHIVE                             -->
+  <!-- ===================================================================== -->
+  <div id="view-archive" class="wiki-view-panel hidden flex flex-col gap-6 bg-[#fdfbf7] border-[4px] border-ink shadow-[8px_8px_0px_#fae100] p-6 sm:p-10 relative">
+    
+    <!-- Vintage Newsprint Header -->
+    <div class="border-b-[4px] border-ink pb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>
+        <div class="font-mono text-xs font-black uppercase text-gray-500 tracking-widest">
+          ARCHIVIO STORICO GASTRONOMICO // BOLOGNA, 14 OTTOBRE 1983 // ANNO XLVII - N. 284
+        </div>
+        <h2 class="font-serif font-black text-3xl sm:text-5xl uppercase tracking-tighter text-ink mt-1">
+          LA GAZZETTA DELLA PASTA
+        </h2>
+        <div class="font-mono text-xs text-gray-600 italic">
+          Organo d'Informazione dell'Unione Mastri Pastai Emiliani • Prezzo: Lire 500
+        </div>
+      </div>
+
+      <!-- Stamp -->
+      <div class="border-[3px] border-red-700 text-red-700 font-mono font-black text-xs px-3 py-1.5 uppercase rotate-6 shadow-[2px_2px_0px_rgba(185,28,28,0.3)] shrink-0">
+        ARCHIVIO RISERVATO // SEQUESTRO DOGANALE
+      </div>
+    </div>
+
+    <!-- Newspaper Headline Banner -->
+    <div class="bg-ink text-white p-4 border-[3px] border-ink text-center">
+      <h3 class="font-display font-black text-2xl sm:text-4xl uppercase tracking-tight text-yellow-fixed">
+        SCANDALO IN SALONE: "QUATTRO FORME ALIENE NELLA PENTOLA BOLOGNESE!"
+      </h3>
+      <p class="font-mono text-xs sm:text-sm text-gray-300 mt-1 uppercase">
+        Sgombero della Gendarmeria al Salone del Gusto: Maccheroni a forma di Stivale, Campana, Sfera e Osso scatenano l'ira dei puristi
+      </p>
+    </div>
+
+    <!-- Columns layout (vintage paper simulation) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-serif text-sm leading-relaxed text-gray-900 pt-4">
+      
+      <!-- Col 1 -->
+      <div class="space-y-3">
+        <p class="first-letter:text-5xl first-letter:font-black first-letter:float-left first-letter:mr-2 first-letter:font-display">
+          <strong>BOLOGNA</strong> — Scene di indescrivibile tumulto si sono registrate questa mattina presso i padiglioni del Salone del Gusto, quando una misteriosa delegazione italo-americana ha disvelato al pubblico un quintale di pasta secca di grano duro sagomata secondo i profili brevettati del celebre boccone di pollo fritto d'Oltreoceano.
+        </p>
+        <p>
+          I mastri sfoglini dell'Accademia, guidati dal venerabile commendator Aurelio Fabbri, hanno prontamente rovesciato un paiolo di rame colmo d'acqua bollente per impedire la prima cottura pubblica: <em>«La sfoglia non è un giocattolo da catena di montaggio dell'Illinois!»</em> ha tuonato Fabbri.
+        </p>
+      </div>
+
+      <!-- Col 2 -->
+      <div class="space-y-3 border-l md:border-ink/20 md:pl-6">
+        <p>
+          Tuttavia, tra i giovani cuochi dell'Appennino serpeggiava una clandestina meraviglia. Il giovane sous-chef Giancarlo Tosi ha raccolto di nascosto tre pezzi della forma detta <em>Lo Stivale</em> per immergerli in un ragù di lepre:
+        </p>
+        <blockquote class="bg-yellow-fixed/40 border-l-[4px] border-ink p-3 font-mono text-xs italic my-3 text-ink">
+          «Dio mi perdoni, ma la concavità del tacco intrappola il soffritto con una voracità mai vista prima nel rigatone. È un mostro meccanico, ma porta la salsa al palato come nessun tubo napoletano ha mai saputo fare.»
+        </blockquote>
+        <p>
+          I campioni sono stati sequestrati e depositati in un caveau blindato presso la Camera di Commercio di Modena in attesa di perizia molecolare.
+        </p>
+      </div>
+
+      <!-- Col 3: English Translation Note -->
+      <div class="bg-white border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b] font-mono text-xs space-y-2">
+        <div class="bg-primary-magenta text-white px-2 py-0.5 font-bold uppercase tracking-wider inline-block">
+          HISTORICAL ARCHIVE NOTE
+        </div>
+        <p class="text-gray-800 leading-relaxed">
+          <strong>Declassified 2026:</strong> The "Bologna Extrusion Riots" marked the first recorded encounter between fast-food industrial silhouette engineering and Old World artisanal bronze-die pasta tooling.
+        </p>
+        <p class="text-gray-700">
+          The four original hand-carved bronze dies are now preserved in the <em>Museo delle Curiosità Gastronomiche</em> in Vignola.
+        </p>
+        <button onclick="switchTab('article')" class="neo-btn neo-btn-white w-full text-[11px] py-1.5 font-bold mt-2">
+          &larr; BACK TO MAIN ARTICLE
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================================== -->
+  <!-- TAB 3: MASTER CHEF RECIPE & PAIRINGS                                   -->
+  <!-- ===================================================================== -->
+  <div id="view-recipe" class="wiki-view-panel hidden flex flex-col gap-8 bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-6 sm:p-10">
+    
+    <!-- Recipe Title & Metadata -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b-[3px] border-ink pb-6">
+      <div>
+        <div class="bg-tertiary-yellow text-ink font-mono text-xs font-black uppercase px-2.5 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b] inline-block mb-2">
+          OFFICIAL CULINARY SPECIFICATION // RICETTA DOCG
+        </div>
+        <h2 class="font-display font-black text-3xl sm:text-5xl uppercase tracking-tight text-ink">
+          McNuggetini al Sugo di San Marzano
+        </h2>
+        <p class="font-body text-base text-gray-700 italic">
+          con Emulsione di Mostarda Dorata, Parmigiano 24 Mesi e Basilico Fresco
+        </p>
+      </div>
+
+      <!-- Quick Recipe Badges -->
+      <div class="flex flex-wrap gap-2 font-mono text-xs">
+        <div class="bg-canvas border-[2px] border-ink px-3 py-1.5 shadow-[2px_2px_0px_#1c1b1b]">
+          <span class="text-gray-500 block text-[10px]">PREP TIME</span>
+          <strong class="text-ink">15 MINS</strong>
+        </div>
+        <div class="bg-canvas border-[2px] border-ink px-3 py-1.5 shadow-[2px_2px_0px_#1c1b1b]">
+          <span class="text-gray-500 block text-[10px]">BOIL TIME</span>
+          <strong class="text-primary-magenta">10 MINS (AL DENTE)</strong>
+        </div>
+        <div class="bg-canvas border-[2px] border-ink px-3 py-1.5 shadow-[2px_2px_0px_#1c1b1b]">
+          <span class="text-gray-500 block text-[10px]">SERVES</span>
+          <strong class="text-ink">4 PERSONS</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recipe Layout: Image on side, ingredients and steps -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left 5 cols: Plated Dish Image & Wine Pairing -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        <div class="border-[4px] border-ink shadow-[6px_6px_0px_#fae100] bg-canvas overflow-hidden">
+          <img src="/static/images/mcnugget_pasta_dish.jpg" alt="Gourmet plated McNuggetini pasta dish with tomato sugo and honey mustard drizzle" class="w-full h-auto object-cover border-b-[3px] border-ink"/>
+          <div class="p-3 font-mono text-xs text-ink bg-white">
+            <strong>Plating:</strong> Cooked McNuggetini tossed in glossy sugo, finished with a zig-zag swirl of honey-mustard olive oil emulsion and shaved Parmigiano.
+          </div>
+        </div>
+
+        <!-- Wine Pairing Box -->
+        <div class="bg-ink text-white p-5 border-[3px] border-ink shadow-[4px_4px_0px_#ff1493] space-y-2">
+          <div class="font-mono text-xs font-bold text-yellow-fixed uppercase flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">wine_bar</span>
+            SOMMELIER WINE PAIRING
+          </div>
+          <h4 class="font-display font-black text-lg text-white">Lambrusco di Sorbara DOC (Secco)</h4>
+          <p class="font-body text-xs text-gray-300 leading-relaxed">
+            The crisp effervescence cuts through the rich honey-mustard acidity while honoring the Emilia-Romagna bronze-die heritage. Alternatively, serve with an ice-cold fountain Coca-Cola in a vintage 1983 paper cup.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right 7 cols: Ingredients & Method -->
+      <div class="lg:col-span-7 flex flex-col gap-6">
+        
+        <!-- Ingredients Table -->
+        <div class="bg-yellow-fixed/20 border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b]">
+          <h3 class="font-display font-black text-xl uppercase tracking-tight text-ink mb-3 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary-magenta">shopping_basket</span>
+            Ingredients (Per 4 Portions)
+          </h3>
+          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs text-gray-800">
+            <li class="flex items-center gap-2 bg-white p-2 border border-ink">
+              <span class="text-primary-magenta font-black">400g</span> Pasta McNuggetini (quad mix)
+            </li>
+            <li class="flex items-center gap-2 bg-white p-2 border border-ink">
+              <span class="text-primary-magenta font-black">800g</span> San Marzano peeled tomatoes
+            </li>
+            <li class="flex items-center gap-2 bg-white p-2 border border-ink">
+              <span class="text-primary-magenta font-black">3 tbsp</span> Extra Virgin Olive Oil
+            </li>
+            <li class="flex items-center gap-2 bg-white p-2 border border-ink">
+              <span class="text-primary-magenta font-black">3 cloves</span> Fresh garlic, crushed
+            </li>
+            <li class="flex items-center gap-2 bg-white p-2 border border-ink">
+              <span class="text-primary-magenta font-black">2 tbsp</span> Dijon mustard (fine grain)
+            </li>
+            <li class="flex items-center gap-2 bg-white p-2 border border-ink">
+              <span class="text-primary-magenta font-black">1.5 tbsp</span> Raw wildflower honey
+            </li>
+            <li class="flex items-center gap-2 bg-white p-2 border border-ink">
+              <span class="text-primary-magenta font-black">60g</span> Parmigiano-Reggiano (shaved)
+            </li>
+            <li class="flex items-center gap-2 bg-white p-2 border border-ink">
+              <span class="text-primary-magenta font-black">8 leaves</span> Fresh Genovese basil
+            </li>
+          </ul>
+        </div>
+
+        <!-- Preparation Steps -->
+        <div class="space-y-4">
+          <h3 class="font-display font-black text-xl uppercase tracking-tight text-ink flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary-magenta">skillet</span>
+            Culinary Method
+          </h3>
+
+          <div class="space-y-3 font-body text-sm sm:text-base text-ink">
+            
+            <div class="flex gap-3 bg-white p-3 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+              <span class="bg-ink text-white font-mono font-black text-xs w-6 h-6 rounded-none flex items-center justify-center shrink-0">1</span>
+              <div>
+                <strong>The Golden Emulsion:</strong> In a small ceramic ramekin, vigorously whisk the Dijon mustard, wildflower honey, 1 tablespoon of olive oil, and a pinch of sea salt until silky and suspended. Set aside.
+              </div>
+            </div>
+
+            <div class="flex gap-3 bg-white p-3 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+              <span class="bg-ink text-white font-mono font-black text-xs w-6 h-6 rounded-none flex items-center justify-center shrink-0">2</span>
+              <div>
+                <strong>The Sugo:</strong> In a broad cast-iron skillet, gently sizzle crushed garlic in 2 tablespoons of olive oil until golden. Crush the San Marzano tomatoes by hand into the pan. Simmer for 15 minutes until rich and glossy.
+              </div>
+            </div>
+
+            <div class="flex gap-3 bg-white p-3 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+              <span class="bg-ink text-white font-mono font-black text-xs w-6 h-6 rounded-none flex items-center justify-center shrink-0">3</span>
+              <div>
+                <strong>Boil to Al Dente:</strong> Plunge the McNuggetini into 4 liters of rolling salted water (10g salt/liter). Cook for exactly <strong>10 minutes</strong>. The shapes will gently swell while retaining rigid corners. Reserve 1/2 cup starchy cooking water.
+              </div>
+            </div>
+
+            <div class="flex gap-3 bg-white p-3 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+              <span class="bg-ink text-white font-mono font-black text-xs w-6 h-6 rounded-none flex items-center justify-center shrink-0">4</span>
+              <div>
+                <strong>La Mantecatura:</strong> Transfer the pasta directly into the tomato sugo. Splash 3 tablespoons of starchy pasta water and toss violently over high flame for 60 seconds. Observe the sauce locking into the Boot heels and Bell cavities.
+              </div>
+            </div>
+
+            <div class="flex gap-3 bg-white p-3 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+              <span class="bg-ink text-white font-mono font-black text-xs w-6 h-6 rounded-none flex items-center justify-center shrink-0">5</span>
+              <div>
+                <strong>The Fast-Food Drizzle:</strong> Spoon into shallow warm bowls. Drizzle the golden honey-mustard emulsion across the top in a confident fast-food zig-zag. Crown with shaved Parmigiano and hand-torn basil.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================================== -->
+  <!-- TAB 4: 4-SHAPE HYDRODYNAMICS & INTERACTIVE VIEWER                    -->
+  <!-- ===================================================================== -->
+  <div id="view-anatomy" class="wiki-view-panel hidden flex flex-col gap-6 bg-white border-[4px] border-ink shadow-[8px_8px_0px_#00e5ff] p-6 sm:p-10">
+    
+    <div class="border-b-[3px] border-ink pb-4">
+      <div class="bg-electric-cyan text-ink font-mono text-xs font-black uppercase px-2.5 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b] inline-block mb-2">
+        AERODYNAMICS & TOPOLOGY LABORATORY
+      </div>
+      <h2 class="font-display font-black text-3xl sm:text-5xl uppercase tracking-tight text-ink">
+        The 4-Shape Geometry Lab
+      </h2>
+      <p class="font-body text-base text-gray-700">
+        Click any canonical shape below to inspect its mathematical extrusion parameters, hydrodynamic performance, and fork retention coefficient.
+      </p>
+    </div>
+
+    <!-- Shape Selection Buttons -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs font-bold">
+      <button onclick="selectShape('boot')" id="shape-btn-boot" class="shape-selector-btn active-shape-btn p-3 bg-tertiary-yellow border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center gap-1 transition-all">
+        <span class="text-2xl">👢</span>
+        <span>LO STIVALE</span>
+        <span class="text-[10px] text-gray-700">(THE BOOT)</span>
+      </button>
+
+      <button onclick="selectShape('bell')" id="shape-btn-bell" class="shape-selector-btn p-3 bg-white hover:bg-yellow-fixed border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center gap-1 transition-all">
+        <span class="text-2xl">🔔</span>
+        <span>LA CAMPANA</span>
+        <span class="text-[10px] text-gray-700">(THE BELL)</span>
+      </button>
+
+      <button onclick="selectShape('ball')" id="shape-btn-ball" class="shape-selector-btn p-3 bg-white hover:bg-yellow-fixed border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center gap-1 transition-all">
+        <span class="text-2xl">⚽</span>
+        <span>LA SFERA</span>
+        <span class="text-[10px] text-gray-700">(THE BALL)</span>
+      </button>
+
+      <button onclick="selectShape('bone')" id="shape-btn-bone" class="shape-selector-btn p-3 bg-white hover:bg-yellow-fixed border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center gap-1 transition-all">
+        <span class="text-2xl">🦴</span>
+        <span>L'OSSO</span>
+        <span class="text-[10px] text-gray-700">(THE BONE)</span>
+      </button>
+    </div>
+
+    <!-- Dynamic Shape Inspector Card -->
+    <div id="shape-inspector" class="bg-canvas border-[4px] border-ink p-6 shadow-[6px_6px_0px_#1c1b1b] flex flex-col md:flex-row gap-8 items-center">
+      
+      <!-- Visual Graphic Preview (pure CSS/SVG Memphis Pop) -->
+      <div id="shape-graphic" class="w-48 h-48 bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex items-center justify-center p-4 relative shrink-0">
+        <!-- Dynamic content injected by JS -->
+      </div>
+
+      <!-- Technical Breakdown -->
+      <div id="shape-details" class="flex-1 flex flex-col gap-3 font-mono">
+        <!-- Dynamic content injected by JS -->
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Minimal vanilla JavaScript for tab switching and shape lab (Standard web, zero npm bloat) -->
+<script>
+  // Tab Switching
+  function switchTab(tabId) {
+    const tabs = ['article', 'archive', 'recipe', 'anatomy'];
+    tabs.forEach(t => {
+      const panel = document.getElementById(`view-${t}`);
+      const btn = document.getElementById(`tab-btn-${t}`);
+      if (t === tabId) {
+        panel.classList.remove('hidden');
+        btn.classList.add('bg-primary-magenta', 'text-white');
+        btn.classList.remove('bg-white', 'text-ink');
+      } else {
+        panel.classList.add('hidden');
+        btn.classList.remove('bg-primary-magenta', 'text-white');
+        btn.classList.add('bg-white', 'text-ink');
+      }
+    });
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+  }
+
+  // 4-Shape Geometry Lab Data
+  const SHAPES = {
+    boot: {
+      name: "Lo Stivale (The Boot)",
+      italian: "Forma a Stivaletto",
+      emoji: "👢",
+      color: "#fae100",
+      description: "Features an asymmetrical 90-degree heel cup designed specifically to trap thick tomato sugo and meat ragù. Offers maximum lateral purchase on standard fork tines.",
+      specs: {
+        "Angle of Ankle Deflection": "89.4°",
+        "Heel Cavity Volume": "1.42 cm³",
+        "Fork Tine Purchase Index": "9.8 / 10",
+        "Primary Dip Affinity": "Honey Mustard Reduction",
+        "Extrusion Die Pressure": "14.2 Bar"
+      },
+      svg: `<svg viewBox="0 0 100 100" class="w-32 h-32">
+        <path d="M25 20 L55 20 L55 55 L80 65 L80 85 L25 85 Z" fill="#ffe243" stroke="#1c1b1b" stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="40" cy="40" r="3" fill="#1c1b1b"/>
+        <circle cx="50" cy="72" r="3" fill="#1c1b1b"/>
+        <line x1="25" y1="85" x2="80" y2="85" stroke="#ff1493" stroke-width="3"/>
+      </svg>`
+    },
+    bell: {
+      name: "La Campana (The Bell)",
+      italian: "Forma a Campanella",
+      emoji: "🔔",
+      color: "#00e5ff",
+      description: "A wide flared acoustic perimeter and crowned dome. Works as a fluid funnel creating low-pressure capillary draw when dipping into warm emulsions.",
+      specs: {
+        "Base Flare Diameter": "32.0 mm",
+        "Crown Radius": "12.5 mm",
+        "Capillary Suction Factor": "9.2 / 10",
+        "Primary Dip Affinity": "Sweet & Sour Agrodolce",
+        "Extrusion Die Pressure": "13.8 Bar"
+      },
+      svg: `<svg viewBox="0 0 100 100" class="w-32 h-32">
+        <path d="M50 15 C40 30 30 45 20 75 C20 85 80 85 80 75 C70 45 60 30 50 15 Z" fill="#00e5ff" stroke="#1c1b1b" stroke-width="4" stroke-linejoin="round"/>
+        <ellipse cx="50" cy="78" rx="20" ry="4" fill="#fae100" stroke="#1c1b1b" stroke-width="2"/>
+        <circle cx="50" cy="18" r="4" fill="#ff1493" stroke="#1c1b1b" stroke-width="2"/>
+      </svg>`
+    },
+    ball: {
+      name: "La Sfera (The Ball)",
+      italian: "Forma Sferica",
+      emoji: "⚽",
+      color: "#fae100",
+      description: "Dense, compact spherical core with minimal surface deformation. Acts as the masticatory al dente baseline of the dish, providing tooth satisfaction.",
+      specs: {
+        "Sphericity Tolerance": "± 0.8 mm",
+        "Core Density": "1.38 g/cm³",
+        "Al Dente Chew Resistance": "9.9 / 10",
+        "Primary Dip Affinity": "Tangy Barbecue Pomodoro",
+        "Extrusion Die Pressure": "16.1 Bar"
+      },
+      svg: `<svg viewBox="0 0 100 100" class="w-32 h-32">
+        <circle cx="50" cy="50" r="35" fill="#ffe243" stroke="#1c1b1b" stroke-width="4"/>
+        <path d="M30 45 Q50 30 70 45" stroke="#1c1b1b" stroke-width="3" fill="none"/>
+        <circle cx="42" cy="62" r="3" fill="#ff1493"/>
+        <circle cx="58" cy="60" r="3" fill="#00e5ff"/>
+      </svg>`
+    },
+    bone: {
+      name: "L'Osso (The Bone / Bow-Tie)",
+      italian: "La Farfalla Solida",
+      emoji: "🦴",
+      color: "#ff1493",
+      description: "Symmetrical dumbbell architecture featuring dual terminal lobes connected by a narrowed waist. Enables asymmetric simultaneous dual-sauce dunking.",
+      specs: {
+        "Inter-Lobe Bridge Width": "14.2 mm",
+        "Lobe Symmetry Index": "99.4%",
+        "Dual-Dipping Capability": "10.0 / 10",
+        "Primary Dip Affinity": "Marinara (Left) + Mustard (Right)",
+        "Extrusion Die Pressure": "15.0 Bar"
+      },
+      svg: `<svg viewBox="0 0 100 100" class="w-32 h-32">
+        <path d="M25 30 C15 30 15 70 25 70 C35 70 40 55 50 55 C60 55 65 70 75 70 C85 70 85 30 75 30 C65 30 60 45 50 45 C40 45 35 30 25 30 Z" fill="#ff1493" stroke="#1c1b1b" stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="30" cy="50" r="4" fill="#fae100" stroke="#1c1b1b" stroke-width="2"/>
+        <circle cx="70" cy="50" r="4" fill="#00e5ff" stroke="#1c1b1b" stroke-width="2"/>
+      </svg>`
+    }
+  };
+
+  function selectShape(shapeKey) {
+    const s = SHAPES[shapeKey];
+    if (!s) return;
+
+    // Update active button
+    document.querySelectorAll('.shape-selector-btn').forEach(btn => {
+      btn.classList.remove('bg-tertiary-yellow', 'shadow-[3px_3px_0px_#1c1b1b]');
+      btn.classList.add('bg-white');
+    });
+    const activeBtn = document.getElementById(`shape-btn-${shapeKey}`);
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-white');
+      activeBtn.classList.add('bg-tertiary-yellow', 'shadow-[3px_3px_0px_#1c1b1b]');
+    }
+
+    // Render Graphic
+    const graphicEl = document.getElementById('shape-graphic');
+    graphicEl.innerHTML = s.svg;
+
+    // Render Details
+    const detailsEl = document.getElementById('shape-details');
+    let specsHtml = Object.entries(s.specs).map(([k, v]) => `
+      <div class="flex justify-between border-b border-ink/20 py-1 text-xs">
+        <span class="text-gray-600">${k}:</span>
+        <span class="font-bold text-ink">${v}</span>
+      </div>
+    `).join('');
+
+    detailsEl.innerHTML = `
+      <div class="flex items-center justify-between gap-2 border-b-2 border-ink pb-2">
+        <div>
+          <h3 class="font-display font-black text-2xl uppercase text-ink">${s.name}</h3>
+          <span class="text-xs text-primary-magenta font-bold">${s.italian}</span>
+        </div>
+        <span class="text-3xl">${s.emoji}</span>
+      </div>
+      <p class="text-xs text-gray-800 leading-relaxed my-2">${s.description}</p>
+      <div class="bg-white border-[2px] border-ink p-3 space-y-1 shadow-[2px_2px_0px_#1c1b1b]">
+        ${specsHtml}
+      </div>
+    `;
+  }
+
+  // Initialize Shape Lab with Boot on load
+  document.addEventListener('DOMContentLoaded', () => {
+    selectShape('boot');
+  });
+</script>
+{% endblock %}
