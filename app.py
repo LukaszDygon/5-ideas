@@ -300,6 +300,17 @@ async def interactive_mcnuggets(request: Request):
     )
 
 
+@app.get("/interactive/nostalgia-cap", response_class=HTMLResponse)
+async def interactive_nostalgia_cap(request: Request):
+    """Interactive Nostalgia Cap generator and fake 90s vintage shopping page."""
+    return templates.TemplateResponse(
+        request=request,
+        name="nostalgia_cap.html",
+        context={},
+    )
+
+
+
 
 @app.post("/api/house-stats/parse-url")
 async def api_house_stats_parse_url(request: Request):

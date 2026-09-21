@@ -1,5 +1,140 @@
 [
   {
+    "id": 61,
+    "date": "2026-09-21",
+    "theme": "Fashion",
+    "subtitle": "The medium is material and the display is human form",
+    "streak_count": 1,
+    "notes": "Last day in Porto. Fresh bread and coffee before packing up and leaving.",
+    "created_at": "2026-09-21 08:46:48",
+    "ideas": [
+      {
+        "id": 436,
+        "day_id": 61,
+        "idea_number": 1,
+        "title": "Wardrobe tracker",
+        "tagline": "Database of what you have",
+        "description": "Tracking what clothes one owns may be very useful for a lot of downstream. I can imagine eventually feeding a shopping list, helping to sell the item (pricing, etc.). Could be used by second hand stores",
+        "tags": "Web, Database",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 437,
+        "day_id": 61,
+        "idea_number": 2,
+        "title": "Tinder for clothes",
+        "tagline": "Choosing couples' outfilts",
+        "description": "Like a dating app to coordinate outfits. One preson swipes the outfits they like against the outfit they choose. The other person does the same. Eventually you end up with pairs of outfits that go together",
+        "tags": "Web, Dating clothes",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 438,
+        "day_id": 61,
+        "idea_number": 3,
+        "title": "Scrapbook brainstorm",
+        "tagline": "Giving fashion ideas flesh",
+        "description": "This one would allow me to upload a bunch of moods, photos, sentences and arrange it into a scrapbook page with an optional note to describe it. I would like to be able to leaf through them on the web",
+        "tags": "Web, Art",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 439,
+        "day_id": 61,
+        "idea_number": 4,
+        "title": "Shorts or pants?",
+        "tagline": "Guess what people on the call are wearing",
+        "description": "A simple app with scoreboard to get people guessing whether the people on the call are wearing long or short trousers.",
+        "tags": "Web, Bonding with coworkers",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 440,
+        "day_id": 61,
+        "idea_number": 5,
+        "title": "Nostalgia cap",
+        "tagline": "Generate a nostalgic cap hat",
+        "description": "There are so many colors and so many nostalgic designs, characters, etc. I want a hat generator. Make it into a fake shopping page. It should be simple. Design should fit the spec.",
+        "tags": "",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 80,
+          "idea_id": 440,
+          "title": "Nostalgia Cap-o-Matic '99",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "Procedural 90s retro cap generator with realistic studio silhouettes, fabric dyeing, and superimposed embroidered patches.",
+          "content": "/interactive/nostalgia-cap",
+          "external_url": "/interactive/nostalgia-cap",
+          "time_spent_hours": 1.5,
+          "ai_tools_used": "Gemini 3.8 Flash, FastAPI, HTML5 Canvas 2D, Radical Memphis Pop Design System",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Ideation & Iteration",
+              "desc": "Asked for the idea, it came up with some pixel graphic caps, I asked it for realistic ones. Then I looked again and it looks broken, so kind of half finished."
+            }
+          ],
+          "what_rocked": [
+            "The page is fully implemented"
+          ],
+          "what_broke": [
+            "The graphics look completely off. Lots of visual issues. The logic of the page (on demand manufacture + limited stock) seems disjointed"
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 6 human turns across 137 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: /spec-implementation\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: The cap is so bad lol. I imagined it's a real type of hat with superimposed graphics\n  \u2022 Turn 5: /record-implementation\n  \u2022 Turn 6: 1. Asked for the idea, it came up with some pixel graphic caps, I sked it for realistic ones, Then I look again and it looks br...\n\nTools Executed: run_command (21), view_file (21), generate_image (10), replace_file_content (4), ask_question (2), find_by_name (2)\nFiles Modified: README.md, app.py, base.html, build_static.py, fractiles.html, house_stats.html, nostalgia_cap.html, pyproject.toml",
+          "created_at": "2026-09-21 09:21:34"
+        }
+      }
+    ],
+    "implemented_idea": {
+      "id": 440,
+      "day_id": 61,
+      "idea_number": 5,
+      "title": "Nostalgia cap",
+      "tagline": "Generate a nostalgic cap hat",
+      "description": "There are so many colors and so many nostalgic designs, characters, etc. I want a hat generator. Make it into a fake shopping page. It should be simple. Design should fit the spec.",
+      "tags": "",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 80,
+        "idea_id": 440,
+        "title": "Nostalgia Cap-o-Matic '99",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "Procedural 90s retro cap generator with realistic studio silhouettes, fabric dyeing, and superimposed embroidered patches.",
+        "content": "/interactive/nostalgia-cap",
+        "external_url": "/interactive/nostalgia-cap",
+        "time_spent_hours": 1.5,
+        "ai_tools_used": "Gemini 3.8 Flash, FastAPI, HTML5 Canvas 2D, Radical Memphis Pop Design System",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Ideation & Iteration",
+            "desc": "Asked for the idea, it came up with some pixel graphic caps, I asked it for realistic ones. Then I looked again and it looks broken, so kind of half finished."
+          }
+        ],
+        "what_rocked": [
+          "The page is fully implemented"
+        ],
+        "what_broke": [
+          "The graphics look completely off. Lots of visual issues. The logic of the page (on demand manufacture + limited stock) seems disjointed"
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 6 human turns across 137 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: /spec-implementation\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: The cap is so bad lol. I imagined it's a real type of hat with superimposed graphics\n  \u2022 Turn 5: /record-implementation\n  \u2022 Turn 6: 1. Asked for the idea, it came up with some pixel graphic caps, I sked it for realistic ones, Then I look again and it looks br...\n\nTools Executed: run_command (21), view_file (21), generate_image (10), replace_file_content (4), ask_question (2), find_by_name (2)\nFiles Modified: README.md, app.py, base.html, build_static.py, fractiles.html, house_stats.html, nostalgia_cap.html, pyproject.toml",
+        "created_at": "2026-09-21 09:21:34"
+      }
+    }
+  },
+  {
     "id": 60,
     "date": "2026-09-20",
     "theme": "Pasta Shapes",

@@ -136,6 +136,19 @@ def test_interactive_mcnuggets_view(client):
     assert "mcnugget_pasta_dish.jpg" in response.text
 
 
+def test_interactive_nostalgia_cap_view(client):
+    response = client.get("/interactive/nostalgia-cap")
+    assert response.status_code == 200
+    assert "NOSTALGIA CAP-O-MATIC" in response.text
+    assert "hatCanvas" in response.text
+    assert "SURPRISE DROP" in response.text
+    assert "Radical Magenta" in response.text
+    assert "Synthwave Sunset" in response.text
+    assert "receiptModal" in response.text
+
+
+
+
 def test_api_get_days(client):
     response = client.get("/api/days")
     assert response.status_code == 200

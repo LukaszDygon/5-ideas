@@ -1,0 +1,1244 @@
+{% extends "base.html" %}
+
+{% block title %}Nostalgia Cap-o-Matic '99: Realistic Retro Hat Studio & Vintage Shop{% endblock %}
+
+{% block content %}
+<style>
+  /* Pulse animation for scarcity pill */
+  @keyframes scarcityPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .scarcity-pulse {
+    animation: scarcityPulse 1.8s infinite ease-in-out;
+  }
+
+  /* Range sliders styled with Radical Memphis Pop */
+  input[type=range] {
+    accent-color: #b40065;
+  }
+
+  /* Canvas preview box */
+  .hat-canvas-wrapper {
+    background: radial-gradient(circle, #ffffff 40%, #e2e8f0 100%);
+  }
+</style>
+
+<div class="flex flex-col gap-6 max-w-7xl mx-auto pb-16" id="nostalgia-cap-root">
+
+  <!-- ========================================================================= -->
+  <!-- HERO HEADER (RADICAL MEMPHIS POP X VINTAGE MERCHANDISE VAULT)             -->
+  <!-- ========================================================================= -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden">
+    <!-- Decorative geometric background accent -->
+    <div class="absolute -right-10 -bottom-10 w-48 h-48 border-[6px] border-white/20 rotate-12 pointer-events-none flex items-center justify-center">
+      <div class="w-32 h-32 border-[4px] border-white/20 -rotate-45"></div>
+    </div>
+
+    <div class="relative z-10">
+      <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-2.5 py-0.5 font-mono text-[11px] font-black uppercase mb-2 shadow-[2px_2px_0px_#1c1b1b] -rotate-1">
+        🧢 DAY 2026-09-21 PROTOTYPE • FASHION MERCH VAULT • DAY #1
+      </div>
+      <h1 class="font-display font-black text-2xl sm:text-4xl uppercase text-white leading-tight tracking-tight flex items-center gap-3">
+        <span>NOSTALGIA CAP-O-MATIC '99</span>
+        <span class="text-xs sm:text-sm font-mono font-bold bg-white text-primary-magenta px-2 py-0.5 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          PHOTO STUDIO
+        </span>
+      </h1>
+      <p class="font-body text-xs sm:text-sm text-white/95 mt-1 max-w-2xl">
+        Real photographic caps with authentic superimposed 90s embroidered patches, dye colorways, and custom stitched graphics. Pick a silhouette, drop your nostalgic badge, and snag yours before the batch sells out!
+      </p>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-2 flex-wrap relative z-10">
+      <button id="audio-toggle-btn" onclick="toggleAudio()" class="neo-btn neo-btn-yellow text-xs py-2 px-3 flex items-center gap-1.5" title="Toggle 8-bit sound effects">
+        <span class="material-symbols-outlined text-base" id="audio-icon">volume_up</span>
+        <span id="audio-text">SOUND ON</span>
+      </button>
+      <button onclick="randomizeDrop(true)" class="neo-btn neo-btn-primary text-xs py-2 px-3 flex items-center gap-1.5 bg-electric-cyan text-ink hover:bg-cyan-300 font-bold" title="Roll a surprise nostalgic colorway & patch">
+        <span class="material-symbols-outlined text-base">casino</span>
+        <span>SURPRISE DROP</span>
+      </button>
+      <a href="/day/2026-09-21" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span>Day Sparks</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- SINGLE-CARD FAKE SHOPPING STOREFRONT LAYOUT                               -->
+  <!-- ========================================================================= -->
+  <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-4 sm:p-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT COLUMN: REALISTIC PRODUCT CANVAS & EXPORT (6 COLS) -->
+      <div class="lg:col-span-6 flex flex-col gap-4">
+        
+        <!-- Canvas Stage Card -->
+        <div class="border-[4px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-3 relative bg-canvas overflow-hidden">
+          <!-- Authentic Vintage Hologram Corner Badge -->
+          <div class="absolute top-4 left-4 z-20 bg-tertiary-yellow text-ink border-2 border-ink px-2 py-0.5 font-mono text-[10px] font-black uppercase tracking-wider shadow-[2px_2px_0px_#1c1b1b] -rotate-3">
+            ★ VERIFIED 90s STOCK
+          </div>
+
+          <!-- Batch Badge -->
+          <div class="absolute top-4 right-4 z-20 bg-ink text-acid-lime border-2 border-ink px-2.5 py-0.5 font-mono text-[10px] font-bold">
+            BATCH <span id="batchDisplay">#042</span>
+          </div>
+
+          <!-- High-Res Interactive Canvas -->
+          <div class="relative w-full aspect-square hat-canvas-wrapper border-2 border-ink flex items-center justify-center overflow-hidden">
+            <canvas id="hatCanvas" width="800" height="800" class="w-full h-full object-contain"></canvas>
+
+            <!-- Loading Spinner Indicator (hidden once loaded) -->
+            <div id="canvasLoader" class="absolute inset-0 bg-white/80 flex flex-col items-center justify-center gap-2 z-30 font-mono text-xs font-bold text-ink">
+              <span class="material-symbols-outlined text-3xl animate-spin text-primary-magenta">progress_activity</span>
+              <span>DEVELOPING PHOTO STUDIO CAP...</span>
+            </div>
+          </div>
+
+          <!-- Live Telemetry Status Bar -->
+          <div class="mt-2.5 flex items-center justify-between text-[11px] font-mono font-bold text-ink px-1">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-accent-lime inline-block"></span>
+              <span id="canvasTelemetrySilhouette">COTTON DAD CAP</span>
+            </span>
+            <span class="text-ink/60 uppercase" id="canvasTelemetryPatch">SYNTHWAVE SUNSET</span>
+          </div>
+        </div>
+
+        <!-- Download & Sharing Toolbar -->
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="downloadProductPhoto()" class="neo-btn neo-btn-cyan text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 font-black uppercase">
+            <span class="material-symbols-outlined text-sm">download</span>
+            <span>DOWNLOAD PHOTO (.PNG)</span>
+          </button>
+          <button onclick="copyRecipe()" id="copyRecipeBtn" class="neo-btn neo-btn-white text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 font-bold uppercase">
+            <span class="material-symbols-outlined text-sm">content_copy</span>
+            <span>COPY RECIPE</span>
+          </button>
+        </div>
+
+        <!-- Product Specs Box -->
+        <div class="border-[3px] border-ink bg-canvas p-3.5 text-xs font-mono">
+          <div class="font-bold text-ink border-b-2 border-ink/20 pb-1 mb-2 uppercase flex items-center justify-between">
+            <span>PHYSICAL SPECIFICATIONS</span>
+            <span class="text-[10px] text-primary-magenta font-bold">LIMITED VAULT RUN</span>
+          </div>
+          <div class="grid grid-cols-2 gap-y-1.5 text-[11px]">
+            <span class="text-ink/60">FABRIC WEAVE:</span>
+            <span class="font-bold text-right" id="specFabric">100% WASHED CHINO TWILL</span>
+
+            <span class="text-ink/60">EMBROIDERY:</span>
+            <span class="font-bold text-right" id="specPatch">HIGH-DENSITY MERROWED PATCH</span>
+
+            <span class="text-ink/60">CLOSURE:</span>
+            <span class="font-bold text-right">ANTIQUE BRASS / RETRO SNAP</span>
+
+            <span class="text-ink/60">MANUFACTURE:</span>
+            <span class="font-bold text-right">CYBERSPACE / PORTO 1999</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: PRODUCT DETAILS & CUSTOMIZER (6 COLS) -->
+      <div class="lg:col-span-6 flex flex-col gap-6">
+
+        <!-- Product Header & Pricing -->
+        <div class="border-b-[3px] border-ink pb-4">
+          <div class="flex items-center justify-between gap-2 flex-wrap mb-1">
+            <span id="productSku" class="font-mono text-xs font-bold text-ink/70 uppercase tracking-widest bg-yellow-fixed/60 px-2 py-0.5 border border-ink">
+              SKU: CAP-94-DAD-SYNTHWAVE
+            </span>
+            <div class="flex items-center gap-1 text-xs font-bold text-ink">
+              <span class="text-amber-500">★★★★★</span>
+              <span class="font-mono">4.9/5</span>
+              <span class="text-ink/60 font-mono">(58 reviews)</span>
+            </div>
+          </div>
+
+          <h2 id="productTitle" class="font-display font-black text-2xl sm:text-3xl text-ink uppercase tracking-tight leading-none mt-2">
+            THE '94 VINTAGE DAD CAP
+          </h2>
+          <p id="productSubtitle" class="font-body text-xs sm:text-sm text-ink/80 mt-1">
+            Washed chino cotton twill with an authentic 90s merrowed embroidered patch, curved visor, and relaxed unstructured crown.
+          </p>
+
+          <!-- Price & Stock Indicator -->
+          <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-baseline gap-2">
+              <span class="font-display font-black text-3xl sm:text-4xl text-primary-magenta">$34.99</span>
+              <span class="font-mono text-sm text-ink/50 line-through">$59.99</span>
+              <span class="bg-acid-lime text-ink font-mono text-[11px] font-black px-2 py-0.5 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b] -rotate-2">
+                SAVE 42%
+              </span>
+            </div>
+
+            <div class="scarcity-pulse inline-flex items-center gap-1.5 bg-vivid-orange text-white font-mono text-xs font-bold px-3 py-1 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+              <span class="material-symbols-outlined text-sm">local_fire_department</span>
+              <span>ONLY <span id="stockCount" class="font-black">2</span> REMAINING IN BATCH!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- CUSTOMIZATION CONTROLS                                              -->
+        <!-- =================================================================== -->
+        <div class="flex flex-col gap-5">
+
+          <!-- 1. Hat Silhouette -->
+          <div>
+            <label class="block font-display font-black text-xs uppercase tracking-wider text-ink mb-1.5 flex items-center justify-between">
+              <span>1. SELECT REAL HAT SILHOUETTE</span>
+              <span class="font-mono text-[11px] font-normal text-ink/70" id="currentSilhouetteLabel">Vintage Dad Cap</span>
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setCapModel('dad')" id="model-dad" class="model-btn neo-btn text-xs py-2 px-2 flex flex-col items-center gap-1 font-bold uppercase border-2 border-ink neo-btn-yellow shadow-[2px_2px_0px_#1c1b1b]">
+                <span class="text-xl">⚾</span>
+                <span>Dad Cap</span>
+                <span class="text-[9px] font-mono text-ink/60 font-normal">Washed Cotton</span>
+              </button>
+              <button onclick="setCapModel('trucker')" id="model-trucker" class="model-btn neo-btn text-xs py-2 px-2 flex flex-col items-center gap-1 font-bold uppercase border-2 border-ink neo-btn-white">
+                <span class="text-xl">🧢</span>
+                <span>Foam Trucker</span>
+                <span class="text-[9px] font-mono text-ink/60 font-normal">Mesh Back</span>
+              </button>
+              <button onclick="setCapModel('snapback')" id="model-snapback" class="model-btn neo-btn text-xs py-2 px-2 flex flex-col items-center gap-1 font-bold uppercase border-2 border-ink neo-btn-white">
+                <span class="text-xl">🛹</span>
+                <span>Flat Snapback</span>
+                <span class="text-[9px] font-mono text-ink/60 font-normal">Structured Wool</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Fabric Dye Colorway -->
+          <div>
+            <label class="block font-display font-black text-xs uppercase tracking-wider text-ink mb-1.5 flex items-center justify-between">
+              <span>2. FABRIC DYE COLORWAY</span>
+              <span class="font-mono text-[10px] text-ink/60" id="colorwayLabel">Crisp Studio White</span>
+            </label>
+            <div class="flex items-center gap-2 flex-wrap" id="colorwaySwatches">
+              <!-- Populated dynamically by JS -->
+            </div>
+          </div>
+
+          <!-- 3. Superimposed Nostalgic Embroidered Patch -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="font-display font-black text-xs uppercase tracking-wider text-ink">
+                3. SUPERIMPOSED NOSTALGIC GRAPHIC / PATCH
+              </label>
+              <span class="font-mono text-[10px] text-ink/60" id="patchLabel">Synthwave Sunset</span>
+            </div>
+            
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2" id="patchGrid">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Custom Graphic Upload Option -->
+            <div class="mt-2.5 flex items-center gap-3 border-2 border-dashed border-ink/40 p-2.5 bg-canvas">
+              <label class="neo-btn neo-btn-yellow text-xs py-1.5 px-3 flex items-center gap-1.5 cursor-pointer font-bold uppercase shrink-0">
+                <span class="material-symbols-outlined text-sm">upload_file</span>
+                <span>UPLOAD YOUR ART</span>
+                <input type="file" id="userArtInput" accept="image/*" class="hidden" onchange="handleUserGraphicUpload(event)"/>
+              </label>
+              <span class="font-mono text-[10px] text-ink/70 truncate" id="uploadStatusText">
+                Or upload any custom PNG/JPG logo to superimpose!
+              </span>
+            </div>
+          </div>
+
+          <!-- 4. Custom Arched Stitched Text -->
+          <div>
+            <label class="block font-display font-black text-xs uppercase tracking-wider text-ink mb-1 flex items-center justify-between">
+              <span>4. CUSTOM STITCHED TEXT (OPTIONAL)</span>
+              <span class="font-mono text-[10px] text-ink/60">EMBROIDERED ON CROWN ARCH</span>
+            </label>
+            <div class="flex gap-2">
+              <input 
+                type="text" 
+                id="customTextInput" 
+                maxlength="14" 
+                placeholder="e.g. NOSTALGIA, PORTO '99, CYBER"
+                oninput="handleCustomTextInput(this.value)" 
+                class="flex-1 bg-white border-[3px] border-ink px-3 py-1.5 font-mono text-sm uppercase font-bold focus:outline-none focus:bg-tertiary-yellow/20"
+              />
+              <button onclick="clearCustomText()" class="neo-btn neo-btn-white text-xs py-1.5 px-3 font-mono font-bold">
+                CLEAR
+              </button>
+            </div>
+          </div>
+
+          <!-- 5. Fine Tuning Drawer: Placement, Scale & Tilt -->
+          <div class="border-[2px] border-ink bg-canvas p-3">
+            <div class="flex items-center justify-between font-mono text-[11px] font-bold text-ink mb-2">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">tune</span>
+                <span>PATCH POSITION & SCALE TUNING</span>
+              </span>
+              <button onclick="resetTuning()" class="text-[10px] text-primary-magenta hover:underline">
+                RESET POSITION
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+              <!-- Scale -->
+              <div>
+                <div class="flex justify-between text-[10px] text-ink/70 mb-1">
+                  <span>SCALE:</span>
+                  <span id="scaleDisplay">100%</span>
+                </div>
+                <input type="range" id="patchScaleSlider" min="50" max="150" value="100" class="w-full" oninput="updatePatchScale(this.value)"/>
+              </div>
+
+              <!-- Vertical Offset -->
+              <div>
+                <div class="flex justify-between text-[10px] text-ink/70 mb-1">
+                  <span>VERTICAL:</span>
+                  <span id="offsetYDisplay">0px</span>
+                </div>
+                <input type="range" id="patchOffsetYSlider" min="-80" max="80" value="0" class="w-full" oninput="updatePatchOffsetY(this.value)"/>
+              </div>
+
+              <!-- Tilt / Angle -->
+              <div>
+                <div class="flex justify-between text-[10px] text-ink/70 mb-1">
+                  <span>ROTATION:</span>
+                  <span id="rotDisplay">-5°</span>
+                </div>
+                <input type="range" id="patchRotSlider" min="-30" max="30" value="-5" class="w-full" oninput="updatePatchRot(this.value)"/>
+              </div>
+            </div>
+
+            <div class="mt-2 pt-2 border-t border-ink/10 flex items-center justify-between text-[11px] font-mono">
+              <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" id="shadowToggle" checked onchange="togglePatchShadow(this.checked)" class="w-3.5 h-3.5 border border-ink accent-primary-magenta"/>
+                <span>REALISTIC EMBROIDERY DROP SHADOW</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" id="cycLightingToggle" checked onchange="toggleCycLighting(this.checked)" class="w-3.5 h-3.5 border border-ink accent-primary-magenta"/>
+                <span>STUDIO CYC LIGHTING TINT</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- ACTION BUTTONS: ADD TO CART & SURPRISE DROP                         -->
+        <!-- =================================================================== -->
+        <div class="pt-2 border-t-[3px] border-ink flex flex-col sm:flex-row gap-3">
+          <!-- Buy Now Button -->
+          <button onclick="triggerCheckout()" class="flex-1 neo-btn neo-btn-primary py-3.5 px-6 font-display font-black text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-2 bg-primary-magenta text-white shadow-[6px_6px_0px_#1c1b1b]">
+            <span class="material-symbols-outlined text-xl">shopping_cart_checkout</span>
+            <span>ADD TO CART & CHECKOUT ($34.99)</span>
+          </button>
+
+          <!-- Shuffle Button -->
+          <button onclick="randomizeDrop(true)" class="neo-btn neo-btn-yellow py-3.5 px-5 font-display font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-[4px_4px_0px_#1c1b1b]">
+            <span class="material-symbols-outlined text-lg">casino</span>
+            <span>SHUFFLE DROP</span>
+          </button>
+        </div>
+
+        <!-- Free shipping & trust guarantees -->
+        <div class="grid grid-cols-3 gap-2 text-center font-mono text-[10px] text-ink/70 border-t border-ink/20 pt-3">
+          <div class="flex items-center justify-center gap-1">
+            <span>📦</span>
+            <span>DIAL-UP AIR POST</span>
+          </div>
+          <div class="flex items-center justify-center gap-1">
+            <span>🧵</span>
+            <span>HIGH-DENSITY MERROW</span>
+          </div>
+          <div class="flex items-center justify-center gap-1">
+            <span>🔒</span>
+            <span>SECURE FAKE PAYMENT</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- RETRO CUSTOMER TESTIMONIALS                                               -->
+  <!-- ========================================================================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+    <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col justify-between">
+      <div class="mb-2">
+        <div class="text-amber-500 font-bold mb-1">★★★★★ 5/5</div>
+        <p class="text-ink font-body text-xs italic">
+          "The realistic cotton weave with the stitched VHS patch is legitimately next-level. I downloaded the product PNG and made it my forum avatar immediately."
+        </p>
+      </div>
+      <div class="font-bold text-[10px] text-primary-magenta flex items-center justify-between border-t border-ink/20 pt-2">
+        <span>@blockbuster_dan</span>
+        <span class="text-ink/60">VERIFIED COLLECTOR</span>
+      </div>
+    </div>
+
+    <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col justify-between">
+      <div class="mb-2">
+        <div class="text-amber-500 font-bold mb-1">★★★★★ 5/5</div>
+        <p class="text-ink font-body text-xs italic">
+          "The '94 Retro Trucker with the Acid Smiley patch looks exactly like the merchandise you used to find at raves and street markets in Berlin. Pure nostalgic dopamine."
+        </p>
+      </div>
+      <div class="font-bold text-[10px] text-primary-magenta flex items-center justify-between border-t border-ink/20 pt-2">
+        <span>@techno_chloe</span>
+        <span class="text-ink/60">90s CLUB RAT</span>
+      </div>
+    </div>
+
+    <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col justify-between">
+      <div class="mb-2">
+        <div class="text-amber-500 font-bold mb-1">★★★★★ 5/5</div>
+        <p class="text-ink font-body text-xs italic">
+          "The fabric dyeing preserves every single seam stitch and lighting highlight from the studio photo. Best hat generator on the modern web."
+        </p>
+      </div>
+      <div class="font-bold text-[10px] text-primary-magenta flex items-center justify-between border-t border-ink/20 pt-2">
+        <span>@skate_or_pizza</span>
+        <span class="text-ink/60">STREETWEAR ARCHIVIST</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: FAKE VINTAGE THERMAL CASH REGISTER RECEIPT                         -->
+  <!-- ========================================================================= -->
+  <div id="receiptModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] max-w-md w-full relative p-6 font-mono text-xs transform transition-all">
+      
+      <!-- Close button -->
+      <button onclick="closeReceipt()" class="absolute top-3 right-3 w-8 h-8 bg-canvas border-2 border-ink font-black hover:bg-neon-pink hover:text-white flex items-center justify-center">
+        ✕
+      </button>
+
+      <!-- Thermal Paper Header -->
+      <div class="text-center border-b-2 border-dashed border-ink/40 pb-4 mb-4">
+        <div class="font-black text-lg uppercase tracking-tight">★ RETROCAPS CO. ★</div>
+        <div class="text-[11px] text-ink/70">PORTO VINTAGE MERCHANDISE VAULT</div>
+        <div class="text-[10px] text-ink/50 mt-1">TRANSACTION RECEIPT #<span id="receiptOrderNum">NC-994821</span></div>
+        <div class="text-[10px] text-ink/50" id="receiptTimestamp">2026-09-21 09:55:00 UTC</div>
+      </div>
+
+      <!-- Itemized Breakdown -->
+      <div class="flex flex-col gap-2 border-b-2 border-dashed border-ink/40 pb-4 mb-4">
+        <div class="flex justify-between font-bold text-sm">
+          <span id="receiptItemName">THE '94 VINTAGE DAD CAP</span>
+          <span>$34.99</span>
+        </div>
+        <div class="text-[11px] text-ink/60 pl-2">
+          • Silhouette: <span id="receiptSilhouette">Dad Cap</span><br/>
+          • Fabric Color: <span id="receiptColor">Crisp White</span><br/>
+          • Superimposed Patch: <span id="receiptPatch">Synthwave Sunset</span><br/>
+          • Stitched Text: <span id="receiptCustomText">NONE</span>
+        </div>
+
+        <div class="flex justify-between text-ink/70 pt-2 border-t border-ink/10">
+          <span>SUBTOTAL:</span>
+          <span>$34.99</span>
+        </div>
+        <div class="flex justify-between text-ink/70">
+          <span>DIAL-UP AIR FREIGHT:</span>
+          <span>$0.00 (PROMOTIONAL FREE)</span>
+        </div>
+        <div class="flex justify-between text-ink/70">
+          <span>ESTIMATED TAX:</span>
+          <span>$0.00 (EXEMPT)</span>
+        </div>
+        <div class="flex justify-between text-base font-black border-t-2 border-ink pt-1 text-ink">
+          <span>TOTAL CHARGED:</span>
+          <span class="text-primary-magenta">$34.99</span>
+        </div>
+      </div>
+
+      <!-- Approved Stamp & Simulated Barcode -->
+      <div class="text-center flex flex-col items-center gap-3">
+        <div class="bg-tertiary-yellow text-ink font-black px-3 py-1 border border-ink text-xs uppercase">
+          ✔ PAYMENT APPROVED // ORDER RECORDED IN VAULT
+        </div>
+
+        <!-- Simulated Barcode -->
+        <div class="w-full flex items-center justify-center gap-[2px] h-10 py-1 overflow-hidden" id="receiptBarcode">
+          <!-- Dynamically populated lines -->
+        </div>
+        <div class="text-[9px] font-mono text-ink/60 tracking-widest">
+          * NOSTALGIA-VAULT-EXPRESS-1999 *
+        </div>
+
+        <p class="text-[10px] text-ink/60 italic leading-snug">
+          Caps are manufactured in cyberspace and dispatched across the spacetime continuum. Estimated delivery year: 1999.
+        </p>
+
+        <!-- Receipt Actions -->
+        <div class="flex gap-2 w-full mt-2">
+          <button onclick="downloadProductPhoto()" class="flex-1 neo-btn neo-btn-cyan text-xs py-2 font-black uppercase">
+            DOWNLOAD PHOTO
+          </button>
+          <button onclick="closeReceipt()" class="flex-1 neo-btn neo-btn-white text-xs py-2 font-bold uppercase">
+            CLOSE RECEIPT
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- JAVASCRIPT: REALISTIC CAP COMPOSITOR & INTERACTIVE STUDIO ENGINE          -->
+<!-- ========================================================================= -->
+<script>
+  // ---------------------------------------------------------------------------
+  // 1. ASSET DEFINITIONS & PRESETS
+  // ---------------------------------------------------------------------------
+  const CAP_MODELS = {
+    dad: {
+      name: "Vintage Dad Cap",
+      src: "/static/images/caps/cap_dad.jpg",
+      fabric: "100% WASHED CHINO TWILL",
+      desc: "Washed chino cotton twill with an authentic 90s merrowed embroidered patch, curved visor, and relaxed unstructured crown.",
+      defaultPatchCenter: { x: 505, y: 440 },
+      defaultRot: -5,
+      defaultScale: 1.0,
+      clipRadius: 155
+    },
+    trucker: {
+      name: "90s Foam Trucker",
+      src: "/static/images/caps/cap_trucker.jpg",
+      fabric: "POLY-FOAM FRONT WITH NYLON MESH REAR",
+      desc: "Classic high-crown foam trucker with breezy rear mesh, contrast foam front panel, and retro curved bill.",
+      defaultPatchCenter: { x: 480, y: 450 },
+      defaultRot: -4,
+      defaultScale: 1.08,
+      clipRadius: 165
+    },
+    snapback: {
+      name: "Pro Flat Snapback",
+      src: "/static/images/caps/cap_snapback.jpg",
+      fabric: "STRUCTURED 6-PANEL HEAVY WOOL",
+      desc: "High-profile structured 6-panel crown with flat stiff brim, embroidered eyelets, and classic streetwear attitude.",
+      defaultPatchCenter: { x: 495, y: 425 },
+      defaultRot: -5,
+      defaultScale: 1.05,
+      clipRadius: 160
+    }
+  };
+
+  const DYE_COLORWAYS = [
+    { id: "original", name: "Crisp Studio White", hex: null, label: "Original" },
+    { id: "magenta",  name: "Radical Magenta",    hex: "#b40065", label: "Magenta" },
+    { id: "cyan",     name: "Electric Cyan",       hex: "#00e5ff", label: "Cyan" },
+    { id: "lime",     name: "Acid Lime",           hex: "#39ff14", label: "Lime" },
+    { id: "yellow",   name: "Sunshine Yellow",     hex: "#fae100", label: "Yellow" },
+    { id: "orange",   name: "Vivid Orange",        hex: "#ff5e00", label: "Orange" },
+    { id: "purple",   name: "Retro Violet",        hex: "#7c3aed", label: "Violet" },
+    { id: "navy",     name: "Washed Navy",         hex: "#1e3a8a", label: "Navy" },
+    { id: "charcoal", name: "Cyber Charcoal",      hex: "#262626", label: "Charcoal" },
+    { id: "teal",     name: "Taco Bell Teal",      hex: "#0d9488", label: "Teal" },
+    { id: "green",    name: "Forest Evergreen",    hex: "#065f46", label: "Forest" },
+  ];
+
+  const PATCH_PRESETS = [
+    {
+      id: "synthwave",
+      name: "Synthwave Sunset",
+      src: "/static/images/caps/patch_synthwave.jpg",
+      type: "circle",
+      icon: "🌴",
+      desc: "Neon palm & synth grid sunset crest"
+    },
+    {
+      id: "floppy",
+      name: "Floppy Disk 3.5\"",
+      src: "/static/images/caps/patch_floppy.jpg",
+      type: "circle",
+      icon: "💾",
+      desc: "Cyberpunk 3.5-inch 'SAVE ME' diskette"
+    },
+    {
+      id: "smiley",
+      name: "Techno Smiley",
+      src: "/static/images/caps/patch_smiley.jpg",
+      type: "circle",
+      icon: "☻",
+      desc: "Acid house sunglasses '90s Revolution' patch"
+    },
+    {
+      id: "pizza",
+      name: "Radical Pizza",
+      src: "/static/images/caps/patch_pizza.jpg",
+      type: "circle",
+      icon: "🍕",
+      desc: "Skateboarding pepperoni slice mascot"
+    },
+    {
+      id: "arcade",
+      name: "Arcade Joystick",
+      src: "/static/images/caps/patch_arcade.jpg",
+      type: "circle",
+      icon: "🕹️",
+      desc: "Retro arcade 'INSERT COIN' high score patch"
+    },
+    {
+      id: "vhs",
+      name: "VHS Rewind",
+      src: "/static/images/caps/patch_vhs.jpg",
+      type: "rounded_rect",
+      icon: "📼",
+      desc: "Vintage 'BE KIND REWIND' cassette tape"
+    },
+    {
+      id: "none",
+      name: "Clean / No Patch",
+      src: null,
+      type: "none",
+      icon: "🚫",
+      desc: "Blank hat without patch"
+    }
+  ];
+
+  // Current customization state
+  const state = {
+    capModel: "dad",
+    colorwayId: "original",
+    patchId: "synthwave",
+    customGraphicUrl: null,
+    customGraphicImage: null,
+    customText: "",
+    scalePercent: 100,
+    offsetY: 0,
+    rotDeg: -5,
+    dropShadow: true,
+    cycLighting: true,
+    audio: true,
+    stockCount: 2,
+    batchNum: 42
+  };
+
+  // Image cache
+  const imageCache = {};
+
+  // ---------------------------------------------------------------------------
+  // 2. AUDIO SYNTHESIZER (WEB AUDIO API - ZERO DEPENDENCIES)
+  // ---------------------------------------------------------------------------
+  let audioCtx = null;
+  function getAudioContext() {
+    if (!audioCtx) {
+      const AudioClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioClass) audioCtx = new AudioClass();
+    }
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  function playSound(type) {
+    if (!state.audio) return;
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+
+      if (type === "click") {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.04);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      } else if (type === "shuffle") {
+        [440, 554.37, 659.25, 880].forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(f, now + i * 0.035);
+          gain.gain.setValueAtTime(0.06, now + i * 0.035);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.035 + 0.09);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + i * 0.035);
+          osc.stop(now + i * 0.035 + 0.09);
+        });
+      } else if (type === "buy") {
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "square";
+          osc.frequency.setValueAtTime(f, now + i * 0.06);
+          gain.gain.setValueAtTime(0.09, now + i * 0.06);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + i * 0.06);
+          osc.stop(now + i * 0.06 + 0.25);
+        });
+      }
+    } catch (e) {}
+  }
+
+  function toggleAudio() {
+    state.audio = !state.audio;
+    const btn = document.getElementById("audio-toggle-btn");
+    const icon = document.getElementById("audio-icon");
+    const text = document.getElementById("audio-text");
+    if (state.audio) {
+      icon.innerText = "volume_up";
+      text.innerText = "SOUND ON";
+      btn.classList.add("neo-btn-yellow");
+      btn.classList.remove("neo-btn-white");
+      playSound("click");
+    } else {
+      icon.innerText = "volume_off";
+      text.innerText = "MUTED";
+      btn.classList.remove("neo-btn-yellow");
+      btn.classList.add("neo-btn-white");
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 3. IMAGE PRELOADER
+  // ---------------------------------------------------------------------------
+  function preloadImage(url) {
+    if (!url) return Promise.resolve(null);
+    if (imageCache[url]) return Promise.resolve(imageCache[url]);
+
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        imageCache[url] = img;
+        resolve(img);
+      };
+      img.onerror = () => {
+        console.error("Failed to load image:", url);
+        resolve(null);
+      };
+      img.src = url;
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. CANVAS COMPOSITING & RENDERING PIPELINE
+  // ---------------------------------------------------------------------------
+  const canvas = document.getElementById("hatCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // Offscreen tinting buffer
+  const tintCanvas = document.createElement("canvas");
+  tintCanvas.width = 800;
+  tintCanvas.height = 800;
+  const tintCtx = tintCanvas.getContext("2d");
+
+  async function renderHatScene() {
+    const model = CAP_MODELS[state.capModel] || CAP_MODELS.dad;
+    const capImg = await preloadImage(model.src);
+
+    const loader = document.getElementById("canvasLoader");
+    if (loader) loader.style.display = "none";
+
+    if (!capImg) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 1. Background studio cyc gradient
+    const bgGrad = ctx.createRadialGradient(400, 360, 80, 400, 400, 450);
+    bgGrad.addColorStop(0, "#ffffff");
+    bgGrad.addColorStop(1, "#e2e8f0");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 800, 800);
+
+    // 2. Draw & Dye the Realistic Cap
+    tintCtx.clearRect(0, 0, 800, 800);
+    tintCtx.drawImage(capImg, 0, 0, 800, 800);
+
+    const colorway = DYE_COLORWAYS.find(c => c.id === state.colorwayId) || DYE_COLORWAYS[0];
+    if (colorway.hex) {
+      // Multiply color tint to dye fabric while keeping cloth shadows & weave intact
+      tintCtx.save();
+      tintCtx.globalCompositeOperation = "multiply";
+      tintCtx.fillStyle = colorway.hex;
+      tintCtx.fillRect(0, 0, 800, 800);
+
+      // Re-illuminate specular highlights
+      tintCtx.globalCompositeOperation = "screen";
+      tintCtx.fillStyle = "rgba(255, 255, 255, 0.22)";
+      tintCtx.fillRect(0, 0, 800, 800);
+      tintCtx.restore();
+    }
+
+    // Draw the dyed cap onto main canvas
+    ctx.drawImage(tintCanvas, 0, 0, 800, 800);
+
+    // 3. Superimpose Embroidered Patch Graphic
+    const patchPreset = PATCH_PRESETS.find(p => p.id === state.patchId);
+    let patchImg = null;
+
+    if (state.customGraphicImage) {
+      patchImg = state.customGraphicImage;
+    } else if (patchPreset && patchPreset.src) {
+      patchImg = await preloadImage(patchPreset.src);
+    }
+
+    const patchPos = {
+      x: model.defaultPatchCenter.x,
+      y: model.defaultPatchCenter.y + state.offsetY
+    };
+    const scaleFactor = (state.scalePercent / 100) * model.defaultScale;
+    const rotRad = (state.rotDeg * Math.PI) / 180;
+
+    if (patchImg) {
+      ctx.save();
+      ctx.translate(patchPos.x, patchPos.y);
+      ctx.rotate(rotRad);
+      ctx.scale(scaleFactor, scaleFactor);
+
+      const targetRadius = model.clipRadius;
+
+      // Realistic physical drop shadow under the embroidered patch onto the cap
+      if (state.dropShadow) {
+        ctx.shadowColor = "rgba(18, 16, 16, 0.48)";
+        ctx.shadowBlur = 14;
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 8;
+      } else {
+        ctx.shadowColor = "transparent";
+      }
+
+      if (state.customGraphicImage) {
+        // User custom uploaded graphic
+        const uW = targetRadius * 2;
+        const uH = (patchImg.height / patchImg.width) * uW;
+        ctx.drawImage(patchImg, -uW / 2, -uH / 2, uW, uH);
+      } else if (patchPreset && patchPreset.type === "rounded_rect") {
+        // Rounded rectangle patch (VHS)
+        const rw = targetRadius * 2.2;
+        const rh = targetRadius * 2.1;
+        const rx = -rw / 2;
+        const ry = -rh / 2;
+
+        ctx.beginPath();
+        ctx.roundRect(rx, ry, rw, rh, 30);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+
+        ctx.clip();
+        ctx.shadowColor = "transparent";
+        ctx.drawImage(patchImg, rx, ry, rw, rh);
+      } else {
+        // Circular embroidered patches
+        ctx.beginPath();
+        ctx.arc(0, 0, targetRadius, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+
+        ctx.clip();
+        ctx.shadowColor = "transparent";
+        ctx.drawImage(patchImg, -targetRadius, -targetRadius, targetRadius * 2, targetRadius * 2);
+      }
+
+      ctx.restore();
+    }
+
+    // 4. Superimpose Custom Stitched Arch Text (if entered)
+    if (state.customText) {
+      renderArchedEmbroideryText(state.customText, patchPos.x, patchPos.y - (patchImg ? 155 * scaleFactor : 40), rotRad);
+    }
+
+    updateMetadataLabels();
+  }
+
+  // ---------------------------------------------------------------------------
+  // 5. ARCHED 3D EMBROIDERY TEXT ENGINE
+  // ---------------------------------------------------------------------------
+  function renderArchedEmbroideryText(text, cx, cy, baseRot) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(baseRot);
+
+    const radius = 240;
+    const angleStep = 0.08;
+    const totalAngle = (text.length - 1) * angleStep;
+    const startAngle = -Math.PI / 2 - totalAngle / 2;
+
+    ctx.font = "900 28px 'Bricolage Grotesque', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      const angle = startAngle + i * angleStep;
+      const x = radius * Math.cos(angle);
+      const y = radius * Math.sin(angle) + radius;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle + Math.PI / 2);
+
+      // Thread drop shadow
+      ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+      ctx.fillText(ch, 2, 3);
+
+      // Black thread outline
+      ctx.strokeStyle = "#1c1b1b";
+      ctx.lineWidth = 5;
+      ctx.strokeText(ch, 0, 0);
+
+      // Golden embroidery satin fill
+      ctx.fillStyle = "#fae100";
+      ctx.fillText(ch, 0, 0);
+
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  // ---------------------------------------------------------------------------
+  // 6. EVENT HANDLERS & STATE ACTIONS
+  // ---------------------------------------------------------------------------
+  function setCapModel(modelKey) {
+    if (!CAP_MODELS[modelKey]) return;
+    state.capModel = modelKey;
+    playSound("click");
+
+    document.querySelectorAll(".model-btn").forEach(btn => {
+      btn.classList.remove("neo-btn-yellow", "shadow-[2px_2px_0px_#1c1b1b]");
+      btn.classList.add("neo-btn-white");
+    });
+    const activeBtn = document.getElementById(`model-${modelKey}`);
+    if (activeBtn) {
+      activeBtn.classList.remove("neo-btn-white");
+      activeBtn.classList.add("neo-btn-yellow", "shadow-[2px_2px_0px_#1c1b1b]");
+    }
+
+    // Set default rotation for model
+    state.rotDeg = CAP_MODELS[modelKey].defaultRot;
+    const rotSlider = document.getElementById("patchRotSlider");
+    if (rotSlider) rotSlider.value = state.rotDeg;
+    document.getElementById("rotDisplay").innerText = `${state.rotDeg}°`;
+
+    renderHatScene();
+  }
+
+  function setColorway(colorId) {
+    state.colorwayId = colorId;
+    playSound("click");
+    updateSwatchHighlights();
+    renderHatScene();
+  }
+
+  function setPatch(patchId) {
+    state.patchId = patchId;
+    state.customGraphicImage = null;
+    document.getElementById("uploadStatusText").innerText = "Or upload any custom PNG/JPG logo to superimpose!";
+    playSound("click");
+    updatePatchHighlights();
+    renderHatScene();
+  }
+
+  function handleUserGraphicUpload(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    playSound("click");
+    const reader = new FileReader();
+    reader.onload = evt => {
+      const img = new Image();
+      img.onload = () => {
+        state.customGraphicImage = img;
+        state.patchId = "custom";
+        document.getElementById("uploadStatusText").innerText = `Uploaded: ${file.name.substring(0, 20)}`;
+        updatePatchHighlights();
+        renderHatScene();
+      };
+      img.src = evt.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleCustomTextInput(val) {
+    state.customText = val.toUpperCase().trim();
+    renderHatScene();
+  }
+
+  function clearCustomText() {
+    state.customText = "";
+    document.getElementById("customTextInput").value = "";
+    playSound("click");
+    renderHatScene();
+  }
+
+  function updatePatchScale(val) {
+    state.scalePercent = parseInt(val, 10);
+    document.getElementById("scaleDisplay").innerText = `${val}%`;
+    renderHatScene();
+  }
+
+  function updatePatchOffsetY(val) {
+    state.offsetY = parseInt(val, 10);
+    document.getElementById("offsetYDisplay").innerText = `${val}px`;
+    renderHatScene();
+  }
+
+  function updatePatchRot(val) {
+    state.rotDeg = parseInt(val, 10);
+    document.getElementById("rotDisplay").innerText = `${val}°`;
+    renderHatScene();
+  }
+
+  function resetTuning() {
+    playSound("click");
+    state.scalePercent = 100;
+    state.offsetY = 0;
+    const model = CAP_MODELS[state.capModel] || CAP_MODELS.dad;
+    state.rotDeg = model.defaultRot;
+
+    document.getElementById("patchScaleSlider").value = 100;
+    document.getElementById("patchOffsetYSlider").value = 0;
+    document.getElementById("patchRotSlider").value = state.rotDeg;
+
+    document.getElementById("scaleDisplay").innerText = "100%";
+    document.getElementById("offsetYDisplay").innerText = "0px";
+    document.getElementById("rotDisplay").innerText = `${state.rotDeg}°`;
+
+    renderHatScene();
+  }
+
+  function togglePatchShadow(checked) {
+    state.dropShadow = checked;
+    playSound("click");
+    renderHatScene();
+  }
+
+  function toggleCycLighting(checked) {
+    state.cycLighting = checked;
+    playSound("click");
+    renderHatScene();
+  }
+
+  // ---------------------------------------------------------------------------
+  // 7. SURPRISE DROP (SHUFFLE GENERATOR)
+  // ---------------------------------------------------------------------------
+  function randomizeDrop(withSound = true) {
+    if (withSound) playSound("shuffle");
+
+    // Random model
+    const modelKeys = Object.keys(CAP_MODELS);
+    state.capModel = modelKeys[Math.floor(Math.random() * modelKeys.length)];
+
+    // Random colorway
+    state.colorwayId = DYE_COLORWAYS[Math.floor(Math.random() * DYE_COLORWAYS.length)].id;
+
+    // Random patch (excluding none)
+    const validPatches = PATCH_PRESETS.filter(p => p.id !== "none");
+    state.patchId = validPatches[Math.floor(Math.random() * validPatches.length)].id;
+    state.customGraphicImage = null;
+
+    // Tuning variation
+    state.scalePercent = Math.floor(Math.random() * 30) + 90; // 90 to 120%
+    state.offsetY = Math.floor(Math.random() * 20) - 10; // -10 to +10px
+    const model = CAP_MODELS[state.capModel];
+    state.rotDeg = model.defaultRot + (Math.floor(Math.random() * 8) - 4);
+
+    state.stockCount = Math.floor(Math.random() * 4) + 1;
+    state.batchNum = Math.floor(Math.random() * 80) + 10;
+
+    syncUIFromState();
+    renderHatScene();
+  }
+
+  // ---------------------------------------------------------------------------
+  // 8. METADATA & UI LABELS SYNC
+  // ---------------------------------------------------------------------------
+  function syncUIFromState() {
+    // Model buttons
+    document.querySelectorAll(".model-btn").forEach(btn => {
+      btn.classList.remove("neo-btn-yellow", "shadow-[2px_2px_0px_#1c1b1b]");
+      btn.classList.add("neo-btn-white");
+    });
+    const activeModelBtn = document.getElementById(`model-${state.capModel}`);
+    if (activeModelBtn) {
+      activeModelBtn.classList.remove("neo-btn-white");
+      activeModelBtn.classList.add("neo-btn-yellow", "shadow-[2px_2px_0px_#1c1b1b]");
+    }
+
+    // Sliders
+    document.getElementById("patchScaleSlider").value = state.scalePercent;
+    document.getElementById("scaleDisplay").innerText = `${state.scalePercent}%`;
+
+    document.getElementById("patchOffsetYSlider").value = state.offsetY;
+    document.getElementById("offsetYDisplay").innerText = `${state.offsetY}px`;
+
+    document.getElementById("patchRotSlider").value = state.rotDeg;
+    document.getElementById("rotDisplay").innerText = `${state.rotDeg}°`;
+
+    updateSwatchHighlights();
+    updatePatchHighlights();
+  }
+
+  function updateSwatchHighlights() {
+    document.querySelectorAll(".colorway-swatch").forEach(btn => {
+      const match = btn.dataset.colorId === state.colorwayId;
+      btn.classList.toggle("ring-4", match);
+      btn.classList.toggle("ring-ink", match);
+      btn.classList.toggle("scale-110", match);
+    });
+  }
+
+  function updatePatchHighlights() {
+    document.querySelectorAll(".patch-btn").forEach(btn => {
+      const match = btn.dataset.patchId === state.patchId;
+      btn.classList.toggle("bg-tertiary-yellow", match);
+      btn.classList.toggle("bg-white", !match);
+      btn.classList.toggle("shadow-[2px_2px_0px_#1c1b1b]", match);
+    });
+  }
+
+  function updateMetadataLabels() {
+    const model = CAP_MODELS[state.capModel] || CAP_MODELS.dad;
+    const colorway = DYE_COLORWAYS.find(c => c.id === state.colorwayId) || DYE_COLORWAYS[0];
+    const patch = PATCH_PRESETS.find(p => p.id === state.patchId) || { name: "Custom Artwork", id: "custom" };
+
+    const titleEl = document.getElementById("productTitle");
+    const subTitleEl = document.getElementById("productSubtitle");
+    const skuEl = document.getElementById("productSku");
+    const stockEl = document.getElementById("stockCount");
+    const batchEl = document.getElementById("batchDisplay");
+
+    const dynamicTitle = `THE '94 ${model.name.toUpperCase()} • ${patch.name.toUpperCase()}`;
+    if (titleEl) titleEl.innerText = dynamicTitle;
+    if (subTitleEl) subTitleEl.innerText = `${model.desc} Dyed in ${colorway.name} with real superimposed ${patch.name} embroidered graphics.`;
+    if (skuEl) skuEl.innerText = `SKU: CAP-94-${state.capModel.toUpperCase()}-${patch.id.toUpperCase()}-${colorway.id.toUpperCase()}`;
+    if (stockEl) stockEl.innerText = state.stockCount;
+    if (batchEl) batchEl.innerText = `#0${state.batchNum}`;
+
+    // Spec card
+    document.getElementById("specFabric").innerText = model.fabric;
+    document.getElementById("specPatch").innerText = `${patch.name.toUpperCase()} (MERROWED)`;
+
+    // Telemetry
+    document.getElementById("canvasTelemetrySilhouette").innerText = model.name.toUpperCase();
+    document.getElementById("canvasTelemetryPatch").innerText = `${patch.name.toUpperCase()} // ${colorway.name.toUpperCase()}`;
+
+    document.getElementById("currentSilhouetteLabel").innerText = model.name;
+    document.getElementById("colorwayLabel").innerText = colorway.name;
+    document.getElementById("patchLabel").innerText = patch.name;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 9. CHECKOUT & THERMAL RECEIPT
+  // ---------------------------------------------------------------------------
+  function triggerCheckout() {
+    playSound("buy");
+
+    const model = CAP_MODELS[state.capModel] || CAP_MODELS.dad;
+    const colorway = DYE_COLORWAYS.find(c => c.id === state.colorwayId) || DYE_COLORWAYS[0];
+    const patch = PATCH_PRESETS.find(p => p.id === state.patchId) || { name: "Custom Art" };
+
+    document.getElementById("receiptOrderNum").innerText = `NC-${Math.floor(100000 + Math.random() * 900000)}`;
+    document.getElementById("receiptTimestamp").innerText = new Date().toISOString().replace('T', ' ').substring(0, 19) + " UTC";
+    document.getElementById("receiptItemName").innerText = document.getElementById("productTitle").innerText;
+    document.getElementById("receiptSilhouette").innerText = model.name;
+    document.getElementById("receiptColor").innerText = colorway.name;
+    document.getElementById("receiptPatch").innerText = patch.name;
+    document.getElementById("receiptCustomText").innerText = state.customText || "NONE";
+
+    // Draw barcode
+    const barcodeBox = document.getElementById("receiptBarcode");
+    barcodeBox.innerHTML = "";
+    for (let i = 0; i < 48; i++) {
+      const line = document.createElement("div");
+      line.className = "h-full";
+      line.style.width = (Math.random() > 0.5 ? "3px" : "1.5px");
+      line.style.backgroundColor = (Math.random() > 0.2 ? "#1c1b1b" : "transparent");
+      barcodeBox.appendChild(line);
+    }
+
+    document.getElementById("receiptModal").classList.remove("hidden");
+  }
+
+  function closeReceipt() {
+    playSound("click");
+    document.getElementById("receiptModal").classList.add("hidden");
+  }
+
+  // ---------------------------------------------------------------------------
+  // 10. EXPORT HIGH-RES PRODUCT PHOTO (.PNG)
+  // ---------------------------------------------------------------------------
+  function downloadProductPhoto() {
+    playSound("click");
+    const link = document.createElement("a");
+    link.download = `nostalgia-cap-${state.capModel}-${state.colorwayId}-${state.patchId}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }
+
+  function copyRecipe() {
+    playSound("click");
+    const recipe = `NOSTALGIA-CAP-PHOTO: Silhouette=${state.capModel}, Color=${state.colorwayId}, Patch=${state.patchId}, Scale=${state.scalePercent}%, Text="${state.customText}"`;
+    navigator.clipboard.writeText(recipe).then(() => {
+      const btn = document.getElementById("copyRecipeBtn");
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<span class="material-symbols-outlined text-sm">check</span><span>COPIED!</span>`;
+      btn.classList.add("bg-acid-lime");
+      setTimeout(() => {
+        btn.innerHTML = orig;
+        btn.classList.remove("bg-acid-lime");
+      }, 2000);
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 11. INITIALIZATION & POPULATION
+  // ---------------------------------------------------------------------------
+  function init() {
+    // Populate colorway swatches
+    const swatchContainer = document.getElementById("colorwaySwatches");
+    DYE_COLORWAYS.forEach(c => {
+      const btn = document.createElement("button");
+      btn.className = "colorway-swatch w-7 h-7 border-2 border-ink transition-transform hover:scale-110 relative";
+      btn.dataset.colorId = c.id;
+      btn.title = c.name;
+      if (c.hex) {
+        btn.style.backgroundColor = c.hex;
+      } else {
+        btn.style.background = "linear-gradient(135deg, #ffffff 50%, #e2e8f0 50%)";
+      }
+      btn.onclick = () => setColorway(c.id);
+      swatchContainer.appendChild(btn);
+    });
+
+    // Populate patch buttons
+    const patchContainer = document.getElementById("patchGrid");
+    PATCH_PRESETS.forEach(p => {
+      const btn = document.createElement("button");
+      btn.className = "patch-btn neo-btn text-xs py-2 px-1 flex flex-col items-center gap-0.5 border-2 border-ink";
+      btn.dataset.patchId = p.id;
+      btn.title = `${p.name}: ${p.desc}`;
+      btn.onclick = () => setPatch(p.id);
+      btn.innerHTML = `<span class="text-base leading-none">${p.icon}</span><span class="text-[9px] font-mono font-bold truncate max-w-full">${p.name}</span>`;
+      patchContainer.appendChild(btn);
+    });
+
+    syncUIFromState();
+    renderHatScene();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+</script>
+{% endblock %}
