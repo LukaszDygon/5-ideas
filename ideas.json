@@ -1,5 +1,140 @@
 [
   {
+    "id": 62,
+    "date": "2026-09-22",
+    "theme": "Big Data LDN",
+    "subtitle": "Conference is coming up tomorrow",
+    "streak_count": 1,
+    "notes": "First day back from holiday. 6 hours sleep after long flight. Feeling holiday blues. I have been doing some good work, but feeling quite anxious and it saps my excitement for the Big Data tomorrow. Hopefully this will make me feel more excited.",
+    "created_at": "2026-09-22 20:01:52",
+    "ideas": [
+      {
+        "id": 451,
+        "day_id": 62,
+        "idea_number": 1,
+        "title": "Voice note organiser",
+        "tagline": "Organise the notes against the content",
+        "description": "",
+        "tags": "Organisation, Record-keeping",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 452,
+        "day_id": 62,
+        "idea_number": 2,
+        "title": "Itinerary planner",
+        "tagline": "A skill to build a personalized itinerary",
+        "description": "https://www.bigdataldn.com/en-gb/conference.html#/sessions is where the sessions are. 2 days. There is too many talks to sift through. It should rank which topics I am most interested in, scrape the data, info about the speakers and let me rank/re-rank it using human language",
+        "tags": "Organisation, Automation",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 82,
+          "idea_id": 452,
+          "title": "Itinerary planner",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "Qdrant vector database and agent skill for Big Data LDN conference itinerary planning and ranking.",
+          "content": "https://github.com/LukaszDygon/big-data-ldn",
+          "external_url": "https://github.com/LukaszDygon/big-data-ldn",
+          "time_spent_hours": 1.5,
+          "ai_tools_used": "Antigravity, Qdrant, FastEmbed, Python, uv",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Build & Curation Process",
+              "desc": "Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had another project with a similar setup. Agent scraped the data, deployed qdrant and created a repo, going straight into skill demonstration. I asked it for an itinerary, it generated a decent one, refined it a little bit, made a pdf."
+            }
+          ],
+          "what_rocked": [
+            "The itinerary is actually decent"
+          ],
+          "what_broke": [
+            "The initial idea wanted to make too much custom vector based stuff, and was too swayed by presence of web, even though the idea was explicitly about creating a skill"
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 10 human turns across 575 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: lets just use something ready made like qdrant and run it via Docker. The knowledge building should be separate to the skill th...\n  \u2022 Turn 3: Good except call it \"big-data-ldn\".\n  \u2022 Turn 4: yes\n  \u2022 Turn 5: mostly mlops, using AI in data processes, technologies like dbt and dlt, power and financial sector\n  \u2022 Turn 6: can you make this into a pdf file\n  \u2022 Turn 7: there are few I don't like, mostly around observability and compliance. I would rather keep focused on engineering and architec...\n  \u2022 Turn 8: /record-implementation\n  \u2022 Turn 9: 1. Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had an...\n  \u2022 Turn 10: Remove extra stuff that was added. Use my words from before for the 3 sections I completed. Then push the changes and create th...\n\nTools Executed: run_command (159), manage_task (40), write_to_file (19), schedule (16), view_file (15), find_by_name (3)\nFiles Modified: .gitignore, AGENTS.md, Big_Data_LDN_2026_Itinerary.html, README.md, SKILL.md, __init__.py, app.py, cli.py",
+          "created_at": "2026-09-22 21:39:01"
+        }
+      },
+      {
+        "id": 453,
+        "day_id": 62,
+        "idea_number": 3,
+        "title": "Active AI dictation",
+        "tagline": "Bespoke voice-to-text setup",
+        "description": "There are a lot of things being talked about during conferences. Some of the words are very unusual, domain specific, jargon. A good AI setup will condense knowledge into a template and collect/label different topics. But the most important and hardest thing is accurate voice attribution/transcription. The correct setup would need a custom, frictionless transcription based on the topics discussed",
+        "tags": "",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 454,
+        "day_id": 62,
+        "idea_number": 4,
+        "title": "Big Data LDN Tech Radar",
+        "tagline": "A ranker for the tech discussed across 4 quadrants",
+        "description": "This thing for tech discussed based on the talks https://www.thoughtworks.com/radar",
+        "tags": "Data Visualisation, Ranking",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 455,
+        "day_id": 62,
+        "idea_number": 5,
+        "title": "Company info lookup",
+        "tagline": "Find out who you are about to talk to",
+        "description": "When walking across the booths, you see companies and the social thing is to ask them about what they are doing. But can we just learn and say \"not for me\" or let me prep what I want to waste their time on talking about",
+        "tags": "",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 452,
+      "day_id": 62,
+      "idea_number": 2,
+      "title": "Itinerary planner",
+      "tagline": "A skill to build a personalized itinerary",
+      "description": "https://www.bigdataldn.com/en-gb/conference.html#/sessions is where the sessions are. 2 days. There is too many talks to sift through. It should rank which topics I am most interested in, scrape the data, info about the speakers and let me rank/re-rank it using human language",
+      "tags": "Organisation, Automation",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 82,
+        "idea_id": 452,
+        "title": "Itinerary planner",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "Qdrant vector database and agent skill for Big Data LDN conference itinerary planning and ranking.",
+        "content": "https://github.com/LukaszDygon/big-data-ldn",
+        "external_url": "https://github.com/LukaszDygon/big-data-ldn",
+        "time_spent_hours": 1.5,
+        "ai_tools_used": "Antigravity, Qdrant, FastEmbed, Python, uv",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Build & Curation Process",
+            "desc": "Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had another project with a similar setup. Agent scraped the data, deployed qdrant and created a repo, going straight into skill demonstration. I asked it for an itinerary, it generated a decent one, refined it a little bit, made a pdf."
+          }
+        ],
+        "what_rocked": [
+          "The itinerary is actually decent"
+        ],
+        "what_broke": [
+          "The initial idea wanted to make too much custom vector based stuff, and was too swayed by presence of web, even though the idea was explicitly about creating a skill"
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 10 human turns across 575 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: lets just use something ready made like qdrant and run it via Docker. The knowledge building should be separate to the skill th...\n  \u2022 Turn 3: Good except call it \"big-data-ldn\".\n  \u2022 Turn 4: yes\n  \u2022 Turn 5: mostly mlops, using AI in data processes, technologies like dbt and dlt, power and financial sector\n  \u2022 Turn 6: can you make this into a pdf file\n  \u2022 Turn 7: there are few I don't like, mostly around observability and compliance. I would rather keep focused on engineering and architec...\n  \u2022 Turn 8: /record-implementation\n  \u2022 Turn 9: 1. Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had an...\n  \u2022 Turn 10: Remove extra stuff that was added. Use my words from before for the 3 sections I completed. Then push the changes and create th...\n\nTools Executed: run_command (159), manage_task (40), write_to_file (19), schedule (16), view_file (15), find_by_name (3)\nFiles Modified: .gitignore, AGENTS.md, Big_Data_LDN_2026_Itinerary.html, README.md, SKILL.md, __init__.py, app.py, cli.py",
+        "created_at": "2026-09-22 21:39:01"
+      }
+    }
+  },
+  {
     "id": 61,
     "date": "2026-09-21",
     "theme": "Fashion",
