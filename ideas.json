@@ -9,7 +9,7 @@
     "created_at": "2026-09-22 20:01:52",
     "ideas": [
       {
-        "id": 451,
+        "id": 456,
         "day_id": 62,
         "idea_number": 1,
         "title": "Voice note organiser",
@@ -21,7 +21,7 @@
         "implementation": null
       },
       {
-        "id": 452,
+        "id": 457,
         "day_id": 62,
         "idea_number": 2,
         "title": "Itinerary planner",
@@ -31,8 +31,8 @@
         "icon": "lightbulb",
         "is_implemented": 1,
         "implementation": {
-          "id": 82,
-          "idea_id": 452,
+          "id": 83,
+          "idea_id": 457,
           "title": "Itinerary planner",
           "build_type": "webapp",
           "rank": 1,
@@ -44,8 +44,23 @@
           "process_steps": [
             {
               "step": 1,
-              "title": "Build & Curation Process",
-              "desc": "Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had another project with a similar setup. Agent scraped the data, deployed qdrant and created a repo, going straight into skill demonstration. I asked it for an itinerary, it generated a decent one, refined it a little bit, made a pdf."
+              "title": "Agent Request",
+              "desc": "Asked to create an agent."
+            },
+            {
+              "step": 2,
+              "title": "Repointing Scope",
+              "desc": "Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had another project with a similar setup."
+            },
+            {
+              "step": 3,
+              "title": "Ingestion & Repo Setup",
+              "desc": "Agent scraped the data, deployed qdrant and created a repo, going straight into skill demonstration."
+            },
+            {
+              "step": 4,
+              "title": "Itinerary & PDF Generation",
+              "desc": "I asked it for an itinerary, it generated a decent one, refined it a little bit, made a pdf."
             }
           ],
           "what_rocked": [
@@ -54,12 +69,12 @@
           "what_broke": [
             "The initial idea wanted to make too much custom vector based stuff, and was too swayed by presence of web, even though the idea was explicitly about creating a skill"
           ],
-          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 10 human turns across 575 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: lets just use something ready made like qdrant and run it via Docker. The knowledge building should be separate to the skill th...\n  \u2022 Turn 3: Good except call it \"big-data-ldn\".\n  \u2022 Turn 4: yes\n  \u2022 Turn 5: mostly mlops, using AI in data processes, technologies like dbt and dlt, power and financial sector\n  \u2022 Turn 6: can you make this into a pdf file\n  \u2022 Turn 7: there are few I don't like, mostly around observability and compliance. I would rather keep focused on engineering and architec...\n  \u2022 Turn 8: /record-implementation\n  \u2022 Turn 9: 1. Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had an...\n  \u2022 Turn 10: Remove extra stuff that was added. Use my words from before for the 3 sections I completed. Then push the changes and create th...\n\nTools Executed: run_command (159), manage_task (40), write_to_file (19), schedule (16), view_file (15), find_by_name (3)\nFiles Modified: .gitignore, AGENTS.md, Big_Data_LDN_2026_Itinerary.html, README.md, SKILL.md, __init__.py, app.py, cli.py",
-          "created_at": "2026-09-22 21:39:01"
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 11 human turns across 614 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: lets just use something ready made like qdrant and run it via Docker. The knowledge building should be separate to the skill th...\n  \u2022 Turn 3: Good except call it \"big-data-ldn\".\n  \u2022 Turn 4: yes\n  \u2022 Turn 5: mostly mlops, using AI in data processes, technologies like dbt and dlt, power and financial sector\n  \u2022 Turn 6: can you make this into a pdf file\n  \u2022 Turn 7: there are few I don't like, mostly around observability and compliance. I would rather keep focused on engineering and architec...\n  \u2022 Turn 8: /record-implementation\n  \u2022 Turn 9: 1. Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had an...\n  \u2022 Turn 10: Remove extra stuff that was added. Use my words from before for the 3 sections I completed. Then push the changes and create th...\n  \u2022 Turn 11: just one more adjustment: break the process up into multiple steps\n\nTools Executed: run_command (175), manage_task (41), write_to_file (20), schedule (16), view_file (15), find_by_name (3)\nFiles Modified: .gitignore, AGENTS.md, Big_Data_LDN_2026_Itinerary.html, README.md, SKILL.md, __init__.py, app.py, cli.py",
+          "created_at": "2026-09-22 21:41:45"
         }
       },
       {
-        "id": 453,
+        "id": 458,
         "day_id": 62,
         "idea_number": 3,
         "title": "Active AI dictation",
@@ -71,7 +86,7 @@
         "implementation": null
       },
       {
-        "id": 454,
+        "id": 459,
         "day_id": 62,
         "idea_number": 4,
         "title": "Big Data LDN Tech Radar",
@@ -83,7 +98,7 @@
         "implementation": null
       },
       {
-        "id": 455,
+        "id": 460,
         "day_id": 62,
         "idea_number": 5,
         "title": "Company info lookup",
@@ -96,7 +111,7 @@
       }
     ],
     "implemented_idea": {
-      "id": 452,
+      "id": 457,
       "day_id": 62,
       "idea_number": 2,
       "title": "Itinerary planner",
@@ -106,8 +121,8 @@
       "icon": "lightbulb",
       "is_implemented": 1,
       "implementation": {
-        "id": 82,
-        "idea_id": 452,
+        "id": 83,
+        "idea_id": 457,
         "title": "Itinerary planner",
         "build_type": "webapp",
         "rank": 1,
@@ -119,8 +134,23 @@
         "process_steps": [
           {
             "step": 1,
-            "title": "Build & Curation Process",
-            "desc": "Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had another project with a similar setup. Agent scraped the data, deployed qdrant and created a repo, going straight into skill demonstration. I asked it for an itinerary, it generated a decent one, refined it a little bit, made a pdf."
+            "title": "Agent Request",
+            "desc": "Asked to create an agent."
+          },
+          {
+            "step": 2,
+            "title": "Repointing Scope",
+            "desc": "Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had another project with a similar setup."
+          },
+          {
+            "step": 3,
+            "title": "Ingestion & Repo Setup",
+            "desc": "Agent scraped the data, deployed qdrant and created a repo, going straight into skill demonstration."
+          },
+          {
+            "step": 4,
+            "title": "Itinerary & PDF Generation",
+            "desc": "I asked it for an itinerary, it generated a decent one, refined it a little bit, made a pdf."
           }
         ],
         "what_rocked": [
@@ -129,8 +159,8 @@
         "what_broke": [
           "The initial idea wanted to make too much custom vector based stuff, and was too swayed by presence of web, even though the idea was explicitly about creating a skill"
         ],
-        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 10 human turns across 575 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: lets just use something ready made like qdrant and run it via Docker. The knowledge building should be separate to the skill th...\n  \u2022 Turn 3: Good except call it \"big-data-ldn\".\n  \u2022 Turn 4: yes\n  \u2022 Turn 5: mostly mlops, using AI in data processes, technologies like dbt and dlt, power and financial sector\n  \u2022 Turn 6: can you make this into a pdf file\n  \u2022 Turn 7: there are few I don't like, mostly around observability and compliance. I would rather keep focused on engineering and architec...\n  \u2022 Turn 8: /record-implementation\n  \u2022 Turn 9: 1. Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had an...\n  \u2022 Turn 10: Remove extra stuff that was added. Use my words from before for the 3 sections I completed. Then push the changes and create th...\n\nTools Executed: run_command (159), manage_task (40), write_to_file (19), schedule (16), view_file (15), find_by_name (3)\nFiles Modified: .gitignore, AGENTS.md, Big_Data_LDN_2026_Itinerary.html, README.md, SKILL.md, __init__.py, app.py, cli.py",
-        "created_at": "2026-09-22 21:39:01"
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 11 human turns across 614 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: lets just use something ready made like qdrant and run it via Docker. The knowledge building should be separate to the skill th...\n  \u2022 Turn 3: Good except call it \"big-data-ldn\".\n  \u2022 Turn 4: yes\n  \u2022 Turn 5: mostly mlops, using AI in data processes, technologies like dbt and dlt, power and financial sector\n  \u2022 Turn 6: can you make this into a pdf file\n  \u2022 Turn 7: there are few I don't like, mostly around observability and compliance. I would rather keep focused on engineering and architec...\n  \u2022 Turn 8: /record-implementation\n  \u2022 Turn 9: 1. Asked to create an agent. Had to repoint the idea to not be a web app, and to use Qdrant instead of SQLite, luckily I had an...\n  \u2022 Turn 10: Remove extra stuff that was added. Use my words from before for the 3 sections I completed. Then push the changes and create th...\n  \u2022 Turn 11: just one more adjustment: break the process up into multiple steps\n\nTools Executed: run_command (175), manage_task (41), write_to_file (20), schedule (16), view_file (15), find_by_name (3)\nFiles Modified: .gitignore, AGENTS.md, Big_Data_LDN_2026_Itinerary.html, README.md, SKILL.md, __init__.py, app.py, cli.py",
+        "created_at": "2026-09-22 21:41:45"
       }
     }
   },
