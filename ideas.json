@@ -1,5 +1,162 @@
 [
   {
+    "id": 63,
+    "date": "2026-09-23",
+    "theme": "Big Data LDN learnings Day 1",
+    "subtitle": "Based on the inspiration from the Big Data LDN Conference",
+    "streak_count": 1,
+    "notes": "Nice filling of Data related talks sandwiched between long commutes. Went running with the club, had a pint, lets see what I remember about the Conference",
+    "created_at": "2026-09-23 20:30:47",
+    "ideas": [
+      {
+        "id": 466,
+        "day_id": 63,
+        "idea_number": 1,
+        "title": "Meta-Wiki",
+        "tagline": "Wiki for all the projects managed in one place",
+        "description": "Factory.com allow maintaining a meta-wiki for all the projects, besides doing other awesome stuff. I wish I worked there, but they are US based. Anyway, the idea would be to create a plugin into agentic SDLC that supports maintaining a meta-wiki.",
+        "tags": "Documentation, Data Platform, AI, SDLC",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 467,
+        "day_id": 63,
+        "idea_number": 2,
+        "title": "Token efficient skill stack",
+        "tagline": "Reduce token usage through skills",
+        "description": "There are a lot of skills that promise making LLM token usage more efficient, often while maintaining high efficiency. Today I heard about Code-Graph-RAG, which reminded me of another project called treesitter. There is also Ponytail, Caveman, and probably some others. I want a stack based on the latest community benchmaxxed, token efficient skills.",
+        "tags": "AI, Cost-cutting",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 468,
+        "day_id": 63,
+        "idea_number": 3,
+        "title": "ELT Mini-Framework",
+        "tagline": "Data Engineering Framework with small footprint",
+        "description": "I want to build a small framework that has few built in tools and a schema for defining spec for building a ELT tool, I imagine being able to define input (lets say API source + parameters), defines the target schema, write disposition, backfill date, natural key, and then uploads it to target (for now DuckDB). It should have very small spec and skills to create it first based on the source, then implement it, and validate it.",
+        "tags": "AI, Data Engineering",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 85,
+          "idea_id": 468,
+          "title": "ELT Mini-Framework",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "Lightweight, declarative ELT framework with DuckDB destination, TOML specs, and agent skills.",
+          "content": "",
+          "external_url": "https://github.com/LukaszDygon/elt-mini",
+          "time_spent_hours": 1.5,
+          "ai_tools_used": "Google Antigravity",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Step 1",
+              "desc": "Build an ETL mini pipeline constrained to one source type (API) and one destination (DuckDB) with some nice additions"
+            },
+            {
+              "step": 2,
+              "title": "Step 2",
+              "desc": "Verify it works as expected in general with new pipelines"
+            },
+            {
+              "step": 3,
+              "title": "Step 3",
+              "desc": "Ask to install evaluation tools for the skills, run validation for code quality"
+            }
+          ],
+          "what_rocked": [
+            "We have an actual working ETL based on a spec and with skills that are validated",
+            "It worked for new specs after implementation"
+          ],
+          "what_broke": [
+            "Nothing major, but the skill quality was not perfect."
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 8 human turns across 231 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: This should be in new standalone repositroty. Lets use toml for config. We should have one sample pipeline\n  \u2022 Turn 3: prceed\n  \u2022 Turn 4: can you make 2 more API specs based on some free APIs like the openstreetmaps or Elexon BMRS and run it to verify\n  \u2022 Turn 5: how are the skills? Can we install some dev dependencies to evaluate the skill quality?\n  \u2022 Turn 6: ok sounds decent. Make a repo for the new codebase\n  \u2022 Turn 7: /record-implementation Suggest the steps\n  \u2022 Turn 8: Nah, Okay so lets do steps: 1. Build am ETL mini pipeline constrained to one source type (API) and one destination (DuckDB) wit...\n\nTools Executed: run_command (60), view_file (20), write_to_file (14), replace_file_content (10), find_by_name (3), ask_question (1)\nFiles Modified: .gitignore, README.md, SKILL.md, __init__.py, app.py, cli.py, elexon_frequency.toml, evaluate_skills.py",
+          "created_at": "2026-09-23 21:15:26"
+        }
+      },
+      {
+        "id": 469,
+        "day_id": 63,
+        "idea_number": 4,
+        "title": "AFDocs pre-commit hook",
+        "tagline": "Make the docs here better",
+        "description": "AF Docs promises making AI suitable documentation. I want a loop to make these docs both human and AI readable with AFDocs evalutation",
+        "tags": "Documentation, AI",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 470,
+        "day_id": 63,
+        "idea_number": 5,
+        "title": "Benchmarking Framework",
+        "tagline": "Data Engineering needs more AI benchmarks for evals",
+        "description": "Everything is benchmaxxxed. We need an eval framework for Data Engineering in the industry. I need one for myself. I want as et of tasks in some Project Management framework, so I can test AI + Harness performance on achieving them, with a test suite matching the Acceptance Criteria to evaluate the output on one-shot execution.",
+        "tags": "Benchmarks, Evals, AI",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 468,
+      "day_id": 63,
+      "idea_number": 3,
+      "title": "ELT Mini-Framework",
+      "tagline": "Data Engineering Framework with small footprint",
+      "description": "I want to build a small framework that has few built in tools and a schema for defining spec for building a ELT tool, I imagine being able to define input (lets say API source + parameters), defines the target schema, write disposition, backfill date, natural key, and then uploads it to target (for now DuckDB). It should have very small spec and skills to create it first based on the source, then implement it, and validate it.",
+      "tags": "AI, Data Engineering",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 85,
+        "idea_id": 468,
+        "title": "ELT Mini-Framework",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "Lightweight, declarative ELT framework with DuckDB destination, TOML specs, and agent skills.",
+        "content": "",
+        "external_url": "https://github.com/LukaszDygon/elt-mini",
+        "time_spent_hours": 1.5,
+        "ai_tools_used": "Google Antigravity",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Step 1",
+            "desc": "Build an ETL mini pipeline constrained to one source type (API) and one destination (DuckDB) with some nice additions"
+          },
+          {
+            "step": 2,
+            "title": "Step 2",
+            "desc": "Verify it works as expected in general with new pipelines"
+          },
+          {
+            "step": 3,
+            "title": "Step 3",
+            "desc": "Ask to install evaluation tools for the skills, run validation for code quality"
+          }
+        ],
+        "what_rocked": [
+          "We have an actual working ETL based on a spec and with skills that are validated",
+          "It worked for new specs after implementation"
+        ],
+        "what_broke": [
+          "Nothing major, but the skill quality was not perfect."
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 8 human turns across 231 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: This should be in new standalone repositroty. Lets use toml for config. We should have one sample pipeline\n  \u2022 Turn 3: prceed\n  \u2022 Turn 4: can you make 2 more API specs based on some free APIs like the openstreetmaps or Elexon BMRS and run it to verify\n  \u2022 Turn 5: how are the skills? Can we install some dev dependencies to evaluate the skill quality?\n  \u2022 Turn 6: ok sounds decent. Make a repo for the new codebase\n  \u2022 Turn 7: /record-implementation Suggest the steps\n  \u2022 Turn 8: Nah, Okay so lets do steps: 1. Build am ETL mini pipeline constrained to one source type (API) and one destination (DuckDB) wit...\n\nTools Executed: run_command (60), view_file (20), write_to_file (14), replace_file_content (10), find_by_name (3), ask_question (1)\nFiles Modified: .gitignore, README.md, SKILL.md, __init__.py, app.py, cli.py, elexon_frequency.toml, evaluate_skills.py",
+        "created_at": "2026-09-23 21:15:26"
+      }
+    }
+  },
+  {
     "id": 62,
     "date": "2026-09-22",
     "theme": "Big Data LDN",
