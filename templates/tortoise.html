@@ -1,0 +1,453 @@
+{% extends "base.html" %}
+
+{% block title %}Morty's Caretaker Guide: Eastern Hermann's Daily Sitter Sheet{% endblock %}
+
+{% block content %}
+<style>
+/* Radical Memphis Pop Web Styling */
+.guide-card {
+  background-color: #ffffff;
+  border: 3px solid #1c1b1b;
+  box-shadow: 5px 5px 0px #1c1b1b;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.guide-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 7px 7px 0px #1c1b1b;
+}
+
+.guide-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 2px solid #1c1b1b;
+  box-shadow: 2px 2px 0px #1c1b1b;
+}
+
+/* Dedicated Print Stylesheet */
+@media print {
+  header, footer, .no-print, nav, #navbar {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10.5pt !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .max-w-5xl {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  .guide-card {
+    border: 1.5px solid #000000 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+    margin-bottom: 12px !important;
+    padding: 12px !important;
+  }
+  .guide-pill {
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+  }
+  .print-page-break {
+    page-break-before: always;
+  }
+}
+</style>
+
+<div class="max-w-5xl mx-auto px-4 py-6 flex flex-col gap-6" id="tortoise-guide-root">
+
+  <!-- TOP ACTION BAR (no-print) -->
+  <div class="flex flex-wrap items-center justify-between gap-3 bg-white border-[3px] border-ink p-3 shadow-[4px_4px_0px_#1c1b1b] no-print">
+    <div class="flex items-center gap-2">
+      <a href="/day/2026-09-24" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
+        ← Back to Day 2026-09-24
+      </a>
+      <span class="guide-pill bg-tertiary-yellow text-ink">
+        🐢 Day #1 Prototype • Idea #5
+      </span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="window.print()" class="neo-btn neo-btn-primary text-xs py-1.5 px-4 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">print</span>
+        <span class="font-bold">PRINT THIS SHEET</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO BANNER -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink p-5 sm:p-6 shadow-[6px_6px_0px_#1c1b1b] relative overflow-hidden">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-2.5 py-0.5 font-mono text-xs font-black uppercase mb-2 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          🌿 DAILY SITTER & CARETAKER GUIDE
+        </div>
+        <h1 class="font-display font-black text-3xl sm:text-4xl uppercase tracking-tight leading-none text-white drop-shadow-[2px_2px_0px_#1c1b1b]">
+          Morty's Caretaker Sheet
+        </h1>
+        <p class="font-body text-sm sm:text-base text-white/95 mt-2 max-w-2xl leading-relaxed">
+          Daily care routine, feeding guidelines, and good practices for <strong>Morty the Torty</strong>.
+          Designed as a clear web guide that formats cleanly when printed for friends, family, or pet sitters.
+        </p>
+      </div>
+
+      <!-- Quick Species Badge / Stamp -->
+      <div class="bg-canvas text-ink border-[3px] border-ink p-3 shadow-[3px_3px_0px_#1c1b1b] flex flex-col items-center justify-center min-w-[170px] text-center self-stretch sm:self-auto shrink-0">
+        <div class="text-3xl mb-1">🐢</div>
+        <div class="font-display font-black text-xs uppercase leading-tight">Eastern Hermann's</div>
+        <div class="font-mono text-[10px] text-ink/75 italic">Testudo hermanni boettgeri</div>
+        <span class="inline-block mt-2 bg-acid-lime text-ink font-mono text-[10px] font-bold px-2 py-0.5 border border-ink">
+          Juvenile • No Brumation
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACTS & ESSENTIAL DETAILS -->
+  <div class="guide-card p-5">
+    <div class="flex items-center justify-between border-b-[2px] border-ink pb-3 mb-4">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-magenta">contact_phone</span>
+        <h2 class="font-display font-black text-lg uppercase tracking-tight">Key Contacts & Details</h2>
+      </div>
+      <span class="text-xs font-mono text-ink/70">Indoor Tortoise Table • London</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs font-mono">
+      <div class="p-3 bg-canvas border-[2px] border-ink">
+        <div class="text-ink/60 uppercase font-bold text-[10px] mb-1">Owner Contact</div>
+        <div class="font-bold text-sm text-ink">Lukasz</div>
+        <div class="text-ink/80">+44 7000 000000</div>
+      </div>
+
+      <div class="p-3 bg-canvas border-[2px] border-ink">
+        <div class="text-ink/60 uppercase font-bold text-[10px] mb-1">Reptile Specialist Vet</div>
+        <div class="font-bold text-sm text-ink">Beaumont Sainsbury Animal Hospital</div>
+        <div class="text-ink/80">020 7387 8134 • Royal College St, Camden NW1</div>
+      </div>
+
+      <div class="p-3 bg-canvas border-[2px] border-ink">
+        <div class="text-ink/60 uppercase font-bold text-[10px] mb-1">Life Stage & Winter Rule</div>
+        <div class="font-bold text-sm text-primary-magenta uppercase">Juvenile (No Brumation)</div>
+        <div class="text-ink/80">Keep warm, active, and well-fed all year round</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORE DAILY CARE BEST PRACTICES (4 PILLARS) -->
+  <div class="guide-card p-5">
+    <div class="flex items-center justify-between border-b-[2px] border-ink pb-3 mb-4">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary-cyan">verified</span>
+        <h2 class="font-display font-black text-lg uppercase tracking-tight">Daily Care & Best Practice Protocols</h2>
+      </div>
+      <span class="guide-pill bg-electric-cyan/20 text-ink">4 Care Habits</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      
+      <!-- 1. The 15-Minute Bath -->
+      <div class="border-[2px] border-ink p-4 bg-white flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2 border-b border-ink/15 pb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-xl">🛁</span>
+              <h3 class="font-display font-black text-sm uppercase">1. The 15-Minute Soak & Bath</h3>
+            </div>
+            <span class="guide-pill bg-tertiary-yellow text-ink text-[10px]">Hydration</span>
+          </div>
+
+          <p class="font-body text-xs text-ink leading-relaxed mb-3">
+            Eastern Hermann juveniles absorb moisture and stimulate healthy bowel movements through regular soaks. 
+            Prepare a shallow tray with water level reaching just up to his lower shell bridge (plastron), keeping Morty's head comfortably above water.
+          </p>
+
+          <div class="bg-amber-50/70 border-l-[3px] border-vivid-orange p-2.5 text-xs text-ink space-y-1.5">
+            <div>
+              <strong>Water Temperature:</strong> Must be <strong>lukewarm only</strong> (test on the inside of your wrist like baby water, roughly 28°C–30°C). 
+              Tortoises absorb heat rapidly; water warmer than lukewarm can be fatal.
+            </div>
+            <div class="text-ink/85 italic pt-1">
+              <strong>Normal behavior:</strong> Morty will often scratch enthusiastically at the tub walls trying to explore or climb out. This is completely safe and normal—as long as the water is lukewarm and shallow, let him soak for the full 15 minutes!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Enclosure Misting -->
+      <div class="border-[2px] border-ink p-4 bg-white">
+        <div class="flex items-center justify-between gap-2 mb-2 border-b border-ink/15 pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl">🌧️</span>
+            <h3 class="font-display font-black text-sm uppercase">2. Enclosure Misting</h3>
+          </div>
+          <span class="guide-pill bg-secondary-cyan text-white text-[10px]">Microclimate</span>
+        </div>
+
+        <p class="font-body text-xs text-ink leading-relaxed mb-3">
+          Young tortoises require steady ambient microclimate humidity to ensure smooth shell growth and prevent dehydration.
+        </p>
+
+        <div class="bg-cyan-50/60 border-l-[3px] border-secondary-cyan p-2.5 text-xs text-ink space-y-1.5">
+          <div class="font-bold text-ink">Daily Misting Habit:</div>
+          <ul class="list-disc list-inside space-y-1 leading-normal">
+            <li>Lightly spray the substrate, hide corners, and moss with fresh tap water once each morning.</li>
+            <li>Keep the soil pleasantly damp underneath, not swampy or dripping wet.</li>
+            <li>Morty loves burrowing in slightly damp substrate at night to rest his shell.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 3. Food Portioning & Prep -->
+      <div class="border-[2px] border-ink p-4 bg-white">
+        <div class="flex items-center justify-between gap-2 mb-2 border-b border-ink/15 pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl">🥗</span>
+            <h3 class="font-display font-black text-sm uppercase">3. Feeding & Portioning</h3>
+          </div>
+          <span class="guide-pill bg-acid-lime text-ink text-[10px]">Wet Greens</span>
+        </div>
+
+        <p class="font-body text-xs text-ink leading-relaxed mb-3">
+          As a growing Eastern Hermann juvenile, Morty's digestive tract is built for high-fiber, low-sugar leafy weeds and greens.
+        </p>
+
+        <div class="bg-lime-50/60 border-l-[3px] border-acid-lime p-2.5 text-xs text-ink space-y-1.5">
+          <div>
+            <strong>Volume Rule of Thumb:</strong> Total daily food portion should equal <strong>roughly the volume of Morty's shell</strong>. 
+            Loose, fluffy salad leaves will look much larger in apparent volume before settling onto his feeding slate.
+          </div>
+          <ul class="list-disc list-inside space-y-1 pt-1 leading-normal">
+            <li><strong>Serve Wet:</strong> Lightly mist fresh greens with clean water on his slate to boost daily hydration.</li>
+            <li><strong>Calcium Dusting:</strong> Sprinkle a tiny pinch of pure calcium powder over the greens 2–3 times a week.</li>
+            <li><strong>Fresh Only:</strong> No dried commercial pellets (juvenile choking/impaction risk).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4. Automated Lighting & Climate -->
+      <div class="border-[2px] border-ink p-4 bg-white">
+        <div class="flex items-center justify-between gap-2 mb-2 border-b border-ink/15 pb-1">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl">☀️</span>
+            <h3 class="font-display font-black text-sm uppercase">4. Climate & Automated Timers</h3>
+          </div>
+          <span class="guide-pill bg-primary-magenta text-white text-[10px]">Smart Timer</span>
+        </div>
+
+        <p class="font-body text-xs text-ink leading-relaxed mb-3">
+          Morty's basking lamp and UVA/UVB tube are connected to <strong>automated smart timers</strong> programmed for a daily 12-hour cycle (~08:00 to 20:00).
+          You do <em>not</em> need to flick switches each day.
+        </p>
+
+        <div class="bg-yellow-50/60 border-l-[3px] border-tertiary-yellow p-2.5 text-xs text-ink space-y-1.5">
+          <div class="font-bold text-ink">Built-in Enclosure Thermometer Targets:</div>
+          <div class="grid grid-cols-2 gap-2 font-mono text-[11px] my-1">
+            <div class="bg-white p-1.5 border border-ink">
+              <span class="text-ink/60 block text-[10px]">BASKING SPOT</span>
+              <span class="font-bold text-primary-magenta text-sm">32°C – 35°C</span>
+            </div>
+            <div class="bg-white p-1.5 border border-ink">
+              <span class="text-ink/60 block text-[10px]">COOL END</span>
+              <span class="font-bold text-secondary-cyan text-sm">20°C – 22°C</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-ink/80 leading-normal">
+            <strong>Extreme weather note:</strong> If London has a heatwave and the room exceeds 30°C (pushing enclosure above 35°C), turn off the basking lamp early.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LONDON GROCERY & FEEDING GUIDE -->
+  <div class="guide-card p-5">
+    <div class="flex items-center justify-between border-b-[2px] border-ink pb-3 mb-4">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-magenta">local_grocery_store</span>
+        <h2 class="font-display font-black text-lg uppercase tracking-tight">London Grocery & Feeding Guide</h2>
+      </div>
+      <span class="guide-pill bg-tertiary-yellow text-ink">Food Availability</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      
+      <!-- Supermarkets -->
+      <div class="border-[2px] border-ink p-3 bg-white">
+        <div class="font-display font-black text-xs uppercase mb-1 text-primary-magenta flex items-center gap-1">
+          <span>🛒</span> London Supermarkets
+        </div>
+        <div class="text-[11px] text-ink/60 mb-2">Tesco, Waitrose, M&S, Sainsbury's</div>
+        <ul class="space-y-1.5 text-xs">
+          <li class="flex items-start gap-1.5">
+            <span class="text-acid-lime font-bold">✔</span>
+            <span><strong>Florette "Crispy" Salad Mix:</strong> Frisée, Lamb's Lettuce, Radicchio. The UK keeper emergency staple.</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-acid-lime font-bold">✔</span>
+            <span><strong>Lamb's Lettuce (Corn Salad):</strong> Soft, high moisture, universally loved.</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-acid-lime font-bold">✔</span>
+            <span><strong>Chicory & Radicchio:</strong> High fiber, great calcium-to-phosphorus ratio.</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-amber-500 font-bold">~</span>
+            <span><strong>Rocket & Watercress:</strong> Good occasional mix-ins (feed in moderation).</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Local Grocers -->
+      <div class="border-[2px] border-ink p-3 bg-white">
+        <div class="font-display font-black text-xs uppercase mb-1 text-secondary-cyan flex items-center gap-1">
+          <span>🏪</span> Local Greengrocers
+        </div>
+        <div class="text-[11px] text-ink/60 mb-2">Turkish / Mediterranean Markets</div>
+        <ul class="space-y-1.5 text-xs">
+          <li class="flex items-start gap-1.5">
+            <span class="text-acid-lime font-bold">✔</span>
+            <span><strong>Radika (Dandelion Greens):</strong> Fresh bunches sold in Green Lanes, Dalston, Hackney grocers. Best natural food!</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-acid-lime font-bold">✔</span>
+            <span><strong>Grape Vine Leaves:</strong> Fresh untreated leaves, exceptional dietary fiber.</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-acid-lime font-bold">✔</span>
+            <span><strong>Opuntia Cactus Pads (Nopales):</strong> Spineless prickly pear pads from Latin/specialist shops.</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Leave Out -->
+      <div class="border-[2px] border-ink p-3 bg-red-50/40">
+        <div class="font-display font-black text-xs uppercase mb-1 text-red-600 flex items-center gap-1">
+          <span>🚫</span> Leave Out (Not Suitable)
+        </div>
+        <div class="text-[11px] text-ink/60 mb-2">Foods to completely bypass</div>
+        <ul class="space-y-1.5 text-xs">
+          <li class="flex items-start gap-1.5">
+            <span class="text-red-500 font-bold">✕</span>
+            <span><strong>Fruit & Berries:</strong> Eastern Hermanns cannot digest sugars (causes gut fermentation & worms).</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-red-500 font-bold">✕</span>
+            <span><strong>Iceberg Lettuce:</strong> Zero nutrition, can cause watery diarrhea.</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-red-500 font-bold">✕</span>
+            <span><strong>Spinach & Chard:</strong> High oxalates bind essential calcium.</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <span class="text-red-500 font-bold">✕</span>
+            <span><strong>Cabbage / Broccoli:</strong> Heavy brassicas disrupt thyroid function.</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- The Tortoise Table Callout -->
+    <div class="bg-tertiary-yellow/20 border-[2px] border-ink p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+      <div>
+        <div class="font-bold uppercase font-display text-ink mb-0.5">
+          Gold Standard Database: The Tortoise Table
+        </div>
+        <p class="text-ink/90 leading-relaxed">
+          Planning to feed wild garden weeds or any unfamiliar plant? 
+          Always check <strong>The Tortoise Table</strong> (<a href="https://www.thetortoisetable.org.uk/" target="_blank" rel="noopener" class="underline font-bold text-primary-magenta hover:text-ink">thetortoisetable.org.uk</a>), the UK's definitive traffic-light guide. Safe plants are coded with a green light.
+        </p>
+      </div>
+      <a href="https://www.thetortoisetable.org.uk/plant-database/" target="_blank" rel="noopener" class="neo-btn neo-btn-white text-xs py-1 px-3 shrink-0 no-print">
+        Visit Database ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- DAILY ROUTINE CHECKLIST -->
+  <div class="guide-card p-5">
+    <div class="flex items-center justify-between border-b-[2px] border-ink pb-3 mb-3">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-ink">checklist</span>
+        <h2 class="font-display font-black text-lg uppercase tracking-tight">Daily Caretaker Routine</h2>
+      </div>
+      <span class="text-xs font-mono text-ink/70">Checklist Sequence</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 font-body text-xs">
+      <div class="p-3 border border-ink bg-white flex items-start gap-2.5">
+        <span class="font-mono font-bold text-primary-magenta text-sm">01</span>
+        <div>
+          <div class="font-bold text-ink">Morning Lights</div>
+          <div class="text-ink/70 text-[11px]">Check automated lamps turned on (~08:00).</div>
+        </div>
+      </div>
+
+      <div class="p-3 border border-ink bg-white flex items-start gap-2.5">
+        <span class="font-mono font-bold text-primary-magenta text-sm">02</span>
+        <div>
+          <div class="font-bold text-ink">15-Minute Soak</div>
+          <div class="text-ink/70 text-[11px]">Lukewarm shallow bath (wrist-tested, scratching is normal).</div>
+        </div>
+      </div>
+
+      <div class="p-3 border border-ink bg-white flex items-start gap-2.5">
+        <span class="font-mono font-bold text-primary-magenta text-sm">03</span>
+        <div>
+          <div class="font-bold text-ink">Enclosure Misting</div>
+          <div class="text-ink/70 text-[11px]">Light spray of substrate & hide with fresh water.</div>
+        </div>
+      </div>
+
+      <div class="p-3 border border-ink bg-white flex items-start gap-2.5">
+        <span class="font-mono font-bold text-primary-magenta text-sm">04</span>
+        <div>
+          <div class="font-bold text-ink">Feed Wet Greens</div>
+          <div class="text-ink/70 text-[11px]">Shell-volume portion misted wet + pinch of calcium.</div>
+        </div>
+      </div>
+
+      <div class="p-3 border border-ink bg-white flex items-start gap-2.5">
+        <span class="font-mono font-bold text-primary-magenta text-sm">05</span>
+        <div>
+          <div class="font-bold text-ink">Check Thermometer</div>
+          <div class="text-ink/70 text-[11px]">Basking zone ~32–35°C / Cool zone ~20–22°C.</div>
+        </div>
+      </div>
+
+      <div class="p-3 border border-ink bg-white flex items-start gap-2.5">
+        <span class="font-mono font-bold text-primary-magenta text-sm">06</span>
+        <div>
+          <div class="font-bold text-ink">Evening Lights Off</div>
+          <div class="text-ink/70 text-[11px]">Verify timer switched lights off (~20:00).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT ACTION & FOOTER (no-print) -->
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-tertiary-yellow border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] no-print">
+    <div class="text-xs font-mono text-ink">
+      <strong>Handing off to a sitter?</strong> Click Print or press <kbd class="px-1 py-0.5 bg-white border border-ink font-bold">Cmd+P</kbd> / <kbd class="px-1 py-0.5 bg-white border border-ink font-bold">Ctrl+P</kbd> to print this sheet cleanly.
+    </div>
+    <button onclick="window.print()" class="neo-btn neo-btn-primary text-xs py-1.5 px-4 flex items-center gap-1.5 shrink-0">
+      <span class="material-symbols-outlined text-sm">print</span>
+      <span class="font-bold">PRINT THIS SHEET</span>
+    </button>
+  </div>
+
+  <div class="text-center font-mono text-xs text-ink/60 py-2 no-print">
+    5 IDEAS DAILY SHOWCASE • 2026-09-24 • SHIPPED PROTOTYPE: MORTY'S CARETAKER SHEET
+  </div>
+
+</div>
+{% endblock %}

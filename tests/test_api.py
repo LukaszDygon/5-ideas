@@ -139,12 +139,25 @@ def test_interactive_mcnuggets_view(client):
 def test_interactive_nostalgia_cap_view(client):
     response = client.get("/interactive/nostalgia-cap")
     assert response.status_code == 200
-    assert "NOSTALGIA CAP-O-MATIC" in response.text
+    assert "Nostalgia Cap-o-Matic '99" in response.text
     assert "hatCanvas" in response.text
     assert "SURPRISE DROP" in response.text
     assert "Radical Magenta" in response.text
     assert "Synthwave Sunset" in response.text
     assert "receiptModal" in response.text
+
+
+def test_interactive_tortoise_view(client):
+    response = client.get("/interactive/tortoise")
+    assert response.status_code == 200
+    assert "Morty's Caretaker Sheet" in response.text
+    assert "Eastern Hermann's" in response.text
+    assert "The 15-Minute Soak" in response.text
+    assert "Enclosure Misting" in response.text
+    assert "Florette" in response.text
+    assert "The Tortoise Table" in response.text
+    assert "checklist" in response.text.lower()
+
 
 
 

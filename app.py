@@ -249,6 +249,17 @@ async def interactive_slots1v1(request: Request):
     )
 
 
+@app.get("/interactive/tortoise", response_class=HTMLResponse)
+async def interactive_tortoise(request: Request):
+    """Morty's Caretaker Handover Sheet & Daily Sitter Guide."""
+    return templates.TemplateResponse(
+        request=request,
+        name="tortoise.html",
+        context={},
+    )
+
+
+
 @app.get("/interactive/house-stats", response_class=HTMLResponse)
 async def interactive_house_stats(request: Request):
     """Interactive House Statistics and property intelligence dossier generator."""
