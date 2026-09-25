@@ -1,5 +1,170 @@
 [
   {
+    "id": 65,
+    "date": "2026-09-25",
+    "theme": "Power, Energy Data",
+    "subtitle": "Projects to do with Energy Data",
+    "streak_count": 1,
+    "notes": "Pretty busy day today. Chinese mid-autumn festival, too! Hot pot and moon cakes for dinner. Thinking about how it's barely calendar Autumn.",
+    "created_at": "2026-09-25 21:26:25",
+    "ideas": [
+      {
+        "id": 501,
+        "day_id": 65,
+        "idea_number": 1,
+        "title": "DuckDB hoard",
+        "tagline": "An ELT playground for Power Data",
+        "description": "Store a bunch of data from open sources in DuckDB and explore it using notebook-embedded skills. I want to use a good modern notebook + AI solution to do this. The idea is to build a lightweight DBT catalog and a full pipeline project. Maybe starting with Elexon BMRS data, and energy price data (UK) building vocabulary, etc. over the data and getting some visualisations",
+        "tags": "ELT, Database",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 91,
+          "idea_id": 501,
+          "title": "Power Desk",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "Minimalist analyst dashboard for UK power & energy data with DuckDB, dlt ELT pipeline, and DAG lineage.",
+          "content": "/",
+          "external_url": "../power-desk",
+          "time_spent_hours": 4.0,
+          "ai_tools_used": "dlt, DuckDB, FastAPI, GridStack.js, Cytoscape.js, Chart.js, Antigravity",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Spec Refinement",
+              "desc": "Did few rounds of spec refinement to inject some of my preexisting knoledge and avoid generic look"
+            },
+            {
+              "step": 2,
+              "title": "Dashboard Creation",
+              "desc": "One shot created a dashboards, but the data was for 2024 for some reason"
+            },
+            {
+              "step": 3,
+              "title": "ELT Refinement",
+              "desc": "Refined the ELT bit of the codebase, to backfill the data"
+            },
+            {
+              "step": 4,
+              "title": "Schema Debugging",
+              "desc": "Few rounds of debugging schema issues. All good in the end"
+            }
+          ],
+          "what_rocked": [
+            "Genuine one shot of a working PoC on a quite complicated, multi-fasceted task"
+          ],
+          "what_broke": [
+            "Not so unique, this design. Some color issues. Some data never gets materialised in marts"
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 11 human turns across 517 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: the design should be minimalist analyst dashboard. Don't use this repo. Create a new repo in parent folder, named 'power-desk' ...\n  \u2022 Turn 3: for the dlt, I want the raw data values to be preserved, no custom row processing. That happens in DBT. It should be incrementa...\n  \u2022 Turn 4: ok that sounds good. Make sure to record the progress in an MD planning file, so you don't get lost (since this task is best to...\n  \u2022 Turn 5: how do I run a dlt backfill?\n  \u2022 Turn 6: the source should be incremental, which means it should run until the data ends and store the pointer to the latest value (for ...\n  \u2022 Turn 7: dlt cannot update tables ['_dlt_version', 'raw_demand_forecast', 'raw_fuelinst', 'raw_itsdo', 'raw_windfor', '_dlt_pipeline_sta...\n  \u2022 Turn 8: can we do full refresh for the new schema then?\n  \u2022 Turn 9: doesn't dlt just have a --refresh drop_source option for the pipelines?\n  \u2022 Turn 10: /record-implementation\n  \u2022 Turn 11: Don't change these: 1. * Did few rounds of spec refinement to inject some of my preexisting knoledge and avoid generic look * O...\n\nTools Executed: run_command (136), view_file (43), write_to_file (38), replace_file_content (20), find_by_name (3), ask_question (2)\nFiles Modified: .gitignore, .python-version, PLAN.md, README.md, SKILL.md, __init__.py, app.py, backfill.py",
+          "created_at": "2026-09-25 22:26:15"
+        }
+      },
+      {
+        "id": 502,
+        "day_id": 65,
+        "idea_number": 2,
+        "title": "Map of electric power plants",
+        "tagline": "Power plants, plotted, discoverable on the map",
+        "description": "I want to see Power plants in Europe + UK on a map. It would be good to get a clear representation, some way of representing important dimensions, like production volumes, type, active/inactive, etc. in an intuitive, visual way that is clear, not too busy (think clustering points that overlap, unclustering when zooming in)",
+        "tags": "Visualisation",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 503,
+        "day_id": 65,
+        "idea_number": 3,
+        "title": "Weather and renewable production",
+        "tagline": "ML model to predict renewable energy production from weather",
+        "description": "Weather affects renewables and their production. I want a model that given weather in various places, can predict the production based on historical data. We want to probably create a dataset from weather data and renewable production data with some geo-location specific data, and then do the classic ML stuff to predict the future (with validation dataset). Would be good to understand feature importance. Optimiser too",
+        "tags": "ML",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 504,
+        "day_id": 65,
+        "idea_number": 4,
+        "title": "Energy price compare",
+        "tagline": "Compare energy prices from different providers",
+        "description": "Do this over time, for the UK market",
+        "tags": "Finance, Web App",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 505,
+        "day_id": 65,
+        "idea_number": 5,
+        "title": "Energy trading primer",
+        "tagline": "A guide to trading energy",
+        "description": "An Energy trading guide, with vivid examples, condensed from authoritative resources. It should be clear, with some examples of what types of strategies are possible, with a possible simulation of outcomes, to show the expectation for each different one",
+        "tags": "Documentation, Learning",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 501,
+      "day_id": 65,
+      "idea_number": 1,
+      "title": "DuckDB hoard",
+      "tagline": "An ELT playground for Power Data",
+      "description": "Store a bunch of data from open sources in DuckDB and explore it using notebook-embedded skills. I want to use a good modern notebook + AI solution to do this. The idea is to build a lightweight DBT catalog and a full pipeline project. Maybe starting with Elexon BMRS data, and energy price data (UK) building vocabulary, etc. over the data and getting some visualisations",
+      "tags": "ELT, Database",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 91,
+        "idea_id": 501,
+        "title": "Power Desk",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "Minimalist analyst dashboard for UK power & energy data with DuckDB, dlt ELT pipeline, and DAG lineage.",
+        "content": "/",
+        "external_url": "../power-desk",
+        "time_spent_hours": 4.0,
+        "ai_tools_used": "dlt, DuckDB, FastAPI, GridStack.js, Cytoscape.js, Chart.js, Antigravity",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Spec Refinement",
+            "desc": "Did few rounds of spec refinement to inject some of my preexisting knoledge and avoid generic look"
+          },
+          {
+            "step": 2,
+            "title": "Dashboard Creation",
+            "desc": "One shot created a dashboards, but the data was for 2024 for some reason"
+          },
+          {
+            "step": 3,
+            "title": "ELT Refinement",
+            "desc": "Refined the ELT bit of the codebase, to backfill the data"
+          },
+          {
+            "step": 4,
+            "title": "Schema Debugging",
+            "desc": "Few rounds of debugging schema issues. All good in the end"
+          }
+        ],
+        "what_rocked": [
+          "Genuine one shot of a working PoC on a quite complicated, multi-fasceted task"
+        ],
+        "what_broke": [
+          "Not so unique, this design. Some color issues. Some data never gets materialised in marts"
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 11 human turns across 517 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: the design should be minimalist analyst dashboard. Don't use this repo. Create a new repo in parent folder, named 'power-desk' ...\n  \u2022 Turn 3: for the dlt, I want the raw data values to be preserved, no custom row processing. That happens in DBT. It should be incrementa...\n  \u2022 Turn 4: ok that sounds good. Make sure to record the progress in an MD planning file, so you don't get lost (since this task is best to...\n  \u2022 Turn 5: how do I run a dlt backfill?\n  \u2022 Turn 6: the source should be incremental, which means it should run until the data ends and store the pointer to the latest value (for ...\n  \u2022 Turn 7: dlt cannot update tables ['_dlt_version', 'raw_demand_forecast', 'raw_fuelinst', 'raw_itsdo', 'raw_windfor', '_dlt_pipeline_sta...\n  \u2022 Turn 8: can we do full refresh for the new schema then?\n  \u2022 Turn 9: doesn't dlt just have a --refresh drop_source option for the pipelines?\n  \u2022 Turn 10: /record-implementation\n  \u2022 Turn 11: Don't change these: 1. * Did few rounds of spec refinement to inject some of my preexisting knoledge and avoid generic look * O...\n\nTools Executed: run_command (136), view_file (43), write_to_file (38), replace_file_content (20), find_by_name (3), ask_question (2)\nFiles Modified: .gitignore, .python-version, PLAN.md, README.md, SKILL.md, __init__.py, app.py, backfill.py",
+        "created_at": "2026-09-25 22:26:15"
+      }
+    }
+  },
+  {
     "id": 64,
     "date": "2026-09-24",
     "theme": "Tortoise",
