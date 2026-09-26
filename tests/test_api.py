@@ -159,7 +159,17 @@ def test_interactive_tortoise_view(client):
     assert "checklist" in response.text.lower()
 
 
-
+def test_interactive_table_steamer_view(client):
+    response = client.get("/interactive/table-steamer")
+    assert response.status_code == 200
+    assert "The Communal Table Steamer" in response.text
+    assert "table_steamer_setup.jpg" in response.text
+    assert "Classic Juicy Pork & Garlic Chive" in response.text
+    assert "Spiced Cumin Beef & Sweet Onion" in response.text
+    assert "Ginger Lemongrass Chicken & Shiitake" in response.text
+    assert "Golden Tofu, Kimchi & Garlic Greens" in response.text
+    assert "Starch Retrogradation" in response.text
+    assert "Myosin Extraction" in response.text
 
 
 def test_api_get_days(client):

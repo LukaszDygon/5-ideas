@@ -321,6 +321,17 @@ async def interactive_nostalgia_cap(request: Request):
     )
 
 
+@app.get("/interactive/table-steamer", response_class=HTMLResponse)
+async def interactive_table_steamer(request: Request):
+    """The Communal Table Steamer: 4-person hosting blueprint and food science dossier."""
+    return templates.TemplateResponse(
+        request=request,
+        name="table_steamer.html",
+        context={},
+    )
+
+
+
 
 
 @app.post("/api/house-stats/parse-url")

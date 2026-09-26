@@ -1,5 +1,160 @@
 [
   {
+    "id": 66,
+    "date": "2026-09-26",
+    "theme": "Dumpling fusion",
+    "subtitle": "Ideas for a dumpling fusion dish",
+    "streak_count": 1,
+    "notes": "Spent the day playing Yakuza, then had some friends over for Bend It Like Beckham",
+    "created_at": "2026-09-26 22:49:26",
+    "ideas": [
+      {
+        "id": 526,
+        "day_id": 66,
+        "idea_number": 1,
+        "title": "Pierogi with stewed meat",
+        "tagline": "Pierogi with stewed meat",
+        "description": "",
+        "tags": "Pierogi, Meat",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 527,
+        "day_id": 66,
+        "idea_number": 2,
+        "title": "Table steamer, dumplings made at the table",
+        "tagline": "A steamer for communal style dumpling assembly and cooking",
+        "description": "",
+        "tags": "Chinese Dumplings, Hotpot",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 95,
+          "idea_id": 527,
+          "title": "The Communal Table Steamer",
+          "build_type": "webapp",
+          "rank": 1,
+          "summary": "A practical 4-person guide to making and steaming fresh dumplings together at the dinner table with 4 easy fillings and food science tips.",
+          "content": "/interactive/table-steamer",
+          "external_url": "/interactive/table-steamer",
+          "time_spent_hours": 1.0,
+          "ai_tools_used": "FastAPI, Jinja2, Tailwind CSS, Python 3.13, Imagen 3, Antigravity",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Idea Inception",
+              "desc": "Come up with the idea"
+            },
+            {
+              "step": 2,
+              "title": "Scope Restraint",
+              "desc": "Stop AI from trying to make a whole ass web app with steaming simulation"
+            },
+            {
+              "step": 3,
+              "title": "Tone Grounding",
+              "desc": "Change the language so it doesn't sound like it's for cybernetic douchebags"
+            }
+          ],
+          "what_rocked": [
+            "It somehow understood the spec and made some good points I haven't considered"
+          ],
+          "what_broke": [
+            "The photo is unrealistic, doesn't conform to the text on it. The advice is a bit suspect."
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 7 human turns across 116 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: this doesn't really need any controls. Just do this for a 4 person setup. It's scalable enough.\n  \u2022 Turn 3: Give at least 4 different easy filling ideas, with some addons that are optionally put with the filling in the wrapper\n  \u2022 Turn 4: otherwise continue\n  \u2022 Turn 5: stop with this kind of language \"TABLE TOPOGRAPHY // 4-DINER ERGONOMIC ARCHITECTURE\". It should be written concisely for humans...\n  \u2022 Turn 6: /record-implementation\n  \u2022 Turn 7: 1. Come up with the ide Stop AI from trying to make a whole ass web app with steaming simulation Change the language so it does...\n\nTools Executed: view_file (21), run_command (19), replace_file_content (5), ask_question (2), write_to_file (2), find_by_name (1)\nFiles Modified: README.md, app.py, base.html, build_static.py, db.py, ideas.json, mcnuggets.html, save_implementation.py",
+          "created_at": "2026-09-26 23:14:30"
+        }
+      },
+      {
+        "id": 528,
+        "day_id": 66,
+        "idea_number": 3,
+        "title": "Calzone Kebab",
+        "tagline": "Turkish pizza filled with meat folded into a dumpling",
+        "description": "",
+        "tags": "Calzone, Turkish",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 529,
+        "day_id": 66,
+        "idea_number": 4,
+        "title": "Soup dumpling meal prep",
+        "tagline": "Few soups, few dumplings, many combos",
+        "description": "",
+        "tags": "Soup dumplings, Uszka, Soups",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 530,
+        "day_id": 66,
+        "idea_number": 5,
+        "title": "Samosa Sunday Roast",
+        "tagline": "Sunday Toast ingeredients in a crusty Indian samosa",
+        "description": "",
+        "tags": "Samosa, English",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 527,
+      "day_id": 66,
+      "idea_number": 2,
+      "title": "Table steamer, dumplings made at the table",
+      "tagline": "A steamer for communal style dumpling assembly and cooking",
+      "description": "",
+      "tags": "Chinese Dumplings, Hotpot",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 95,
+        "idea_id": 527,
+        "title": "The Communal Table Steamer",
+        "build_type": "webapp",
+        "rank": 1,
+        "summary": "A practical 4-person guide to making and steaming fresh dumplings together at the dinner table with 4 easy fillings and food science tips.",
+        "content": "/interactive/table-steamer",
+        "external_url": "/interactive/table-steamer",
+        "time_spent_hours": 1.0,
+        "ai_tools_used": "FastAPI, Jinja2, Tailwind CSS, Python 3.13, Imagen 3, Antigravity",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Idea Inception",
+            "desc": "Come up with the idea"
+          },
+          {
+            "step": 2,
+            "title": "Scope Restraint",
+            "desc": "Stop AI from trying to make a whole ass web app with steaming simulation"
+          },
+          {
+            "step": 3,
+            "title": "Tone Grounding",
+            "desc": "Change the language so it doesn't sound like it's for cybernetic douchebags"
+          }
+        ],
+        "what_rocked": [
+          "It somehow understood the spec and made some good points I haven't considered"
+        ],
+        "what_broke": [
+          "The photo is unrealistic, doesn't conform to the text on it. The advice is a bit suspect."
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 7 human turns across 116 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: this doesn't really need any controls. Just do this for a 4 person setup. It's scalable enough.\n  \u2022 Turn 3: Give at least 4 different easy filling ideas, with some addons that are optionally put with the filling in the wrapper\n  \u2022 Turn 4: otherwise continue\n  \u2022 Turn 5: stop with this kind of language \"TABLE TOPOGRAPHY // 4-DINER ERGONOMIC ARCHITECTURE\". It should be written concisely for humans...\n  \u2022 Turn 6: /record-implementation\n  \u2022 Turn 7: 1. Come up with the ide Stop AI from trying to make a whole ass web app with steaming simulation Change the language so it does...\n\nTools Executed: view_file (21), run_command (19), replace_file_content (5), ask_question (2), write_to_file (2), find_by_name (1)\nFiles Modified: README.md, app.py, base.html, build_static.py, db.py, ideas.json, mcnuggets.html, save_implementation.py",
+        "created_at": "2026-09-26 23:14:30"
+      }
+    }
+  },
+  {
     "id": 65,
     "date": "2026-09-25",
     "theme": "Power, Energy Data",
