@@ -331,6 +331,16 @@ async def interactive_table_steamer(request: Request):
     )
 
 
+@app.get("/interactive/crusade-trail", response_class=HTMLResponse)
+async def interactive_crusade_trail(request: Request):
+    """The Crusade Trail: Authentic cartographic explorer tracing the overland First Crusade (1096-1099)."""
+    return templates.TemplateResponse(
+        request=request,
+        name="crusade_trail.html",
+        context={},
+    )
+
+
 
 
 

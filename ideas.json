@@ -1,5 +1,172 @@
 [
   {
+    "id": 67,
+    "date": "2026-09-27",
+    "theme": "European Holidays",
+    "subtitle": "Ideas for European holidays",
+    "streak_count": 1,
+    "notes": "",
+    "created_at": "2026-09-28 07:35:14",
+    "ideas": [
+      {
+        "id": 541,
+        "day_id": 67,
+        "idea_number": 1,
+        "title": "Interrail",
+        "tagline": "See villages and cities of France, Germany, Italy",
+        "description": "Travel across Europe by train, exploring villages and cities through France, Germany, and Italy.",
+        "tags": "Travel, Rail, Europe",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 542,
+        "day_id": 67,
+        "idea_number": 2,
+        "title": "E route through-hiking",
+        "tagline": "Probably Scandinavia to Turkey",
+        "description": "Trek along European long-distance paths (E-routes), through-hiking from Scandinavia down to Turkey.",
+        "tags": "Hiking, Outdoors, Adventure",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 543,
+        "day_id": 67,
+        "idea_number": 3,
+        "title": "Crusade trail",
+        "tagline": "Follow historic pilgrimage to the Holy Land",
+        "description": "Follow the historic pilgrimage route across Europe towards the Holy Land.",
+        "tags": "History, Pilgrimage, Trail",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 97,
+          "idea_id": 543,
+          "title": "Iter Hierosolymitanum: The Crusade Trail Explorer",
+          "build_type": "interactive",
+          "rank": 1,
+          "summary": "An authentic vintage cartographic explorer tracing the ~4,200 km overland First Crusade and medieval pilgrimage trail from Western Europe to Jerusalem, complete with historical dossiers, medieval lore, logistics, and surviving landmarks.",
+          "content": "/interactive/crusade-trail",
+          "external_url": "/interactive/crusade-trail",
+          "time_spent_hours": 1.5,
+          "ai_tools_used": "HTML5 Canvas, Vanilla JS, Natural Earth 50m/110m GeoJSON, Google Fonts (Cinzel, EB Garamond), FastAPI, Python 3.13, Antigravity",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Handwritten Spark Generation",
+              "desc": "Write things on paper"
+            },
+            {
+              "step": 2,
+              "title": "AI OCR Ingestion",
+              "desc": "Feed into AI. It was good at decoding my handwriting!"
+            },
+            {
+              "step": 3,
+              "title": "Zero-Friction Entry Logging",
+              "desc": "Generate the entry for today from OCR, I didn't want to do data entry"
+            },
+            {
+              "step": 4,
+              "title": "Spec Correction & Ship",
+              "desc": "Minor correction to implementation plan, et voila"
+            }
+          ],
+          "what_rocked": [
+            "OCR was amazing",
+            "The look of cartographer style app is decent"
+          ],
+          "what_broke": [
+            "The map looks a bit weird, scroll to zoom doesn't work properly (fixed: restored full topological land rings, layered crisp 50m coastline linework, and implemented smooth exponential trackpad/mouse-wheel zoom)"
+          ],
+          "prompt_transcript": "Genesis Prompt: \"Can you create an entry for 27/9/2026 based on a photo /Users/lukaszdygon/Downloads/20260928_081245.jpg\"\nInteraction Turns: 6 human turns across 247 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: /spec-implementation 27-09-2026\n  \u2022 Turn 3: no animation neededd, just an interactive map with facts about history. It should be cartography font/feel, not Memphis\n  \u2022 Turn 4: yes\n  \u2022 Turn 5: /record-implementation\n  \u2022 Turn 6: 1. Write things on paper Feed into AI. It was good at decoding my handwriting! Generate the entry for today from OCR, I didn't ...\n\nTools Executed: run_command (52), view_file (46), replace_file_content (7), find_by_name (6), grep_search (3), ask_question (2)\nFiles Modified: 20260928_081245.jpg, README.md, SKILL.md, admin.py, app.py, base.html, build_static.py, crusade_trail.html",
+          "created_at": "2026-09-28 08:19:39"
+        }
+      },
+      {
+        "id": 544,
+        "day_id": 67,
+        "idea_number": 4,
+        "title": "Paragliding in the Alps",
+        "tagline": "Paraglide with a backpack, landing and camping in remote mountains, monasteries",
+        "description": "Hike-and-fly in the Alps: paraglide with a backpack, landing and camping in remote mountains and monasteries.",
+        "tags": "Paragliding, Alps, Camping",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 545,
+        "day_id": 67,
+        "idea_number": 5,
+        "title": "Learn cooking in French Village",
+        "tagline": "Few weeks, forage, fish, cook.",
+        "description": "Spend a few weeks in a French village to forage, fish, and master local cooking.",
+        "tags": "Cooking, Culinary, France",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 543,
+      "day_id": 67,
+      "idea_number": 3,
+      "title": "Crusade trail",
+      "tagline": "Follow historic pilgrimage to the Holy Land",
+      "description": "Follow the historic pilgrimage route across Europe towards the Holy Land.",
+      "tags": "History, Pilgrimage, Trail",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 97,
+        "idea_id": 543,
+        "title": "Iter Hierosolymitanum: The Crusade Trail Explorer",
+        "build_type": "interactive",
+        "rank": 1,
+        "summary": "An authentic vintage cartographic explorer tracing the ~4,200 km overland First Crusade and medieval pilgrimage trail from Western Europe to Jerusalem, complete with historical dossiers, medieval lore, logistics, and surviving landmarks.",
+        "content": "/interactive/crusade-trail",
+        "external_url": "/interactive/crusade-trail",
+        "time_spent_hours": 1.5,
+        "ai_tools_used": "HTML5 Canvas, Vanilla JS, Natural Earth 50m/110m GeoJSON, Google Fonts (Cinzel, EB Garamond), FastAPI, Python 3.13, Antigravity",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Handwritten Spark Generation",
+            "desc": "Write things on paper"
+          },
+          {
+            "step": 2,
+            "title": "AI OCR Ingestion",
+            "desc": "Feed into AI. It was good at decoding my handwriting!"
+          },
+          {
+            "step": 3,
+            "title": "Zero-Friction Entry Logging",
+            "desc": "Generate the entry for today from OCR, I didn't want to do data entry"
+          },
+          {
+            "step": 4,
+            "title": "Spec Correction & Ship",
+            "desc": "Minor correction to implementation plan, et voila"
+          }
+        ],
+        "what_rocked": [
+          "OCR was amazing",
+          "The look of cartographer style app is decent"
+        ],
+        "what_broke": [
+          "The map looks a bit weird, scroll to zoom doesn't work properly (fixed: restored full topological land rings, layered crisp 50m coastline linework, and implemented smooth exponential trackpad/mouse-wheel zoom)"
+        ],
+        "prompt_transcript": "Genesis Prompt: \"Can you create an entry for 27/9/2026 based on a photo /Users/lukaszdygon/Downloads/20260928_081245.jpg\"\nInteraction Turns: 6 human turns across 247 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: /spec-implementation 27-09-2026\n  \u2022 Turn 3: no animation neededd, just an interactive map with facts about history. It should be cartography font/feel, not Memphis\n  \u2022 Turn 4: yes\n  \u2022 Turn 5: /record-implementation\n  \u2022 Turn 6: 1. Write things on paper Feed into AI. It was good at decoding my handwriting! Generate the entry for today from OCR, I didn't ...\n\nTools Executed: run_command (52), view_file (46), replace_file_content (7), find_by_name (6), grep_search (3), ask_question (2)\nFiles Modified: 20260928_081245.jpg, README.md, SKILL.md, admin.py, app.py, base.html, build_static.py, crusade_trail.html",
+        "created_at": "2026-09-28 08:19:39"
+      }
+    }
+  },
+  {
     "id": 66,
     "date": "2026-09-26",
     "theme": "Dumpling fusion",

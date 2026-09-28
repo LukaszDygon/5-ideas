@@ -1,0 +1,647 @@
+{
+  "waypoints": [
+    {
+      "id": "bouillon",
+      "number": 1,
+      "name": "Bouillon & Cologne",
+      "toponym": "Castrum Bullionis & Colonia Agrippina",
+      "region": "Lower Lorraine & Rhineland",
+      "coords": [
+        5.06,
+        49.79
+      ],
+      "date": "15 August 1096",
+      "leaders": "Duke Godfrey of Bouillon, Baldwin of Boulogne, Eustace III of Boulogne",
+      "distance_km": 0,
+      "stage_title": "Departure of the Princes",
+      "summary": "Duke Godfrey mortgages ancestral lands to assemble 40,000 disciplined pilgrims and knights, embarking on the armed pilgrimage.",
+      "chronicle": "Unlike the chaotic mobs of the People's Crusade under Peter the Hermit that ravaged the Rhineland earlier that spring, Duke Godfrey instituted iron discipline. To fund his army, he mortgaged his ancestral fortress of Bouillon to the Prince-Bishop of Li\u00e8ge for 1,300 silver marks, and sold Stenay to the Bishop of Verdun. Pilgrims stitched cloth red crosses to their mantles, taking the solemn vow of crucesignati before departing southward along ancient Roman roads toward the Danube.",
+      "lore_relics": "Godfrey undertook the crusade as deep personal penance for having previously fought against Pope Gregory VII in imperial service during the Investiture Controversy. Pilgrims prayed at Cologne Cathedral before relics of the Three Magi.",
+      "logistics": "0 km marched \u2022 Army composed of ~10,000 cavalry (knights, squires) and ~30,000 footmen, camp followers, priests, and artisans. Daily pace ~22-25 km.",
+      "today": "The massive stone fortress of Ch\u00e2teau de Bouillon crowns the ridge above the Semois River in Belgium. Cologne Cathedral and Roman monuments remain world icons."
+    },
+    {
+      "id": "regensburg",
+      "number": 2,
+      "name": "Regensburg",
+      "toponym": "Ratisbona ad Danubium",
+      "region": "Bavaria, Holy Roman Empire",
+      "coords": [
+        12.1,
+        49.01
+      ],
+      "date": "September 1096",
+      "leaders": "Godfrey of Bouillon, Western Knightly Host",
+      "distance_km": 680,
+      "stage_title": "The Upper Danube Highway",
+      "summary": "The host reaches the head of navigation on the Danube, transitioning from Roman overland roads to river-supported transit.",
+      "chronicle": "At Regensburg\u2014the ancient Roman Castra Regina\u2014the expedition struck the great water artery of Europe: the Danube. Here the crusaders followed the historic Strata Danubiana (Danube Road), which had linked Gaul to the Black Sea since Roman antiquity. Duke Godfrey negotiated peaceful provisions from Bavarian imperial burgesses and purchased river barges to float siege equipment and grain downstream, sparing weary pack animals.",
+      "lore_relics": "Crusaders stopped at the Abbey of Saint Emmeram, one of the wealthiest Benedictine abbeys of medieval Christendom, invoking the martyr's protection for the trials ahead.",
+      "logistics": "680 km from Bouillon \u2022 Autumn rains began churning riverbank paths to thick mud. River transport reduced horse casualties along this leg.",
+      "today": "Regensburg retains its UNESCO-listed medieval core, including the 12th-century Stone Bridge (Steinerne Br\u00fccke) and the Roman Porta Praetoria gate (built 179 AD)."
+    },
+    {
+      "id": "esztergom",
+      "number": 3,
+      "name": "Esztergom & Buda",
+      "toponym": "Strigonium & Castrum Budense",
+      "region": "Kingdom of Hungary",
+      "coords": [
+        18.74,
+        47.79
+      ],
+      "date": "October 1096",
+      "leaders": "Godfrey of Bouillon, King Coloman the Bookish",
+      "distance_km": 1180,
+      "stage_title": "The Hungarian Gateway",
+      "summary": "King Coloman demands noble hostages to ensure peaceable passage after earlier crusader mobs ravaged Hungarian villages.",
+      "chronicle": "Having suffered violent pillaging from the earlier disorganized crowds of Peter the Hermit and Walter Sans-Avoir, King Coloman of Hungary met Duke Godfrey at the frontier fortress of Sopron with an assembled army. In an extraordinary act of diplomatic trust, Godfrey offered his younger brother Baldwin of Boulogne and Baldwin's Norman wife Godvere as royal hostages to guarantee peace. Strict orders forbade taking even an apple without payment. For four weeks, the host marched peacefully across the fertile Hungarian plain to Esztergom.",
+      "lore_relics": "Esztergom was the sacred coronation site of King Saint Stephen I (year 1000). The Hungarian clergy blessed the crusaders and provided extensive markets of sheep, pork, and oats.",
+      "logistics": "1,180 km from departure \u2022 Flat, brisk marching across the Puszta grasslands. Hostages were safely returned at the southern border with zero bloodshed.",
+      "today": "Esztergom Basilica commands the high bluff overlooking the Danube bend; visitors can gaze across the river directly into Slovakia via the M\u00e1ria Val\u00e9ria Bridge."
+    },
+    {
+      "id": "belgrade",
+      "number": 4,
+      "name": "Belgrade & The Balkan Forest",
+      "toponym": "Singidunum / Alba Graeca",
+      "region": "Byzantine Military Frontier",
+      "coords": [
+        20.45,
+        44.79
+      ],
+      "date": "Late October \u2013 November 1096",
+      "leaders": "Godfrey of Bouillon, Doux Nicetas of Nish",
+      "distance_km": 1620,
+      "stage_title": "Crossing into the Byzantine Empire",
+      "summary": "Rafting across the Sava River into imperial Roman territory and plunging into the perilous eight-day Silva Bulgarorum.",
+      "chronicle": "At Belgrade, the Sava joins the Danube, marking the northern boundary of the Byzantine Empire. The crusaders were rafted across the river by imperial boatmen. Beyond Belgrade lay the formidable Silva Bulgarorum\u2014the Great Forest of the Bulgars\u2014a vast, trackless wilderness of beech and oak trees where wolves and Pecheneg bandits roamed. It required eight arduous days to emerge into the Morava valley at Nish (Naissus), where Byzantine Governor Nicetas provided royal escorts and grain depots.",
+      "lore_relics": "Nish was the historic birthplace of Constantine the Great (272 AD). Western clerics were amazed by the imperial Greek liturgies and Byzantine courtly regalia.",
+      "logistics": "1,620 km from start \u2022 Winter frost settled in; mountain passes in the Morava valley caused the first major loss of horses and pack mules.",
+      "today": "Belgrade's Kalemegdan Fortress stands upon the dramatic limestone bluff overlooking the confluence of the Sava and Danube, bearing layers of Roman, Byzantine, and Ottoman stonework."
+    },
+    {
+      "id": "sofia",
+      "number": 5,
+      "name": "Sofia & The Via Militaris",
+      "toponym": "Serdica & Philippopolis Thraciae",
+      "region": "Imperial Thrace",
+      "coords": [
+        23.32,
+        42.7
+      ],
+      "date": "November \u2013 December 1096",
+      "leaders": "Duke Godfrey, Byzantine Imperial Legates",
+      "distance_km": 2020,
+      "stage_title": "The Imperial Roman Highway",
+      "summary": "Marching through the historic Trajan's Gate onto the Thracian plain along stone-paved Roman roads.",
+      "chronicle": "From Sofia (ancient Serdica), the army ascended the narrow mountain defile of Trajan's Gate (Suki pass), the fortified mountain bottleneck controlling access between Moesia and Thrace. Breaking out onto the broad, fertile Thracian plain at Philippopolis (Plovdiv), Duke Godfrey learned that Count Hugh of Vermandois had been shipwrecked in the Adriatic and placed under honorable guard by Emperor Alexios. Tensions flared, but imperial couriers defused conflict by ensuring regular rations.",
+      "lore_relics": "Crusaders crossed stone bridges built by Roman legions eight centuries earlier, marveling at the surviving Roman milestones and paved basalt surfaces.",
+      "logistics": "2,020 km marched \u2022 Food supplies plentiful in the Maritsa valley; horses rested and shoed by camp blacksmiths before the imperial capital.",
+      "today": "Plovdiv boasts one of the world's best-preserved Roman amphitheatres and Roman stadiums. The ancient Via Militaris remains traceable along the modern transit corridor."
+    },
+    {
+      "id": "constantinople",
+      "number": 6,
+      "name": "Constantinople",
+      "toponym": "Constantinopolis / Miklagard",
+      "region": "The Bosporus, Capital of Byzantium",
+      "coords": [
+        28.98,
+        41.01
+      ],
+      "date": "23 December 1096 \u2013 April 1097",
+      "leaders": "Emperor Alexios I Komnenos, Duke Godfrey, Bohemond of Taranto, Raymond IV of Toulouse",
+      "distance_km": 2480,
+      "stage_title": "The Queen of Cities",
+      "summary": "The western hosts converge upon the Theodosian Walls. Tense imperial negotiations end with oaths of fealty and the historic Asian ferry crossing.",
+      "chronicle": "Godfrey's vanguard arrived on Christmas Eve 1096 outside the colossal triple Theodosian Walls. To western knights accustomed to modest stone keeps, the golden metropolis of 500,000 souls with marble palaces, massive aqueducts, and the dome of Hagia Sophia was unfathomable. Emperor Alexios I Komnenos required oaths of fealty: in exchange for naval transport, siege artillery, and gold, princes agreed to return any captured Roman cities. In April 1097, thousands of troops were ferried across the blue waters of the Bosporus into Asia Minor\u2014the first western army to enter Asia since Alexander.",
+      "lore_relics": "Constantinople was the relic treasury of the world: pilgrims viewed the True Cross, the Crown of Thorns, the Holy Sponge, and the Virgin's Veil inside the imperial chapel of the Great Palace.",
+      "logistics": "2,480 km from Bouillon \u2022 The armies of Godfrey, Bohemond, Raymond, and Robert of Normandy united here, numbering ~60,000 people and 7,000 knights.",
+      "today": "Hagia Sophia (built 537 AD), the Basilica Cistern, the Hippodrome obelisks, and the weathered ramparts of the Theodosian Walls continue to dominate Istanbul."
+    },
+    {
+      "id": "dorylaeum",
+      "number": 7,
+      "name": "Nicaea & Dorylaeum",
+      "toponym": "Nicaea Bithyniae & Dorylaeum",
+      "region": "Phrygia / Anatolian Plateau",
+      "coords": [
+        30.52,
+        39.78
+      ],
+      "date": "May \u2013 July 1097",
+      "leaders": "Bohemond of Taranto, Kilij Arslan I, Godfrey, Raymond",
+      "distance_km": 2780,
+      "stage_title": "The Crucible of Dorylaeum",
+      "summary": "After taking Nicaea, the vanguard is surrounded by Seljuk horse archers at Dorylaeum; a desperate defense and flanking charge saves the crusade.",
+      "chronicle": "Following the siege of Nicaea, the army marched into the interior in two parallel columns. At dawn on 1 July 1097 near Dorylaeum, the Norman vanguard under Bohemond was encircled by 30,000 mounted Seljuk archers under Sultan Kilij Arslan I. For seven sweltering hours, Bohemond held a tight shield wall while priests prayed and women carried water from the marsh. At midday, Duke Godfrey and Raymond crested the southern hills with the heavy cavalry reserve, shattering the Turkish flank. The Seljuks broke in panic, leaving their royal pavilion and treasury.",
+      "lore_relics": "Nicaea was revered as the birthplace of the Nicene Creed (325 AD). Chroniclers noted that Saint George and Saint Demetrius were seen riding beside the crusaders on white chargers.",
+      "logistics": "2,780 km \u2022 The victory opened the road across Anatolia, but cost over 4,000 crusader casualties and hundreds of invaluable warhorses.",
+      "today": "\u0130znik (Nicaea) preserves its complete circuit of Roman/Byzantine gates and lakeside walls. The battlefield of Dorylaeum lies near modern Eski\u015fehir."
+    },
+    {
+      "id": "ciliciangates",
+      "number": 8,
+      "name": "The Cilician Gates & Konya",
+      "toponym": "Iconium & Portae Ciliciae",
+      "region": "Taurus Mountains / Cilicia",
+      "coords": [
+        34.78,
+        37.28
+      ],
+      "date": "August \u2013 October 1097",
+      "leaders": "Tancred of Hauteville, Baldwin of Boulogne, Duke Godfrey",
+      "distance_km": 3200,
+      "stage_title": "The Iron Defile & Waterless Desert",
+      "summary": "A brutal summer march across the scorched Anatolian steppe followed by the treacherous climb through the razor-narrow Cilician Gates.",
+      "chronicle": "The march across the central Anatolian plateau was a waking nightmare of thirst. Kilij Arslan scorched the earth, poisoning wells and setting fire to grain fields. Warhorses died by the hundreds; proud knights walked on foot or rode plodding oxen, loading hunting dogs and goats with chainmail hauberks. Passing Iconium (Konya), the crusaders encountered the towering wall of the Taurus Mountains. They funneled through the Cilician Gates (G\u00fclek Bo\u011faz\u0131)\u2014a dizzying chasm so narrow that pack mules fell into abysses. Baldwin and Tancred split off here into Cilicia to establish friendly ties with local Armenian Christians.",
+      "lore_relics": "Iconium was sanctified by Saint Paul's early mission. Armenian highland princes provided mountain guides, food, and forged weapons to their fellow Christian allies.",
+      "logistics": "3,200 km from start \u2022 Over 60% of original cavalry horses perished from heat and dehydration during this 400-km desert-and-mountain trek.",
+      "today": "The Cilician Gates pass is carved through sheer limestone canyon walls in Mersin province, still serving as the vital transport bottleneck connecting Anatolia to Syria."
+    },
+    {
+      "id": "antioch",
+      "number": 9,
+      "name": "Antioch (Antiochia)",
+      "toponym": "Antiochia Magna ad Orontem",
+      "region": "Orontes River Basin, Syria",
+      "coords": [
+        36.16,
+        36.2
+      ],
+      "date": "20 October 1097 \u2013 28 June 1098",
+      "leaders": "Bohemond I, Peter Bartholomew, Kerbogha of Mosul, Adhemar of Le Puy",
+      "distance_km": 3650,
+      "stage_title": "The Great Eight-Month Siege",
+      "summary": "Starvation, betrayal of the walls, and the miraculous discovery of the Holy Lance that broke Kerbogha's massive siege.",
+      "chronicle": "Antioch was considered the third city of the Roman world, defended by four hundred massive stone towers scaling Mount Silpius. The crusaders endured winter torrential rains, disease, and horrific famine\u2014men chewed thistle roots and boiled saddle leather. On 2 June 1098, Bohemond bribed an Armenian commander named Firouz, who dropped rope ladders from the Tower of the Two Sisters. The city fell, only for the crusaders to be encircled three days later by a colossal Turkish relief army under Kerbogha of Mosul. On 14 June, a peasant mystic named Peter Bartholomew excavated the Holy Lance from the floor of Saint Peter's Cathedral. Electrified with religious fervor, the starving garrison marched out the bridge gate on 28 June and shattered Kerbogha's host in one decisive charge.",
+      "lore_relics": "The Holy Lance (the spear of Longinus that pierced the side of Christ) became the crusade's miraculous banner. Antioch was the historic see of Saint Peter.",
+      "logistics": "3,650 km \u2022 Over 15,000 crusaders died of pestilence and famine during the siege. Papal Legate Adhemar of Le Puy died of typhoid shortly after the victory.",
+      "today": "The Cave Church of Saint Peter (one of Christianity's earliest sanctuaries) is carved into Mount Silpius in Antakya (ancient Antioch)."
+    },
+    {
+      "id": "krak",
+      "number": 10,
+      "name": "Krak des Chevaliers & Tripoli",
+      "toponym": "Hosn al-Akrad / Tripolis",
+      "region": "Homs Gap / Mount Lebanon Coast",
+      "coords": [
+        36.29,
+        34.76
+      ],
+      "date": "January \u2013 May 1099",
+      "leaders": "Raymond IV of Toulouse, Count of Flanders, Robert of Normandy",
+      "distance_km": 3880,
+      "stage_title": "The Lebanese Corridor",
+      "summary": "Passing the strategic Homs Gap beneath the crag of Krak des Chevaliers and reaching the warm Mediterranean coast.",
+      "chronicle": "Disgusted by princes arguing over titles in Antioch, ordinary pilgrims dismantled the fortifications of Ma'arra and forced Count Raymond of Toulouse to march barefoot toward Jerusalem. Raymond led the army through the fertile Buqaia valley via the Homs Gap, passing the Kurdish fortress of Hosn al-Akrad (later expanded by the Knights Hospitaller into the celebrated Krak des Chevaliers). Arriving at the Mediterranean coast near Tripoli, the local Muslim Emir Jalal al-Mulk agreed to a treaty, supplying horses, gold, guides, and open food markets in exchange for avoiding a siege.",
+      "lore_relics": "Crusaders rejoiced upon reconnecting with the sea at Tripoli, where Genoese, Pisan, and English merchant fleets delivered grain, barrels of wine, and fresh armor.",
+      "logistics": "3,880 km marched \u2022 Health returned quickly with Mediterranean citrus, fresh bread, olive oil, and coastal spring water.",
+      "today": "Krak des Chevaliers is celebrated by UNESCO as the pinnacle of medieval military architecture, boasting concentric ring walls and vaulted Hospitaller halls."
+    },
+    {
+      "id": "acre",
+      "number": 11,
+      "name": "Acre, Caesarea & Jaffa",
+      "toponym": "Ptolemais, Caesarea & Joppe",
+      "region": "Levantine Coastal Plain",
+      "coords": [
+        35.08,
+        32.93
+      ],
+      "date": "May \u2013 Early June 1099",
+      "leaders": "Godfrey of Bouillon, Raymond of Toulouse, Tancred",
+      "distance_km": 4060,
+      "stage_title": "The Fast Coastal March",
+      "summary": "A rapid southward march past the Phoenician coastal strongholds toward Jaffa to link up with Genoese shipwrights.",
+      "chronicle": "Learning that the Fatimid Caliphate of Egypt had wrested Jerusalem from the Seljuks, the crusader column sprinted down the narrow Levantine coastal plain. They passed Tyre, Acre, and Caesarea without attempting prolonged sieges, demanding only safe conduct and livestock. At Ramla, the Muslim garrison evacuated, leaving behind overflowing grain stores and the venerated basilica of Saint George. At Jaffa, two Genoese galleys and four transport ships commanded by Guglielmo Embriaco anchored, carrying shipwrights, iron nails, ropes, and timber indispensable for building siege engines.",
+      "lore_relics": "The church and tomb of Saint George at Lydda (Lod) received lavish veneration. Knights adopted Saint George's red cross on white banner as their primary martial emblem.",
+      "logistics": "4,060 km \u2022 The army turned inland from Ramla, ascending 800 vertical meters through the limestone defiles of the Judean Hills.",
+      "today": "Acre (Akko) contains a preserved subterranean Crusader city with vast vaulted refectories, crypts, and Knights Templar tunnels."
+    },
+    {
+      "id": "jerusalem",
+      "number": 12,
+      "name": "Jerusalem (Hierosolyma)",
+      "toponym": "Hierosolyma / Civitas Sancta / Al-Quds",
+      "region": "Judean Mountains, Holy Land",
+      "coords": [
+        35.21,
+        31.77
+      ],
+      "date": "7 June \u2013 15 July 1099",
+      "leaders": "Duke Godfrey of Bouillon, Raymond of Toulouse, Tancred, Robert of Normandy",
+      "distance_km": 4180,
+      "stage_title": "The Holy Sepulchre Reached",
+      "summary": "The three-year, 4,200 km pilgrimage concludes as siege towers breach the northern walls on 15 July 1099.",
+      "chronicle": "On 7 June 1099, the vanguard crested Nebi Samwil (the 'Mount of Joy') and wept upon catching their first glimpse of Jerusalem's domes and limestone towers. Fatimid Governor Iftikhar al-Dawla had poisoned all external cisterns and springs. In baking summer heat, crusaders carried water six miles from the spring of Siloam in stinking animal skins. Following an austere barefoot procession around the city walls on 8 July, two colossal three-story wooden siege towers were rolled into place. At noon on Friday, 15 July 1099, Duke Godfrey's tower dropped its drawbridge onto the northern rampart near Herod's Gate. Godfrey's knights flooded the walls, and within hours the city was taken. Duke Godfrey knelt in tears at the Church of the Holy Sepulchre, refusing the royal crown where Christ wore thorns, styling himself Advocatus Sancti Sepulchri.",
+      "lore_relics": "The Church of the Holy Sepulchre\u2014enclosing the rock of Golgotha and the empty Tomb of Jesus\u2014was the sole spiritual objective of the three-year armed pilgrimage.",
+      "logistics": "4,180 km from Bouillon \u2022 Only ~1,200 knights and ~12,000 foot soldiers survived to witness the capture of Jerusalem from the 60,000 who set out in 1096.",
+      "today": "The Church of the Holy Sepulchre retains its 12th-century Crusader Romanesque facade, bell tower, and the Chapel of the Holy Sepulchre."
+    }
+  ],
+  "route": [
+    [
+      5.06,
+      49.79
+    ],
+    [
+      5.6,
+      50.15
+    ],
+    [
+      6.2,
+      50.55
+    ],
+    [
+      6.96,
+      50.94
+    ],
+    [
+      7.3,
+      50.6
+    ],
+    [
+      7.59,
+      50.36
+    ],
+    [
+      7.85,
+      50.15
+    ],
+    [
+      8.27,
+      49.99
+    ],
+    [
+      8.8,
+      49.9
+    ],
+    [
+      9.35,
+      49.85
+    ],
+    [
+      9.93,
+      49.79
+    ],
+    [
+      10.5,
+      49.6
+    ],
+    [
+      11.08,
+      49.45
+    ],
+    [
+      11.6,
+      49.2
+    ],
+    [
+      12.1,
+      49.01
+    ],
+    [
+      12.75,
+      48.8
+    ],
+    [
+      13.46,
+      48.57
+    ],
+    [
+      13.9,
+      48.45
+    ],
+    [
+      14.29,
+      48.31
+    ],
+    [
+      14.85,
+      48.25
+    ],
+    [
+      15.33,
+      48.23
+    ],
+    [
+      15.85,
+      48.2
+    ],
+    [
+      16.37,
+      48.21
+    ],
+    [
+      16.75,
+      48.18
+    ],
+    [
+      17.11,
+      48.15
+    ],
+    [
+      17.8,
+      47.95
+    ],
+    [
+      18.74,
+      47.79
+    ],
+    [
+      19.04,
+      47.5
+    ],
+    [
+      18.98,
+      46.53
+    ],
+    [
+      18.68,
+      45.99
+    ],
+    [
+      19.3,
+      45.6
+    ],
+    [
+      19.86,
+      45.25
+    ],
+    [
+      20.45,
+      44.79
+    ],
+    [
+      20.93,
+      44.66
+    ],
+    [
+      21.4,
+      43.9
+    ],
+    [
+      21.9,
+      43.32
+    ],
+    [
+      22.25,
+      43.25
+    ],
+    [
+      22.59,
+      43.16
+    ],
+    [
+      22.95,
+      42.95
+    ],
+    [
+      23.32,
+      42.7
+    ],
+    [
+      23.95,
+      42.36
+    ],
+    [
+      24.35,
+      42.25
+    ],
+    [
+      24.75,
+      42.14
+    ],
+    [
+      25.6,
+      41.9
+    ],
+    [
+      26.56,
+      41.68
+    ],
+    [
+      27.36,
+      41.4
+    ],
+    [
+      27.8,
+      41.25
+    ],
+    [
+      28.25,
+      41.07
+    ],
+    [
+      28.98,
+      41.01
+    ],
+    [
+      29.03,
+      40.99
+    ],
+    [
+      29.35,
+      40.82
+    ],
+    [
+      29.92,
+      40.77
+    ],
+    [
+      29.72,
+      40.43
+    ],
+    [
+      30.01,
+      40.36
+    ],
+    [
+      30.52,
+      39.78
+    ],
+    [
+      30.8,
+      39.2
+    ],
+    [
+      31.05,
+      38.71
+    ],
+    [
+      31.42,
+      38.36
+    ],
+    [
+      31.18,
+      38.3
+    ],
+    [
+      31.85,
+      38.1
+    ],
+    [
+      32.49,
+      37.87
+    ],
+    [
+      33.25,
+      37.7
+    ],
+    [
+      34.05,
+      37.51
+    ],
+    [
+      34.87,
+      37.42
+    ],
+    [
+      34.78,
+      37.28
+    ],
+    [
+      34.9,
+      36.92
+    ],
+    [
+      35.33,
+      37.0
+    ],
+    [
+      35.63,
+      36.95
+    ],
+    [
+      36.2,
+      36.49
+    ],
+    [
+      36.16,
+      36.2
+    ],
+    [
+      36.45,
+      35.9
+    ],
+    [
+      36.68,
+      35.65
+    ],
+    [
+      36.4,
+      35.42
+    ],
+    [
+      36.29,
+      34.76
+    ],
+    [
+      36.08,
+      34.53
+    ],
+    [
+      35.85,
+      34.44
+    ],
+    [
+      35.66,
+      34.25
+    ],
+    [
+      35.65,
+      34.12
+    ],
+    [
+      35.5,
+      33.89
+    ],
+    [
+      35.37,
+      33.56
+    ],
+    [
+      35.2,
+      33.27
+    ],
+    [
+      35.11,
+      33.09
+    ],
+    [
+      35.08,
+      32.93
+    ],
+    [
+      34.99,
+      32.82
+    ],
+    [
+      34.9,
+      32.5
+    ],
+    [
+      34.81,
+      32.2
+    ],
+    [
+      34.75,
+      32.05
+    ],
+    [
+      34.87,
+      31.93
+    ],
+    [
+      34.99,
+      31.84
+    ],
+    [
+      35.18,
+      31.83
+    ],
+    [
+      35.21,
+      31.77
+    ]
+  ],
+  "mountains": [
+    {
+      "name": "Alps",
+      "coords": [
+        10.5,
+        46.5
+      ]
+    },
+    {
+      "name": "Carpathians",
+      "coords": [
+        23.5,
+        47.0
+      ]
+    },
+    {
+      "name": "Balkan Mountains",
+      "coords": [
+        24.5,
+        42.8
+      ]
+    },
+    {
+      "name": "Taurus Mountains",
+      "coords": [
+        33.5,
+        37.3
+      ]
+    },
+    {
+      "name": "Mount Lebanon",
+      "coords": [
+        35.9,
+        34.1
+      ]
+    }
+  ]
+}

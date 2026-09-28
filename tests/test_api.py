@@ -172,6 +172,21 @@ def test_interactive_table_steamer_view(client):
     assert "Myosin Extraction" in response.text
 
 
+def test_interactive_crusade_trail_view(client):
+    response = client.get("/interactive/crusade-trail")
+    assert response.status_code == 200
+    assert "Iter Hierosolymitanum" in response.text
+    assert "cartoCanvas" in response.text
+    assert "Cinzel" in response.text
+    assert "EB Garamond" in response.text
+    assert "crusade_geo.json" in response.text
+    assert "crusade_waypoints.json" in response.text
+    assert "Bouillon & Cologne" in response.text
+    assert "Holy Sepulchre" in response.text
+
+
+
+
 def test_api_get_days(client):
     response = client.get("/api/days")
     assert response.status_code == 200
