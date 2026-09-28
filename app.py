@@ -341,6 +341,16 @@ async def interactive_crusade_trail(request: Request):
     )
 
 
+@app.get("/interactive/monster-mystery", response_class=HTMLResponse)
+async def interactive_monster_mystery(request: Request):
+    """The Monster Gala Murder: Vintage noir monster-costume murder mystery party kit & host guide."""
+    return templates.TemplateResponse(
+        request=request,
+        name="monster_mystery.html",
+        context={},
+    )
+
+
 
 
 

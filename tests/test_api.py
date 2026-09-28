@@ -185,6 +185,18 @@ def test_interactive_crusade_trail_view(client):
     assert "Holy Sepulchre" in response.text
 
 
+def test_interactive_monster_mystery_view(client):
+    response = client.get("/interactive/monster-mystery")
+    assert response.status_code == 200
+    assert "The Monster Gala Murder" in response.text
+    assert "CORPSE PENALTY" in response.text
+    assert "Host Master One-Pager" in response.text
+    assert "Count Vladimir of HR" in response.text
+    assert "Fenrir the Agile Scrum Master" in response.text
+    assert "EXHIBIT A: PHYSICAL TRACE" in response.text
+    assert "EXHIBIT D: THE MURDER WEAPON" in response.text
+
+
 
 
 def test_api_get_days(client):
