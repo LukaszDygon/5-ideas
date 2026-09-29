@@ -313,6 +313,31 @@ def test_interactive_water_calories(client):
     assert "0.00000" in response.text
 
 
+def test_interactive_which_is_faster(client):
+    response = client.get("/interactive/which-is-faster")
+    assert response.status_code == 200
+    assert "WHICH ONE IS FASTER?" in response.text
+    assert "KING OF THE HILL SURVIVOR" in response.text
+    assert "Fleeting Time Discovery Bank" in response.text
+
+
+def test_api_which_is_faster_events(client):
+    response = client.get("/api/which-is-faster/events")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["count"] >= 30
+    assert "events" in data
+    # Verify accurate scientific data structure
+    first = data["events"][0]
+    assert "id" in first
+    assert "title" in first
+    assert "duration_s" in first
+    assert "duration_display" in first
+    assert "scientific_fact" in first
+    assert "source" in first
+
+
+
 
 
 

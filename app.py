@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import calendar
 from datetime import datetime
+import json
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -349,6 +350,33 @@ async def interactive_monster_mystery(request: Request):
         name="monster_mystery.html",
         context={},
     )
+
+
+@app.get("/interactive/which-is-faster", response_class=HTMLResponse)
+async def interactive_which_is_faster(request: Request):
+    """Which One is Faster? Survivor trivia showdown comparing fleeting moments and cosmic durations."""
+    bank_path = STATIC_DIR / "data" / "fleeting_time_bank.json"
+    events = []
+    if bank_path.exists():
+        with open(bank_path, "r", encoding="utf-8") as f:
+            events = json.load(f)
+    return templates.TemplateResponse(
+        request=request,
+        name="which_is_faster.html",
+        context={"events_json": json.dumps(events)},
+    )
+
+
+@app.get("/api/which-is-faster/events")
+async def api_which_is_faster_events():
+    """Returns the verified question bank of fleeting time events."""
+    bank_path = STATIC_DIR / "data" / "fleeting_time_bank.json"
+    if not bank_path.exists():
+        raise HTTPException(status_code=404, detail="Question bank not found")
+    with open(bank_path, "r", encoding="utf-8") as f:
+        events = json.load(f)
+    return {"count": len(events), "events": events}
+
 
 
 

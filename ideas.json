@@ -1,5 +1,160 @@
 [
   {
+    "id": 69,
+    "date": "2026-09-29",
+    "theme": "Time goes so quick",
+    "subtitle": "The passage of time is relentless",
+    "streak_count": 1,
+    "notes": "Day at work, a bit stressful, drinks with CIO, Cindy said yes.",
+    "created_at": "2026-09-29 21:53:43",
+    "ideas": [
+      {
+        "id": 571,
+        "day_id": 69,
+        "idea_number": 1,
+        "title": "Countdown to death",
+        "tagline": "We have 80k hours, or something",
+        "description": "A nice widget that lives on your desktop to remind you of your mortality. No message, just a constant reminder of how many days you likely have left, how many you used up",
+        "tags": "Calendar",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 572,
+        "day_id": 69,
+        "idea_number": 2,
+        "title": "How many anniversaries",
+        "tagline": "A collection of important dates, and reminder to celebrate",
+        "description": "Just a way to have a list of important dates and events, and a beautiful way of displaying how many years and days since it happened.",
+        "tags": "Calendar",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 573,
+        "day_id": 69,
+        "idea_number": 3,
+        "title": "Photo timeline",
+        "tagline": "Scroll through a life",
+        "description": "Timeline that shows a person on photos with scrollbar, maybe morphing a photo into another in transition, to make it cool and constantly moving when I press play",
+        "tags": "Album, Art",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 574,
+        "day_id": 69,
+        "idea_number": 4,
+        "title": "Fake memories",
+        "tagline": "Make me feel like I was there",
+        "description": "Create a fake diary of a life lived through the most important points in recent history. Was I there when a president was elected, or when independence was declared? This one convinces you that yes, you were and you are the most interesting person ever",
+        "tags": "Calendar, Whimsy",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 575,
+        "day_id": 69,
+        "idea_number": 5,
+        "title": "Which one is faster?",
+        "tagline": "Quiz that makes you guess what was faster",
+        "description": "A series of questions: a period of butterfly wings, a blink, longest dive of all time - which one was the shortest? A series of facts about fleeting time, with preference of the astounding and life reaffirming ones, so I can feel great about beauty of life and time after playing.",
+        "tags": "Game",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 101,
+          "idea_id": 575,
+          "title": "Which One is Faster?",
+          "build_type": "interactive",
+          "rank": 1,
+          "summary": "A King-of-the-Hill survivor trivia showdown comparing fleeting moments and cosmic phenomena across orders of magnitude.",
+          "content": "/interactive/which-is-faster",
+          "external_url": "",
+          "time_spent_hours": 2.0,
+          "ai_tools_used": "FastAPI, Vanilla JS, Radical Memphis Pop CSS, Wikipedia Orders of Magnitude API",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Step 1",
+              "desc": "Get the idea right, stressing the need for verifiable data sources and increasing difficulty"
+            },
+            {
+              "step": 2,
+              "title": "Step 2",
+              "desc": "Improve UI, so it doesn't feel horrible to play"
+            },
+            {
+              "step": 3,
+              "title": "Step 3",
+              "desc": "Done"
+            }
+          ],
+          "what_rocked": [
+            "It came up with a cool collection at the bottom"
+          ],
+          "what_broke": [
+            "Some of the questions are super obscure"
+          ],
+          "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 9 human turns across 252 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: yes but make sure there is a good question bank (find a data source), don't make it up\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: I can't see the implementation\n  \u2022 Turn 5: I like the unlocks for cats, but the game takes place over two panels. Can we move next to the main panel?\n  \u2022 Turn 6: it moves around when you select, with a popout panel. Can we make it so that it doesn't do that?\n  \u2022 Turn 7: /record-implementation\n  \u2022 Turn 8: 1. Get the idea right, stressing the need for verifiable data sources and increasing difficulty Improve UI, so it doesn't feel ...\n  \u2022 Turn 9: don't change the wording, save what I wrote\n\nTools Executed: view_file (40), run_command (38), search_web (15), replace_file_content (9), find_by_name (5), grep_search (5)\nFiles Modified: README.md, SKILL.md, app.py, build_static.py, content.md, day.html, db.py, fleeting_time_bank.json",
+          "created_at": "2026-09-29 22:24:24"
+        }
+      }
+    ],
+    "implemented_idea": {
+      "id": 575,
+      "day_id": 69,
+      "idea_number": 5,
+      "title": "Which one is faster?",
+      "tagline": "Quiz that makes you guess what was faster",
+      "description": "A series of questions: a period of butterfly wings, a blink, longest dive of all time - which one was the shortest? A series of facts about fleeting time, with preference of the astounding and life reaffirming ones, so I can feel great about beauty of life and time after playing.",
+      "tags": "Game",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 101,
+        "idea_id": 575,
+        "title": "Which One is Faster?",
+        "build_type": "interactive",
+        "rank": 1,
+        "summary": "A King-of-the-Hill survivor trivia showdown comparing fleeting moments and cosmic phenomena across orders of magnitude.",
+        "content": "/interactive/which-is-faster",
+        "external_url": "",
+        "time_spent_hours": 2.0,
+        "ai_tools_used": "FastAPI, Vanilla JS, Radical Memphis Pop CSS, Wikipedia Orders of Magnitude API",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Step 1",
+            "desc": "Get the idea right, stressing the need for verifiable data sources and increasing difficulty"
+          },
+          {
+            "step": 2,
+            "title": "Step 2",
+            "desc": "Improve UI, so it doesn't feel horrible to play"
+          },
+          {
+            "step": 3,
+            "title": "Step 3",
+            "desc": "Done"
+          }
+        ],
+        "what_rocked": [
+          "It came up with a cool collection at the bottom"
+        ],
+        "what_broke": [
+          "Some of the questions are super obscure"
+        ],
+        "prompt_transcript": "Genesis Prompt: \"/spec-implementation\"\nInteraction Turns: 9 human turns across 252 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: yes but make sure there is a good question bank (find a data source), don't make it up\n  \u2022 Turn 3: yes\n  \u2022 Turn 4: I can't see the implementation\n  \u2022 Turn 5: I like the unlocks for cats, but the game takes place over two panels. Can we move next to the main panel?\n  \u2022 Turn 6: it moves around when you select, with a popout panel. Can we make it so that it doesn't do that?\n  \u2022 Turn 7: /record-implementation\n  \u2022 Turn 8: 1. Get the idea right, stressing the need for verifiable data sources and increasing difficulty Improve UI, so it doesn't feel ...\n  \u2022 Turn 9: don't change the wording, save what I wrote\n\nTools Executed: view_file (40), run_command (38), search_web (15), replace_file_content (9), find_by_name (5), grep_search (5)\nFiles Modified: README.md, SKILL.md, app.py, build_static.py, content.md, day.html, db.py, fleeting_time_bank.json",
+        "created_at": "2026-09-29 22:24:24"
+      }
+    }
+  },
+  {
     "id": 68,
     "date": "2026-09-28",
     "theme": "Halloween Party",

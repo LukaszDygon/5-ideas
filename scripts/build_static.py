@@ -56,6 +56,7 @@ def rewrite_html_links(html: str, base_path: str) -> str:
         ('href="/interactive/table-steamer"', f'href="{base_path}interactive/table-steamer/"'),
         ('href="/interactive/crusade-trail"', f'href="{base_path}interactive/crusade-trail/"'),
         ('href="/interactive/monster-mystery"', f'href="{base_path}interactive/monster-mystery/"'),
+        ('href="/interactive/which-is-faster"', f'href="{base_path}interactive/which-is-faster/"'),
         ('href="/day/', f'href="{base_path}day/'),
         ('href="/static/', f'href="{base_path}static/'),
         ('src="/static/', f'src="{base_path}static/'),
@@ -105,6 +106,7 @@ def build_static(base_path: str = "/5-ideas/"):
         ("/interactive/table-steamer", DIST_DIR / "interactive" / "table-steamer" / "index.html"),
         ("/interactive/crusade-trail", DIST_DIR / "interactive" / "crusade-trail" / "index.html"),
         ("/interactive/monster-mystery", DIST_DIR / "interactive" / "monster-mystery" / "index.html"),
+        ("/interactive/which-is-faster", DIST_DIR / "interactive" / "which-is-faster" / "index.html"),
     ]
 
     # Dynamic day routes
