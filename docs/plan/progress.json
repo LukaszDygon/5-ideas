@@ -554,7 +554,7 @@
       "commit_message": "test: restructure suite around app factory and settings",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "a4d2bca",
       "notes": "Layout: tests/unit (db, streak, registry, cli, capture), tests/web (pages, api, admin), tests/prototypes (every_prototype contract + prototype_content), tests/ai_setup (T3.2), tests/build (T3.3). conftest: autouse 'settings' copies data/ideas.json and streak.json to tmp_path/data and sets FIVE_IDEAS_DATA_DIR (an env var, not a module global) so CLI subprocesses stay isolated too; 'client' = TestClient(create_app(settings)); 'admin_client' = Flask test client of create_admin_app(settings). Tests pass settings.db_file / settings.streak_file explicitly. Every original assertion kept (test_api.py split by function into web/test_pages.py, web/test_api.py, prototypes/test_prototype_content.py). 173 tests excluding ai_setup (baseline 49). No monkeypatch.setattr anywhere. tests/web/test_admin.py runs alone. --durations=5 is added in CI (T3.4)."
     },
     {
@@ -562,7 +562,7 @@
       "phase": "P3",
       "title": "AI-setup quality tests (tests/ai_setup)",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 20,
       "depends_on": [
         "T1.3",
@@ -578,10 +578,10 @@
         "test_plan_progress validates docs/plan/progress.json"
       ],
       "commit_message": "test(ai-setup): validate instructions, skills, hooks, settings, agents, secrets, docs",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "tests/ai_setup has 9 modules and 106 tests, about 6 s: instructions, rules, skills, settings, hooks (table-driven subprocess, 14 deny / 10 allow bash cases), agents, secrets, docs_freshness, plan_progress; a shared frontmatter parser lives in conftest.py. Stdlib only, no network. test_settings validates .claude/settings.json once installed and docs/plan/settings.proposed.json meanwhile; test_settings_installed SKIPS (with the cp command) until the user installs it. Negative check done: adding Bash(*) to allow fails test_no_blanket_permissions, and reverting makes it pass. Documented-path checks accept gitignored local files (.env, data/ideas.db) so CI checkouts pass. Deviation: test_docs_freshness also asserts that AGENTS.md lists every showcase/*.py module."
     },
     {
       "id": "T3.3",
