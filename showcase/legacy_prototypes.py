@@ -17,14 +17,10 @@ TEMPLATE_ROUTES = {
     "/interactive/campfire": "campfire.html",
     "/interactive/campfire/hardware": "campfire_hardware.html",
     "/interactive/slots1v1": "slots1v1.html",
-    "/interactive/house-stats": "house_stats.html",
-    "/interactive/water-calories": "water_calories.html",
-    "/interactive/fractiles": "fractiles.html",
     "/interactive/mcnuggets": "mcnuggets.html",
     "/interactive/nostalgia-cap": "nostalgia_cap.html",
     "/interactive/table-steamer": "table_steamer.html",
     "/interactive/crusade-trail": "crusade_trail.html",
-    "/interactive/monster-mystery": "monster_mystery.html",
 }
 
 router = APIRouter()

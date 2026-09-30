@@ -1,0 +1,8 @@
+slug = "monster-mystery"
+title = "The Monster Gala: Murder Mystery Party Kit & Dossier"
+date = "2026-09-28"
+build_type = "interactive"
+template = "template.html"
+description = "Vintage noir monster-costume murder mystery party kit and host guide."
+extra_paths = []
+routes = false
