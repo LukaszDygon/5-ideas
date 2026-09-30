@@ -17,7 +17,10 @@ ROOT = Path(__file__).resolve().parents[2]
 INSTALLED = ROOT / ".claude" / "settings.json"
 PROPOSED = ROOT / "docs" / "plan" / "settings.proposed.json"
 CANDIDATES = [p for p in (INSTALLED, PROPOSED) if p.exists()]
-REQUIRED_DENY = {"Read(./.env)", "Read(~/.ssh/**)", "Bash(sudo *)", "Edit(./data/**)"}
+REQUIRED_DENY = {"Read(./.env)", "Read(~/.ssh/**)", "Bash(sudo *)"}
+# Folders the CLI writes. Edit/Read deny rules are merged into the sandbox, so denying these would
+# stop `five-ideas` itself; the protect-files hook guards them from the Edit/Write tools instead.
+CLI_WRITES = ("./data/", "./dist/", "data/", "dist/")
 # History-rewriting git commands may prompt (ask) or be refused (deny), never run silently.
 GUARDED = {"Bash(git push --force *)", "Bash(git reset --hard *)", "Bash(git clean *)", "Bash(git rebase *)"}
 FORBIDDEN_ALLOW = {"Bash", "Bash(*)", "Bash(:*)", "Bash( *)", "*"}
@@ -54,6 +57,20 @@ def test_no_blanket_permissions(config):
 def test_required_denies(config):
     deny = {normalise(r) for r in config["permissions"].get("deny", [])}
     assert deny >= REQUIRED_DENY, REQUIRED_DENY - deny
+
+
+def test_cli_folders_are_not_denied(config):
+    deny = config["permissions"].get("deny", [])
+    blocked = [
+        r for r in deny if r.startswith(("Edit(", "Read(")) and r[r.index("(") + 1 :].startswith(CLI_WRITES)
+    ]
+    assert not blocked, f"these also block the CLI inside the sandbox: {blocked}"
+
+
+def test_protect_files_hook_guards_edits(config):
+    pre = config.get("hooks", {}).get("PreToolUse", [])
+    guarded = [g for g in pre if "Edit" in g.get("matcher", "") and "Write" in g.get("matcher", "")]
+    assert any("protect-files.py" in h["command"] for g in guarded for h in g["hooks"])
 
 
 def test_history_rewriting_git_commands_need_approval(config):
