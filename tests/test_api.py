@@ -265,10 +265,11 @@ def test_admin_visibility_and_transcript_label(client, monkeypatch):
 def test_interactive_slots1v1(client):
     response = client.get("/interactive/slots1v1")
     assert response.status_code == 200
-    assert "Slots 1v1: Tactical Reel Arena" in response.text
-    assert "SPIN REELS" in response.text
-    assert "PeerJS" in response.text or "peerjs" in response.text
-    assert "https://github.com/LukaszDygon/slot-battles" in response.text
+    text = page_with_assets(client, "/interactive/slots1v1")
+    assert "Slots 1v1: Tactical Reel Arena" in text
+    assert "SPIN REELS" in text
+    assert "PeerJS" in text or "peerjs" in text
+    assert "https://github.com/LukaszDygon/slot-battles" in text
 
     day_resp = client.get("/day/2026-09-13")
     assert day_resp.status_code == 200
