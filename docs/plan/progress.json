@@ -90,7 +90,7 @@
       "commit_message": "chore(security): move MCP key to env, parametrise admin secret",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "271554e",
       "notes": "Rotating the key itself is a manual user action in the Google console. Key was never in git history. .mcp.json + .env.example added; admin secret from FIVE_IDEAS_ADMIN_SECRET. The plan's verify grep for X-Goog-Api-Key necessarily matches the tracked .mcp.json placeholder and the plan docs; the real check (no AQ.* key values in tracked files) passes. Left for the user: delete the stray empty 5ideas.db (the auto-mode classifier blocked rm; it is gitignored), and delete mcp_config.json + .agents/plugins/stitch/mcp_config.json once STITCH_API_KEY is in .env/shell (both still gitignored)."
     },
     {
@@ -98,7 +98,7 @@
       "phase": "P1a",
       "title": "CLAUDE.md imports AGENTS.md; rewrite AGENTS.md; path-scoped rules",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 3,
       "depends_on": [
         "T0.2"
@@ -117,10 +117,10 @@
         "every path mentioned in AGENTS.md exists (automated later by T3.2)"
       ],
       "commit_message": "docs(agents): CLAUDE.md imports AGENTS.md; add path-scoped rules",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "AGENTS.md (76 lines, 559 words) describes the current layout; it is updated as T2.x/T1.4 land. All backtick paths in AGENTS.md exist (scripted check). rules/prototypes.md documents the target prototypes/<slug>/ contract and only loads once that folder exists (T2.3). Interactive checks (/memory shows AGENTS.md imported, /context shows python.md on .py) need a fresh claude session by the user."
     },
     {
       "id": "T1.2",

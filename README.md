@@ -25,6 +25,8 @@ Every day:
 
 ## Developer Commands
 
+AI coding agents: start with [AGENTS.md](AGENTS.md) (Claude Code loads it through `CLAUDE.md`).
+
 ```bash
 # Install dependencies
 uv sync

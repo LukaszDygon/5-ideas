@@ -1,20 +1,76 @@
 # AGENTS.md
 
-Instructions and index for AI agents working in the **5 Ideas Daily Showcase** repository.
+Single source of truth for AI agents working in the **5 Ideas Daily Showcase** repo. `CLAUDE.md` imports this file.
 
-## Core Directives
-- **Simplicity First:** Standard library before external packages, native browser APIs before dependencies, and minimal code.
-- **Reference Docs:** Do not duplicate full project documentation here. Refer to the table below to locate detailed guides when needed.
-- **Verify:** Always run `uv run pytest` after modifying code.
+## What this repo is
 
-## Documentation Index
+Every day: 5 idea "sparks" on a theme, 1 prototype shipped before sundown, all shown on a Radical Memphis Pop site.
+FastAPI serves the public site and JSON API, a Flask admin is mounted at `/admin`, data lives in SQLite (stdlib `sqlite3`).
+The site is frozen to static HTML and deployed to GitHub Pages under `/5-ideas/`.
 
-| Context / Task | Reference | When to Look |
-| :--- | :--- | :--- |
-| **Tech Stack & Commands** | [README.md](README.md) | Running the app, routes, CLI scripts, and developer commands |
-| **Design System & Styling** | [README.md#design-system-rules-radical-memphis-pop](README.md#design-system-rules-radical-memphis-pop) & [templates/design_system.html](templates/design_system.html) | Borders, hard shadows, active button physics, and color tokens |
-| **Idea Planning & Spec** | [.agents/skills/spec-implementation/SKILL.md](.agents/skills/spec-implementation/SKILL.md) | Reading day sparks, selecting an idea, asking tech questions, confirming spec |
-| **Prototype Recording** | [.agents/skills/record-implementation/SKILL.md](.agents/skills/record-implementation/SKILL.md) | Saving shipped prototype, process steps, and retrospective to database |
-| **AI Interaction Summaries** | [.agents/skills/capture-implementation/SKILL.md](.agents/skills/capture-implementation/SKILL.md) | Generating leak-free AI interaction summary from conversation logs |
-| **Data Layer & SQLite** | [db.py](db.py) | Schema for `days`, `ideas`, and `implementations` tables |
-| **Web & Admin Apps** | [app.py](app.py) & [admin.py](admin.py) | FastAPI public views and Flask content management |
+## Commands
+
+```bash
+uv sync                                                      # install
+uv run python main.py                                        # dev server on http://127.0.0.1:8000
+uv run pytest -q                                             # tests (run after every code change)
+uv run python scripts/get_day_sparks.py --date today         # show a day's sparks (add --idea N, --json)
+uv run python scripts/save_implementation.py --idea N ...    # record a shipped prototype
+uv run python scripts/capture_process.py --title "Name"      # leak-free AI interaction summary
+uv run python scripts/build_static.py --base-path /5-ideas/  # freeze site into dist/
+uv run python db.py                                          # wipe DB and reseed from ideas.json
+```
+
+## Repo map
+
+| Path | Purpose |
+| :--- | :--- |
+| `app.py` | FastAPI app: public pages, `/api/*`, one route per prototype |
+| `admin.py` | Flask admin (CRUD, rankings, streak) mounted at `/admin` |
+| `db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
+| `main.py` | uvicorn launcher |
+| `scripts/` | CLI helpers: sparks, save implementation, capture, static build |
+| `templates/` | Site templates, `templates/admin/`, and one template per prototype |
+| `static/` | Shared `static/style.css` and `static/app.js`, plus prototype media and data |
+| `tests/` | pytest suite (`tests/conftest.py` isolates the DB per test) |
+| `ideas.json`, `streak.json` | Committed seed/export data |
+| `.claude/` | Claude Code settings, rules, hooks, skills |
+| `.agents/skills/` | Workflow skills (spec, record, capture) |
+| `docs/plan/` | Current restructure plan and its progress tracker |
+
+## Daily workflow
+
+1. Morning: log the theme and five sparks (admin `/admin/day/new`).
+2. `/spec-implementation` picks the spark and confirms a build spec.
+3. Build the prototype (template + route), keep tests green.
+4. `/record-implementation` saves process steps and the retrospective (always ask the user; never invent them).
+5. Build the static site, commit, and let the user push.
+
+## Conventions
+
+- Simplicity first: stdlib before packages, native browser APIs before dependencies, minimal code.
+- Commits: `feat(YYYY-MM-DD): <what shipped>` for daily work; `refactor:`, `test:`, `docs:`, `chore:` otherwise.
+- Data files (`ideas.json`, `streak.json`, `*.db`) change only through the scripts or the admin.
+- UI follows the design system: [README.md#design-system-rules-radical-memphis-pop](README.md#design-system-rules-radical-memphis-pop), live at `/design-system` (`templates/design_system.html`).
+- Every prototype template extends `templates/base.html`.
+
+## Do not
+
+- Hand-edit `ideas.json`, `streak.json` or any `*.db` file.
+- Add dependencies without asking.
+- Touch `dist/` (build output) or `.baseline/` (restructure snapshots).
+- Print, copy or commit secrets (`.env`, `mcp_config.json`). Use `.env.example` for new variables.
+- Push, force-push, or rewrite git history.
+
+## Where to look
+
+| Need | Look at |
+| :--- | :--- |
+| Routes, stack, developer commands | [README.md](README.md) |
+| Design tokens and components | `templates/design_system.html`, `static/style.css`, `.claude/rules/design-system.md` |
+| Python conventions | `.claude/rules/python.md` |
+| Prototype conventions | `.claude/rules/prototypes.md` |
+| Schema for `days`, `ideas`, `implementations` | `db.py` |
+| Spec, record, capture workflows | `.agents/skills/` |
+| MCP servers (Stitch) | `.mcp.json`; the key comes from `STITCH_API_KEY` (see `.env.example`) |
+| Restructure plan and status | `docs/plan/PLAN.md`, `docs/plan/progress.json` |
