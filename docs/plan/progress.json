@@ -127,7 +127,7 @@
       "phase": "P1a",
       "title": "Permissions and sandbox in .claude/settings.json",
       "priority": "must",
-      "status": "blocked",
+      "status": "done",
       "order": 4,
       "depends_on": [
         "T0.2"
@@ -144,16 +144,16 @@
       ],
       "commit_message": "feat(claude): project permissions and sandbox settings",
       "started": "2026-09-30",
-      "completed": null,
-      "commit": null,
-      "notes": "Confirmed against the docs: Write(path) rules are ignored (use Edit(path)), 'Bash(x *)' is the current form (':*' still accepted), sandbox keys are sandbox.network.allowedDomains and sandbox.filesystem.{allowWrite,denyRead}, and Read deny rules are merged into the sandbox, so a blanket Read(~/.claude/**) would also stop the T1.7 capture script from reading transcripts (narrowed to ~/.claude/.credentials.json and ~/.claude.json). Sandbox also needs allowWrite for ~/.cache/uv and ~/.local/share/uv, or uv run fails. BLOCKED: the agent's auto-mode classifier refuses to write .claude/settings.json (self-modification). Draft is ready for the user to review and install. Proposed file: docs/plan/settings.proposed.json (permissions + sandbox + hook registration). To finish T1.2/T1.3 the user reviews it and runs: cp docs/plan/settings.proposed.json .claude/settings.json"
+      "completed": "2026-09-30",
+      "commit": "2be8815",
+      "notes": "Confirmed against the docs: Write(path) rules are ignored (use Edit(path)), 'Bash(x *)' is the current form (':*' still accepted), sandbox keys are sandbox.network.allowedDomains and sandbox.filesystem.{allowWrite,denyRead}, and Read deny rules are merged into the sandbox, so a blanket Read(~/.claude/**) would also stop the T1.7 capture script from reading transcripts (narrowed to ~/.claude/.credentials.json and ~/.claude.json). Sandbox also needs allowWrite for ~/.cache/uv and ~/.local/share/uv, or uv run fails. BLOCKED: the agent's auto-mode classifier refuses to write .claude/settings.json (self-modification). Draft is ready for the user to review and install. Proposed file: docs/plan/settings.proposed.json (permissions + sandbox + hook registration). To finish T1.2/T1.3 the user reviews it and runs: cp docs/plan/settings.proposed.json .claude/settings.json UPDATE 2026-09-30: the user reviewed the proposal and committed it as .claude/settings.json (2be8815). Their changes: the over-broad Read(./.env.*) deny is dropped (it also blocked .env.example and broke sandboxed pytest), and force-push, reset --hard, clean and rebase moved from deny to ask. The ai-setup test now accepts ask or deny for those (84c18bc); guard-bash still blocks force-push, reset --hard and clean. A trailing comma in 2be8815 made the file invalid JSON (Claude Code then dropped the sandbox) and is fixed by the user's follow-up commit. Verified live in-session: the sandbox is active (Operation not permitted outside allowed paths), deny rules are honoured, and git push works. Local sandboxed pytest also needs mcp_config.json removed from the repo root (the **/mcp_config.json deny trips pytest's root scan)."
     },
     {
       "id": "T1.3",
       "phase": "P1a",
       "title": "Hooks: session-start, guard-bash, protect-files, post-edit, stop-check, prompt-context",
       "priority": "must",
-      "status": "blocked",
+      "status": "done",
       "order": 5,
       "depends_on": [
         "T1.2"
@@ -170,9 +170,9 @@
       ],
       "commit_message": "feat(claude): session, guard, protect, post-edit and stop hooks",
       "started": "2026-09-30",
-      "completed": null,
+      "completed": "2026-09-30",
       "commit": "39250ad",
-      "notes": "Six hook scripts written and table-tested (guard-bash 17 deny / 13 allow cases, protect-files 10/6, stop-check blocks on a deliberately failing test and passes on a clean tree, session-start writes .claude/state/session.json, post-edit flags bad JSON/Jinja). post-edit is Python rather than sh, so it can parse the JSON payload with the stdlib. Hooks also allow the system temp dir, and protect-files allows ~/.claude/projects (agent memory). BLOCKED on T1.2: registration lives in .claude/settings.json (hooks section of docs/plan/settings.proposed.json). Live checks (/hooks, a real force-push refusal) need the user's session after installing."
+      "notes": "Six hook scripts written and table-tested (guard-bash 17 deny / 13 allow cases, protect-files 10/6, stop-check blocks on a deliberately failing test and passes on a clean tree, session-start writes .claude/state/session.json, post-edit flags bad JSON/Jinja). post-edit is Python rather than sh, so it can parse the JSON payload with the stdlib. Hooks also allow the system temp dir, and protect-files allows ~/.claude/projects (agent memory). BLOCKED on T1.2: registration lives in .claude/settings.json (hooks section of docs/plan/settings.proposed.json). Live checks (/hooks, a real force-push refusal) need the user's session after installing. UPDATE 2026-09-30: hooks registered via the user's .claude/settings.json (2be8815). Verified live: guard-bash blocked a redirect to ~/ with 'Blocked by .claude/hooks/guard-bash.py: redirection writes outside the repo'."
     },
     {
       "id": "T2.1",
