@@ -1,0 +1,8 @@
+slug = "slots1v1"
+title = "Slots 1v1: Tactical Reel Arena"
+date = "2026-09-13"
+build_type = "webapp"
+template = "template.html"
+description = "Networked and bot-driven 1v1 tactical slot machine arena with counter-combat."
+extra_paths = []
+routes = false

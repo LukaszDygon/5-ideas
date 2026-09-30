@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% block title %}The Monster Gala Murder Mystery // Classified Case File #1031{% endblock %}
+
+{% block content %}
+<!-- Google Fonts: Pulp Noir & Dossier Typewriter Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Special+Elite&family=Bricolage+Grotesque:opsz,wght@12..96,800;12..96,900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/static/prototypes/monster-mystery/style.css"/>
+
+<div class="noir-bg min-h-screen py-6 px-3 md:px-6 relative">
+  <div class="halftone-overlay absolute inset-0"></div>
+
+  <!-- CAUTION CRIME TAPE BANNER -->
+  <div class="police-tape py-2 px-4 mb-6 shadow-[4px_4px_0px_#181513] overflow-hidden no-print">
+    <div class="flex items-center justify-between text-ink font-mono font-black text-xs md:text-sm tracking-widest uppercase whitespace-nowrap">
+      <span>★ CASE FILE #1031: THE MONSTER GALA MURDER</span>
+      <span class="hidden sm:inline">⚠️ WARNING: KEEP IN CHARACTER AT ALL TIMES</span>
+      <span>☠️ NO COSTUME = AUTOMATIC VICTIM CLAUSE</span>
+      <span class="hidden md:inline">★ TOP SECRET / EYES ONLY</span>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto relative z-10 flex flex-col gap-6">
+
+    <!-- HEADER DOSSIER HERO -->
+    <div class="manila-folder p-6 md:p-8">
+      <div class="paperclip-marker"></div>
+      
+      <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b-2 border-ink pb-6">
+        <div>
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="stamp-classified">CASE DOSSIER #1031</span>
+            <span class="stamp-confidential">PARTY KIT &amp; HOST MANUAL</span>
+            <span class="stamp-penalty">THE CORPSE PENALTY IN EFFECT</span>
+          </div>
+          <h1 class="font-display font-black text-3xl md:text-5xl uppercase text-ink leading-tight tracking-tight">
+            The Monster Gala Murder
+          </h1>
+          <p class="font-typewriter text-base md:text-lg text-dossier-ink-muted mt-2 max-w-3xl">
+            "A classic parlor whodunit where everyone showed up dressed like a monster. The catch? You're regular everyday mortals given absurd supernatural backstories—and you must stay furiously in character until the killer is unmasked."
+          </p>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="flex flex-wrap md:flex-col gap-2 shrink-0 no-print">
+          <button onclick="window.print()" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center justify-center gap-2 shadow-[3px_3px_0px_#181513]">
+            <span class="material-symbols-outlined text-sm">print</span>
+            <span>Print Game Kit / PDF</span>
+          </button>
+          <button onclick="toggleQuickAssigner()" class="neo-btn neo-btn-cyan text-xs py-2 px-4 flex items-center justify-center gap-2 shadow-[3px_3px_0px_#181513]">
+            <span class="material-symbols-outlined text-sm">edit_note</span>
+            <span id="assigner-toggle-label">Edit Guest Roster</span>
+          </button>
+          <button onclick="playBlackoutScream()" class="neo-btn neo-btn-yellow text-xs py-2 px-4 flex items-center justify-center gap-2 shadow-[3px_3px_0px_#181513]">
+            <span class="material-symbols-outlined text-sm">volume_up</span>
+            <span>Trigger Blackout Scream</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- THE CORE GOLDEN RULE BOX -->
+      <div class="mt-6 bg-[#fffdfa] border-2 border-ink p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-[3px_3px_0px_#181513]">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 bg-dossier-crimson text-white border-2 border-ink flex items-center justify-center shrink-0 font-display font-black text-xl -rotate-3">
+            ☠️
+          </div>
+          <div>
+            <div class="font-display font-black text-sm uppercase text-dossier-crimson tracking-wider">
+              The Sovereign Rule: Normal Humans, Absurd Monster Lore
+            </div>
+            <div class="font-courier text-xs md:text-sm text-ink font-bold mt-0.5">
+              1. <strong>Guests bring their own costumes.</strong> Host hands them their assigned dossier cards on arrival.<br/>
+              2. <strong>The Corpse Penalty:</strong> Anyone who arrives without a costume is automatically sentenced to be the <strong>Deceased Victim</strong> of the night!<br/>
+              3. <strong>Stay In Character:</strong> Blend your mundane human neuroses (bills, air fryers, HOA gossip) with bloodcurdling gothic horror.
+            </div>
+          </div>
+        </div>
+        <div class="shrink-0 self-end md:self-center">
+          <span class="font-mono text-xs text-dossier-ink-muted bg-yellow-100 border border-ink/40 px-2 py-1">
+            8 Roles • 4 Acts • ~90 Minutes
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK GUEST ROSTER ASSIGNER (EXPANDABLE DRAWER) -->
+    <div id="quick-assigner-panel" class="manila-folder p-6 hidden no-print">
+      <div class="flex items-center justify-between border-b-2 border-ink pb-3 mb-4">
+        <div>
+          <h3 class="font-display font-black text-lg uppercase text-ink flex items-center gap-2">
+            <span class="material-symbols-outlined text-dossier-crimson">group</span>
+            Guest Roster &amp; Costume Matcher
+          </h3>
+          <p class="font-courier text-xs text-dossier-ink-muted">
+            Type your guests' real names and what costume they showed up in. The dossier cards update instantly!
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="fillSampleGuests()" class="font-mono text-xs font-bold bg-white border border-ink px-2.5 py-1 hover:bg-yellow-200">
+            Load Sample Party Roster
+          </button>
+          <button onclick="resetGuestRoster()" class="font-mono text-xs font-bold bg-white border border-ink px-2.5 py-1 text-dossier-crimson hover:bg-red-100">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="roster-inputs-grid">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <div class="mystery-tab-nav flex flex-wrap gap-2 no-print">
+      <button class="mystery-tab-btn active" onclick="switchTab('host-tab')">
+        📋 Host 1-Pager &amp; Timeline
+      </button>
+      <button class="mystery-tab-btn" onclick="switchTab('dossiers-tab')">
+        🦹 Monster Suspect Dossiers (8)
+      </button>
+      <button class="mystery-tab-btn" onclick="switchTab('clues-tab')">
+        🔍 Evidence &amp; Clue Cards (4)
+      </button>
+      <button class="mystery-tab-btn" onclick="switchTab('solution-tab')">
+        🔐 Case Solution (Host Eyes Only)
+      </button>
+    </div>
+
+    <!-- TAB 1: HOST 1-PAGER & TIMELINE -->
+    <div id="host-tab-pane" class="tab-content flex flex-col gap-6">
+
+      <!-- THE 1-PAGE CHEATSHEET CONTAINER -->
+      <div class="dossier-sheet p-6 md:p-8 print-page">
+        <div class="flex flex-col md:flex-row md:items-center justify-between border-b-2 border-ink pb-4 mb-6 gap-2">
+          <div>
+            <span class="stamp-confidential">DOCUMENT H-101</span>
+            <h2 class="font-display font-black text-2xl md:text-3xl uppercase text-ink">
+              Host Master One-Pager &amp; Party Timeline
+            </h2>
+            <p class="font-typewriter text-xs text-dossier-ink-muted">
+              Everything the Game Master needs to coordinate the mystery on a single printable page.
+            </p>
+          </div>
+          <div class="font-mono text-xs text-right text-dossier-ink-muted">
+            Run Time: 75–90 min<br/>
+            Players: 6–10 Guests
+          </div>
+        </div>
+
+        <!-- 4-ACT PARTY TIMELINE -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          
+          <!-- ACT I -->
+          <div class="bg-[#faf6eb] border-2 border-ink p-4 flex flex-col justify-between">
+            <div>
+              <div class="bg-dossier-folder border border-ink font-mono font-bold text-[11px] px-2 py-0.5 inline-block uppercase mb-2">
+                Act I: 0–25 Min
+              </div>
+              <h3 class="font-display font-black text-base uppercase text-ink">The Crypt Soirée</h3>
+              <p class="font-courier text-xs text-ink mt-2">
+                <strong>Arrival &amp; Secret Briefing:</strong> Greet guests. If someone arrived costume-less, loudly read the <em>Corpse Penalty Clause</em>. Hand each guest their sealed Dossier Card.
+              </p>
+              <div class="mt-3 bg-white p-2 border border-ink/40 text-[11px] font-courier">
+                💡 <em>Prompt:</em> "Mingle, grab a drink, and drop hints about your mundane job through your terrifying monster accent."
+              </div>
+            </div>
+          </div>
+
+          <!-- ACT II -->
+          <div class="bg-[#faf6eb] border-2 border-ink p-4 flex flex-col justify-between">
+            <div>
+              <div class="bg-dossier-crimson text-white font-mono font-bold text-[11px] px-2 py-0.5 inline-block uppercase mb-2">
+                Act II: 25–35 Min
+              </div>
+              <h3 class="font-display font-black text-base uppercase text-dossier-crimson">The Blackout &amp; Crime</h3>
+              <p class="font-courier text-xs text-ink mt-2">
+                <strong>The Lights Go Out:</strong> Kill the lights (or trigger the sound effect!). A bloodcurdling scream echoes. Lights turn back on: the Penalty Victim is slumped dramatically on the floor!
+              </p>
+              <div class="mt-3 bg-white p-2 border border-ink/40 text-[11px] font-courier">
+                🩸 <em>Crime:</em> Found slain near the snack table, clutching a torn note and dusted in mysterious powdered sugar!
+              </div>
+            </div>
+          </div>
+
+          <!-- ACT III -->
+          <div class="bg-[#faf6eb] border-2 border-ink p-4 flex flex-col justify-between">
+            <div>
+              <div class="bg-electric-cyan/20 border border-ink font-mono font-bold text-[11px] px-2 py-0.5 inline-block uppercase mb-2 text-ink">
+                Act III: 35–65 Min
+              </div>
+              <h3 class="font-display font-black text-base uppercase text-ink">The Monster Inquest</h3>
+              <p class="font-courier text-xs text-ink mt-2">
+                <strong>Interrogation &amp; Clue Drops:</strong> Host reveals Evidence Cards #1 through #4 at 7-minute intervals. Guests question each other's ridiculous alibis and petty grudges.
+              </p>
+              <div class="mt-3 bg-white p-2 border border-ink/40 text-[11px] font-courier">
+                🔎 <em>Ghost Rule:</em> The dead victim now lingers as a ghost, able to answer only in dramatic sighs and one-word whispers.
+              </div>
+            </div>
+          </div>
+
+          <!-- ACT IV -->
+          <div class="bg-[#faf6eb] border-2 border-ink p-4 flex flex-col justify-between">
+            <div>
+              <div class="bg-tertiary-yellow border border-ink font-mono font-bold text-[11px] px-2 py-0.5 inline-block uppercase mb-2 text-ink">
+                Act IV: 65–80 Min
+              </div>
+              <h3 class="font-display font-black text-base uppercase text-ink">The Grand Accusation</h3>
+              <p class="font-courier text-xs text-ink mt-2">
+                <strong>The Circle of Guilt:</strong> Each monster publicly points their claw/fang/wand at their prime suspect and states why. Host reveals the true killer &amp; reads the confession!
+              </p>
+              <div class="mt-3 bg-white p-2 border border-ink/40 text-[11px] font-courier">
+                🏆 <em>Awards:</em> Best Monster Voice, Worst Detective, and Most Dramatic Victim Death!
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- HOST SCRIPT & MONOLOGUE BOX -->
+        <div class="border-2 border-ink p-5 bg-white mb-6">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="font-display font-black text-xs uppercase bg-ink text-white px-2 py-0.5">
+              Host Script // Opening Speech (Read Aloud at Act I)
+            </span>
+          </div>
+          <p class="font-typewriter text-xs md:text-sm text-ink leading-relaxed">
+            "Good evening, creatures of the night, damned souls, and Dave who apparently forgot what Halloween is. Welcome to the Annual Monster Gala. Tonight, we put aside our differences—the blood-feuds between vampires and werewolves, the ancient curses of the Nile, and that unresolved dispute regarding shared refrigerator etiquette. 
+            <br/><br/>
+            Look around you. Every person in this parlor has a terrifying secret, an unpaid water bill, and an alibi thinner than single-ply toilet paper. Sip your cocktails, stay in character, and remember: if any one of you drops their monster persona, the curse will claim you next. Let the evening begin..."
+          </p>
+        </div>
+
+        <!-- THE PENALTY RULE BOX (EXPANDED) -->
+        <div class="border-2 border-dashed border-dossier-crimson p-4 bg-red-50/50 flex flex-col md:flex-row gap-4 items-start">
+          <div class="stamp-penalty text-xs shrink-0">CORPSE PENALTY</div>
+          <div class="font-courier text-xs text-ink">
+            <strong>HOW TO ENFORCE:</strong> If 1 or more guests showed up without a monster costume, do NOT let them off easy. The first uncostumed arrival is designated <strong>Victim #1</strong>. Their job: socialize during Act I as a 'doomed mortal who thought this was just drinks', dramatically drop to the carpet in Act II, and spend Act III wearing a white napkin on their head as the <em>Bitter Ghost of HR</em> offering cryptic hints. If everyone wore costumes, assign the Victim role to an empty chair with a mannequin head or a volunteer!
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TAB 2: MONSTER SUSPECT DOSSIERS -->
+    <div id="dossiers-tab-pane" class="tab-content hidden flex flex-col gap-6">
+
+      <div class="flex items-center justify-between no-print mb-2">
+        <div class="font-display font-black text-lg uppercase text-ink">
+          Classified Character Dossiers (Hand Out to Guests)
+        </div>
+        <div class="font-courier text-xs text-dossier-ink-muted">
+          Click "Copy Role for Text/WhatsApp" to message guest directly!
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="dossiers-cards-container">
+        <!-- Rendered dynamically via JavaScript so real guest names and costumes are synchronized -->
+      </div>
+
+    </div>
+
+    <!-- TAB 3: EVIDENCE & CLUE CARDS -->
+    <div id="clues-tab-pane" class="tab-content hidden flex flex-col gap-6">
+
+      <div class="dossier-sheet p-6 print-page">
+        <div class="border-b-2 border-ink pb-3 mb-6 flex items-center justify-between">
+          <div>
+            <span class="stamp-classified">CRIME SCENE EVIDENCE</span>
+            <h2 class="font-display font-black text-2xl uppercase text-ink">
+              The 4 Recovered Evidence Cards
+            </h2>
+            <p class="font-typewriter text-xs text-dossier-ink-muted">
+              Cut out or reveal sequentially during Act III at 7-10 minute intervals.
+            </p>
+          </div>
+          <span class="font-mono text-xs bg-yellow-200 border border-ink px-2 py-1">
+            4 EXHIBITS LOGGED
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- EVIDENCE #1 -->
+          <div class="bg-white border-2 border-ink p-5 shadow-[4px_4px_0px_#181513] relative">
+            <div class="flex items-center justify-between border-b border-ink/40 pb-2 mb-3">
+              <span class="font-mono text-xs font-bold uppercase bg-tertiary-yellow text-ink px-2 py-0.5 border border-ink">
+                EXHIBIT A: PHYSICAL TRACE
+              </span>
+              <span class="font-mono text-[10px] text-gray-500">REVEAL: MINUTE 35</span>
+            </div>
+            <h4 class="font-display font-black text-base uppercase text-ink">
+              Torn Silk Lining &amp; Air Fryer Recipe Card
+            </h4>
+            <p class="font-courier text-xs text-ink mt-2 leading-relaxed">
+              Found caught on the victim's belt buckle: a fragment of black velvet lining smelling faintly of mothballs, and a folded grease-stained index card titled <em>"Keto Air-Fryer Brussels Sprouts (12 min at 190°C)"</em>.
+            </p>
+            <div class="mt-3 p-2 bg-yellow-50 border border-ink/30 text-[11px] font-typewriter">
+              🩸 <em>Forensic Note:</em> Who among our monsters is obsessed with low-carb suburban meal prep while pretending to subsist on the blood of virgins?
+            </div>
+          </div>
+
+          <!-- EVIDENCE #2 -->
+          <div class="bg-white border-2 border-ink p-5 shadow-[4px_4px_0px_#181513] relative">
+            <div class="flex items-center justify-between border-b border-ink/40 pb-2 mb-3">
+              <span class="font-mono text-xs font-bold uppercase bg-electric-cyan text-ink px-2 py-0.5 border border-ink">
+                EXHIBIT B: TIMESTAMPTED ALIBI CRUSHER
+              </span>
+              <span class="font-mono text-[10px] text-gray-500">REVEAL: MINUTE 45</span>
+            </div>
+            <h4 class="font-display font-black text-base uppercase text-ink">
+              The Lidl Express Receipt (8:59 PM)
+            </h4>
+            <p class="font-courier text-xs text-ink mt-2 leading-relaxed">
+              Found crumpled behind the radiator: a receipt time-stamped exactly 6 minutes before the blackout. Items purchased: <em>1x Garlic Hummus (Reduced to clear), 1x Roll of Heavy Duty Gauze, and 1x Can of Lynx Africa deodorant spray</em>.
+            </p>
+            <div class="mt-3 p-2 bg-yellow-50 border border-ink/30 text-[11px] font-typewriter">
+              🩸 <em>Forensic Note:</em> The killer clearly had to make a last-minute emergency convenience store run before the murder.
+            </div>
+          </div>
+
+          <!-- EVIDENCE #3 -->
+          <div class="bg-white border-2 border-ink p-5 shadow-[4px_4px_0px_#181513] relative">
+            <div class="flex items-center justify-between border-b border-ink/40 pb-2 mb-3">
+              <span class="font-mono text-xs font-bold uppercase bg-dossier-crimson text-white px-2 py-0.5 border border-ink">
+                EXHIBIT C: THE THREATENING STICKY NOTE
+              </span>
+              <span class="font-mono text-[10px] text-gray-500">REVEAL: MINUTE 55</span>
+            </div>
+            <h4 class="font-display font-black text-base uppercase text-ink">
+              The Post-It Note on the Fondue Pot
+            </h4>
+            <p class="font-courier text-xs text-ink mt-2 leading-relaxed">
+              Stuck directly on the victim's half-empty punch glass: a neon pink sticky note written in frantic capital letters: 
+              <br/>
+              <em>"STOP MICROWAVING SMOKED MACKEREL DURING CORE BUSINESS HOURS. THIS IS YOUR FINAL NOTICE BEFORE ETERNAL DAMNATION."</em>
+            </p>
+            <div class="mt-3 p-2 bg-yellow-50 border border-ink/30 text-[11px] font-typewriter">
+              🩸 <em>Forensic Note:</em> Handwriting analysis indicates extreme HR corporate rage masking a gothic curse.
+            </div>
+          </div>
+
+          <!-- EVIDENCE #4 -->
+          <div class="bg-white border-2 border-ink p-5 shadow-[4px_4px_0px_#181513] relative">
+            <div class="flex items-center justify-between border-b border-ink/40 pb-2 mb-3">
+              <span class="font-mono text-xs font-bold uppercase bg-acid-lime text-ink px-2 py-0.5 border border-ink">
+                EXHIBIT D: THE MURDER WEAPON
+              </span>
+              <span class="font-mono text-[10px] text-gray-500">REVEAL: MINUTE 62</span>
+            </div>
+            <h4 class="font-display font-black text-base uppercase text-ink">
+              The Heavy Brass Fondue Skewer
+            </h4>
+            <p class="font-courier text-xs text-ink mt-2 leading-relaxed">
+              Found dumped inside the umbrella stand by the front door: an antique brass fondue skewer coated in red sangria and melted gruyère. Wrapped around the handle is a rubber band printed with <em>"Ergonomic Wrist Support Association 2024"</em>.
+            </p>
+            <div class="mt-3 p-2 bg-yellow-50 border border-ink/30 text-[11px] font-typewriter">
+              🩸 <em>Forensic Note:</em> The fatal blow required both proximity to the snack table and an intimate familiarity with office supply ergonomics!
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 4: CASE SOLUTION (HOST ONLY) -->
+    <div id="solution-tab-pane" class="tab-content hidden flex flex-col gap-6">
+
+      <div class="dossier-sheet p-6 md:p-8 border-4 border-dossier-crimson">
+        <div class="flex items-center justify-between border-b-2 border-ink pb-4 mb-4">
+          <div class="flex items-center gap-3">
+            <span class="stamp-penalty">CONFIDENTIAL WHODUNIT</span>
+            <h2 class="font-display font-black text-2xl uppercase text-ink">
+              Official Case Resolution &amp; Confession Script
+            </h2>
+          </div>
+          <span class="font-mono text-xs font-bold text-dossier-crimson bg-red-100 border border-dossier-crimson px-2 py-1">
+            HOST EYES ONLY
+          </span>
+        </div>
+
+        <div id="solution-locked-box" class="p-6 bg-yellow-50 border-2 border-ink text-center flex flex-col items-center gap-3">
+          <span class="material-symbols-outlined text-4xl text-dossier-crimson">lock</span>
+          <h3 class="font-display font-black text-lg uppercase text-ink">
+            Spoilers Sealed in Vault
+          </h3>
+          <p class="font-courier text-xs text-dossier-ink-muted max-w-md">
+            Do not reveal this if you are playing along as a participant. Click below when your party has reached Act IV to reveal the culprit and read the final confession!
+          </p>
+          <button onclick="revealSolution()" class="neo-btn neo-btn-primary text-xs py-2 px-6">
+            Unlock Host Solution Key
+          </button>
+        </div>
+
+        <div id="solution-revealed-box" class="hidden flex flex-col gap-6">
+
+          <div class="bg-white border-2 border-ink p-5 shadow-[4px_4px_0px_#181513]">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="stamp-classified text-sm">THE KILLER UNMASKED</span>
+              <h3 class="font-display font-black text-xl uppercase text-dossier-crimson">
+                Suspect #1: Count Vlad of Human Resources
+              </h3>
+            </div>
+            <p class="font-courier text-sm text-ink leading-relaxed">
+              <strong>The Motive:</strong> The victim repeatedly microwaved leftover smoked mackerel in the breakroom microwave during Vlad's delicate coffin sleep window. Worse, the victim failed to submit their quarterly ergonomics assessment form, triggering an automatic corporate audit from corporate headquarters.
+            </p>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 font-courier text-xs">
+              <div class="p-3 bg-canvas border border-ink">
+                <strong>How the Clues Point to Vlad:</strong><br/>
+                • <em>Exhibit A:</em> The air-fryer recipe card matches Vlad’s suburban obsession with low-carb garlic-free meal prep.<br/>
+                • <em>Exhibit B:</em> The Lidl receipt shows someone urgently buying garlic-free snacks and Lynx deodorant because their bat-breath failed them.<br/>
+              </div>
+              <div class="p-3 bg-canvas border border-ink">
+                <strong>The Smoking Gun:</strong><br/>
+                • <em>Exhibit C:</em> The Post-It note threatens eternal damnation over microwaved fish.<br/>
+                • <em>Exhibit D:</em> The fondue skewer was wrapped in an <em>Ergonomic Wrist Support</em> rubber band, issued exclusively to HR committee members!
+              </div>
+            </div>
+          </div>
+
+          <!-- CONFESSION SCRIPT -->
+          <div class="bg-[#fffcf5] border-2 border-ink p-5">
+            <h4 class="font-display font-black text-sm uppercase text-ink mb-2">
+              The Culprit's Dramatic Confession (To be read aloud by Vlad):
+            </h4>
+            <blockquote class="font-typewriter text-xs md:text-sm text-dossier-ink italic border-l-4 border-dossier-crimson pl-4 py-1 leading-relaxed">
+              "Fine! Yes! I did it! I impaled him with the fondue skewer! Have any of you tried sleeping 400 years in a cedar crypt while someone reheats oily mackerel on HIGH for four minutes?! It permeates the velvet lining! And don't get me started on the ergonomics! His lumbar support was an insult to the undead! I regret nothing! Now if you will excuse me, my sourdough starter needs feeding!"
+            </blockquote>
+          </div>
+
+          <!-- AWARD CEREMONY -->
+          <div class="bg-tertiary-yellow/30 border-2 border-ink p-4 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div>
+              <div class="font-display font-black text-sm uppercase text-ink">Party Host Award Categories</div>
+              <div class="font-courier text-xs text-dossier-ink-muted">Hand out paper awards or leftover candy to celebrate:</div>
+            </div>
+            <div class="flex flex-wrap gap-2 text-xs font-mono font-bold">
+              <span class="bg-white border border-ink px-2 py-1">👑 Master Monster Roleplayer</span>
+              <span class="bg-white border border-ink px-2 py-1">🕵️ Prime Sleuth (First to Guess)</span>
+              <span class="bg-white border border-ink px-2 py-1">🎭 Most Pathetic Victim Death</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- JAVASCRIPT LOGIC & LOCALSTORAGE STATE -->
+<script src="/static/prototypes/monster-mystery/app.js"></script>
+{% endblock %}

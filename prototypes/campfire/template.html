@@ -1,0 +1,547 @@
+{% extends "base.html" %}
+
+{% block title %}LED Block Campfire // Techno Light Installation{% endblock %}
+
+{% block content %}
+<!-- Techno Black & White Stylesheet -->
+<link rel="stylesheet" href="/static/prototypes/campfire/style.css"/>
+
+<div class="flex flex-col gap-3 font-techno text-sm" id="campfire-app">
+
+  <!-- TOP STATUS / NAVIGATION BAR -->
+  <div class="bg-[#08090c] border border-[#222530] p-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-white">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-white text-black flex items-center justify-center font-bold text-base font-techno border border-white">
+        ▲
+      </div>
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="px-1.5 py-0.5 bg-white text-black text-[9px] font-extrabold tracking-wider">
+            DAY_01 // LIGHT
+          </span>
+          <span class="text-[10px] text-[#71768c] font-mono">
+            DARK MATTER BERLIN // 4-SIDED TIMBERS & DYNAMIC GLOW
+          </span>
+        </div>
+        <h1 class="text-base font-extrabold tracking-wide uppercase mt-0.5">
+          A Campfire Made Out of LED Blocks
+        </h1>
+      </div>
+    </div>
+
+    <!-- Top Action Links -->
+    <div class="flex items-center gap-2 flex-wrap w-full md:w-auto justify-start md:justify-end">
+      <button onclick="toggleSidePanel()" id="panel-toggle-btn" class="techno-btn flex items-center gap-1.5" title="Toggle Side Panel (H)">
+        <span class="material-symbols-outlined text-sm">side_navigation</span>
+        <span id="panel-toggle-label">Hide Panel</span>
+      </button>
+
+      <button onclick="toggleFullScreen()" class="techno-btn flex items-center gap-1.5" title="Full Screen Mode (F)">
+        <span class="material-symbols-outlined text-sm">fullscreen</span>
+        <span>Fullscreen</span>
+      </button>
+
+      <button onclick="resetCamera()" class="techno-btn flex items-center gap-1" title="Reset Camera">
+        <span class="material-symbols-outlined text-sm">center_focus_strong</span>
+        <span>Reset Cam</span>
+      </button>
+
+      <a href="/interactive/campfire/hardware" class="techno-btn flex items-center gap-1.5 border-[#22c55e] text-[#22c55e] hover:bg-[#22c55e] hover:text-black" title="Physical Build Guide & Hardware Blueprint">
+        <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
+        <span>Build Guide</span>
+      </a>
+
+      <a href="/day/2026-09-12" class="techno-btn active flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        <span>Back to Day #1</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN DUAL-PANE VIEWPORT: 3D STAGE (LEFT) + TECHNO SIDE PANEL (RIGHT) -->
+  <div id="viewport-wrapper" class="relative w-full h-[760px] lg:h-[860px] bg-[#050507] border border-[#222530] flex flex-col md:flex-row overflow-hidden">
+    
+    <!-- LEFT: 3D THREE.JS CANVAS STAGE -->
+    <div class="relative flex-1 h-full min-h-[400px] overflow-hidden bg-[#050507] select-none" id="canvas-wrapper">
+      <!-- Canvas container -->
+      <div id="canvas-3d" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+      <!-- Crosshair HUD Overlays (Techno Aesthetic) -->
+      <div class="absolute top-3 left-3 pointer-events-none text-[10px] text-[#555a6d] font-techno flex flex-col gap-0.5 z-10">
+        <div class="flex items-center gap-2">
+          <span class="text-white font-bold">+ EMISSIVE_HEARTH // RADIANT</span>
+          <span id="hud-gravity-badge" class="text-green-400 text-[9px] font-bold tracking-wider">● GRAVITY_ACTIVE</span>
+        </div>
+        <div id="hud-subline" class="text-[9px] text-[#71768c]">
+          VOXELS: 8 | PALETTE: AMBER | AUDIO: ACTIVE_CRACKLE
+        </div>
+      </div>
+
+      <!-- Top Right Coordinate Readout -->
+      <div class="absolute top-3 right-3 pointer-events-none text-[9px] text-[#444857] font-techno text-right hidden sm:block z-10">
+        <div>[X: <span id="cam-x">0.0</span> Y: <span id="cam-y">4.4</span> Z: <span id="cam-z">8.5</span>]</div>
+        <div>GLOW: HIGH_EMISSION // NON_OVERLAPPING</div>
+      </div>
+
+      <!-- Bottom Center Keyboard Cue -->
+      <div id="interaction-cue" class="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none transition-opacity duration-300 z-10 w-auto max-w-[95%]">
+        <div class="px-3 py-1.5 bg-black/90 border border-[#333847] text-[#9da3ba] text-[10px] tracking-wider uppercase font-techno flex items-center gap-2 flex-wrap justify-center shadow-2xl">
+          <span><span class="key-chip">WASD</span> MOVE</span>
+          <span>&bull;</span>
+          <span><span class="key-chip">Q/E</span> YAW</span>
+          <span>&bull;</span>
+          <span><span class="key-chip">Z/C</span> PITCH</span>
+          <span>&bull;</span>
+          <span><span class="key-chip">R/F</span> ELEVATE</span>
+          <span>&bull;</span>
+          <span><span class="key-chip">G</span> GRAVITY/FLOAT</span>
+          <span>&bull;</span>
+          <span><span class="key-chip">[ / ]</span> SCALE</span>
+          <span>&bull;</span>
+          <span><span class="key-chip">SPACE</span> FLAME</span>
+        </div>
+      </div>
+
+      <!-- Floating Unhide Button (when side panel is hidden) -->
+      <button id="unhide-panel-btn" onclick="toggleSidePanel()" class="absolute top-3 right-3 z-30 techno-btn active hidden items-center gap-1.5 shadow-2xl">
+        <span class="material-symbols-outlined text-sm">tune</span>
+        <span>Show Panel</span>
+      </button>
+    </div>
+
+    <!-- RIGHT: DEDICATED TECHNO SIDE PANEL (UNOBSTRUCTED) -->
+    <div id="techno-side-panel" class="w-full md:w-[380px] lg:w-[420px] h-full bg-[#08090c] border-t md:border-t-0 md:border-l border-[#222530] flex flex-col justify-between text-white z-20 transition-all duration-300">
+      
+      <!-- Side Panel Header -->
+      <div class="p-3.5 border-b border-[#222530] flex items-center justify-between bg-[#0b0c10]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 bg-white"></span>
+          <span class="text-xs font-bold uppercase tracking-widest text-white">
+            // CONTROL_MATRIX
+          </span>
+        </div>
+        <span class="text-[9px] text-[#5b6075] uppercase">CLEAN_TIMBERS_V3.3</span>
+      </div>
+
+      <!-- Scrollable Controls Body -->
+      <div class="flex-1 overflow-y-auto techno-scroll p-4 flex flex-col gap-3.5 text-xs">
+
+        <!-- SECTION 1: AUTHENTIC CAMPFIRE FORMATIONS (NON-OVERLAPPING) -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between text-[10px] text-[#71768c] uppercase tracking-wider border-b border-[#1c1f29] pb-1">
+            <span>01 // CAMPFIRE_FORMATIONS</span>
+            <span id="formation-current" class="text-white font-bold">TEEPEE</span>
+          </div>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button onclick="applyFormation('teepee')" class="techno-btn formation-btn active text-center" title="4-Timber Leaning Teepee + Suspended Embers">
+              Teepee
+            </button>
+            <button onclick="applyFormation('cabin')" class="techno-btn formation-btn text-center" title="Orthogonal Stacked Cross-Timbers (Zero Clipping)">
+              Log Cabin
+            </button>
+            <button onclick="applyFormation('leanto')" class="techno-btn formation-btn text-center" title="Foundation Trunk + Angled Resting Timbers">
+              Lean-To
+            </button>
+            <button onclick="applyFormation('star')" class="techno-btn formation-btn text-center" title="Radial Star Fireplace">
+              Star Fire
+            </button>
+            <button onclick="applyFormation('darkmatter')" class="techno-btn formation-btn text-center" title="Zero-G Floating Embers (Dark Matter Sculpture)">
+              Zero-G Embers
+            </button>
+            <button onclick="settleAllWithGravity()" class="techno-btn text-center border-dashed text-amber-200" title="Drop & Settle All Blocks with Gravity Physics">
+              ⬇ Settle Gravity
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 2: SPAWN CLEAN 4-SIDED TIMBER & VOXEL SHAPES -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between text-[10px] text-[#71768c] uppercase tracking-wider border-b border-[#1c1f29] pb-1">
+            <span>02 // SPAWN_EMITTER_SHAPE</span>
+            <span class="text-[#555a6d] font-mono">[4-SIDED]</span>
+          </div>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button onclick="addBlockWithShape('timber')" class="techno-btn text-center text-[9px]" title="Add Long 4-Sided Timber Beam">
+              + Timber
+            </button>
+            <button onclick="addBlockWithShape('chunk')" class="techno-btn text-center text-[9px]" title="Add Chunky 4-Sided Base Log">
+              + Chunky
+            </button>
+            <button onclick="addBlockWithShape('kindling')" class="techno-btn text-center text-[9px]" title="Add Slender 4-Sided Kindling Stick">
+              + Kindling
+            </button>
+            <button onclick="addBlockWithShape('spark')" class="techno-btn text-center text-[9px] border-cyan-500/50 text-cyan-200" title="Add Floating Spark (Zero-G Crystal Ember)">
+              ✦ Spark (Float)
+            </button>
+            <button onclick="addBlockWithShape('cube')" class="techno-btn text-center text-[9px]" title="Add Glowing Coal Cube">
+              + Cube
+            </button>
+            <button onclick="addBlockWithShape('slab')" class="techno-btn text-center text-[9px]" title="Add Hearth Stone Base">
+              + Slab
+            </button>
+            <button onclick="clearBlocks()" class="techno-btn text-center text-[9px] text-red-400 border-red-900/60 col-span-2" title="Clear all blocks">
+              Clear All
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 3: CHROMATIC PRESET MAPS (STRICT SINGLE-HUE PRESETS) -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between text-[10px] text-[#71768c] uppercase tracking-wider border-b border-[#1c1f29] pb-1">
+            <span>03 // CHROMATIC_MAP</span>
+            <span id="palette-current" class="text-white font-bold">AMBER</span>
+          </div>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button onclick="setColorPalette('amber')" class="techno-btn palette-btn active flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 bg-[#ff8800]"></span>
+              <span>Amber</span>
+            </button>
+            <button onclick="setColorPalette('ruby')" class="techno-btn palette-btn flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 bg-[#ff2222]"></span>
+              <span>Ruby</span>
+            </button>
+            <button onclick="setColorPalette('twilight')" class="techno-btn palette-btn flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 bg-[#b84dff]"></span>
+              <span>Twilight</span>
+            </button>
+            <button onclick="setColorPalette('frost')" class="techno-btn palette-btn flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 bg-[#00e5ff]"></span>
+              <span>Glacial</span>
+            </button>
+            <button onclick="setColorPalette('solar')" class="techno-btn palette-btn flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 bg-[#ffe243]"></span>
+              <span>Solar</span>
+            </button>
+            <button onclick="setColorPalette('monochrome')" class="techno-btn palette-btn flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 bg-white"></span>
+              <span>Techno B&W</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 4: FLICKER SPEED & TURBULENCE CONTROLS (NO MORE LAVA LAMP) -->
+        <div class="flex flex-col gap-2 p-2.5 bg-[#0c0d12] border border-[#222530]">
+          <div class="flex items-center justify-between text-[10px] text-[#71768c] uppercase tracking-wider border-b border-[#1c1f29] pb-1">
+            <span class="text-white font-bold">04 // FLICKER_ENGINE</span>
+            <span class="text-amber-400 font-mono text-[9px]">DANCING_FLAME</span>
+          </div>
+          
+          <div class="flex flex-col gap-1 pt-1">
+            <div class="flex items-center justify-between text-[10px]">
+              <span class="text-[#71768c]">FLICKER SPEED:</span>
+              <span id="flicker-speed-val" class="text-white font-mono font-bold">0.8x</span>
+            </div>
+            <input type="range" id="flicker-speed-slider" min="0.1" max="1.5" step="0.05" value="0.8" oninput="updateFlickerSpeed(this.value)" class="techno-slider w-full cursor-pointer">
+            <div class="flex justify-between text-[8px] text-[#555a6d] font-mono">
+              <span>CALM [0.1x]</span>
+              <span>NATURAL [0.8x]</span>
+              <span>MAX [1.5x]</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1 pt-1">
+            <div class="flex items-center justify-between text-[10px]">
+              <span class="text-[#71768c]">FLAME DYNAMICS (POPS):</span>
+              <span id="flicker-turb-val" class="text-white font-mono font-bold">1.2x</span>
+            </div>
+            <input type="range" id="flicker-turb-slider" min="0.0" max="2.0" step="0.1" value="1.2" oninput="updateFlickerTurbulence(this.value)" class="techno-slider w-full cursor-pointer">
+            <div class="flex justify-between text-[8px] text-[#555a6d] font-mono">
+              <span>SMOOTH [0.0]</span>
+              <span>CRACKLING [1.2]</span>
+              <span>WILD [2.0]</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 5: MASTER LUMINANCE & SPATIAL INTENSITY -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between text-[10px] text-[#71768c] uppercase tracking-wider border-b border-[#1c1f29] pb-1">
+            <span>05 // RADIANT_LUMINANCE</span>
+            <span id="luminance-val" class="text-white font-bold font-mono">80%</span>
+          </div>
+          <div class="flex flex-col gap-1 pt-1">
+            <input type="range" id="luminance-slider" min="0.2" max="2.0" step="0.05" value="0.80" oninput="updateLuminance(this.value)" class="techno-slider w-full cursor-pointer">
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-[#71768c] uppercase tracking-wider border-b border-[#1c1f29] pb-1 pt-1">
+            <span>GEOMETRIC_FALLOFF</span>
+            <span id="spatial-val" class="text-white font-bold font-mono">1.10x</span>
+          </div>
+          <div class="flex flex-col gap-1 pt-1">
+            <input type="range" id="spatial-slider" min="0.0" max="2.5" step="0.05" value="1.1" oninput="updateSpatialIntensity(this.value)" class="techno-slider w-full cursor-pointer">
+          </div>
+        </div>
+
+        <!-- SECTION 6: SELECTED VOXEL INSPECTOR & CONTROLS -->
+        <div class="flex flex-col gap-2 p-3 bg-[#0c0d12] border border-[#222530]">
+          <div class="flex items-center justify-between text-[10px] text-[#71768c] uppercase tracking-wider border-b border-[#1c1f29] pb-1">
+            <span class="text-white font-bold">VOXEL_INSPECTOR</span>
+            <div class="flex items-center gap-1">
+              <button onclick="cycleSelectedVoxel(-1)" class="text-[9px] px-1 bg-[#1a1d28] hover:bg-white hover:text-black font-bold border border-[#33384a]">◀</button>
+              <span id="sel-voxel-id" class="text-white font-mono font-bold">[#01]</span>
+              <button onclick="cycleSelectedVoxel(1)" class="text-[9px] px-1 bg-[#1a1d28] hover:bg-white hover:text-black font-bold border border-[#33384a]">▶</button>
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-between text-[11px] pt-1">
+            <span class="text-[#71768c]">SHAPE:</span>
+            <span id="sel-voxel-shape" class="text-white font-mono font-bold">TIMBER_LOG</span>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-[#71768c]">EMITTER_MODE:</span>
+            <span id="sel-voxel-mode" class="text-white font-mono font-bold">DANCING FLAME</span>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-[#71768c]">PHYSICS_MODE:</span>
+            <span id="sel-voxel-physics" class="text-green-400 font-mono font-bold">GRAVITY DYNAMIC</span>
+          </div>
+
+          <!-- ZERO-G / GRAVITY TOGGLE BUTTON (HOTKEY G) -->
+          <div class="pt-1">
+            <button onclick="toggleSelectedGravity()" id="sel-gravity-btn" class="w-full techno-btn active text-center flex items-center justify-center gap-1.5" title="Toggle Gravity vs Zero-G Floating (G)">
+              <span class="material-symbols-outlined text-sm">flight</span>
+              <span id="sel-gravity-btn-label">Gravity: ON (Physics ⬇) [G]</span>
+            </button>
+          </div>
+
+          <!-- SCALE CONTROLS (HOTKEYS [ / ]) -->
+          <div class="flex flex-col gap-1 pt-1">
+            <div class="flex items-center justify-between text-[10px] text-[#71768c]">
+              <span>SCALE / SIZE:</span>
+              <span id="sel-scale-label" class="text-white font-mono font-bold">1.00x</span>
+            </div>
+            <div class="grid grid-cols-4 gap-1">
+              <button onclick="setSelectedScale(0.65)" class="techno-btn text-center text-[9px]">0.65x Sm</button>
+              <button onclick="setSelectedScale(1.0)" class="techno-btn text-center text-[9px]">1.0x Med</button>
+              <button onclick="setSelectedScale(1.4)" class="techno-btn text-center text-[9px]">1.4x Lg</button>
+              <button onclick="setSelectedScale(1.8)" class="techno-btn text-center text-[9px]">1.8x XL</button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] pt-1">
+            <span class="text-[#71768c]">ROTATION [P, Y, R]:</span>
+            <span id="sel-voxel-rot" class="text-white font-mono font-bold">0°, 0°, 0°</span>
+          </div>
+
+          <!-- 3-Axis Rotation Matrix (Pitch X, Yaw Y, Roll Z) -->
+          <div class="flex flex-col gap-1 pt-0.5">
+            <div class="grid grid-cols-3 gap-1">
+              <button onclick="rotateSelectedAxis('x', 15)" class="techno-btn text-center text-[9px]" title="Tilt Pitch Forward/Back (Z/C)">
+                Pitch X (Z/C)
+              </button>
+              <button onclick="rotateSelectedAxis('y', 15)" class="techno-btn text-center text-[9px]" title="Spin Yaw Left/Right (Q/E)">
+                Yaw Y (Q/E)
+              </button>
+              <button onclick="rotateSelectedAxis('z', 15)" class="techno-btn text-center text-[9px]" title="Roll Tilt Z">
+                Roll Z
+              </button>
+            </div>
+          </div>
+
+          <!-- Vertical & Gravity Settling -->
+          <div class="grid grid-cols-3 gap-1 pt-1">
+            <button onclick="elevateSelectedBlock(0.12)" class="techno-btn text-center text-[9px]" title="Elevate Up (R)">
+              ▲ Up (R)
+            </button>
+            <button onclick="elevateSelectedBlock(-0.12)" class="techno-btn text-center text-[9px]" title="Lower Down (F)">
+              ▼ Down (F)
+            </button>
+            <button onclick="dropSelectedWithGravity()" class="techno-btn text-center text-[9px] border-amber-600/50 text-amber-200" title="Drop and Land on Floor/Stack">
+              ⬇ Drop
+            </button>
+          </div>
+
+          <!-- Movement Directional Step Buttons -->
+          <div class="grid grid-cols-4 gap-1 pt-1">
+            <button onclick="moveSelectedVoxel(-0.15, 0)" class="techno-btn text-center text-[9px]" title="Move Left (A / Left)">
+              ← Left
+            </button>
+            <button onclick="moveSelectedVoxel(0.15, 0)" class="techno-btn text-center text-[9px]" title="Move Right (D / Right)">
+              Right →
+            </button>
+            <button onclick="moveSelectedVoxel(0, -0.15)" class="techno-btn text-center text-[9px]" title="Move Forward (W / Up)">
+              ↑ Fwd
+            </button>
+            <button onclick="moveSelectedVoxel(0, 0.15)" class="techno-btn text-center text-[9px]" title="Move Back (S / Down)">
+              ↓ Back
+            </button>
+          </div>
+
+          <div class="flex items-center gap-1 pt-1">
+            <button onclick="toggleSelectedBlockMode()" class="techno-btn flex-1 text-center text-[9px]" title="Toggle Flame vs Ember (Space)">
+              Flame/Ember (Space)
+            </button>
+            <button onclick="removeBlock()" class="techno-btn text-red-400 hover:text-red-200 border-red-900/60 text-center text-[9px]" title="Delete (Del)">
+              Delete
+            </button>
+          </div>
+        </div>
+
+        <!-- SECTION 7: MULTI-TRACK SOUNDSCAPE MATRIX & AMBIENCE MIXER -->
+        <div class="flex flex-col gap-2.5">
+          <div class="flex items-center justify-between text-[10px] text-[#71768c] uppercase tracking-wider border-b border-[#1c1f29] pb-1">
+            <span>07 // SOUNDSCAPE_MATRIX</span>
+            <div class="flex items-center gap-1.5">
+              <!-- Visual VU Meter with Reactive LED Bars -->
+              <div id="audio-vu" class="flex items-end gap-0.5 h-3">
+                <div class="vu-bar" id="vu-1"></div>
+                <div class="vu-bar" id="vu-2"></div>
+                <div class="vu-bar" id="vu-3"></div>
+                <div class="vu-bar" id="vu-4"></div>
+              </div>
+              <span id="audio-status-label" class="text-[#71768c] font-mono">OFF</span>
+            </div>
+          </div>
+
+          <!-- Hidden Preloaded Stem Media Elements -->
+          <audio id="audio-stem-music" src="/static/prototypes/campfire/audio/ambient_drone.mp3" preload="auto" loop></audio>
+          <audio id="audio-stem-crackle" src="/static/prototypes/campfire/audio/wood_crackle.mp3" preload="auto" loop></audio>
+          <audio id="audio-stem-wind" src="/static/prototypes/campfire/audio/night_wind.mp3" preload="auto" loop></audio>
+          <audio id="audio-stem-crickets" src="/static/prototypes/campfire/audio/crickets.mp3" preload="auto" loop></audio>
+
+          <!-- Master Controls -->
+          <div class="flex items-center justify-between gap-2 pt-0.5">
+            <button onclick="toggleAudio()" id="audio-btn" class="techno-btn flex-1 flex items-center justify-center gap-1.5 py-1.5">
+              <span id="audio-icon" class="material-symbols-outlined text-sm">volume_off</span>
+              <span id="audio-label">Start Campfire Audio</span>
+            </button>
+            <div class="flex items-center gap-1.5 w-28">
+              <input type="range" id="volume-slider" min="0.0" max="1.0" step="0.05" value="0.75" oninput="setAudioVolume(this.value)" class="techno-slider w-full cursor-pointer" title="Master Volume">
+              <span id="volume-val" class="text-[9px] font-mono text-[#71768c] w-6 text-right">75%</span>
+            </div>
+          </div>
+
+          <!-- Quick Soundscape Mood Presets -->
+          <div class="grid grid-cols-4 gap-1">
+            <button onclick="applySoundPreset('fire')" class="techno-btn text-[8px] py-1 text-center font-mono" title="Only wood crackling & sap pops">
+              🔥 Fire
+            </button>
+            <button onclick="applySoundPreset('gallery')" class="techno-btn text-[8px] py-1 text-center font-mono" title="Droning chords + fire + wind">
+              🏛️ Chords
+            </button>
+            <button onclick="applySoundPreset('forest')" class="techno-btn text-[8px] py-1 text-center font-mono" title="Night forest wind + crickets + fire">
+              🌲 Forest
+            </button>
+            <button onclick="applySoundPreset('all')" class="techno-btn text-[8px] py-1 text-center font-mono" title="All stems active">
+              ✨ Full Mix
+            </button>
+          </div>
+
+          <!-- Individual Ambience Stems Matrix -->
+          <div class="flex flex-col gap-1.5 text-[9px] font-mono">
+
+            <!-- Stem 1: Droning Ambient Chords -->
+            <div class="stem-row flex flex-col gap-1 rounded-sm">
+              <div class="flex items-center justify-between">
+                <button onclick="toggleStem('music')" id="stem-btn-music" class="stem-toggle active px-1.5 py-0.5 border border-[#2b2e3b] flex items-center gap-1.5 rounded-sm">
+                  <span class="stem-indicator" id="ind-music"></span>
+                  <span class="font-bold text-white">🎹 DRONING CHORDS</span>
+                </button>
+                <div class="flex items-center gap-1">
+                  <span class="text-[8px] text-[#555a6d]">Chordal Soundscape</span>
+                  <span id="stem-val-music" class="text-[#71768c] w-6 text-right">65%</span>
+                </div>
+              </div>
+              <input type="range" id="stem-vol-music" min="0.0" max="1.0" step="0.05" value="0.65" oninput="setStemVolume('music', this.value)" class="techno-slider w-full cursor-pointer">
+            </div>
+
+            <!-- Stem 2: Wood Crackle & Fire -->
+            <div class="stem-row flex flex-col gap-1 rounded-sm">
+              <div class="flex items-center justify-between">
+                <button onclick="toggleStem('crackle')" id="stem-btn-crackle" class="stem-toggle active px-1.5 py-0.5 border border-[#2b2e3b] flex items-center gap-1.5 rounded-sm">
+                  <span class="stem-indicator" id="ind-crackle"></span>
+                  <span class="font-bold text-white">🔥 WOOD CRACKLE</span>
+                </button>
+                <div class="flex items-center gap-1">
+                  <span class="text-[8px] text-[#555a6d]">Fire & Embers</span>
+                  <span id="stem-val-crackle" class="text-[#71768c] w-6 text-right">85%</span>
+                </div>
+              </div>
+              <input type="range" id="stem-vol-crackle" min="0.0" max="1.0" step="0.05" value="0.85" oninput="setStemVolume('crackle', this.value)" class="techno-slider w-full cursor-pointer">
+            </div>
+
+            <!-- Stem 3: Night Wind & Atmosphere -->
+            <div class="stem-row flex flex-col gap-1 rounded-sm">
+              <div class="flex items-center justify-between">
+                <button onclick="toggleStem('wind')" id="stem-btn-wind" class="stem-toggle active px-1.5 py-0.5 border border-[#2b2e3b] flex items-center gap-1.5 rounded-sm">
+                  <span class="stem-indicator" id="ind-wind"></span>
+                  <span class="font-bold text-white">🌲 NIGHT WIND</span>
+                </button>
+                <div class="flex items-center gap-1">
+                  <span class="text-[8px] text-[#555a6d]">Forest Breeze</span>
+                  <span id="stem-val-wind" class="text-[#71768c] w-6 text-right">45%</span>
+                </div>
+              </div>
+              <input type="range" id="stem-vol-wind" min="0.0" max="1.0" step="0.05" value="0.45" oninput="setStemVolume('wind', this.value)" class="techno-slider w-full cursor-pointer">
+            </div>
+
+            <!-- Stem 4: Night Crickets -->
+            <div class="stem-row flex flex-col gap-1 rounded-sm">
+              <div class="flex items-center justify-between">
+                <button onclick="toggleStem('crickets')" id="stem-btn-crickets" class="stem-toggle px-1.5 py-0.5 border border-[#2b2e3b] flex items-center gap-1.5 rounded-sm">
+                  <span class="stem-indicator" id="ind-crickets"></span>
+                  <span class="font-bold text-white">🦗 CRICKETS</span>
+                </button>
+                <div class="flex items-center gap-1">
+                  <span class="text-[8px] text-[#555a6d]">Night Meadow</span>
+                  <span id="stem-val-crickets" class="text-[#71768c] w-6 text-right">40%</span>
+                </div>
+              </div>
+              <input type="range" id="stem-vol-crickets" min="0.0" max="1.0" step="0.05" value="0.40" oninput="setStemVolume('crickets', this.value)" class="techno-slider w-full cursor-pointer">
+            </div>
+
+            <!-- Stem 5: Resonant Sap Pops (Dynamic Physics Pops) -->
+            <div class="stem-row flex flex-col gap-1 rounded-sm">
+              <div class="flex items-center justify-between">
+                <button onclick="toggleStem('pops')" id="stem-btn-pops" class="stem-toggle active px-1.5 py-0.5 border border-[#2b2e3b] flex items-center gap-1.5 rounded-sm">
+                  <span class="stem-indicator" id="ind-pops"></span>
+                  <span class="font-bold text-white">🪵 SAP POPS</span>
+                </button>
+                <div class="flex items-center gap-1">
+                  <span class="text-[8px] text-[#555a6d]">Acoustic Pops</span>
+                  <span id="stem-val-pops" class="text-[#71768c] w-6 text-right">70%</span>
+                </div>
+              </div>
+              <input type="range" id="stem-vol-pops" min="0.0" max="1.0" step="0.05" value="0.70" oninput="setStemVolume('pops', this.value)" class="techno-slider w-full cursor-pointer">
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 8: KEYBOARD SHORTCUTS REFERENCE -->
+        <div class="p-2.5 bg-[#090a0e] border border-[#1d202b] flex flex-col gap-1.5 text-[9px] text-[#7c8299]">
+          <span class="text-white font-bold uppercase tracking-wider text-[10px]">KEYBOARD BINDINGS</span>
+          <div class="grid grid-cols-2 gap-1 font-mono">
+            <div><span class="key-chip">W A S D</span> : Move X/Z</div>
+            <div><span class="key-chip">Q</span> / <span class="key-chip">E</span> : Yaw Y</div>
+            <div><span class="key-chip">Z</span> / <span class="key-chip">C</span> : Pitch X</div>
+            <div><span class="key-chip">R</span> / <span class="key-chip">F</span> : Up / Down</div>
+            <div><span class="key-chip">G</span> : Gravity/Zero-G</div>
+            <div><span class="key-chip">[</span> / <span class="key-chip">]</span> : Scale -/+</div>
+            <div><span class="key-chip">TAB</span> : Cycle Voxel</div>
+            <div><span class="key-chip">SPACE</span> : Mode Toggle</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Side Panel Footer -->
+      <div class="p-3 border-t border-[#222530] bg-[#07080a] flex items-center justify-between text-[10px] text-[#555a6d]">
+        <span>5-IDEAS SHOWCASE</span>
+        <span class="text-white font-mono font-bold">DARK MATTER BERLIN</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- THREE.JS & ORBITCONTROLS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<!-- TECHNO CAMPFIRE INSTALLATION ENGINE SCRIPT -->
+<script src="/static/prototypes/campfire/app.js"></script>
+{% endblock %}

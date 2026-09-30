@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}Nostalgia Cap-o-Matic '99: Realistic Retro Hat Studio & Vintage Shop{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/prototypes/nostalgia-cap/style.css"/>
+
+<div class="flex flex-col gap-6 max-w-7xl mx-auto pb-16" id="nostalgia-cap-root">
+
+  <!-- ========================================================================= -->
+  <!-- HERO HEADER (RADICAL MEMPHIS POP X VINTAGE MERCHANDISE VAULT)             -->
+  <!-- ========================================================================= -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden">
+    <!-- Decorative geometric background accent -->
+    <div class="absolute -right-10 -bottom-10 w-48 h-48 border-[6px] border-white/20 rotate-12 pointer-events-none flex items-center justify-center">
+      <div class="w-32 h-32 border-[4px] border-white/20 -rotate-45"></div>
+    </div>
+
+    <div class="relative z-10">
+      <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-2.5 py-0.5 font-mono text-[11px] font-black uppercase mb-2 shadow-[2px_2px_0px_#1c1b1b] -rotate-1">
+        🧢 DAY 2026-09-21 PROTOTYPE • FASHION MERCH VAULT • DAY #1
+      </div>
+      <h1 class="font-display font-black text-2xl sm:text-4xl uppercase text-white leading-tight tracking-tight flex items-center gap-3">
+        <span>NOSTALGIA CAP-O-MATIC '99</span>
+        <span class="text-xs sm:text-sm font-mono font-bold bg-white text-primary-magenta px-2 py-0.5 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          PHOTO STUDIO
+        </span>
+      </h1>
+      <p class="font-body text-xs sm:text-sm text-white/95 mt-1 max-w-2xl">
+        Real photographic caps with authentic superimposed 90s embroidered patches, dye colorways, and custom stitched graphics. Pick a silhouette, drop your nostalgic badge, and snag yours before the batch sells out!
+      </p>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="flex items-center gap-2 flex-wrap relative z-10">
+      <button id="audio-toggle-btn" onclick="toggleAudio()" class="neo-btn neo-btn-yellow text-xs py-2 px-3 flex items-center gap-1.5" title="Toggle 8-bit sound effects">
+        <span class="material-symbols-outlined text-base" id="audio-icon">volume_up</span>
+        <span id="audio-text">SOUND ON</span>
+      </button>
+      <button onclick="randomizeDrop(true)" class="neo-btn neo-btn-primary text-xs py-2 px-3 flex items-center gap-1.5 bg-electric-cyan text-ink hover:bg-cyan-300 font-bold" title="Roll a surprise nostalgic colorway & patch">
+        <span class="material-symbols-outlined text-base">casino</span>
+        <span>SURPRISE DROP</span>
+      </button>
+      <a href="/day/2026-09-21" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span>Day Sparks</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- SINGLE-CARD FAKE SHOPPING STOREFRONT LAYOUT                               -->
+  <!-- ========================================================================= -->
+  <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-4 sm:p-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT COLUMN: REALISTIC PRODUCT CANVAS & EXPORT (6 COLS) -->
+      <div class="lg:col-span-6 flex flex-col gap-4">
+        
+        <!-- Canvas Stage Card -->
+        <div class="border-[4px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-3 relative bg-canvas overflow-hidden">
+          <!-- Authentic Vintage Hologram Corner Badge -->
+          <div class="absolute top-4 left-4 z-20 bg-tertiary-yellow text-ink border-2 border-ink px-2 py-0.5 font-mono text-[10px] font-black uppercase tracking-wider shadow-[2px_2px_0px_#1c1b1b] -rotate-3">
+            ★ VERIFIED 90s STOCK
+          </div>
+
+          <!-- Batch Badge -->
+          <div class="absolute top-4 right-4 z-20 bg-ink text-acid-lime border-2 border-ink px-2.5 py-0.5 font-mono text-[10px] font-bold">
+            BATCH <span id="batchDisplay">#042</span>
+          </div>
+
+          <!-- High-Res Interactive Canvas -->
+          <div class="relative w-full aspect-square hat-canvas-wrapper border-2 border-ink flex items-center justify-center overflow-hidden">
+            <canvas id="hatCanvas" width="800" height="800" class="w-full h-full object-contain"></canvas>
+
+            <!-- Loading Spinner Indicator (hidden once loaded) -->
+            <div id="canvasLoader" class="absolute inset-0 bg-white/80 flex flex-col items-center justify-center gap-2 z-30 font-mono text-xs font-bold text-ink">
+              <span class="material-symbols-outlined text-3xl animate-spin text-primary-magenta">progress_activity</span>
+              <span>DEVELOPING PHOTO STUDIO CAP...</span>
+            </div>
+          </div>
+
+          <!-- Live Telemetry Status Bar -->
+          <div class="mt-2.5 flex items-center justify-between text-[11px] font-mono font-bold text-ink px-1">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-accent-lime inline-block"></span>
+              <span id="canvasTelemetrySilhouette">COTTON DAD CAP</span>
+            </span>
+            <span class="text-ink/60 uppercase" id="canvasTelemetryPatch">SYNTHWAVE SUNSET</span>
+          </div>
+        </div>
+
+        <!-- Download & Sharing Toolbar -->
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="downloadProductPhoto()" class="neo-btn neo-btn-cyan text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 font-black uppercase">
+            <span class="material-symbols-outlined text-sm">download</span>
+            <span>DOWNLOAD PHOTO (.PNG)</span>
+          </button>
+          <button onclick="copyRecipe()" id="copyRecipeBtn" class="neo-btn neo-btn-white text-xs py-2.5 px-3 flex items-center justify-center gap-1.5 font-bold uppercase">
+            <span class="material-symbols-outlined text-sm">content_copy</span>
+            <span>COPY RECIPE</span>
+          </button>
+        </div>
+
+        <!-- Product Specs Box -->
+        <div class="border-[3px] border-ink bg-canvas p-3.5 text-xs font-mono">
+          <div class="font-bold text-ink border-b-2 border-ink/20 pb-1 mb-2 uppercase flex items-center justify-between">
+            <span>PHYSICAL SPECIFICATIONS</span>
+            <span class="text-[10px] text-primary-magenta font-bold">LIMITED VAULT RUN</span>
+          </div>
+          <div class="grid grid-cols-2 gap-y-1.5 text-[11px]">
+            <span class="text-ink/60">FABRIC WEAVE:</span>
+            <span class="font-bold text-right" id="specFabric">100% WASHED CHINO TWILL</span>
+
+            <span class="text-ink/60">EMBROIDERY:</span>
+            <span class="font-bold text-right" id="specPatch">HIGH-DENSITY MERROWED PATCH</span>
+
+            <span class="text-ink/60">CLOSURE:</span>
+            <span class="font-bold text-right">ANTIQUE BRASS / RETRO SNAP</span>
+
+            <span class="text-ink/60">MANUFACTURE:</span>
+            <span class="font-bold text-right">CYBERSPACE / PORTO 1999</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: PRODUCT DETAILS & CUSTOMIZER (6 COLS) -->
+      <div class="lg:col-span-6 flex flex-col gap-6">
+
+        <!-- Product Header & Pricing -->
+        <div class="border-b-[3px] border-ink pb-4">
+          <div class="flex items-center justify-between gap-2 flex-wrap mb-1">
+            <span id="productSku" class="font-mono text-xs font-bold text-ink/70 uppercase tracking-widest bg-yellow-fixed/60 px-2 py-0.5 border border-ink">
+              SKU: CAP-94-DAD-SYNTHWAVE
+            </span>
+            <div class="flex items-center gap-1 text-xs font-bold text-ink">
+              <span class="text-amber-500">★★★★★</span>
+              <span class="font-mono">4.9/5</span>
+              <span class="text-ink/60 font-mono">(58 reviews)</span>
+            </div>
+          </div>
+
+          <h2 id="productTitle" class="font-display font-black text-2xl sm:text-3xl text-ink uppercase tracking-tight leading-none mt-2">
+            THE '94 VINTAGE DAD CAP
+          </h2>
+          <p id="productSubtitle" class="font-body text-xs sm:text-sm text-ink/80 mt-1">
+            Washed chino cotton twill with an authentic 90s merrowed embroidered patch, curved visor, and relaxed unstructured crown.
+          </p>
+
+          <!-- Price & Stock Indicator -->
+          <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-baseline gap-2">
+              <span class="font-display font-black text-3xl sm:text-4xl text-primary-magenta">$34.99</span>
+              <span class="font-mono text-sm text-ink/50 line-through">$59.99</span>
+              <span class="bg-acid-lime text-ink font-mono text-[11px] font-black px-2 py-0.5 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b] -rotate-2">
+                SAVE 42%
+              </span>
+            </div>
+
+            <div class="scarcity-pulse inline-flex items-center gap-1.5 bg-vivid-orange text-white font-mono text-xs font-bold px-3 py-1 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+              <span class="material-symbols-outlined text-sm">local_fire_department</span>
+              <span>ONLY <span id="stockCount" class="font-black">2</span> REMAINING IN BATCH!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- CUSTOMIZATION CONTROLS                                              -->
+        <!-- =================================================================== -->
+        <div class="flex flex-col gap-5">
+
+          <!-- 1. Hat Silhouette -->
+          <div>
+            <label class="block font-display font-black text-xs uppercase tracking-wider text-ink mb-1.5 flex items-center justify-between">
+              <span>1. SELECT REAL HAT SILHOUETTE</span>
+              <span class="font-mono text-[11px] font-normal text-ink/70" id="currentSilhouetteLabel">Vintage Dad Cap</span>
+            </label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setCapModel('dad')" id="model-dad" class="model-btn neo-btn text-xs py-2 px-2 flex flex-col items-center gap-1 font-bold uppercase border-2 border-ink neo-btn-yellow shadow-[2px_2px_0px_#1c1b1b]">
+                <span class="text-xl">⚾</span>
+                <span>Dad Cap</span>
+                <span class="text-[9px] font-mono text-ink/60 font-normal">Washed Cotton</span>
+              </button>
+              <button onclick="setCapModel('trucker')" id="model-trucker" class="model-btn neo-btn text-xs py-2 px-2 flex flex-col items-center gap-1 font-bold uppercase border-2 border-ink neo-btn-white">
+                <span class="text-xl">🧢</span>
+                <span>Foam Trucker</span>
+                <span class="text-[9px] font-mono text-ink/60 font-normal">Mesh Back</span>
+              </button>
+              <button onclick="setCapModel('snapback')" id="model-snapback" class="model-btn neo-btn text-xs py-2 px-2 flex flex-col items-center gap-1 font-bold uppercase border-2 border-ink neo-btn-white">
+                <span class="text-xl">🛹</span>
+                <span>Flat Snapback</span>
+                <span class="text-[9px] font-mono text-ink/60 font-normal">Structured Wool</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Fabric Dye Colorway -->
+          <div>
+            <label class="block font-display font-black text-xs uppercase tracking-wider text-ink mb-1.5 flex items-center justify-between">
+              <span>2. FABRIC DYE COLORWAY</span>
+              <span class="font-mono text-[10px] text-ink/60" id="colorwayLabel">Crisp Studio White</span>
+            </label>
+            <div class="flex items-center gap-2 flex-wrap" id="colorwaySwatches">
+              <!-- Populated dynamically by JS -->
+            </div>
+          </div>
+
+          <!-- 3. Superimposed Nostalgic Embroidered Patch -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="font-display font-black text-xs uppercase tracking-wider text-ink">
+                3. SUPERIMPOSED NOSTALGIC GRAPHIC / PATCH
+              </label>
+              <span class="font-mono text-[10px] text-ink/60" id="patchLabel">Synthwave Sunset</span>
+            </div>
+            
+            <div class="grid grid-cols-4 sm:grid-cols-7 gap-2" id="patchGrid">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Custom Graphic Upload Option -->
+            <div class="mt-2.5 flex items-center gap-3 border-2 border-dashed border-ink/40 p-2.5 bg-canvas">
+              <label class="neo-btn neo-btn-yellow text-xs py-1.5 px-3 flex items-center gap-1.5 cursor-pointer font-bold uppercase shrink-0">
+                <span class="material-symbols-outlined text-sm">upload_file</span>
+                <span>UPLOAD YOUR ART</span>
+                <input type="file" id="userArtInput" accept="image/*" class="hidden" onchange="handleUserGraphicUpload(event)"/>
+              </label>
+              <span class="font-mono text-[10px] text-ink/70 truncate" id="uploadStatusText">
+                Or upload any custom PNG/JPG logo to superimpose!
+              </span>
+            </div>
+          </div>
+
+          <!-- 4. Custom Arched Stitched Text -->
+          <div>
+            <label class="block font-display font-black text-xs uppercase tracking-wider text-ink mb-1 flex items-center justify-between">
+              <span>4. CUSTOM STITCHED TEXT (OPTIONAL)</span>
+              <span class="font-mono text-[10px] text-ink/60">EMBROIDERED ON CROWN ARCH</span>
+            </label>
+            <div class="flex gap-2">
+              <input 
+                type="text" 
+                id="customTextInput" 
+                maxlength="14" 
+                placeholder="e.g. NOSTALGIA, PORTO '99, CYBER"
+                oninput="handleCustomTextInput(this.value)" 
+                class="flex-1 bg-white border-[3px] border-ink px-3 py-1.5 font-mono text-sm uppercase font-bold focus:outline-none focus:bg-tertiary-yellow/20"
+              />
+              <button onclick="clearCustomText()" class="neo-btn neo-btn-white text-xs py-1.5 px-3 font-mono font-bold">
+                CLEAR
+              </button>
+            </div>
+          </div>
+
+          <!-- 5. Fine Tuning Drawer: Placement, Scale & Tilt -->
+          <div class="border-[2px] border-ink bg-canvas p-3">
+            <div class="flex items-center justify-between font-mono text-[11px] font-bold text-ink mb-2">
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">tune</span>
+                <span>PATCH POSITION & SCALE TUNING</span>
+              </span>
+              <button onclick="resetTuning()" class="text-[10px] text-primary-magenta hover:underline">
+                RESET POSITION
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+              <!-- Scale -->
+              <div>
+                <div class="flex justify-between text-[10px] text-ink/70 mb-1">
+                  <span>SCALE:</span>
+                  <span id="scaleDisplay">100%</span>
+                </div>
+                <input type="range" id="patchScaleSlider" min="50" max="150" value="100" class="w-full" oninput="updatePatchScale(this.value)"/>
+              </div>
+
+              <!-- Vertical Offset -->
+              <div>
+                <div class="flex justify-between text-[10px] text-ink/70 mb-1">
+                  <span>VERTICAL:</span>
+                  <span id="offsetYDisplay">0px</span>
+                </div>
+                <input type="range" id="patchOffsetYSlider" min="-80" max="80" value="0" class="w-full" oninput="updatePatchOffsetY(this.value)"/>
+              </div>
+
+              <!-- Tilt / Angle -->
+              <div>
+                <div class="flex justify-between text-[10px] text-ink/70 mb-1">
+                  <span>ROTATION:</span>
+                  <span id="rotDisplay">-5°</span>
+                </div>
+                <input type="range" id="patchRotSlider" min="-30" max="30" value="-5" class="w-full" oninput="updatePatchRot(this.value)"/>
+              </div>
+            </div>
+
+            <div class="mt-2 pt-2 border-t border-ink/10 flex items-center justify-between text-[11px] font-mono">
+              <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" id="shadowToggle" checked onchange="togglePatchShadow(this.checked)" class="w-3.5 h-3.5 border border-ink accent-primary-magenta"/>
+                <span>REALISTIC EMBROIDERY DROP SHADOW</span>
+              </label>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                <input type="checkbox" id="cycLightingToggle" checked onchange="toggleCycLighting(this.checked)" class="w-3.5 h-3.5 border border-ink accent-primary-magenta"/>
+                <span>STUDIO CYC LIGHTING TINT</span>
+              </label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- ACTION BUTTONS: ADD TO CART & SURPRISE DROP                         -->
+        <!-- =================================================================== -->
+        <div class="pt-2 border-t-[3px] border-ink flex flex-col sm:flex-row gap-3">
+          <!-- Buy Now Button -->
+          <button onclick="triggerCheckout()" class="flex-1 neo-btn neo-btn-primary py-3.5 px-6 font-display font-black text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-2 bg-primary-magenta text-white shadow-[6px_6px_0px_#1c1b1b]">
+            <span class="material-symbols-outlined text-xl">shopping_cart_checkout</span>
+            <span>ADD TO CART & CHECKOUT ($34.99)</span>
+          </button>
+
+          <!-- Shuffle Button -->
+          <button onclick="randomizeDrop(true)" class="neo-btn neo-btn-yellow py-3.5 px-5 font-display font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-[4px_4px_0px_#1c1b1b]">
+            <span class="material-symbols-outlined text-lg">casino</span>
+            <span>SHUFFLE DROP</span>
+          </button>
+        </div>
+
+        <!-- Free shipping & trust guarantees -->
+        <div class="grid grid-cols-3 gap-2 text-center font-mono text-[10px] text-ink/70 border-t border-ink/20 pt-3">
+          <div class="flex items-center justify-center gap-1">
+            <span>📦</span>
+            <span>DIAL-UP AIR POST</span>
+          </div>
+          <div class="flex items-center justify-center gap-1">
+            <span>🧵</span>
+            <span>HIGH-DENSITY MERROW</span>
+          </div>
+          <div class="flex items-center justify-center gap-1">
+            <span>🔒</span>
+            <span>SECURE FAKE PAYMENT</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- RETRO CUSTOMER TESTIMONIALS                                               -->
+  <!-- ========================================================================= -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+    <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col justify-between">
+      <div class="mb-2">
+        <div class="text-amber-500 font-bold mb-1">★★★★★ 5/5</div>
+        <p class="text-ink font-body text-xs italic">
+          "The realistic cotton weave with the stitched VHS patch is legitimately next-level. I downloaded the product PNG and made it my forum avatar immediately."
+        </p>
+      </div>
+      <div class="font-bold text-[10px] text-primary-magenta flex items-center justify-between border-t border-ink/20 pt-2">
+        <span>@blockbuster_dan</span>
+        <span class="text-ink/60">VERIFIED COLLECTOR</span>
+      </div>
+    </div>
+
+    <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col justify-between">
+      <div class="mb-2">
+        <div class="text-amber-500 font-bold mb-1">★★★★★ 5/5</div>
+        <p class="text-ink font-body text-xs italic">
+          "The '94 Retro Trucker with the Acid Smiley patch looks exactly like the merchandise you used to find at raves and street markets in Berlin. Pure nostalgic dopamine."
+        </p>
+      </div>
+      <div class="font-bold text-[10px] text-primary-magenta flex items-center justify-between border-t border-ink/20 pt-2">
+        <span>@techno_chloe</span>
+        <span class="text-ink/60">90s CLUB RAT</span>
+      </div>
+    </div>
+
+    <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-4 flex flex-col justify-between">
+      <div class="mb-2">
+        <div class="text-amber-500 font-bold mb-1">★★★★★ 5/5</div>
+        <p class="text-ink font-body text-xs italic">
+          "The fabric dyeing preserves every single seam stitch and lighting highlight from the studio photo. Best hat generator on the modern web."
+        </p>
+      </div>
+      <div class="font-bold text-[10px] text-primary-magenta flex items-center justify-between border-t border-ink/20 pt-2">
+        <span>@skate_or_pizza</span>
+        <span class="text-ink/60">STREETWEAR ARCHIVIST</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: FAKE VINTAGE THERMAL CASH REGISTER RECEIPT                         -->
+  <!-- ========================================================================= -->
+  <div id="receiptModal" class="fixed inset-0 z-50 bg-ink/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] max-w-md w-full relative p-6 font-mono text-xs transform transition-all">
+      
+      <!-- Close button -->
+      <button onclick="closeReceipt()" class="absolute top-3 right-3 w-8 h-8 bg-canvas border-2 border-ink font-black hover:bg-neon-pink hover:text-white flex items-center justify-center">
+        ✕
+      </button>
+
+      <!-- Thermal Paper Header -->
+      <div class="text-center border-b-2 border-dashed border-ink/40 pb-4 mb-4">
+        <div class="font-black text-lg uppercase tracking-tight">★ RETROCAPS CO. ★</div>
+        <div class="text-[11px] text-ink/70">PORTO VINTAGE MERCHANDISE VAULT</div>
+        <div class="text-[10px] text-ink/50 mt-1">TRANSACTION RECEIPT #<span id="receiptOrderNum">NC-994821</span></div>
+        <div class="text-[10px] text-ink/50" id="receiptTimestamp">2026-09-21 09:55:00 UTC</div>
+      </div>
+
+      <!-- Itemized Breakdown -->
+      <div class="flex flex-col gap-2 border-b-2 border-dashed border-ink/40 pb-4 mb-4">
+        <div class="flex justify-between font-bold text-sm">
+          <span id="receiptItemName">THE '94 VINTAGE DAD CAP</span>
+          <span>$34.99</span>
+        </div>
+        <div class="text-[11px] text-ink/60 pl-2">
+          • Silhouette: <span id="receiptSilhouette">Dad Cap</span><br/>
+          • Fabric Color: <span id="receiptColor">Crisp White</span><br/>
+          • Superimposed Patch: <span id="receiptPatch">Synthwave Sunset</span><br/>
+          • Stitched Text: <span id="receiptCustomText">NONE</span>
+        </div>
+
+        <div class="flex justify-between text-ink/70 pt-2 border-t border-ink/10">
+          <span>SUBTOTAL:</span>
+          <span>$34.99</span>
+        </div>
+        <div class="flex justify-between text-ink/70">
+          <span>DIAL-UP AIR FREIGHT:</span>
+          <span>$0.00 (PROMOTIONAL FREE)</span>
+        </div>
+        <div class="flex justify-between text-ink/70">
+          <span>ESTIMATED TAX:</span>
+          <span>$0.00 (EXEMPT)</span>
+        </div>
+        <div class="flex justify-between text-base font-black border-t-2 border-ink pt-1 text-ink">
+          <span>TOTAL CHARGED:</span>
+          <span class="text-primary-magenta">$34.99</span>
+        </div>
+      </div>
+
+      <!-- Approved Stamp & Simulated Barcode -->
+      <div class="text-center flex flex-col items-center gap-3">
+        <div class="bg-tertiary-yellow text-ink font-black px-3 py-1 border border-ink text-xs uppercase">
+          ✔ PAYMENT APPROVED // ORDER RECORDED IN VAULT
+        </div>
+
+        <!-- Simulated Barcode -->
+        <div class="w-full flex items-center justify-center gap-[2px] h-10 py-1 overflow-hidden" id="receiptBarcode">
+          <!-- Dynamically populated lines -->
+        </div>
+        <div class="text-[9px] font-mono text-ink/60 tracking-widest">
+          * NOSTALGIA-VAULT-EXPRESS-1999 *
+        </div>
+
+        <p class="text-[10px] text-ink/60 italic leading-snug">
+          Caps are manufactured in cyberspace and dispatched across the spacetime continuum. Estimated delivery year: 1999.
+        </p>
+
+        <!-- Receipt Actions -->
+        <div class="flex gap-2 w-full mt-2">
+          <button onclick="downloadProductPhoto()" class="flex-1 neo-btn neo-btn-cyan text-xs py-2 font-black uppercase">
+            DOWNLOAD PHOTO
+          </button>
+          <button onclick="closeReceipt()" class="flex-1 neo-btn neo-btn-white text-xs py-2 font-bold uppercase">
+            CLOSE RECEIPT
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- JAVASCRIPT: REALISTIC CAP COMPOSITOR & INTERACTIVE STUDIO ENGINE          -->
+<!-- ========================================================================= -->
+<script src="/static/prototypes/nostalgia-cap/app.js"></script>
+{% endblock %}

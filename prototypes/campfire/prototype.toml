@@ -1,0 +1,8 @@
+slug = "campfire"
+title = "A Campfire Made Out of LED Blocks"
+date = "2026-09-12"
+build_type = "webapp"
+template = "template.html"
+description = "3D LED block campfire installation simulation with a physical hardware build guide."
+extra_paths = ["hardware"]
+routes = false

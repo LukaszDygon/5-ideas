@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 5 Ideas Daily: magenta tile, ink border, hard offset shadow, blocky "5" (matches the header logo) -->
+  <rect x="10" y="10" width="50" height="50" fill="#1c1b1b"/>
+  <rect x="4" y="4" width="50" height="50" fill="#b40065" stroke="#1c1b1b" stroke-width="4"/>
+  <path d="M17 13h25v8H25v6h11a7 7 0 0 1 7 7v10a7 7 0 0 1-7 7H17v-8h17v-8H17z" fill="#ffffff" stroke="#1c1b1b" stroke-width="2.5" stroke-linejoin="miter"/>
+  <rect x="44" y="4" width="10" height="10" fill="#fae100" stroke="#1c1b1b" stroke-width="3"/>
+</svg>

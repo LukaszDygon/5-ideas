@@ -1,8 +1,8 @@
 # Python-generated files
 __pycache__/
 *.py[oc]
-build/
-dist/
+/build/
+/dist/
 wheels/
 *.egg-info
 
@@ -17,5 +17,21 @@ mcp_config.json
 *.db
 *.db-wal
 *.db-shm
+data/*.db*
 
 
+
+# Restructure reference snapshots (docs/plan T0.1)
+.baseline/
+
+# Secrets and local environment (docs/plan T0.2)
+.env
+.env.*
+!.env.example
+
+# Claude Code local state
+.claude/settings.local.json
+.claude/state/
+
+# Eval run output
+evals/results/

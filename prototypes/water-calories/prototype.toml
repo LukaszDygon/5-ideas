@@ -1,0 +1,8 @@
+slug = "water-calories"
+title = "Aqueous Caloric Spectrometer"
+date = "2026-09-16"
+build_type = "webapp"
+template = "template.html"
+description = "Dual-beam spectrometer and molecular calorimetry laboratory for water."
+extra_paths = []
+routes = false

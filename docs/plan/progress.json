@@ -1,0 +1,668 @@
+{
+  "plan": "docs/plan/PLAN.md",
+  "schema_version": 1,
+  "created": "2026-09-30",
+  "updated": "2026-09-30",
+  "how_to_update": "Set status (todo|in_progress|blocked|done|skipped), started/completed as YYYY-MM-DD, commit as short SHA, notes for anything the next person must know. Follow the order field unless depends_on is unmet. Keep this file valid JSON; tests/ai_setup/test_plan_progress.py checks it after T3.2.",
+  "status_values": [
+    "todo",
+    "in_progress",
+    "blocked",
+    "done",
+    "skipped"
+  ],
+  "priority_values": {
+    "must": "required for the plan to be done",
+    "should": "do unless time-boxed out; note if deferred",
+    "could": "optional stretch"
+  },
+  "baseline": {
+    "tests_passing_before": 49,
+    "prototype_routes_before": 19,
+    "notes": "Recorded at planning time on 2026-09-30."
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "title": "Baseline and hygiene"
+    },
+    {
+      "id": "P1a",
+      "title": "Claude Code core setup"
+    },
+    {
+      "id": "P2",
+      "title": "Structure"
+    },
+    {
+      "id": "P1b",
+      "title": "Skills, subagents, transcript capture"
+    },
+    {
+      "id": "P3",
+      "title": "Test suite"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T0.1",
+      "phase": "P0",
+      "title": "Golden baseline snapshot",
+      "priority": "must",
+      "status": "done",
+      "order": 1,
+      "depends_on": [],
+      "touches": [
+        ".gitignore",
+        ".baseline/"
+      ],
+      "verify": [
+        "uv run pytest -q  # record count",
+        "uv run python scripts/build_static.py --base-path /5-ideas/ && cp -r dist .baseline/dist-before",
+        "test -f .baseline/dist-before/index.html && grep -c '^/interactive/' .baseline/routes-before.txt  # expect 19"
+      ],
+      "commit_message": "chore: ignore .baseline snapshots",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "8acb4c3",
+      "notes": "Baseline: 49 tests passing. routes-before.txt has 16 /interactive/ paths (15 prototypes + campfire/hardware), not 19: the 19 in the plan is build_static's route list (4 core + 15 interactive; house-stats missing from it). Static build froze 39 pages. Also saved .baseline/sparks-2026-09-29.json for T2.7. Test run shows on_event, httpx->httpx2 and starlette WSGIMiddleware deprecation warnings."
+    },
+    {
+      "id": "T0.2",
+      "phase": "P0",
+      "title": "Secret hygiene: MCP key to env, admin secret, gitignore",
+      "priority": "must",
+      "status": "done",
+      "order": 2,
+      "depends_on": [],
+      "touches": [
+        ".env.example",
+        ".mcp.json",
+        ".gitignore",
+        "admin.py",
+        "5ideas.db"
+      ],
+      "verify": [
+        "git ls-files | xargs grep -lE 'AQ\\.[A-Za-z0-9_-]{20,}|X-Goog-Api-Key'  # expect no output",
+        "uv run pytest -q",
+        "git status --porcelain | grep -c '^?? .env$'  # expect 0"
+      ],
+      "commit_message": "chore(security): move MCP key to env, parametrise admin secret",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "271554e",
+      "notes": "Rotating the key itself is a manual user action in the Google console. Key was never in git history. .mcp.json + .env.example added; admin secret from FIVE_IDEAS_ADMIN_SECRET. The plan's verify grep for X-Goog-Api-Key necessarily matches the tracked .mcp.json placeholder and the plan docs; the real check (no AQ.* key values in tracked files) passes. Left for the user: delete the stray empty 5ideas.db (the auto-mode classifier blocked rm; it is gitignored), and delete mcp_config.json + .agents/plugins/stitch/mcp_config.json once STITCH_API_KEY is in .env/shell (both still gitignored)."
+    },
+    {
+      "id": "T1.1",
+      "phase": "P1a",
+      "title": "CLAUDE.md imports AGENTS.md; rewrite AGENTS.md; path-scoped rules",
+      "priority": "must",
+      "status": "done",
+      "order": 3,
+      "depends_on": [
+        "T0.2"
+      ],
+      "touches": [
+        "CLAUDE.md",
+        "AGENTS.md",
+        ".claude/rules/python.md",
+        ".claude/rules/prototypes.md",
+        ".claude/rules/design-system.md",
+        "README.md"
+      ],
+      "verify": [
+        "claude → /memory shows CLAUDE.md with AGENTS.md imported",
+        "open a .py file → /context shows .claude/rules/python.md loaded",
+        "every path mentioned in AGENTS.md exists (automated later by T3.2)"
+      ],
+      "commit_message": "docs(agents): CLAUDE.md imports AGENTS.md; add path-scoped rules",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "3092292",
+      "notes": "AGENTS.md (76 lines, 559 words) describes the current layout; it is updated as T2.x/T1.4 land. All backtick paths in AGENTS.md exist (scripted check). rules/prototypes.md documents the target prototypes/<slug>/ contract and only loads once that folder exists (T2.3). Interactive checks (/memory shows AGENTS.md imported, /context shows python.md on .py) need a fresh claude session by the user."
+    },
+    {
+      "id": "T1.2",
+      "phase": "P1a",
+      "title": "Permissions and sandbox in .claude/settings.json",
+      "priority": "must",
+      "status": "blocked",
+      "order": 4,
+      "depends_on": [
+        "T0.2"
+      ],
+      "touches": [
+        ".claude/settings.json",
+        ".gitignore"
+      ],
+      "verify": [
+        "python3 -m json.tool .claude/settings.json",
+        "new session: uv run pytest, git status, editing prototypes/ do not prompt",
+        "Bash cat ~/.ssh/config refused; Read tool on ~/.ssh refused; git push --force refused; uv add prompts",
+        "/permissions lists project rules"
+      ],
+      "commit_message": "feat(claude): project permissions and sandbox settings",
+      "started": "2026-09-30",
+      "completed": null,
+      "commit": null,
+      "notes": "Confirmed against the docs: Write(path) rules are ignored (use Edit(path)), 'Bash(x *)' is the current form (':*' still accepted), sandbox keys are sandbox.network.allowedDomains and sandbox.filesystem.{allowWrite,denyRead}, and Read deny rules are merged into the sandbox, so a blanket Read(~/.claude/**) would also stop the T1.7 capture script from reading transcripts (narrowed to ~/.claude/.credentials.json and ~/.claude.json). Sandbox also needs allowWrite for ~/.cache/uv and ~/.local/share/uv, or uv run fails. BLOCKED: the agent's auto-mode classifier refuses to write .claude/settings.json (self-modification). Draft is ready for the user to review and install. Proposed file: docs/plan/settings.proposed.json (permissions + sandbox + hook registration). To finish T1.2/T1.3 the user reviews it and runs: cp docs/plan/settings.proposed.json .claude/settings.json"
+    },
+    {
+      "id": "T1.3",
+      "phase": "P1a",
+      "title": "Hooks: session-start, guard-bash, protect-files, post-edit, stop-check, prompt-context",
+      "priority": "must",
+      "status": "blocked",
+      "order": 5,
+      "depends_on": [
+        "T1.2"
+      ],
+      "touches": [
+        ".claude/hooks/",
+        ".claude/settings.json"
+      ],
+      "verify": [
+        "echo '{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"git push --force\"}}' | .claude/hooks/guard-bash.py; echo $?  # 2",
+        "echo '{\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"data/ideas.json\"}}' | .claude/hooks/protect-files.py; echo $?  # 2",
+        "/hooks lists all six; editing a .py file triggers ruff (no-op until T2.9)",
+        "break a test, say 'done' → Stop hook blocks; revert"
+      ],
+      "commit_message": "feat(claude): session, guard, protect, post-edit and stop hooks",
+      "started": "2026-09-30",
+      "completed": null,
+      "commit": "39250ad",
+      "notes": "Six hook scripts written and table-tested (guard-bash 17 deny / 13 allow cases, protect-files 10/6, stop-check blocks on a deliberately failing test and passes on a clean tree, session-start writes .claude/state/session.json, post-edit flags bad JSON/Jinja). post-edit is Python rather than sh, so it can parse the JSON payload with the stdlib. Hooks also allow the system temp dir, and protect-files allows ~/.claude/projects (agent memory). BLOCKED on T1.2: registration lives in .claude/settings.json (hooks section of docs/plan/settings.proposed.json). Live checks (/hooks, a real force-push refusal) need the user's session after installing."
+    },
+    {
+      "id": "T2.1",
+      "phase": "P2",
+      "title": "showcase/ package with app factory and lifespan",
+      "priority": "must",
+      "status": "done",
+      "order": 6,
+      "depends_on": [
+        "T0.1",
+        "T0.2"
+      ],
+      "touches": [
+        "showcase/config.py",
+        "showcase/db.py",
+        "showcase/admin.py",
+        "showcase/web.py",
+        "showcase/api.py",
+        "main.py",
+        "tests/",
+        ".github/workflows/deploy-pages.yml",
+        "README.md",
+        "AGENTS.md"
+      ],
+      "verify": [
+        "uv run pytest -q  # green, no on_event DeprecationWarning",
+        "uv run python main.py → / , /admin , /docs respond",
+        "uv run python -c 'import app'  # must fail: old module removed"
+      ],
+      "commit_message": "refactor: move app into showcase/ package with app factory",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "8cdf05f",
+      "notes": "showcase/{config,db,admin,web,api}.py plus a temporary showcase/legacy_prototypes.py that holds the 15 per-prototype routes and 2 prototype APIs until T2.3-T2.5. Lifespan replaces on_event. Paths resolve from Settings.from_env() at call time, so the conftest now isolates tests by setting FIVE_IDEAS_DATA_DIR (no module-global monkeypatching). db.py dropped its 'pytest in sys.modules' export guard: exports now go next to whichever DB was written. Verified: 49 tests pass, no on_event warning; uvicorn showcase.web:app serves /, /admin/, /docs (checked on port 8765 because the user's own main.py server from 18 Sep holds :8000 and needs a restart); 'import app' fails; static build byte-identical to the baseline. The remaining Starlette WSGIMiddleware deprecation goes away with T2.8."
+    },
+    {
+      "id": "T2.2",
+      "phase": "P2",
+      "title": "Move data files under data/",
+      "priority": "must",
+      "status": "done",
+      "order": 7,
+      "depends_on": [
+        "T2.1"
+      ],
+      "touches": [
+        "data/ideas.json",
+        "data/streak.json",
+        ".gitignore",
+        "showcase/config.py"
+      ],
+      "verify": [
+        "uv run python scripts/get_day_sparks.py --date 2026-09-29  # prints entry",
+        "git status shows two renames only",
+        "uv run pytest -q"
+      ],
+      "commit_message": "refactor: move data files under data/",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "8a66118",
+      "notes": "git mv of ideas.json and streak.json; local ideas.db moved with mv (no -wal/-shm present). DEFAULT_DATA_DIR is now ROOT/data. The sparks script prints 2026-09-29; tests pass; static build still byte-identical to the baseline."
+    },
+    {
+      "id": "T2.3",
+      "phase": "P2",
+      "title": "Prototype registry + pilot migration (which-is-faster)",
+      "priority": "must",
+      "status": "done",
+      "order": 8,
+      "depends_on": [
+        "T2.2"
+      ],
+      "touches": [
+        "showcase/registry.py",
+        "showcase/static_site.py",
+        "showcase/web.py",
+        "prototypes/which-is-faster/",
+        "tests/unit/test_registry.py",
+        "tests/prototypes/test_every_prototype.py"
+      ],
+      "verify": [
+        "curl -s localhost:8000/interactive/which-is-faster | head",
+        "uv run pytest -q tests/prototypes",
+        "build → dist/interactive/which-is-faster/index.html equals baseline after normalising asset paths"
+      ],
+      "commit_message": "feat(registry): prototype discovery from prototypes/<slug>/prototype.toml (pilot: which-is-faster)",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "dd3771f",
+      "notes": "Registry validates slug/folder, required and unknown keys, date, build_type, templates, routes.py. routes.py may define page_context(request) for server-side template data (which-is-faster needs it for its embedded question bank). FastAPI 0.141 keeps included routers lazy (_IncludedRouter), so the build uses an explicit page list (CORE_PAGES + registry pages + legacy routes + days) rather than walking app.routes. The link rewriter is now a regex over href/src/action/poster, CSS url() and JS '/static/' strings; page hrefs get a trailing slash. Normalised dist diff vs baseline: which-is-faster differs only by that slash; house-stats page added; previously un-prefixed links (calendar ?month nav, house-stats links, JS asset strings in nostalgia-cap/slots1v1/crusade-trail) now work under /5-ideas/. 69 tests pass."
+    },
+    {
+      "id": "T2.4",
+      "phase": "P2",
+      "title": "Migrate remaining 14 prototypes into prototypes/ (3–4 batches)",
+      "priority": "must",
+      "status": "done",
+      "order": 9,
+      "depends_on": [
+        "T2.3"
+      ],
+      "touches": [
+        "prototypes/*/",
+        "templates/",
+        "static/",
+        "showcase/web.py",
+        "showcase/static_site.py"
+      ],
+      "verify": [
+        "per batch: uv run pytest -q",
+        "grep -rn '/static/audio\\|/static/images/caps\\|/static/images/slots\\|/static/data/' templates prototypes  # only new prefixed paths",
+        "every route in .baseline/routes-before.txt has dist/<route>/index.html",
+        "diff -r baseline vs new dist shows only asset-path changes",
+        "browser: campfire, nostalgia-cap, slots1v1 load media without 404s"
+      ],
+      "commit_message": "refactor(prototypes): migrate <batch> into prototypes/",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "a7c08db",
+      "notes": "Migrated in 4 commits: (neondj, canopy, tortoise, flute) a8390e6, (water-calories, fractiles, monster-mystery, house-stats) c230d03, (campfire+hardware, slots1v1, nostalgia-cap) 7d0e2a2, (mcnuggets, table-steamer, crusade-trail) in the commit recorded here. Assets moved with git mv, keeping their subpaths (static/audio/x.mp3 -> prototypes/campfire/static/audio/x.mp3). Dates/titles/types come from data/ideas.json; neondj has no implementation record, so it uses 2026-09-10 (day 1). After each batch: tests green, every baseline /interactive/ route built, normalised dist diff shows only the intended link fixes. Browser check replaced by an automated one: all 105 /5-ideas/static/ references in dist resolve to files (please still eyeball campfire audio once). static/images/macau_game.png and macau_training.png are referenced by nothing; left in place for the user to keep or delete."
+    },
+    {
+      "id": "T2.5",
+      "phase": "P2",
+      "title": "Per-prototype routes.py; de-personalise house-stats",
+      "priority": "must",
+      "status": "done",
+      "order": 10,
+      "depends_on": [
+        "T2.4"
+      ],
+      "touches": [
+        "prototypes/house-stats/routes.py",
+        "prototypes/house-stats/static/data/sample_listings.json",
+        "showcase/web.py",
+        "showcase/config.py"
+      ],
+      "verify": [
+        "uv run pytest -q",
+        "grep -rn lukaszdygon showcase prototypes  # nothing",
+        "wc -l showcase/web.py  # < 150"
+      ],
+      "commit_message": "refactor(prototypes): move per-prototype APIs into routes.py; de-personalise house-stats",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "e92175e",
+      "notes": "house-stats API now lives in prototypes/house-stats/routes.py (routes = true); presets come from static/data/sample_listings.json with obviously synthetic ZZ postcodes and round prices, still matched by the listing ids the page's sample buttons use. The external parser runs only when HOUSE_STATS_DIR is set. showcase/legacy_prototypes.py deleted. HTML page routes moved to showcase/pages.py, so web.py is 66 lines (target < 150). Test updated to the sample data, plus a fallback test. Not done, needs the user: prototypes/house-stats/template.html still embeds real listing ids, street addresses and local-area data from the original home search (published content, outside this task's API scope)."
+    },
+    {
+      "id": "T2.6",
+      "phase": "P2",
+      "title": "Extract inline JS/CSS for large prototypes (incremental)",
+      "priority": "should",
+      "status": "done",
+      "order": 11,
+      "depends_on": [
+        "T2.5"
+      ],
+      "touches": [
+        "prototypes/*/static/app.js",
+        "prototypes/*/static/style.css",
+        "prototypes/*/template.html"
+      ],
+      "verify": [
+        "node --check prototypes/<slug>/static/app.js (skip if no node)",
+        "browser: exercise main interaction with console open, zero errors",
+        "uv run pytest -q tests/prototypes"
+      ],
+      "commit_message": "refactor(<slug>): extract inline JS/CSS to static assets",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "848300a",
+      "notes": "Done for all 11 prototypes with >200 inline script lines (which-is-faster ce27b44, crusade-trail c4aa5f5, monster-mystery 409c276, campfire 18f6a5f, canopy 58ca788, flute 423fd50, fractiles 0d47a54, house-stats ed91f89, nostalgia-cap 9c59232, slots1v1 d938a16, water-calories 848300a); neondj and mcnuggets stay inline (~150 lines). Script and style bodies moved byte-for-byte; which-is-faster's bank now arrives as <script id=data type=application/json>{{ events | tojson }}</script> (same data; Jinja sorts keys, and the JS doesn't depend on key order). The static build now also prefixes /static/ inside JS/CSS files, and the contract test scans prototype JS/CSS for missing assets. View tests assert on page + prototype assets (page_with_assets helper), so every existing assertion is kept. node --check passes for every app.js. The browser check was automated with headless Chrome (console errors per page), compared against a pre-extraction export: no new errors. It exposed an existing bug: shared static/app.js declared top-level audioCtx/isAudioPlaying, which clashed with 5 prototypes and stopped the shared script on those pages. Fixed by wrapping it in an IIFE that only exports helpers a page hasn't defined (campfire and nostalgia-cap keep their own getAudioContext; neondj uses the shared one). The only remaining console errors are WebGL context failures in headless Chrome (no GPU). Shared-script fix in c9f39b3. Final headless run over all 21 pages: zero JS errors except WebGL context creation (headless has no GPU)."
+    },
+    {
+      "id": "T2.7",
+      "phase": "P2",
+      "title": "db.py dedupe, context-managed connections, streak.py",
+      "priority": "must",
+      "status": "done",
+      "order": 12,
+      "depends_on": [
+        "T2.2"
+      ],
+      "touches": [
+        "showcase/db.py",
+        "showcase/streak.py",
+        "tests/unit/test_db.py",
+        "tests/unit/test_streak.py"
+      ],
+      "verify": [
+        "uv run pytest -q",
+        "grep -c 'SELECT \\* FROM implementations WHERE idea_id' showcase/db.py  # 1",
+        "sparks --json output for 2026-09-29 unchanged vs saved copy"
+      ],
+      "commit_message": "refactor(db): deduplicate hydration, context-managed connections, streak module",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "ff6aa3c",
+      "notes": "One _hydrate_days(conn, rows) serves get_all_days, get_day_by_date and get_day_by_id with 2 queries in total (IN lists) instead of N+1. connect() context manager used everywhere. Streak logic moved to showcase/streak.py (db no longer imports it; callers of seed_demo_data reset the streak file). New db.get_published_dates() feeds the Jinja date global and the streak, so page renders no longer hydrate every day just for the dates. Equivalence: sparks --json for 2026-09-29 is byte-identical to the baseline copy, and re-exporting the real DB reproduces data/ideas.json byte-for-byte. tests/unit/test_streak.py added (7 tests). The dedupe grep counts 1."
+    },
+    {
+      "id": "T2.9",
+      "phase": "P2",
+      "title": "Tooling: ruff, dev groups, project script, warnings-as-errors",
+      "priority": "must",
+      "status": "done",
+      "order": 13,
+      "depends_on": [
+        "T2.1"
+      ],
+      "touches": [
+        "pyproject.toml",
+        "uv.lock"
+      ],
+      "verify": [
+        "uv run ruff check .",
+        "uv run ruff format --check .",
+        "uv run pytest -q  # no warnings from showcase.*"
+      ],
+      "commit_message": "chore: ruff config, dev dependency groups, project script",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "4d7f924",
+      "notes": "Config commit 4d7f924, formatting commit b46649e (style:). ruff check and ruff format --check are clean. E501 is ignored because the formatter owns line length and long literal strings (HTML, messages) stay as written. httpx is replaced by httpx2 (Starlette's TestClient deprecates httpx); it is a runtime dependency because static_site uses TestClient. Hatchling build backend (packages = showcase) so [project.scripts] five-ideas is installed. filterwarnings errors on DeprecationWarning from showcase.*. Two warnings remain, neither a DeprecationWarning from us: anyio's BlockingPortal alias (third-party, inside Starlette's TestClient) and Starlette's WSGIMiddleware warning (a UserWarning subclass, emitted at showcase/web.py's import; goes away with T2.8). 'uv run five-ideas --help' is verified in T2.10."
+    },
+    {
+      "id": "T2.10",
+      "phase": "P2",
+      "title": "CLI consolidation: showcase.cli with new-day and new-prototype",
+      "priority": "must",
+      "status": "done",
+      "order": 14,
+      "depends_on": [
+        "T2.3",
+        "T2.9"
+      ],
+      "touches": [
+        "showcase/cli.py",
+        "scripts/",
+        "tests/unit/test_cli.py",
+        "README.md",
+        "AGENTS.md"
+      ],
+      "verify": [
+        "uv run python -m showcase.cli --help  # seven sub-commands",
+        "new-prototype --slug demo in a tmp copy passes tests/prototypes",
+        "new-day then sparks round-trips",
+        "seed without --yes exits non-zero"
+      ],
+      "commit_message": "feat(cli): single showcase.cli entry point with new-day and new-prototype",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "e733c7c",
+      "notes": "showcase/cli.py (argparse) with sparks, new-day, save-impl, capture, new-prototype, build, seed; run it as 'uv run five-ideas' or 'python -m showcase.cli'. scripts/ deleted rather than shimmed (the plan's preference); README, AGENTS.md and deploy-pages.yml updated; .agents skills are updated in T1.4. capture_process.py moved to showcase/capture.py (library only). new-day requires exactly 5 ideas and refuses an existing date unless --replace (which would drop its prototype record). new-prototype scaffolds prototype.toml, a design-system hero template and static/.gitkeep, then validates via the registry. Settings.prototypes_dir (FIVE_IDEAS_PROTOTYPES_DIR) makes scaffolds testable in tmp. Every command except seed calls ensure_database, so fresh clones work. The 'python -m showcase.db' reseed entry point is replaced by 'five-ideas seed --yes'. main.py gained argparse (--port, --no-reload) so --help no longer starts a server. tests/unit/test_cli.py: 15 subprocess tests."
+    },
+    {
+      "id": "T1.4",
+      "phase": "P1b",
+      "title": "Skills in .claude/skills (migrate 3, add new-day, new-prototype, ship, design-system)",
+      "priority": "must",
+      "status": "done",
+      "order": 15,
+      "depends_on": [
+        "T1.1",
+        "T2.10"
+      ],
+      "touches": [
+        ".claude/skills/",
+        ".agents/skills/"
+      ],
+      "verify": [
+        "ls -la .agents/skills  # symlinks",
+        "in session: /new-day /new-prototype /ship autocomplete",
+        "/skill-doctor lists no invalid skills (if available)",
+        "uv run pytest tests/ai_setup/test_skills.py (after T3.2)"
+      ],
+      "commit_message": "feat(claude): skills for the daily workflow; .agents/skills symlink to .claude/skills",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "5c7604f",
+      "notes": "7 skills in .claude/skills: spec-implementation, record-implementation, capture-implementation (moved with git mv, commands switched to 'uv run five-ideas', ask-before-generating rules kept), plus new-day, new-prototype, ship (disable-model-invocation: true, never pushes, stages explicit paths) and design-system (4 rules + 6 snippets from templates/design_system.html and templates/index.html). .agents/skills/<name> are relative symlinks for all 7. tests/ai_setup/test_skills.py (committed with T3.2) checks frontmatter, CLI commands, symlinks, duplicate descriptions and ship's flag. Interactive checks (autocomplete of /new-day /new-prototype /ship, /skill-doctor) need the user's session."
+    },
+    {
+      "id": "T1.5",
+      "phase": "P1b",
+      "title": "Subagents: design-reviewer, prototype-qa",
+      "priority": "should",
+      "status": "done",
+      "order": 16,
+      "depends_on": [
+        "T1.4"
+      ],
+      "touches": [
+        ".claude/agents/design-reviewer.md",
+        ".claude/agents/prototype-qa.md"
+      ],
+      "verify": [
+        "/agents lists both",
+        "@design-reviewer review which-is-faster → findings, git status clean"
+      ],
+      "commit_message": "feat(claude): design-reviewer and prototype-qa subagents",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "9133aaa",
+      "notes": "Project agents load only at session start, so '@design-reviewer' could not be called from the session that created it. Proxy verification: a read-only Explore agent ran the design-reviewer body verbatim on which-is-faster and returned 24 file:line findings plus a verdict; git status stayed clean. Its top finding is confirmed: bg-accent-orange / bg-accent-lime are used 11 times but defined nowhere, so some controls render invisible (a pre-existing prototype bug, reported, not fixed). prototype-qa commands were run by hand: pytest -k slug (5 passed), build to a temp dir, asset refs (4, none missing). '/agents lists both' needs the user's next session. tests/ai_setup/test_agents.py (with T3.2) checks frontmatter and least-privilege tools."
+    },
+    {
+      "id": "T1.6",
+      "phase": "P1b",
+      "title": "MCP project config verified",
+      "priority": "should",
+      "status": "done",
+      "order": 17,
+      "depends_on": [
+        "T0.2"
+      ],
+      "touches": [
+        ".mcp.json",
+        "AGENTS.md"
+      ],
+      "verify": [
+        "claude mcp list includes stitch",
+        "git grep -n X-Goog-Api-Key shows only the ${STITCH_API_KEY} placeholder"
+      ],
+      "commit_message": "docs: MCP setup",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "1892e46",
+      "notes": "claude mcp list shows 'stitch: https://stitch.googleapis.com/mcp (HTTP)' from project config .mcp.json, 'Pending approval (run claude to approve)', with a warning that STITCH_API_KEY is missing, as expected until the user exports it (Claude Code does not read .env). .mcp.json is tracked; git grep X-Goog-Api-Key outside docs/plan shows only the placeholder. AGENTS.md documents: export the key, approve the server once. User action still pending: rotate the old key, put the new one in STITCH_API_KEY, then delete mcp_config.json and .agents/plugins/stitch/mcp_config.json."
+    },
+    {
+      "id": "T1.7",
+      "phase": "P1b",
+      "title": "Claude Code transcript source for capture",
+      "priority": "should",
+      "status": "done",
+      "order": 18,
+      "depends_on": [
+        "T1.3",
+        "T2.10"
+      ],
+      "touches": [
+        "showcase/cli.py",
+        "tests/fixtures/claude_transcript.jsonl",
+        "tests/unit/test_capture.py"
+      ],
+      "verify": [
+        "uv run pytest tests/unit/test_capture.py",
+        "live: cli capture --title Demo → Genesis Prompt is the session's first real user message"
+      ],
+      "commit_message": "feat(capture): Claude Code transcript source",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "eac374b",
+      "notes": "capture --source auto|claude|antigravity and --transcript. auto uses the Claude Code transcript: .claude/state/session.json (SessionStart hook) first, else the newest ~/.claude/projects/<project-slug>/*.jsonl, and falls back to Antigravity if neither exists. Kept as human prompts: user entries that are not isMeta, not isSidechain, not tool results, and don't start with <system-reminder>/<command-name>/<local-command-*>; inline <system-reminder> blocks are stripped. Tools and file basenames come from assistant tool_use blocks; thinking and text are never read. The format is auto-detected per file. The Markdown report no longer fills 'Build Steps' and 'Retrospective' with canned text (it now says they come from the user, per the skills' rule). tests/fixtures/claude_transcript.jsonl (15 lines) plus tests/unit/test_capture.py (8 tests). Live check in this session (hook not installed, so the fallback path ran): Genesis Prompt equals the session's first real user message, 1 human turn."
+    },
+    {
+      "id": "T3.1",
+      "phase": "P3",
+      "title": "Restructure tests around app factory and settings",
+      "priority": "must",
+      "status": "done",
+      "order": 19,
+      "depends_on": [
+        "T2.1",
+        "T2.2"
+      ],
+      "touches": [
+        "tests/conftest.py",
+        "tests/unit/",
+        "tests/web/"
+      ],
+      "verify": [
+        "uv run pytest -q  # count >= 49",
+        "grep -rn 'monkeypatch.setattr(db' tests  # nothing",
+        "uv run pytest tests/web/test_admin.py"
+      ],
+      "commit_message": "test: restructure suite around app factory and settings",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "a4d2bca",
+      "notes": "Layout: tests/unit (db, streak, registry, cli, capture), tests/web (pages, api, admin), tests/prototypes (every_prototype contract + prototype_content), tests/ai_setup (T3.2), tests/build (T3.3). conftest: autouse 'settings' copies data/ideas.json and streak.json to tmp_path/data and sets FIVE_IDEAS_DATA_DIR (an env var, not a module global) so CLI subprocesses stay isolated too; 'client' = TestClient(create_app(settings)); 'admin_client' = Flask test client of create_admin_app(settings). Tests pass settings.db_file / settings.streak_file explicitly. Every original assertion kept (test_api.py split by function into web/test_pages.py, web/test_api.py, prototypes/test_prototype_content.py). 173 tests excluding ai_setup (baseline 49). No monkeypatch.setattr anywhere. tests/web/test_admin.py runs alone. --durations=5 is added in CI (T3.4)."
+    },
+    {
+      "id": "T3.2",
+      "phase": "P3",
+      "title": "AI-setup quality tests (tests/ai_setup)",
+      "priority": "must",
+      "status": "done",
+      "order": 20,
+      "depends_on": [
+        "T1.3",
+        "T1.4",
+        "T3.1"
+      ],
+      "touches": [
+        "tests/ai_setup/"
+      ],
+      "verify": [
+        "uv run pytest -q tests/ai_setup  # green, < 15 s",
+        "add Bash(*) to allow → test_settings fails; revert",
+        "test_plan_progress validates docs/plan/progress.json"
+      ],
+      "commit_message": "test(ai-setup): validate instructions, skills, hooks, settings, agents, secrets, docs",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "9c3d3f9",
+      "notes": "tests/ai_setup has 9 modules and 106 tests, about 6 s: instructions, rules, skills, settings, hooks (table-driven subprocess, 14 deny / 10 allow bash cases), agents, secrets, docs_freshness, plan_progress; a shared frontmatter parser lives in conftest.py. Stdlib only, no network. test_settings validates .claude/settings.json once installed and docs/plan/settings.proposed.json meanwhile; test_settings_installed SKIPS (with the cp command) until the user installs it. Negative check done: adding Bash(*) to allow fails test_no_blanket_permissions, and reverting makes it pass. Documented-path checks accept gitignored local files (.env, data/ideas.db) so CI checkouts pass. Deviation: test_docs_freshness also asserts that AGENTS.md lists every showcase/*.py module."
+    },
+    {
+      "id": "T3.3",
+      "phase": "P3",
+      "title": "Static build and page tests",
+      "priority": "must",
+      "status": "done",
+      "order": 21,
+      "depends_on": [
+        "T2.5",
+        "T3.1"
+      ],
+      "touches": [
+        "tests/build/test_static_site.py",
+        "tests/web/test_pages.py",
+        "showcase/static_site.py"
+      ],
+      "verify": [
+        "uv run pytest -q tests/build tests/web",
+        "remove a prototype static/ folder → build test fails; restore"
+      ],
+      "commit_message": "test: static build and page rendering coverage",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "891256c",
+      "notes": "tests/build/test_static_site.py (18 tests): one module-scoped build into tmp with its own data copy. Checks that every core, registry and day page is frozen (and exactly those), the GitHub Pages extras (dates.json matches the DB), no un-prefixed href/src/action/poster, every /5-ideas/static reference in HTML, JS and CSS resolves, and no raw '/static/' is left in shipped JS/CSS; plus unit tests for rewrite_html_links and rewrite_asset_links. web/test_pages.py adds core pages, the streak value in the header, the day-to-prototype link and calendar month navigation. Negative check done: moving prototypes/crusade-trail/static away fails test_every_static_reference_resolves; restoring it passes. build_static(out=...) already existed (T2.3)."
+    },
+    {
+      "id": "T3.4",
+      "phase": "P3",
+      "title": "CI: lint, tests, build artifact; optional gated LLM evals",
+      "priority": "must",
+      "status": "done",
+      "order": 22,
+      "depends_on": [
+        "T2.9",
+        "T2.10",
+        "T3.2",
+        "T3.3"
+      ],
+      "touches": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/deploy-pages.yml",
+        "evals/"
+      ],
+      "verify": [
+        "open a PR → ci and deploy jobs green",
+        "download dist artifact, serve with python3 -m http.server, links work under /5-ideas/"
+      ],
+      "commit_message": "ci: lint, tests, static build artifact; deploy uses the CLI",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "85b1cdc",
+      "notes": "ci.yml runs on pull_request and on pushes to non-main branches: uv sync, ruff check, ruff format --check, pytest -q --durations=5, five-ideas build, and uploads dist (hidden files included for .nojekyll). deploy-pages.yml runs the same lint/test/build steps through the CLI and deploys only from main. Not pushed and no PR opened (outward-facing; the user's call). Verified by running the CI steps in two fresh clones: the first run found 3 issues, fixed in f8d1c70 (one unformatted file; hook tests that used ../ paths, which resolve into the temp dir the hooks allow; progress SHAs lagging behind commits). The second clone: all green, 284 passed, 1 skipped. Served dist under /5-ideas/ with python3 -m http.server and crawled 39 pages / 71 URLs: every internal link and asset loads except '../power-desk', a relative external_url in the 2026-09-25 data that only resolves from the site root (pre-existing, user data). Optional LLM evals skipped: 'claude plugin eval' loads no project-level config (no .claude/, CLAUDE.md or .mcp.json per the docs), so it cannot test this repo's skills without repackaging them as a plugin."
+    },
+    {
+      "id": "T2.8",
+      "phase": "P2",
+      "title": "Fold Flask admin into FastAPI (optional)",
+      "priority": "could",
+      "status": "done",
+      "order": 23,
+      "depends_on": [
+        "T2.7",
+        "T3.1"
+      ],
+      "touches": [
+        "showcase/admin.py",
+        "templates/admin/",
+        "pyproject.toml"
+      ],
+      "verify": [
+        "admin tests pass on FastAPI client",
+        "manual: create/edit/reorder/delete a day at /admin",
+        "flask absent from venv after uv sync"
+      ],
+      "commit_message": "refactor(admin): port Flask admin to FastAPI router, drop Flask",
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "b41d5ed",
+      "notes": "Admin is now a FastAPI APIRouter at /admin sharing app.state.templates; Flask, Werkzeug and itsdangerous are gone from the venv after uv remove flask. Flash messages use a 60 s base64-JSON cookie (path /admin, httponly), read and cleared by the rendering route, so the admin templates are unchanged. /admin/day/{date|id}/edit is one route; POSTs redirect with 303. FIVE_IDEAS_ADMIN_SECRET removed from Settings and .env.example (nothing to sign). All 10 original admin tests pass on the FastAPI client (.data became .content), plus 4 new ones: /admin redirects to /admin/, flash shows once, delete day, unknown-day error. Headless Chrome: /admin/, /admin/day/new and /admin/day/2026-09-29/edit load with zero console errors. The only warning left in pytest is third-party (anyio, inside Starlette's TestClient)."
+    }
+  ]
+}

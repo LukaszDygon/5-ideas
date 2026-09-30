@@ -1,0 +1,8 @@
+slug = "nostalgia-cap"
+title = "Nostalgia Cap-o-Matic '99"
+date = "2026-09-21"
+build_type = "webapp"
+template = "template.html"
+description = "Procedural 90s cap generator and fake vintage shopping page."
+extra_paths = []
+routes = false

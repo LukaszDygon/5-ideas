@@ -1,0 +1,91 @@
+{
+  "presets": [
+    {
+      "match": ["72635023"],
+      "listing": {
+        "portal": "Zoopla",
+        "postcode": "ZZ1 1AA",
+        "outcode": "ZZ1",
+        "title": "4 Bed Semi-Detached House (sample)",
+        "price": 500000,
+        "priceStr": "£500,000",
+        "address": "1 Example Road, Sampletown ZZ1",
+        "beds": 4,
+        "baths": 2,
+        "sqft": 1300,
+        "type": "Semi-Detached",
+        "tenure": "Freehold",
+        "epc": "Rating C",
+        "image": "",
+        "features": ["Four Bedrooms", "En-Suite", "Rear Garden", "Garage & Driveway"],
+        "notes": "Synthetic sample listing for the demo.",
+        "status": "Active",
+        "priority": "High"
+      }
+    },
+    {
+      "match": ["74208604"],
+      "listing": {
+        "portal": "Zoopla",
+        "postcode": "ZZ2 2BB",
+        "outcode": "ZZ2",
+        "title": "3 Bed Semi-Detached House (sample)",
+        "price": 450000,
+        "priceStr": "£450,000",
+        "address": "2 Placeholder Avenue, Demoville ZZ2",
+        "beds": 3,
+        "baths": 1,
+        "sqft": 1000,
+        "type": "Semi-Detached",
+        "tenure": "Freehold",
+        "epc": "Rating D",
+        "image": "",
+        "features": ["Three Bedrooms", "Off-Street Parking", "Garden", "Near Station"],
+        "notes": "Synthetic sample listing for the demo.",
+        "status": "Active",
+        "priority": "High"
+      }
+    },
+    {
+      "match": ["17930197"],
+      "listing": {
+        "portal": "OnTheMarket",
+        "postcode": "ZZ3 3CC",
+        "outcode": "ZZ3",
+        "title": "2 Bedroom Penthouse Apartment (sample)",
+        "price": 1500000,
+        "priceStr": "£1,500,000",
+        "address": "3 Fictional Gate, Exampleton ZZ3",
+        "beds": 2,
+        "baths": 2,
+        "sqft": 1800,
+        "type": "Penthouse",
+        "tenure": "Leasehold (999 yrs)",
+        "epc": "Rating B",
+        "image": "",
+        "features": ["Lift Access", "Roof Terrace", "Concierge", "Secure Parking"],
+        "notes": "Synthetic sample listing for the demo.",
+        "status": "Under Offer",
+        "priority": "Medium"
+      }
+    }
+  ],
+  "fallback": {
+    "postcode": "ZZ9 9ZZ",
+    "outcode": "ZZ9",
+    "title": "Tracked Property Listing",
+    "price": 400000,
+    "priceStr": "£400,000",
+    "address": "Sampletown, Example County",
+    "beds": 3,
+    "baths": 2,
+    "sqft": 1100,
+    "type": "Semi-Detached",
+    "tenure": "Freehold",
+    "epc": "Rating C",
+    "image": "",
+    "features": ["Spacious Living", "Good Transport Links"],
+    "status": "Active",
+    "priority": "Medium"
+  }
+}

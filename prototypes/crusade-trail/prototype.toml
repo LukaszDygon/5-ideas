@@ -1,0 +1,8 @@
+slug = "crusade-trail"
+title = "Iter Hierosolymitanum: The Crusade Trail Explorer"
+date = "2026-09-27"
+build_type = "interactive"
+template = "template.html"
+description = "Cartographic explorer tracing the overland First Crusade (1096-1099)."
+extra_paths = []
+routes = false

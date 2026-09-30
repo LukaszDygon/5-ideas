@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}Fractiles: Aperiodic Prime Spiral Tessellation Laboratory{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/prototypes/fractiles/style.css"/>
+
+<div class="flex flex-col gap-6 max-w-7xl mx-auto" id="fractiles-root">
+
+  <!-- TOP HERO BANNER (RADICAL MEMPHIS POP X PORTO AZULEJO) -->
+  <div class="bg-[#0038A8] text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden">
+    <!-- Decorative geometric background tile corner -->
+    <div class="absolute -right-8 -bottom-8 w-44 h-44 border-[6px] border-white/20 rounded-none rotate-12 pointer-events-none flex items-center justify-center">
+      <div class="w-28 h-28 border-[4px] border-white/20 rotate-45 flex items-center justify-center">
+        <div class="w-14 h-14 bg-white/10 rotate-12"></div>
+      </div>
+    </div>
+
+    <div class="relative z-10">
+      <div class="inline-flex items-center gap-2 bg-[#FBBF24] text-ink px-2.5 py-0.5 font-mono text-[11px] font-black uppercase mb-2 shadow-[2px_2px_0px_#1c1b1b] -rotate-1">
+        🇵🇹 PORTO AZULEJO PROTOCOL • GAPLESS PRIME TESSELLATION • DAY #1
+      </div>
+      <h1 class="font-display font-black text-2xl sm:text-4xl uppercase text-white leading-tight tracking-tight flex items-center gap-3">
+        <span>FRACTILES</span>
+        <span class="text-xs sm:text-sm font-mono font-bold bg-white text-[#0038A8] px-2 py-0.5 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          TRUE TESSELLATION
+        </span>
+      </h1>
+      <p class="font-body text-xs sm:text-sm text-white/95 mt-1 max-w-2xl">
+        Continuous, space-filling ceramic tile tessellation. Every tile shares 100% of its edges with adjacent tiles without gaps. Prime numbers form ornate <strong>Keystone Tiles</strong> that trigger recursive fractal subdivisions, driven by aperiodic prime intervals that never repeat.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap relative z-10">
+      <button id="sound-btn" onclick="toggleSound()" class="neo-btn neo-btn-yellow text-xs py-2 px-3 flex items-center gap-1.5" title="Toggle Acoustic Ceramic Feedback">
+        <span class="material-symbols-outlined text-base" id="sound-icon">volume_up</span>
+        <span id="sound-text">AUDIO ON</span>
+      </button>
+      <button onclick="exportPNG()" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1.5" title="Export High-Res Canvas Snapshot">
+        <span class="material-symbols-outlined text-base">download</span>
+        <span>Snapshot</span>
+      </button>
+      <a href="/day/2026-09-18" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span>Day Sparks</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- TELEMETRY / STATUS STRIP -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center font-mono text-[11px]">
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Interlocking Tiles</div>
+      <div class="font-black text-lg text-ink" id="stat-tile-count">100</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Prime Keystones</div>
+      <div class="font-black text-lg text-[#0038A8]" id="stat-prime-count">25 (25.0%)</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Tessellation Coverage</div>
+      <div class="font-black text-lg text-acid-lime bg-ink px-1 inline-block" id="stat-coverage">100% GAPLESS</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Aperiodic Sequence</div>
+      <div class="font-black text-lg text-[#C2410C]" id="stat-last-prime">#97 (Twin)</div>
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+    
+    <!-- LEFT: CANVAS VIEWPORT & TOOLTIP HUD (8 COLS LG) -->
+    <div class="lg:col-span-8 flex flex-col gap-3">
+      <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] relative overflow-hidden flex flex-col">
+        <!-- Canvas top bar -->
+        <div class="bg-canvas border-b-[3px] border-ink px-4 py-2 flex items-center justify-between font-mono text-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#0038A8] border border-ink inline-block"></span>
+            <span class="font-bold text-ink uppercase tracking-wider" id="viewport-title">Interlocking Azulejo Spiral (Space-Filling)</span>
+          </div>
+          <div class="flex items-center gap-3 text-ink/70">
+            <span id="canvas-zoom-indicator">Zoom: 100%</span>
+            <button onclick="autoFitZoom()" class="hover:text-ink font-bold underline cursor-pointer text-[11px]" title="Automatically scale zoom to fit all tiles on screen">
+              Auto-Fit
+            </button>
+            <button onclick="recenterView()" class="hover:text-ink font-bold underline cursor-pointer text-[11px]" title="Reset pan to center">
+              Recenter
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas Body with ceramic grid backdrop -->
+        <div class="relative w-full h-[520px] sm:h-[620px] ceramic-wall-bg flex items-center justify-center overflow-hidden">
+          <canvas id="fractile-canvas" class="w-full h-full block"></canvas>
+
+          <!-- Floating Hover Inspector HUD -->
+          <div id="tile-tooltip" class="absolute pointer-events-none hidden bg-white/95 backdrop-blur border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-3 font-mono text-xs z-30 transition-opacity duration-150 max-w-xs">
+            <div class="flex items-center justify-between border-b-2 border-ink pb-1 mb-1.5">
+              <span class="font-black text-sm text-[#0038A8]" id="tip-index">Tile #17</span>
+              <span class="px-1.5 py-0.2 text-[10px] font-black uppercase text-white" id="tip-badge">KEYSTONE</span>
+            </div>
+            <div class="flex flex-col gap-0.5 text-[11px] text-ink">
+              <div><span class="text-ink/60">Tessellation:</span> <span class="font-bold text-[#0038A8]">100% Edge-Matched</span></div>
+              <div><span class="text-ink/60">Factors:</span> <span class="font-bold" id="tip-factors">Prime (1 × 17)</span></div>
+              <div><span class="text-ink/60">Fractal State:</span> <span class="font-bold" id="tip-fractal">2×2 Subdivided Azulejo</span></div>
+              <div><span class="text-ink/60">Neighbor Edges:</span> <span class="font-bold" id="tip-edges">4 Shared Grout Seams</span></div>
+            </div>
+          </div>
+
+          <!-- Bottom Viewport Controls -->
+          <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
+            <div class="pointer-events-auto bg-white/90 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b] px-2 py-1 font-mono text-[10px] text-ink flex items-center gap-2">
+              <span class="material-symbols-outlined text-xs">pan_tool</span>
+              <span>Drag to Pan • Wheel to Zoom • Hover Tile to Inspect</span>
+            </div>
+            <div class="pointer-events-auto flex items-center gap-1.5">
+              <button onclick="zoomDelta(-0.2)" class="w-8 h-8 bg-white border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b] font-mono font-black text-sm hover:bg-[#FBBF24] active:translate-x-0.5 active:translate-y-0.5 transition-transform flex items-center justify-center">
+                -
+              </button>
+              <button onclick="zoomDelta(0.2)" class="w-8 h-8 bg-white border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b] font-mono font-black text-sm hover:bg-[#FBBF24] active:translate-x-0.5 active:translate-y-0.5 transition-transform flex items-center justify-center">
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mathematical Proof & Architectural Lore Box -->
+      <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-3 sm:p-4 font-body text-xs text-ink/90 flex flex-col gap-2">
+        <div class="flex items-center gap-2 font-mono text-[11px] font-bold text-[#0038A8] uppercase">
+          <span class="material-symbols-outlined text-sm">verified</span>
+          <span>Authentic Space-Filling Tesselation & Prime Aperiodicity</span>
+        </div>
+        <p class="leading-relaxed">
+          Unlike point-distribution spirals that leave voids, <strong>Fractiles</strong> partitions expanding Archimedean ribbons into interlocking quadrilaterals where <code class="bg-gray-100 px-1 border border-ink/40 font-mono text-[11px]">r_out(θ) = r_in(θ + 2π)</code>. This guarantees that successive turns share 100% of their curved seams with <strong>zero gaps</strong>. Tile lengths are modulated by prime factors, meaning seams never align into repeating radial spokes. Primes trigger <strong>recursive fractal subdivision</strong> ($2\times2$ and $3\times3$ nested azulejos), creating an authentic non-repeating ceramic floor.
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT: CONTROL CONSOLE (4 COLS LG) -->
+    <div class="lg:col-span-4 flex flex-col gap-4">
+
+      <!-- PANEL 1: TESSELLATION ENGINE SELECTOR -->
+      <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 flex flex-col gap-3">
+        <div class="border-b-[3px] border-ink pb-2 flex items-center justify-between">
+          <h2 class="font-display font-black text-base uppercase text-ink flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 bg-[#0038A8] border border-ink inline-block"></span>
+            <span>Tessellation Engine</span>
+          </h2>
+          <span class="font-mono text-[10px] font-bold text-ink/70">SPACE-FILLING</span>
+        </div>
+
+        <div class="flex flex-col gap-2 font-mono text-xs">
+          <button id="engine-spiral" onclick="setEngine('spiral')" class="border-2 border-ink p-2.5 bg-[#0038A8] text-white font-bold text-left shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black">✦ Interlocking Spiral Azulejo</div>
+              <div class="text-[10px] text-white/80">Continuous ribbon, staggered seams & fractal splits</div>
+            </div>
+            <span class="material-symbols-outlined text-base">cyclone</span>
+          </button>
+
+          <button id="engine-voronoi" onclick="setEngine('voronoi')" class="border-2 border-ink p-2.5 bg-white text-ink font-bold text-left shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black">✦ Voronoi Calçada Mosaic</div>
+              <div class="text-[10px] text-ink/70">Organic polygonal stone tiles sharing 100% edges</div>
+            </div>
+            <span class="material-symbols-outlined text-base">interests</span>
+          </button>
+
+          <button id="engine-triangles" onclick="setEngine('triangles')" class="border-2 border-ink p-2.5 bg-white text-ink font-bold text-left shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black">✦ Triangular Pinwheel Fan</div>
+              <div class="text-[10px] text-ink/70">Edge-matching triangular shards with prime splits</div>
+            </div>
+            <span class="material-symbols-outlined text-base">change_history</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PANEL 2: GENERATIVE ANIMATOR & CONTROLS -->
+      <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 flex flex-col gap-3">
+        <div class="border-b-[3px] border-ink pb-2 flex items-center justify-between">
+          <h2 class="font-display font-black text-base uppercase text-ink flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 bg-primary-magenta border border-ink inline-block"></span>
+            <span>Step-By-Step Assembler</span>
+          </h2>
+          <span class="font-mono text-[10px] font-bold uppercase bg-tertiary-yellow text-ink px-1.5 py-0.5 border border-ink shadow-[1px_1px_0px_#1c1b1b]" id="play-status-pill">
+            PAUSED
+          </span>
+        </div>
+
+        <!-- Master Play / Pause / Reset -->
+        <div class="grid grid-cols-2 gap-2">
+          <button id="play-btn" onclick="togglePlay()" class="neo-btn neo-btn-primary py-2 text-xs flex items-center justify-center gap-1.5 font-bold">
+            <span class="material-symbols-outlined text-base" id="play-icon">play_arrow</span>
+            <span id="play-label">LAY TILES</span>
+          </button>
+          <button onclick="resetTessellation()" class="neo-btn neo-btn-white py-2 text-xs flex items-center justify-center gap-1.5 font-bold">
+            <span class="material-symbols-outlined text-base">restart_alt</span>
+            <span>CLEAR MOSAIC</span>
+          </button>
+        </div>
+
+        <!-- Discrete Step Controls -->
+        <div class="flex items-center gap-1.5 pt-1">
+          <button onclick="stepBy(-1)" class="neo-btn neo-btn-white text-[11px] py-1.5 px-2 flex-1 text-center font-mono font-bold" title="Undo 1 Tile">
+            -1
+          </button>
+          <button onclick="stepBy(1)" class="neo-btn neo-btn-yellow text-[11px] py-1.5 px-2 flex-1 text-center font-mono font-bold" title="Place 1 Matching Tile">
+            +1 Tile
+          </button>
+          <button onclick="stepBy(10)" class="neo-btn neo-btn-white text-[11px] py-1.5 px-2 flex-1 text-center font-mono font-bold" title="Place 10 Matching Tiles">
+            +10
+          </button>
+          <button onclick="stepBy(50)" class="neo-btn neo-btn-white text-[11px] py-1.5 px-1.5 flex-1 text-center font-mono font-bold" title="Place 50 Matching Tiles">
+            +50
+          </button>
+          <button onclick="stepBy(100)" class="neo-btn neo-btn-white text-[11px] py-1.5 px-1.5 flex-1 text-center font-mono font-bold" title="Place 100 Matching Tiles">
+            +100
+          </button>
+        </div>
+
+        <!-- Speed & Tile Limit Sliders -->
+        <div class="flex flex-col gap-2.5 pt-2 border-t-2 border-ink/20 font-mono text-xs">
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-ink/80 text-[11px] font-bold">PLACEMENT SPEED:</span>
+              <span class="font-bold text-ink" id="speed-val">25 tiles/sec</span>
+            </div>
+            <input type="range" id="speed-slider" min="1" max="150" value="25" class="w-full accent-[#0038A8] cursor-pointer" oninput="updateSpeed(this.value)">
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-ink/80 text-[11px] font-bold">TOTAL TILES TARGET:</span>
+              <div class="flex items-center gap-1.5">
+                <input type="number" id="target-number-input" min="1" max="50000" value="120"
+                       class="w-20 px-1.5 py-0.5 border-2 border-ink font-mono font-bold text-xs bg-white shadow-[1px_1px_0px_#1c1b1b] text-right"
+                       onchange="updateTargetLimit(this.value)" oninput="updateTargetLimit(this.value)">
+                <button onclick="jumpToTarget()" class="neo-btn neo-btn-yellow text-[10px] py-1 px-2 font-bold flex items-center gap-0.5" title="Instantly lay all tiles up to target">
+                  <span class="material-symbols-outlined text-xs">done_all</span>
+                  <span>Lay All</span>
+                </button>
+              </div>
+            </div>
+            <input type="range" id="target-slider" min="10" max="1000" step="10" value="120" class="w-full accent-primary-magenta cursor-pointer" oninput="updateTargetLimit(this.value)">
+            
+            <!-- Quick Target Presets -->
+            <div class="flex items-center gap-1 mt-1.5 flex-wrap">
+              <span class="text-[10px] font-mono text-ink/60 font-bold uppercase">Presets:</span>
+              <button onclick="setTargetPreset(50)" class="text-[10px] font-mono px-1.5 py-0.5 border border-ink bg-white hover:bg-yellow-100 shadow-[1px_1px_0px_#1c1b1b] font-bold">50</button>
+              <button onclick="setTargetPreset(150)" class="text-[10px] font-mono px-1.5 py-0.5 border border-ink bg-white hover:bg-yellow-100 shadow-[1px_1px_0px_#1c1b1b] font-bold">150</button>
+              <button onclick="setTargetPreset(500)" class="text-[10px] font-mono px-1.5 py-0.5 border border-ink bg-white hover:bg-yellow-100 shadow-[1px_1px_0px_#1c1b1b] font-bold">500</button>
+              <button onclick="setTargetPreset(1000)" class="text-[10px] font-mono px-1.5 py-0.5 border border-ink bg-white hover:bg-yellow-100 shadow-[1px_1px_0px_#1c1b1b] font-bold">1,000</button>
+              <button onclick="setTargetPreset(2500)" class="text-[10px] font-mono px-1.5 py-0.5 border border-ink bg-white hover:bg-yellow-100 shadow-[1px_1px_0px_#1c1b1b] font-bold">2,500</button>
+              <button onclick="setTargetPreset(5000)" class="text-[10px] font-mono px-1.5 py-0.5 border border-ink bg-white hover:bg-yellow-100 shadow-[1px_1px_0px_#1c1b1b] font-bold">5,000</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL 3: FRACTAL RULES & APERIODIC CONTROLS -->
+      <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 flex flex-col gap-3">
+        <div class="border-b-[3px] border-ink pb-2 flex items-center justify-between">
+          <h2 class="font-display font-black text-base uppercase text-ink flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 bg-[#FBBF24] border border-ink inline-block"></span>
+            <span>Fractal & Math Rules</span>
+          </h2>
+          <span class="font-mono text-[10px] font-bold text-ink/70">APERIODIC</span>
+        </div>
+
+        <!-- Toggles -->
+        <div class="flex flex-col gap-2 font-mono text-xs">
+          <label class="flex items-center gap-2 cursor-pointer bg-blue-50 p-1.5 border border-ink shadow-[1px_1px_0px_#1c1b1b]">
+            <input type="checkbox" id="check-fractal-subdiv" checked onchange="toggleFractalSubdiv(this.checked)" class="accent-[#0038A8]">
+            <div class="flex flex-col">
+              <span class="text-[11px] font-bold text-ink">Recursive Fractal Subdivision</span>
+              <span class="text-[10px] text-ink/70">Primes split into 2×2, Twin Primes into 3×3 tiles</span>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-2 cursor-pointer bg-yellow-50 p-1.5 border border-ink shadow-[1px_1px_0px_#1c1b1b]">
+            <input type="checkbox" id="check-prime-mod" checked onchange="togglePrimeMod(this.checked)" class="accent-[#FBBF24]">
+            <div class="flex flex-col">
+              <span class="text-[11px] font-bold text-ink">Aperiodic Prime Arc Modulation</span>
+              <span class="text-[10px] text-ink/70">Tile widths vary by prime factors (never repeat)</span>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-2 cursor-pointer bg-white p-1.5 border border-ink shadow-[1px_1px_0px_#1c1b1b]">
+            <input type="checkbox" id="check-azulejo-art" checked onchange="toggleAzulejoArt(this.checked)" class="accent-[#0038A8]">
+            <div class="flex flex-col">
+              <span class="text-[11px] font-bold text-ink">Portuguese Rosette & Inlay Craft</span>
+              <span class="text-[10px] text-ink/70">Geometric center stars and corner dots</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Tile Size & Ribbon Thickness -->
+        <div class="grid grid-cols-2 gap-3 pt-2 border-t-2 border-ink/20 font-mono text-xs">
+          <div>
+            <span class="text-ink/70 text-[10px] font-bold uppercase block mb-1">Tile Width:</span>
+            <input type="range" id="width-slider" min="20" max="65" step="2" value="38" class="w-full accent-ink cursor-pointer" oninput="updateRibbonWidth(this.value)">
+          </div>
+          <div>
+            <span class="text-ink/70 text-[10px] font-bold uppercase block mb-1">Grout Seam:</span>
+            <input type="range" id="grout-slider" min="1" max="5" step="0.5" value="2.5" class="w-full accent-ink cursor-pointer" oninput="updateGroutWidth(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL 4: GLAZE COLOR PALETTES -->
+      <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 flex flex-col gap-3">
+        <div class="border-b-[3px] border-ink pb-2 flex items-center justify-between">
+          <h2 class="font-display font-black text-base uppercase text-ink flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 bg-electric-cyan border border-ink inline-block"></span>
+            <span>Glaze Palettes</span>
+          </h2>
+          <span class="font-mono text-[10px] font-bold text-ink/70">CERAMIC COAT</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-1.5 font-mono text-[11px]">
+          <button id="pal-porto" onclick="setPalette('porto')" class="border-2 border-ink p-2 bg-blue-50 text-ink font-bold text-left shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-between">
+            <span>Porto Azulejo</span>
+            <span class="w-3.5 h-3.5 rounded-none bg-[#0038A8] border border-ink"></span>
+          </button>
+          <button id="pal-memphis" onclick="setPalette('memphis')" class="border-2 border-ink p-2 bg-white text-ink font-bold text-left shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-between">
+            <span>Memphis Pop</span>
+            <span class="w-3.5 h-3.5 rounded-none bg-primary-magenta border border-ink"></span>
+          </button>
+          <button id="pal-terracotta" onclick="setPalette('terracotta')" class="border-2 border-ink p-2 bg-white text-ink font-bold text-left shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-between">
+            <span>Terracotta</span>
+            <span class="w-3.5 h-3.5 rounded-none bg-[#C2410C] border border-ink"></span>
+          </button>
+          <button id="pal-emerald" onclick="setPalette('emerald')" class="border-2 border-ink p-2 bg-white text-ink font-bold text-left shadow-[2px_2px_0px_#1c1b1b] flex items-center justify-between">
+            <span>Emerald Glaze</span>
+            <span class="w-3.5 h-3.5 rounded-none bg-[#047857] border border-ink"></span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- JAVASCRIPT MASTER TESSELLATION ENGINE -->
+<script src="/static/prototypes/fractiles/app.js"></script>
+{% endblock %}

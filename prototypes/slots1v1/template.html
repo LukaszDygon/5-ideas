@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+
+{% block title %}Slots 1v1: Tactical Reel Battle{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/prototypes/slots1v1/style.css"/>
+
+<div class="flex flex-col gap-4 max-w-6xl mx-auto" id="slots-game-root">
+
+  <!-- Top Hero Banner -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-3">
+    <div>
+      <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-2 py-0.5 font-mono text-[11px] font-black uppercase mb-1">
+        🎰 DAY 2026-09-13 PROTOTYPE • 100 HP BEST OF 7 DUEL
+      </div>
+      <h1 class="font-display font-black text-2xl sm:text-3xl uppercase text-white leading-none">
+        Slots 1v1: Tactical Reel Arena
+      </h1>
+      <p class="font-body text-xs text-white/90 mt-1 max-w-2xl">
+        100 HP duels, Best-of-7 series. Escalating upgrade costs, staggered combat popups, and tactical inter-game strategy adjustments.
+      </p>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="sound-toggle" onclick="toggleAudio()" class="neo-btn neo-btn-yellow text-xs py-1.5 px-3 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm" id="sound-icon">volume_up</span>
+        <span id="sound-text">SOUND ON</span>
+      </button>
+      <a href="/day/2026-09-13" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
+        Back to Day
+      </a>
+      <a href="https://github.com/LukaszDygon/slot-battles" target="_blank" class="neo-btn neo-btn-white text-xs py-1.5 px-3 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">code</span>
+        <span>Source Repo</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Best of 7 Series Scoreboard Header -->
+  <div class="bg-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] p-3 flex flex-col md:flex-row items-center justify-between gap-3">
+    
+    <!-- P1 Series Score -->
+    <div class="flex items-center gap-2">
+      <span class="font-display font-black text-xs uppercase text-ink">YOU:</span>
+      <div class="flex items-center gap-1" id="p1-series-pips">
+        <span class="score-pip empty" id="p1-pip-1"></span>
+        <span class="score-pip empty" id="p1-pip-2"></span>
+        <span class="score-pip empty" id="p1-pip-3"></span>
+        <span class="score-pip empty" id="p1-pip-4"></span>
+      </div>
+      <span class="font-mono text-xs font-bold text-gray-600">(<b id="p1-wins-text" class="text-ink">0</b>/4)</span>
+    </div>
+
+    <!-- Match Center Status -->
+    <div class="bg-tertiary-yellow border-2 border-ink px-4 py-1 font-mono text-xs font-black shadow-[2px_2px_0px_#1c1b1b] text-center">
+      BEST OF 7 • <span id="game-series-indicator">GAME 1 / 7</span>
+    </div>
+
+    <!-- P2 Series Score -->
+    <div class="flex items-center gap-2">
+      <span class="font-display font-black text-xs uppercase text-ink">RIVAL:</span>
+      <div class="flex items-center gap-1" id="p2-series-pips">
+        <span class="score-pip empty" id="p2-pip-1"></span>
+        <span class="score-pip empty" id="p2-pip-2"></span>
+        <span class="score-pip empty" id="p2-pip-3"></span>
+        <span class="score-pip empty" id="p2-pip-4"></span>
+      </div>
+      <span class="font-mono text-xs font-bold text-gray-600">(<b id="p2-wins-text" class="text-ink">0</b>/4)</span>
+    </div>
+
+  </div>
+
+  <!-- Combat Arena (100 HP Duel) -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- PLAYER 1 (YOU) CABINET -->
+    <div class="slot-cabinet bg-[#222129] border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-4 flex flex-col gap-3 relative rounded-xl" id="p1-card">
+      
+      <div id="p1-popups" class="absolute inset-0 pointer-events-none z-40 overflow-hidden"></div>
+
+      <!-- Marquee Arch -->
+      <div class="bg-gradient-to-r from-primary-magenta via-neon-pink to-tertiary-yellow border-[3px] border-ink p-2.5 shadow-[3px_3px_0px_#1c1b1b] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="flex gap-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-tertiary-yellow border border-ink animate-pulse"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-acid-lime border border-ink animate-pulse"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-electric-cyan border border-ink animate-pulse"></span>
+          </div>
+          <span class="font-display font-black text-xs uppercase text-ink tracking-wider">YOUR MACHINE</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs font-black bg-ink text-tertiary-yellow px-2 py-0.5 border border-ink">
+            GOLD: <b id="p1-gold" class="text-white">10g</b>
+          </span>
+        </div>
+      </div>
+
+      <!-- 100 HP Health Bar & Shield Gauge -->
+      <div class="bg-white border-[3px] border-ink p-2.5 shadow-[3px_3px_0px_#1c1b1b] flex flex-col gap-1.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-5 h-5 bg-electric-cyan border-2 border-ink font-display font-black flex items-center justify-center text-[10px]">P1</span>
+            <h2 class="font-display font-black text-sm uppercase leading-tight" id="p1-name">You (Challenger)</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-black text-xl text-primary-magenta" id="p1-hp-text">100</span>
+            <span class="font-mono text-[10px] text-gray-500">/ 100 HP</span>
+            <span id="p1-block-pill" class="hidden bg-electric-cyan text-ink border-2 border-ink font-mono text-[10px] font-black px-1.5 py-0.2">
+              🛡️ <span id="p1-block-text">0</span>
+            </span>
+          </div>
+        </div>
+        <div class="w-full h-3 bg-gray-200 border-2 border-ink overflow-hidden">
+          <div id="p1-hp-bar" class="h-full bg-primary-magenta transition-all duration-200" style="width: 100%;"></div>
+        </div>
+        <!-- Fever Gauge -->
+        <div class="flex items-center justify-between text-[9px] font-mono font-black">
+          <span class="text-primary-magenta flex items-center gap-1">
+            <span class="material-symbols-outlined text-xs">local_fire_department</span>
+            UNDERDOG FEVER:
+          </span>
+          <span id="p1-fever-text">0%</span>
+        </div>
+        <div class="w-full h-1.5 bg-gray-200 border border-ink overflow-hidden">
+          <div id="p1-fever-bar" class="h-full bg-gradient-to-r from-tertiary-yellow via-vivid-orange to-neon-pink transition-all duration-200" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Active Passives Status -->
+      <div class="flex items-center gap-1.5 flex-wrap min-h-[22px]" id="p1-passives">
+        <span class="text-[9px] font-mono uppercase text-gray-400">Status:</span>
+        <span class="text-[9px] font-mono text-gray-500 italic" id="p1-empty-passives">Standard Loadout</span>
+      </div>
+
+      <!-- 3x3 Continuous Reel Window -->
+      <div class="relative bg-gradient-to-b from-[#111] via-[#1a1921] to-[#111] p-2.5 border-[4px] border-ink shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)] rounded-md flex items-center justify-between gap-3">
+        
+        <div class="relative flex-1 grid grid-cols-3 gap-2 bg-[#09080c] p-2 border-2 border-ink/80 rounded overflow-hidden" id="p1-reels-viewport">
+          <div class="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-black/40 pointer-events-none z-20"></div>
+          <div class="absolute top-0 left-0 right-0 h-7 bg-gradient-to-b from-black via-black/60 to-transparent pointer-events-none z-20"></div>
+          <div class="absolute bottom-0 left-0 right-0 h-7 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-20"></div>
+
+          <div class="reel-column relative h-[216px] overflow-hidden bg-white border-2 border-ink rounded" id="p1-col-0">
+            <div class="reel-strip flex flex-col" id="p1-strip-0"></div>
+          </div>
+          <div class="reel-column relative h-[216px] overflow-hidden bg-white border-2 border-ink rounded" id="p1-col-1">
+            <div class="reel-strip flex flex-col" id="p1-strip-1"></div>
+          </div>
+          <div class="reel-column relative h-[216px] overflow-hidden bg-white border-2 border-ink rounded" id="p1-col-2">
+            <div class="reel-strip flex flex-col" id="p1-strip-2"></div>
+          </div>
+
+          <svg class="absolute inset-0 w-full h-full pointer-events-none z-30" id="p1-payline-svg" viewBox="0 0 300 216" preserveAspectRatio="none"></svg>
+        </div>
+
+        <!-- Pull Lever -->
+        <div class="hidden sm:flex flex-col items-center justify-center select-none cursor-pointer group" id="p1-lever" onclick="triggerSpin()">
+          <div class="w-3.5 h-3.5 bg-tertiary-yellow border-2 border-ink rounded-full mb-0.5"></div>
+          <div class="relative w-3.5 h-32 bg-gray-700 border-2 border-ink flex flex-col items-center justify-start transition-transform duration-150 origin-bottom" id="p1-lever-arm">
+            <div class="absolute -top-4 w-9 h-9 bg-gradient-to-br from-red-400 via-primary-magenta to-red-900 border-[3px] border-ink rounded-full shadow-[2px_2px_0px_#1c1b1b] group-hover:scale-110 transition-transform"></div>
+            <div class="w-1.5 h-full bg-gradient-to-r from-gray-400 via-white to-gray-400"></div>
+          </div>
+          <div class="w-9 h-5 bg-tertiary-yellow border-[2px] border-ink mt-1 flex items-center justify-center font-mono text-[7px] font-black">
+            PULL
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Footer -->
+      <div class="flex items-center justify-between gap-2 pt-1">
+        <div class="font-mono text-xs text-white/90 truncate flex-1">
+          <span id="p1-combat-log" class="font-bold text-tertiary-yellow">Pull lever to clash!</span>
+        </div>
+        <button id="spin-btn" onclick="triggerSpin()" title="SPIN REELS" class="neo-btn neo-btn-lime font-display font-black text-sm py-2 px-6 shadow-[4px_4px_0px_#1c1b1b] flex items-center gap-1.5 whitespace-nowrap">
+          <span class="material-symbols-outlined text-base">casino</span>
+          <span id="spin-btn-label">SPIN REELS</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- PLAYER 2 (OPPONENT / BOT) CABINET -->
+    <div class="slot-cabinet bg-[#222129] border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-4 flex flex-col gap-3 relative rounded-xl" id="p2-card">
+      
+      <div id="p2-popups" class="absolute inset-0 pointer-events-none z-40 overflow-hidden"></div>
+
+      <!-- Marquee Arch -->
+      <div class="bg-gradient-to-r from-tertiary-yellow via-vivid-orange to-primary-magenta border-[3px] border-ink p-2.5 shadow-[3px_3px_0px_#1c1b1b] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="flex gap-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-electric-cyan border border-ink animate-pulse"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-tertiary-yellow border border-ink animate-pulse"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-neon-pink border border-ink animate-pulse"></span>
+          </div>
+          <span class="font-display font-black text-xs uppercase text-ink tracking-wider" id="p2-marquee-title">RIVAL BOT CHASSIS</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs font-black bg-ink text-tertiary-yellow px-2 py-0.5 border border-ink">
+            BUILD: <b id="p2-archetype-tag" class="text-white">Burst Blades</b>
+          </span>
+        </div>
+      </div>
+
+      <!-- 100 HP Health Bar & Shield Gauge -->
+      <div class="bg-white border-[3px] border-ink p-2.5 shadow-[3px_3px_0px_#1c1b1b] flex flex-col gap-1.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-5 h-5 bg-tertiary-yellow border-2 border-ink font-display font-black flex items-center justify-center text-[10px]">P2</span>
+            <h2 class="font-display font-black text-sm uppercase leading-tight" id="p2-name">Rival Bot</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-black text-xl text-primary-magenta" id="p2-hp-text">100</span>
+            <span class="font-mono text-[10px] text-gray-500">/ 100 HP</span>
+            <span id="p2-block-pill" class="hidden bg-electric-cyan text-ink border-2 border-ink font-mono text-[10px] font-black px-1.5 py-0.2">
+              🛡️ <span id="p2-block-text">0</span>
+            </span>
+          </div>
+        </div>
+        <div class="w-full h-3 bg-gray-200 border-2 border-ink overflow-hidden">
+          <div id="p2-hp-bar" class="h-full bg-primary-magenta transition-all duration-200" style="width: 100%;"></div>
+        </div>
+        <!-- Fever Gauge -->
+        <div class="flex items-center justify-between text-[9px] font-mono font-black">
+          <span class="text-primary-magenta flex items-center gap-1">
+            <span class="material-symbols-outlined text-xs">local_fire_department</span>
+            UNDERDOG FEVER:
+          </span>
+          <span id="p2-fever-text">0%</span>
+        </div>
+        <div class="w-full h-1.5 bg-gray-200 border border-ink overflow-hidden">
+          <div id="p2-fever-bar" class="h-full bg-gradient-to-r from-tertiary-yellow via-vivid-orange to-neon-pink transition-all duration-200" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Active Passives Status -->
+      <div class="flex items-center gap-1.5 flex-wrap min-h-[22px]" id="p2-passives">
+        <span class="text-[9px] font-mono uppercase text-gray-400">Status:</span>
+        <span class="text-[9px] font-mono text-gray-500 italic" id="p2-empty-passives">Burst Reel Setup</span>
+      </div>
+
+      <!-- 3x3 Continuous Reel Window -->
+      <div class="relative bg-gradient-to-b from-[#111] via-[#1a1921] to-[#111] p-2.5 border-[4px] border-ink shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)] rounded-md flex items-center justify-between gap-3">
+        
+        <div class="relative flex-1 grid grid-cols-3 gap-2 bg-[#09080c] p-2 border-2 border-ink/80 rounded overflow-hidden" id="p2-reels-viewport">
+          <div class="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-black/40 pointer-events-none z-20"></div>
+          <div class="absolute top-0 left-0 right-0 h-7 bg-gradient-to-b from-black via-black/60 to-transparent pointer-events-none z-20"></div>
+          <div class="absolute bottom-0 left-0 right-0 h-7 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-20"></div>
+
+          <div class="reel-column relative h-[216px] overflow-hidden bg-white border-2 border-ink rounded" id="p2-col-0">
+            <div class="reel-strip flex flex-col" id="p2-strip-0"></div>
+          </div>
+          <div class="reel-column relative h-[216px] overflow-hidden bg-white border-2 border-ink rounded" id="p2-col-1">
+            <div class="reel-strip flex flex-col" id="p2-strip-1"></div>
+          </div>
+          <div class="reel-column relative h-[216px] overflow-hidden bg-white border-2 border-ink rounded" id="p2-col-2">
+            <div class="reel-strip flex flex-col" id="p2-strip-2"></div>
+          </div>
+
+          <svg class="absolute inset-0 w-full h-full pointer-events-none z-30" id="p2-payline-svg" viewBox="0 0 300 216" preserveAspectRatio="none"></svg>
+        </div>
+
+        <div class="hidden sm:flex flex-col items-center justify-center opacity-60">
+          <div class="w-3.5 h-3.5 bg-gray-400 border-2 border-ink rounded-full mb-0.5"></div>
+          <div class="w-3.5 h-32 bg-gray-800 border-2 border-ink flex flex-col items-center justify-start">
+            <div class="w-9 h-9 bg-gray-600 border-[3px] border-ink rounded-full -top-4 relative"></div>
+            <div class="w-1.5 h-full bg-gray-400"></div>
+          </div>
+          <div class="w-9 h-5 bg-gray-300 border-[2px] border-ink mt-1 flex items-center justify-center font-mono text-[7px] font-bold">
+            AUTO
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Footer -->
+      <div class="flex items-center justify-between gap-2 pt-1">
+        <div class="font-mono text-xs text-white/90 truncate flex-1">
+          <span id="p2-combat-log" class="font-bold text-electric-cyan">Opponent awaits spin.</span>
+        </div>
+        <div class="text-right">
+          <span class="inline-block px-3 py-1 bg-yellow-100 border-2 border-ink font-mono text-[10px] font-bold" id="p2-ready-tag">
+            READY
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Combat Log & Payline Ticker (Mid-game modder button removed) -->
+  <div class="bg-yellow-50 border-[3px] border-ink p-3 shadow-[4px_4px_0px_#1c1b1b] flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3 w-full">
+      <div class="w-8 h-8 bg-tertiary-yellow border-2 border-ink flex items-center justify-center font-display font-black text-base shrink-0">
+        ⚡
+      </div>
+      <div class="overflow-hidden">
+        <h4 class="font-display font-black text-xs uppercase text-ink">Rules & Counters:</h4>
+        <p class="font-body text-[11px] text-gray-700">
+          <b>Blade:</b> 6 chip / 24 burst • <b>Shield:</b> 6 block / 20 burst • <b>Spikes:</b> Requires block to parry; max 3/hit • <b>Acid:</b> Bypasses block & spikes! • Upgrades unlock between games!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRE-MATCH INITIAL SETUP MODAL -->
+  <div id="prematch-modal" class="fixed inset-0 bg-ink/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-canvas border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] max-w-2xl w-full p-6 flex flex-col gap-4 max-h-[92vh] overflow-y-auto">
+      <div class="border-b-2 border-ink pb-2">
+        <div class="inline-flex items-center gap-1 bg-tertiary-yellow text-ink px-2 py-0.5 font-mono text-[10px] font-black uppercase">
+          PRE-MATCH STRATEGY SELECTION • BEST OF 7
+        </div>
+        <h3 class="font-display font-black text-2xl uppercase text-ink mt-1">
+          Draft Your Starting Machine
+        </h3>
+        <p class="font-body text-xs text-gray-700 mt-0.5">
+          Pick your starting loadout for Game 1. Strategy adjustments unlock after each game!
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div onclick="applyStarterPreset('aggro')" class="cursor-pointer bg-white border-2 border-ink p-3 flex flex-col justify-between gap-2 hover:bg-pink-50 transition-colors shadow-[2px_2px_0px_#1c1b1b]">
+          <div>
+            <span class="text-2xl">⚔️</span>
+            <h4 class="font-display font-black text-sm uppercase text-ink mt-1">Berserk Blade</h4>
+            <p class="font-body text-[11px] text-gray-600 mt-1">Dense Blade strip setup. High risk, explosive 24-damage burst diagonals.</p>
+          </div>
+          <span class="neo-btn neo-btn-primary text-[10px] py-1 text-center font-mono font-bold block">LOAD AGGRO</span>
+        </div>
+
+        <div onclick="applyStarterPreset('turtle')" class="cursor-pointer bg-white border-2 border-ink p-3 flex flex-col justify-between gap-2 hover:bg-cyan-50 transition-colors shadow-[2px_2px_0px_#1c1b1b]">
+          <div>
+            <span class="text-2xl">🛡️</span>
+            <h4 class="font-display font-black text-sm uppercase text-ink mt-1">Iron Bastion</h4>
+            <p class="font-body text-[11px] text-gray-600 mt-1">Heavy shield clusters with Lvl 1 Spikes. Punishes attackers who hit your block.</p>
+          </div>
+          <span class="neo-btn neo-btn-cyan text-[10px] py-1 text-center font-mono font-bold block">LOAD DEFENSE</span>
+        </div>
+
+        <div onclick="applyStarterPreset('acid')" class="cursor-pointer bg-white border-2 border-ink p-3 flex flex-col justify-between gap-2 hover:bg-lime-50 transition-colors shadow-[2px_2px_0px_#1c1b1b]">
+          <div>
+            <span class="text-2xl">🧪</span>
+            <h4 class="font-display font-black text-sm uppercase text-ink mt-1">Toxic Saboteur</h4>
+            <p class="font-body text-[11px] text-gray-600 mt-1">Acid vials that bypass shields directly to HP and melt defensive turtlers.</p>
+          </div>
+          <span class="neo-btn neo-btn-lime text-[10px] py-1 text-center font-mono font-bold block">LOAD ACID</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t-2 border-ink">
+        <button onclick="openPreMatchModder()" class="neo-btn neo-btn-white text-xs py-2 px-4 font-mono font-bold">
+          🛠️ Custom Tune Reels
+        </button>
+        <button onclick="closePreMatchModal()" class="neo-btn neo-btn-lime font-display font-black text-sm py-2 px-6 shadow-[3px_3px_0px_#1c1b1b]">
+          LOCK IN & START BEST OF 7 ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTER-GAME REEL MODDER & WORKSHOP MODAL (Only opens between games) -->
+  <div id="shop-modal" class="hidden fixed inset-0 bg-ink/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-canvas border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] max-w-4xl w-full p-5 flex flex-col gap-4 max-h-[92vh] overflow-y-auto">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b-2 border-ink pb-2.5">
+        <div>
+          <div class="inline-flex items-center gap-1 bg-acid-lime text-ink px-2 py-0.5 font-mono text-[9px] font-black uppercase" id="shop-header-badge">
+            INTER-GAME WORKSHOP • BEST OF 7
+          </div>
+          <h3 class="font-display font-black text-2xl uppercase text-ink mt-0.5" id="shop-header-title">
+            Adjust Strategy For Next Game
+          </h3>
+        </div>
+        <div class="text-right flex items-center gap-3">
+          <div class="bg-white border-2 border-ink px-3 py-1 shadow-[2px_2px_0px_#1c1b1b]">
+            <span class="font-mono text-[9px] text-gray-600 block">YOUR GOLD:</span>
+            <span class="font-display font-black text-2xl text-primary-magenta" id="shop-wallet-gold">10g</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center gap-2 border-b-2 border-ink pb-2">
+        <button onclick="setShopTab('reels')" id="tab-btn-reels" class="neo-btn neo-btn-yellow text-xs py-1.5 px-3 font-display font-black">
+          🛠️ 1. TUNE REEL STRIPS
+        </button>
+        <button onclick="setShopTab('relics')" id="tab-btn-relics" class="neo-btn neo-btn-white text-xs py-1.5 px-3 font-display font-black">
+          🛡️ 2. COUNTER-TECH & RELICS (SCALING COSTS)
+        </button>
+        <button onclick="setShopTab('scout')" id="tab-btn-scout" class="neo-btn neo-btn-white text-xs py-1.5 px-3 font-display font-black">
+          👁️ 3. ENEMY REEL SCOUT
+        </button>
+      </div>
+
+      <!-- TAB 1: REEL MODDER -->
+      <div id="tab-reels" class="flex flex-col gap-3">
+        <div class="bg-yellow-100 border-2 border-ink p-2.5 text-xs text-gray-800">
+          <b>Click any slot below (1–12 on Reels 1, 2, or 3)</b> and choose a symbol card from the draft picker below to place it into that exact slot.
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="reel-strips-editor"></div>
+
+        <div class="bg-white border-2 border-ink p-3 shadow-[3px_3px_0px_#1c1b1b]">
+          <h4 class="font-display font-black text-xs uppercase text-ink mb-1.5 flex items-center justify-between">
+            <span>Choose Symbol Card to Install:</span>
+            <span class="font-mono text-[10px] text-gray-500" id="selected-slot-indicator">Click a slot above first!</span>
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2" id="symbol-card-draft"></div>
+        </div>
+      </div>
+
+      <!-- TAB 2: RELIC SHOP WITH SCALING COSTS & LEVEL CAPS -->
+      <div id="tab-relics" class="hidden flex flex-col gap-3">
+        <div class="bg-yellow-100 border-2 border-ink p-2.5 flex flex-col gap-1">
+          <div class="flex items-center justify-between">
+            <span class="font-display font-black text-xs uppercase text-ink flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">visibility</span>
+              Scouted Enemy Strategy:
+            </span>
+            <span class="font-mono text-xs font-bold text-primary-magenta" id="scout-counter-hint">Watch out for Diagonals</span>
+          </div>
+          <p class="font-body text-xs text-gray-800" id="scout-summary-text">
+            Upgrades grow more expensive each level. Thorns only parries when you hold active block!
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="shop-cards-container"></div>
+      </div>
+
+      <!-- TAB 3: ENEMY REEL SCOUT -->
+      <div id="tab-scout" class="hidden flex flex-col gap-3">
+        <div class="bg-white border-2 border-ink p-3 shadow-[3px_3px_0px_#1c1b1b]">
+          <h4 class="font-display font-black text-sm uppercase text-ink mb-1">Opponent's Physical Reel Strips</h4>
+          <p class="font-body text-xs text-gray-700 mb-2">Inspect your rival's symbol placements to prepare counter-tech:</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="enemy-reel-strips-view"></div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-2 border-t-2 border-ink">
+        <span class="font-mono text-xs text-gray-600">Locked in until the next game ends.</span>
+        <button onclick="closeShopAndReady()" class="neo-btn neo-btn-lime font-display font-black text-sm py-2 px-6 shadow-[3px_3px_0px_#1c1b1b]">
+          LOCK IN & START NEXT GAME ➔
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SERIES CHAMPIONSHIP MODAL -->
+  <div id="game-over-modal" class="hidden fixed inset-0 bg-ink/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] max-w-md w-full p-6 flex flex-col items-center text-center gap-4">
+      <div class="w-16 h-16 bg-tertiary-yellow border-[3px] border-ink flex items-center justify-center text-3xl shadow-[3px_3px_0px_#1c1b1b]" id="go-icon">
+        🏆
+      </div>
+      <div>
+        <h3 class="font-display font-black text-3xl uppercase text-ink" id="go-title">MATCH VICTORY!</h3>
+        <p class="font-body text-sm text-gray-700 mt-1" id="go-desc">You claimed the Best-of-7 Championship with superior tactical adjustments.</p>
+      </div>
+      <div class="w-full bg-yellow-50 border-2 border-ink p-3 font-mono text-xs text-left flex flex-col gap-1" id="go-stats">
+        <div>Series Score: <b id="go-series-score">4 - 2</b></div>
+        <div>Games Played: <b id="go-games-count">6 Games</b></div>
+        <div>MVP Strategy: <b id="go-counter">Anti-Burst Aegis</b></div>
+      </div>
+      <button onclick="resetFullMatch()" class="neo-btn neo-btn-primary font-display font-black text-base py-2.5 px-8 w-full shadow-[4px_4px_0px_#1c1b1b]">
+        PLAY NEW BEST OF 7
+      </button>
+    </div>
+  </div>
+
+  <!-- JOIN ROOM MODAL -->
+  <div id="join-modal" class="hidden fixed inset-0 bg-ink/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] max-w-sm w-full p-5 flex flex-col gap-4">
+      <h3 class="font-display font-black text-xl uppercase text-ink">Join Network Match</h3>
+      <p class="font-body text-xs text-gray-700">Enter the room code from your opponent to connect via WebRTC:</p>
+      <input type="text" id="join-room-input" placeholder="e.g. slots-9821" class="border-2 border-ink p-2 font-mono text-sm uppercase bg-yellow-50 focus:outline-none"/>
+      <div class="flex items-center justify-end gap-2">
+        <button onclick="closeJoinModal()" class="neo-btn neo-btn-white text-xs py-1.5 px-3">Cancel</button>
+        <button onclick="confirmJoinRoom()" class="neo-btn neo-btn-lime text-xs py-1.5 px-4">Connect</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PeerJS for zero-server WebRTC multiplayer -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+<script src="/static/prototypes/slots1v1/app.js"></script>
+{% endblock %}

@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+
+{% block title %}Aqueous Caloric Spectrometer: Molecular Enthalpy & Caloric Determination Lab{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/prototypes/water-calories/style.css"/>
+
+<div class="flex flex-col gap-5 max-w-6xl mx-auto" id="hydrocal-root">
+
+  <!-- TOP HERO BANNER -->
+  <div class="bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div>
+      <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-2.5 py-0.5 font-mono text-[11px] font-black uppercase mb-1.5 shadow-[2px_2px_0px_#1c1b1b]">
+        🔬 LABORATORY INSTRUMENTATION • PROTOCOL ACS-9
+      </div>
+      <h1 class="font-display font-black text-2xl sm:text-4xl uppercase text-white leading-tight tracking-tight">
+        Aqueous Caloric Spectrometer
+      </h1>
+      <p class="font-body text-xs sm:text-sm text-white/95 mt-1 max-w-2xl">
+        High-resolution dual-beam FTIR and Raman diagnostic system for determining biological metabolizable energy in aqueous specimens via molecular vibrational analysis and thermodynamic enthalpy integration.
+      </p>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="sound-toggle" onclick="toggleAudio()" class="neo-btn neo-btn-yellow text-xs py-2 px-3 flex items-center gap-1.5" title="Toggle acoustic telemetry">
+        <span class="material-symbols-outlined text-base" id="sound-icon">volume_up</span>
+        <span id="sound-text">AUDIO ON</span>
+      </button>
+      <a href="/day/2026-09-16" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span>Day Sparks</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- INSTRUMENT STATUS & SPECIFICATION BAR -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center font-mono text-[11px]">
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Standard Reference</div>
+      <div class="font-black text-secondary-cyan">NIST SRM-211D</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Thermal Baseline</div>
+      <div class="font-black text-primary-magenta" id="banner-cryo">293.15 K (±0.02 K)</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Interferometer</div>
+      <div class="font-black text-ink">DUAL-BEAM 3657 cm⁻¹</div>
+    </div>
+    <div class="bg-white border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] p-2">
+      <div class="text-ink/60 uppercase text-[10px] font-bold">Detection Limit</div>
+      <div class="font-black text-acid-lime bg-ink px-1">0.00001 kcal (0.0418 J)</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: INGESTION CHAMBER (UPLOAD ONLY) -->
+  <div id="upload-panel" class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-5 sm:p-7">
+    <div class="flex items-center justify-between border-b-[3px] border-ink pb-3 mb-5 flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <span class="w-3.5 h-3.5 rounded-full bg-secondary-cyan border-2 border-ink inline-block"></span>
+        <h2 class="font-display font-black text-xl uppercase tracking-tight text-ink">
+          Section 1: Specimen Ingestion & Optical Alignment
+        </h2>
+      </div>
+      <span class="font-mono text-xs font-bold bg-tertiary-yellow px-2 py-0.5 border-2 border-ink">
+        DIGITAL SPECIMEN REQUIRED
+      </span>
+    </div>
+
+    <!-- Drag & Drop Zone -->
+    <div id="drop-zone" 
+         class="relative border-[3px] border-dashed border-ink bg-canvas/60 hover:bg-canvas p-6 sm:p-10 text-center cursor-pointer transition-all duration-150 flex flex-col items-center justify-center min-h-[280px] group"
+         onclick="triggerFileSelect()">
+      <input type="file" id="file-input" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)">
+      
+      <!-- Four Memphis Reticle Corners -->
+      <div class="corner-reticle top-2 left-2 border-t-4 border-l-4"></div>
+      <div class="corner-reticle top-2 right-2 border-t-4 border-r-4"></div>
+      <div class="corner-reticle bottom-2 left-2 border-b-4 border-l-4"></div>
+      <div class="corner-reticle bottom-2 right-2 border-b-4 border-r-4"></div>
+
+      <!-- Empty State -->
+      <div id="drop-empty-state" class="flex flex-col items-center gap-3">
+        <div class="w-16 h-16 bg-tertiary-yellow rounded-full border-[3px] border-ink flex items-center justify-center shadow-[4px_4px_0px_#1c1b1b] group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-3xl text-ink">camera</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="font-display font-black text-lg sm:text-2xl uppercase text-ink">
+            Mount Sample Photographic Record
+          </span>
+          <span class="font-mono text-xs text-ink/70 mt-1 max-w-lg">
+            Upload an uncompressed raster image or acquire a direct camera frame of the liquid specimen to initialize optical meniscus edge detection.
+          </span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 bg-ink text-white font-mono text-[11px] font-bold px-3 py-1.5 border border-ink mt-2">
+          <span class="material-symbols-outlined text-sm text-acid-lime">check_circle</span>
+          <span>SUPPORTED MATRICES: TAP WATER, SPRING WATER, INFUSIONS, ICE PHASES, AQUEOUS SOLUTIONS</span>
+        </div>
+      </div>
+
+      <!-- Loaded Preview State -->
+      <div id="drop-loaded-state" class="hidden flex-col items-center gap-4 w-full max-w-md">
+        <div class="relative border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] overflow-hidden bg-ink w-full max-h-[320px] flex items-center justify-center">
+          <img id="preview-image" src="" alt="Specimen Preview" class="max-h-[300px] w-auto object-contain">
+          <div class="crt-scanlines absolute inset-0"></div>
+          <div class="absolute bottom-2 left-2 bg-ink/90 text-acid-lime font-mono text-[10px] px-2 py-0.5 border border-ink">
+            OPTICAL GEOMETRY: SECURED
+          </div>
+        </div>
+        <div class="font-mono text-xs font-bold text-ink bg-tertiary-yellow px-3 py-1.5 border-2 border-ink w-full flex justify-between items-center shadow-[2px_2px_0px_#1c1b1b]">
+          <span id="specimen-meta">SPECIMEN RECORD: ready.jpg</span>
+          <span id="specimen-size">0.0 MB</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chamber Action Controls -->
+    <div class="flex items-center justify-between mt-5 pt-4 border-t-[3px] border-ink flex-wrap gap-3">
+      <button id="clear-btn" onclick="clearSpecimen()" class="neo-btn neo-btn-white text-xs py-2 px-4 hidden">
+        <span class="material-symbols-outlined text-sm">restart_alt</span>
+        Reset Ingestion
+      </button>
+      <div class="flex-1"></div>
+      <button id="analyze-btn" onclick="startAnalysis()" disabled class="neo-btn neo-btn-primary text-sm py-3.5 px-7 opacity-40 cursor-not-allowed flex items-center gap-2">
+        <span class="material-symbols-outlined text-xl">biotech</span>
+        <span>Initiate 5-Phase Spectrometric Protocol</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: THE SPECTROMETRY CHAMBER (DELIBERATE & RIGOROUS) -->
+  <div id="analysis-theater" class="hidden bg-ink text-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-5 sm:p-7 relative overflow-hidden flex-col gap-5">
+    <!-- CRT Overlay -->
+    <div class="crt-scanlines absolute inset-0 pointer-events-none"></div>
+
+    <!-- Theater Header & Resolution Setting -->
+    <div class="flex items-center justify-between border-b-2 border-white/20 pb-3 flex-wrap gap-3 relative z-10">
+      <div class="flex items-center gap-3">
+        <span class="w-3.5 h-3.5 rounded-full bg-acid-lime animate-ping inline-block"></span>
+        <div>
+          <span class="font-display font-black text-lg sm:text-2xl uppercase tracking-tight text-white block">
+            Spectrometric Diagnostic Chamber // Operational Run
+          </span>
+          <span class="font-mono text-[11px] text-white/70">
+            Calorimetric integration in progress. Maintain sample optical isolation.
+          </span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="expedite-btn" onclick="toggleExpedite()" class="neo-btn neo-btn-yellow text-[11px] py-1.5 px-3 flex items-center gap-1 shadow-none" title="Switch measurement resolution mode">
+          <span class="material-symbols-outlined text-sm">speed</span>
+          <span id="expedite-text">MODE: STANDARD (HIGH FIDELITY)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 5-PHASE STEP PROGRESS BAR -->
+    <div class="relative z-10 bg-black/70 border-[3px] border-white/30 p-3 flex flex-col gap-2">
+      <div class="flex justify-between items-center text-xs font-mono font-bold text-white/90">
+        <span class="text-tertiary-yellow flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">hourglass_top</span>
+          <span id="active-phase-name">PHASE 1: OPTICAL CALIBRATION & MENISCUS MAPPING</span>
+        </span>
+        <span class="text-acid-lime font-mono" id="master-progress-pct">0%</span>
+      </div>
+
+      <!-- Master Progress Bar Container -->
+      <div class="w-full h-4 bg-white/10 border-2 border-white/40 overflow-hidden relative">
+        <div id="master-progress-fill" class="h-full bg-gradient-to-r from-secondary-cyan via-tertiary-yellow to-acid-lime transition-all duration-300" style="width: 0%;"></div>
+      </div>
+
+      <!-- Phase Badges Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-center font-mono text-[10px] mt-1">
+        <div id="step-badge-1" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [1] OPTICAL ALIGN
+        </div>
+        <div id="step-badge-2" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [2] BASELINE CORR
+        </div>
+        <div id="step-badge-3" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [3] RAMAN SPECTRA
+        </div>
+        <div id="step-badge-4" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [4] ENTHALPY SOLVE
+        </div>
+        <div id="step-badge-5" class="p-1.5 border border-white/20 bg-white/5 text-white/70 transition-all font-bold">
+          [5] CERTIFICATION
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Stage Detail Hero Card -->
+    <div id="stage-detail-box" class="relative z-10 bg-canvas/10 border-[3px] border-tertiary-yellow p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-tertiary-yellow text-ink border-2 border-ink flex items-center justify-center font-display font-black text-xl shrink-0" id="phase-icon-box">
+          1
+        </div>
+        <div>
+          <div class="font-mono text-xs font-black text-tertiary-yellow uppercase" id="phase-title">
+            Phase 1: Sub-Pixel Surface & Refractive Meniscus Geometry
+          </div>
+          <div class="font-body text-xs text-white/80 mt-0.5" id="phase-description">
+            Mapping the optical interface to compute Snell refraction index (n = 1.3330) and isolate ambient reflection glare.
+          </div>
+        </div>
+      </div>
+      <div class="font-mono text-[11px] bg-black/80 text-acid-lime border border-white/30 px-2.5 py-1 shrink-0" id="phase-substatus">
+        STATUS: MAPPING BOUNDARY GRADIENT
+      </div>
+    </div>
+
+    <!-- Main Visualizer Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 relative z-10">
+      
+      <!-- Left: Specimen Laser Scan Chamber -->
+      <div class="lg:col-span-6 flex flex-col gap-3">
+        <div class="font-mono text-xs font-bold text-white/80 flex items-center justify-between">
+          <span>SPECIMEN APERTURE HUD</span>
+          <span class="text-acid-lime font-mono text-[10px]" id="laser-fps">FTIR SCANNING 3657 cm⁻¹</span>
+        </div>
+        
+        <div class="relative bg-black border-[3px] border-white/40 h-[340px] flex items-center justify-center overflow-hidden" id="aperture-box">
+          <canvas id="specimen-canvas" class="w-full h-full object-contain"></canvas>
+          
+          <!-- Laser Scan Line -->
+          <div id="laser-bar" class="laser-line-deliberate absolute left-0 right-0 h-1.5 bg-electric-cyan shadow-[0_0_14px_#00e5ff,0_0_28px_#39ff14] border-t border-white pointer-events-none"></div>
+          
+          <!-- Moving Targeting Grid Box -->
+          <div id="scanning-reticle-box" class="absolute border-2 border-dashed border-acid-lime pointer-events-none transition-all duration-700 w-32 h-32 flex items-center justify-center" style="top: 25%; left: 25%;">
+            <div class="w-2 h-2 bg-acid-lime rounded-full"></div>
+            <span class="absolute -top-5 left-0 font-mono text-[9px] bg-ink text-acid-lime px-1" id="reticle-label">MENISCUS #01</span>
+          </div>
+
+          <!-- Crosshair and HUD elements -->
+          <div class="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <div class="absolute top-3 left-3 font-mono text-[9px] text-white/70 bg-black/70 p-1 border border-white/20">
+              TARGET: H₂O COVALENT CLUSTERS<br>
+              SURFACE TENSION: 72.8 mN/m<br>
+              REFRACTIVE INDEX: 1.3330
+            </div>
+            <div class="absolute bottom-3 right-3 font-mono text-[9px] text-electric-cyan bg-black/70 p-1 border border-white/20 text-right">
+              CHAMBER PRESSURE: <span id="gauge-pressure" class="text-white font-bold">101.325 kPa</span><br>
+              ISOLATION STATUS: <span id="gauge-vac-status" class="text-acid-lime font-bold">NOMINAL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Real-Time Dials & The Stepped Calorie Deconvolution Meter -->
+      <div class="lg:col-span-6 flex flex-col gap-4">
+        
+        <!-- The Calorie Deconvolution Meter -->
+        <div class="bg-white text-ink border-[3px] border-ink shadow-[4px_4px_0px_#fae100] p-4 flex flex-col items-center justify-center relative overflow-hidden" id="meter-container">
+          <div class="font-mono text-[11px] font-black uppercase tracking-wider text-ink/70 flex items-center gap-1">
+            <span class="material-symbols-outlined text-base text-primary-magenta">calculate</span>
+            <span>INTEGRATED METABOLIZABLE CALORIC VALUE</span>
+          </div>
+          
+          <!-- Large Numeric Readout -->
+          <div class="font-display font-black text-3xl sm:text-5xl text-primary-magenta tracking-tight my-1 transition-all" id="ticker-number">
+            1428.50000
+          </div>
+
+          <div class="font-mono text-xs font-bold text-ink/80 flex items-center gap-2">
+            <span class="bg-tertiary-yellow px-2 py-0.5 border border-ink">KILOCALORIES (kcal)</span>
+            <span>•</span>
+            <span id="ticker-status" class="text-primary-magenta font-black">EXTRACTING BASELINE ENTHALPY</span>
+          </div>
+
+          <!-- Live Subtraction Banner -->
+          <div id="subtraction-banner" class="mt-2 font-mono text-[11px] text-ink/80 bg-canvas px-2.5 py-1 border border-ink w-full text-center">
+            Uncorrected gross photometric energy across sample plane
+          </div>
+        </div>
+
+        <!-- Oscilloscope / Radar Canvas -->
+        <div class="bg-black/80 border-[3px] border-white/30 p-3 flex flex-col gap-2">
+          <div class="font-mono text-xs font-bold text-tertiary-yellow flex justify-between items-center">
+            <span>RAMAN RESONANCE SPECTROGRAM</span>
+            <span class="text-acid-lime font-mono text-[10px]" id="spectral-band-indicator">BAND: 3657 cm⁻¹</span>
+          </div>
+          <div class="h-28 w-full bg-black relative border border-white/20 overflow-hidden">
+            <canvas id="radar-canvas" class="w-full h-full"></canvas>
+          </div>
+        </div>
+
+        <!-- Telemetry Gauges Grid -->
+        <div class="grid grid-cols-3 gap-2 text-center font-mono text-[10px]">
+          <div class="bg-black/80 border border-white/20 p-2">
+            <div class="text-white/60">TEMPERATURE</div>
+            <div class="text-acid-lime font-bold text-xs" id="gauge-temp">293.15 K</div>
+          </div>
+          <div class="bg-black/80 border border-white/20 p-2">
+            <div class="text-white/60">O-H BONDS COUNTED</div>
+            <div class="text-electric-cyan font-bold text-xs" id="gauge-bonds">0</div>
+          </div>
+          <div class="bg-black/80 border border-white/20 p-2">
+            <div class="text-white/60">INTEGRITY HASH</div>
+            <div class="text-tertiary-yellow font-bold text-xs truncate" id="gauge-hash">STANDBY</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Scrolling Telemetry Terminal Console -->
+    <div class="pt-3 border-t-2 border-white/20 relative z-10 flex flex-col gap-1.5">
+      <div class="flex items-center justify-between">
+        <span class="font-mono text-xs text-acid-lime font-bold flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">terminal</span>
+          REAL-TIME DIAGNOSTIC TELEMETRY LOG
+        </span>
+        <span class="font-mono text-[10px] text-white/50">SPECTROMETRY INTERFACE ACS-4.2 • VERBOSE</span>
+      </div>
+      <div id="terminal-log" class="bg-black border border-white/30 p-3 font-mono text-xs text-acid-lime h-36 overflow-y-auto flex flex-col gap-1">
+        <!-- Diagnostic steps logged by script -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: THE OFFICIAL ANALYTICAL REPORT (REVEAL) -->
+  <div id="certificate-panel" class="hidden flex-col gap-5">
+    
+    <!-- Top Result Banner -->
+    <div class="bg-tertiary-yellow border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-primary-magenta text-white border-[3px] border-ink flex items-center justify-center shadow-[3px_3px_0px_#1c1b1b] shrink-0">
+          <span class="material-symbols-outlined text-3xl">verified</span>
+        </div>
+        <div>
+          <h2 class="font-display font-black text-xl sm:text-2xl uppercase text-ink leading-tight">
+            Analytical Determination Concluded
+          </h2>
+          <p class="font-mono text-xs text-ink/80 font-bold">
+            All 5 diagnostic phases executed. Biological metabolizable energy content determined.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="copyShareLink()" class="neo-btn neo-btn-primary text-xs py-2 px-3.5 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">share</span>
+          <span id="copy-btn-text">Copy Analytical Link</span>
+        </button>
+        <button onclick="resetLab()" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">refresh</span>
+          <span>Analyze Next Sample</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- The Official Analytical Certificate Card -->
+    <div id="official-certificate" class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] p-6 sm:p-10 relative overflow-hidden">
+      
+      <!-- Top Decorative Memphis Pattern Stripes -->
+      <div class="h-3 w-full bg-gradient-to-r from-primary-magenta via-tertiary-yellow to-secondary-cyan border-b-2 border-ink -mt-6 -mx-6 sm:-mt-10 sm:-mx-10 mb-6 sm:mb-8" style="width: calc(100% + 3rem + 2px);"></div>
+
+      <!-- Certificate Header -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-[3px] border-ink pb-4 mb-6 gap-3">
+        <div>
+          <span class="font-mono text-xs font-black text-primary-magenta uppercase tracking-widest">
+            DIVISION OF PHYSICAL CHEMISTRY & METROLOGICAL STANDARDS
+          </span>
+          <h3 class="font-display font-black text-2xl sm:text-4xl text-ink uppercase tracking-tight">
+            Certificate of Analytical Determination
+          </h3>
+          <p class="font-body text-xs text-ink/70 mt-0.5">
+            Determination of Metabolizable Caloric Content in Aqueous Phase • Protocol Ref: ASTM-D1293 / ISO-H2O
+          </p>
+        </div>
+        <div class="font-mono text-xs font-bold bg-canvas border-2 border-ink p-2 self-stretch sm:self-auto text-left sm:text-right">
+          <div>SAMPLE REF: <span id="cert-id" class="text-primary-magenta">#H2O-88421</span></div>
+          <div>DATE: <span id="cert-date" class="text-ink">2026-09-16</span></div>
+          <div class="text-[10px] text-secondary-cyan">CHECKSUM: <span id="cert-hash" class="font-mono">7f4e89...</span></div>
+        </div>
+      </div>
+
+      <!-- Center Monumental Measurement Display -->
+      <div class="my-6 sm:my-8 flex flex-col items-center justify-center p-6 sm:p-8 bg-canvas border-[3px] border-ink relative">
+        
+        <!-- Measurement Box -->
+        <div id="stamp-container" class="stamp-animate flex flex-col items-center justify-center border-[4px] border-primary-magenta bg-white p-6 sm:p-8 shadow-[6px_6px_0px_#b40065] -rotate-2 max-w-lg w-full text-center">
+          <div class="font-mono text-xs font-black tracking-widest text-primary-magenta uppercase mb-1">
+            DETERMINED METABOLIZABLE ENERGY CONTENT
+          </div>
+          
+          <div class="font-display font-black text-5xl sm:text-7xl text-ink leading-none tracking-tight my-2" id="monumental-val">
+            0.00000
+          </div>
+
+          <div class="inline-flex items-center gap-1.5 font-mono font-black text-sm uppercase bg-tertiary-yellow text-ink px-3 py-1 border-2 border-ink shadow-[2px_2px_0px_#1c1b1b]">
+            <span id="unit-label">KILOCALORIES (kcal)</span>
+            <button onclick="toggleUnits()" class="ml-2 underline text-[11px] font-bold text-primary-magenta hover:text-ink">
+              [SWITCH TO kJ]
+            </button>
+          </div>
+
+          <p class="font-mono text-[11px] text-ink/70 mt-3 max-w-sm">
+            5-phase spectrophotometric integration confirms zero available biological energy. The covalent bonds of H₂O cannot be hydrolyzed into adenosine triphosphate (ATP).
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Detailed Breakdown Table -->
+      <div class="border-[3px] border-ink bg-white mb-6">
+        <div class="bg-ink text-white font-mono text-xs font-bold px-4 py-2 flex justify-between">
+          <span>ANALYTICAL FRACTION DECONVOLUTION</span>
+          <span>CALORIC CONTRIBUTION</span>
+        </div>
+        <div class="divide-y-2 divide-ink font-mono text-xs">
+          <div class="px-4 py-2.5 flex justify-between items-center hover:bg-canvas/50">
+            <div>
+              <span class="font-bold">Phase 1: Molecular Water (H₂O) Matrix</span>
+              <div class="text-[11px] text-ink/60">Covalent O-H sigma bonds (460 kJ/mol) — physiologically inert to digestive catabolism</div>
+            </div>
+            <span class="font-bold text-ink">0.00000 kcal</span>
+          </div>
+          <div class="px-4 py-2.5 flex justify-between items-center hover:bg-canvas/50">
+            <div>
+              <span class="font-bold">Phase 2: Dissolved Atmospheric Solutes (N₂, O₂, Ar)</span>
+              <div class="text-[11px] text-ink/60">Non-combustible dissolved gaseous traces</div>
+            </div>
+            <span class="font-bold text-ink">0.00000 kcal</span>
+          </div>
+          <div class="px-4 py-2.5 flex justify-between items-center hover:bg-canvas/50">
+            <div>
+              <span class="font-bold">Phase 3: Raman Bond Harmonic Overtones</span>
+              <div class="text-[11px] text-ink/60">970 nm, 1450 nm & 3657 cm⁻¹ vibrational modes (zero metabolic yield)</div>
+            </div>
+            <span class="font-bold text-ink">0.00000 kcal</span>
+          </div>
+          <div class="px-4 py-2.5 flex justify-between items-center hover:bg-canvas/50">
+            <div>
+              <span class="font-bold">Phase 4: Esophageal Transit Work (Mechanical Swallowing)</span>
+              <div class="text-[11px] text-ink/60">Peristaltic muscular expenditure during ingestion</div>
+            </div>
+            <span class="font-bold text-primary-magenta">-0.00000 kcal</span>
+          </div>
+          <div class="px-4 py-3 flex justify-between items-center bg-tertiary-yellow font-black text-sm">
+            <span>NET PHYSIOLOGICALLY AVAILABLE CALORIES DELIVERED</span>
+            <span class="text-base text-ink">0.00000 kcal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verdict Callout -->
+      <div class="bg-canvas border-[3px] border-ink p-4 flex items-start gap-3">
+        <span class="material-symbols-outlined text-2xl text-secondary-cyan mt-0.5">science</span>
+        <div class="font-body text-xs text-ink leading-relaxed">
+          <strong>Analytical Finding:</strong> High-resolution optical, spectroscopic, and thermodynamic evaluation demonstrates that water contains zero metabolizable energy. Pure dihydrogen monoxide possesses no accessible chemical enthalpy for human cellular respiration. Any transient variation in body mass following ingestion represents temporary hydrostatic water volume that is regulated and excreted through renal function.
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="flex items-center justify-between mt-6 pt-4 border-t-[3px] border-ink flex-wrap gap-3">
+        <button onclick="downloadBadge()" class="neo-btn neo-btn-white text-xs py-2 px-4 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-sm">download</span>
+          Download Certificate (PNG)
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="copyShareLink()" class="neo-btn neo-btn-secondary text-xs py-2 px-4 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">link</span>
+            <span>Share This Report</span>
+          </button>
+          <button onclick="resetLab()" class="neo-btn neo-btn-primary text-xs py-2 px-5 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">biotech</span>
+            <span>Evaluate Another Sample</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- HIDDEN CANVAS FOR BADGE DOWNLOAD -->
+  <canvas id="export-canvas" class="hidden" width="800" height="500"></canvas>
+
+</div>
+
+<script src="/static/prototypes/water-calories/app.js"></script>
+{% endblock %}

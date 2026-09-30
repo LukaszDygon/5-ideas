@@ -1,0 +1,600 @@
+{% extends "base.html" %}
+
+{% block title %}The Communal Table Steamer // A 4-Person Guide to Dumplings at the Table{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-8 max-w-5xl mx-auto pb-20">
+
+  <!-- TOP MASTHEAD -->
+  <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#fae100] p-5 sm:p-8 relative overflow-hidden">
+    <!-- Memphis Pop geometric decals -->
+    <div class="absolute -right-8 -top-8 w-36 h-36 bg-tertiary-yellow border-[3px] border-ink rounded-full opacity-30 pointer-events-none"></div>
+    <div class="absolute right-32 -bottom-10 w-28 h-28 bg-electric-cyan border-[3px] border-ink rotate-45 opacity-25 pointer-events-none"></div>
+    
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-wrap items-center gap-2 font-mono text-xs font-bold uppercase">
+          <span class="bg-ink text-white px-2.5 py-1 border border-ink shadow-[2px_2px_0px_#ff1493]">
+            DAY 1 DROP // 2026-09-26
+          </span>
+          <span class="bg-acid-lime text-ink px-2.5 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b] -rotate-1">
+            ⭐ IDEA #2: TABLE STEAMER
+          </span>
+          <span class="bg-secondary-cyan text-white px-2.5 py-1 border border-ink shadow-[2px_2px_0px_#1c1b1b]">
+            DUMPLING FUSION
+          </span>
+        </div>
+
+        <h1 class="font-display font-black text-3xl sm:text-5xl uppercase tracking-tight text-ink mt-1">
+          The Communal Table Steamer
+        </h1>
+        <p class="font-body text-base text-gray-800 max-w-2xl leading-relaxed">
+          A practical guide to making and steaming fresh dumplings together right at the dinner table for four people. Simple hardware, four easy fillings, fun things to tuck inside, and the kitchen science that keeps them juicy and tender.
+        </p>
+      </div>
+
+      <!-- Navigation buttons -->
+      <div class="flex flex-wrap sm:flex-nowrap md:flex-col gap-2 shrink-0">
+        <a href="/day/2026-09-26" class="neo-btn neo-btn-white text-xs py-2 px-3.5 flex items-center justify-center gap-1.5 font-bold">
+          <span class="material-symbols-outlined text-base">calendar_today</span>
+          <span>DAY 1 NOTES</span>
+        </a>
+        <button onclick="window.print()" class="neo-btn neo-btn-yellow text-xs py-2 px-3.5 flex items-center justify-center gap-1.5 font-bold">
+          <span class="material-symbols-outlined text-base">print</span>
+          <span>PRINT THIS GUIDE</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO PHOTO & QUICK NUMBERS -->
+  <div class="bg-white border-[4px] border-ink shadow-[8px_8px_0px_#1c1b1b] overflow-hidden">
+    <div class="relative w-full aspect-[16/9] sm:max-h-[500px] overflow-hidden border-b-[4px] border-ink bg-canvas">
+      <img 
+        src="/static/prototypes/table-steamer/images/table_steamer_setup.jpg" 
+        alt="Four friends making and steaming dumplings together at a dining table" 
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute bottom-3 left-3 bg-ink/90 text-white font-mono text-xs px-3 py-1.5 border border-white/40 shadow-[3px_3px_0px_#fae100] backdrop-blur-sm hidden sm:block">
+        FOUR PEOPLE, A TWO-TIER BAMBOO STEAMER, AND FRESH DUMPLINGS AS YOU GO
+      </div>
+    </div>
+
+    <!-- Quick Numbers -->
+    <div class="p-5 sm:p-6 bg-yellow-fixed/20 grid grid-cols-2 md:grid-cols-4 gap-4 font-mono text-xs border-b-[3px] border-ink">
+      <div class="bg-white p-3 border-[2px] border-ink shadow-[3px_3px_0px_#1c1b1b]">
+        <div class="text-gray-500 uppercase text-[10px] font-bold">SEATS</div>
+        <div class="font-display font-black text-xl text-ink">4 PEOPLE</div>
+        <div class="text-[11px] text-gray-700">A board and cloth for each</div>
+      </div>
+      <div class="bg-white p-3 border-[2px] border-ink shadow-[3px_3px_0px_#1c1b1b]">
+        <div class="text-gray-500 uppercase text-[10px] font-bold">TOTAL YIELD</div>
+        <div class="font-display font-black text-xl text-primary-magenta">48 DUMPLINGS</div>
+        <div class="text-[11px] text-gray-700">12 dumplings per person</div>
+      </div>
+      <div class="bg-white p-3 border-[2px] border-ink shadow-[3px_3px_0px_#1c1b1b]">
+        <div class="text-gray-500 uppercase text-[10px] font-bold">MEAL RHYTHM</div>
+        <div class="font-display font-black text-xl text-secondary-cyan">3 ROUNDS</div>
+        <div class="text-[11px] text-gray-700">16 dumplings per round (2 tiers)</div>
+      </div>
+      <div class="bg-white p-3 border-[2px] border-ink shadow-[3px_3px_0px_#1c1b1b]">
+        <div class="text-gray-500 uppercase text-[10px] font-bold">STEAMING TIME</div>
+        <div class="font-display font-black text-xl text-vivid-orange">7 MINUTES</div>
+        <div class="text-[11px] text-gray-700">Fold the next batch while one steams</div>
+      </div>
+    </div>
+
+    <!-- Introduction -->
+    <div class="p-6 sm:p-8 bg-white font-body text-base text-ink space-y-3">
+      <h2 class="font-display font-black text-2xl uppercase tracking-tight text-ink flex items-center gap-2">
+        <span class="w-3.5 h-3.5 bg-primary-magenta border border-ink inline-block"></span>
+        Why Cook Dumplings at the Table?
+      </h2>
+      <p class="leading-relaxed">
+        Folding dumplings beforehand usually means one person spends two hours trapped alone in the kitchen before guests show up. Bringing the steamer to the table turns dinner into the activity itself. Everyone sits down with a drink, scoops their own filling, tucks in a favorite extra (like a prawn or a bit of cheese), and watches the steam rise. You eat them straight from the bamboo basket while they are still burning hot, dipping them into vinegar and chili oil.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 1: SETTING UP THE TABLE                                        -->
+  <!-- ===================================================================== -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 sm:p-8 flex flex-col gap-6">
+    <div class="flex items-center justify-between border-b-[3px] border-ink pb-3 flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <span class="bg-primary-magenta text-white font-mono font-bold text-xs px-2.5 py-1 border border-ink">PART 01</span>
+        <h2 class="font-display font-black text-2xl sm:text-3xl uppercase tracking-tight text-ink">
+          Setting Up the Table for Four
+        </h2>
+      </div>
+      <span class="font-mono text-xs text-gray-500 font-bold uppercase">EQUIPMENT & LAYOUT</span>
+    </div>
+
+    <!-- The Gear -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Steamer & Burner -->
+      <div class="bg-canvas border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-3">
+        <div class="flex items-center gap-2 font-mono text-xs font-bold text-ink uppercase">
+          <span class="material-symbols-outlined text-secondary-cyan text-xl">cooking</span>
+          <span>The Cooker and Baskets</span>
+        </div>
+        <h3 class="font-display font-bold text-lg text-ink">A 10-Inch Bamboo Steamer on a Portable Burner</h3>
+        <p class="text-sm font-body text-gray-700 leading-relaxed">
+          You don't need fancy restaurant gear. A portable induction hotplate or a simple butane table burner works great.
+        </p>
+        <ul class="text-xs font-body text-gray-800 space-y-2 bg-white p-3 border border-ink">
+          <li><strong>The Steamer:</strong> A standard 10-inch (25cm) two-tier bamboo steamer with a woven lid. A 10-inch basket comfortably fits 8 medium dumplings without them touching, so two tiers hold 16 at once.</li>
+          <li><strong>The Pan:</strong> Sit the steamer over a wide skillet or shallow wok with 1.5 to 2 inches of water, wide enough so the bamboo rim rests safely above the water level.</li>
+          <li><strong>Liners:</strong> Line the baskets with reusable perforated silicone mats. If you don't have them, use cabbage leaves or parchment paper with holes poked through so steam circulates freely.</li>
+        </ul>
+      </div>
+
+      <!-- Hot Water & Prep -->
+      <div class="bg-canvas border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-3">
+        <div class="flex items-center gap-2 font-mono text-xs font-bold text-ink uppercase">
+          <span class="material-symbols-outlined text-vivid-orange text-xl">water_drop</span>
+          <span>Water & Utensils</span>
+        </div>
+        <h3 class="font-display font-bold text-lg text-ink">Keep a Boiling Kettle on Standby</h3>
+        <p class="text-sm font-body text-gray-700 leading-relaxed">
+          The number one mistake with table steaming is letting the pan run dry, or adding cold tap water and killing your boil for five minutes.
+        </p>
+        <ul class="text-xs font-body text-gray-800 space-y-2 bg-white p-3 border border-ink">
+          <li><strong>The Kettle Trick:</strong> Boil an electric kettle before sitting down. Keep it on a side table. When the water gets low between rounds, top up with boiling water so the steam never stops.</li>
+          <li><strong>Tongs:</strong> Keep a pair of long tongs or a silicone oven mitt on the table to lift the hot bamboo lid safely.</li>
+          <li><strong>Damp Towels:</strong> A clean kitchen towel, dampened and wrung dry, to drape over wrappers at each seat so they don't dry out.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- How to Arrange the Table -->
+    <div class="bg-yellow-fixed/15 border-[3px] border-ink p-5 sm:p-6 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-4">
+      <h3 class="font-display font-black text-xl uppercase tracking-tight text-ink">
+        How to Arrange the Table
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        
+        <!-- Center -->
+        <div class="bg-white border-[2px] border-ink p-4 shadow-[3px_3px_0px_#ff1493] flex flex-col gap-2">
+          <div class="font-bold text-primary-magenta font-mono text-xs uppercase flex items-center gap-1">
+            <span class="material-symbols-outlined text-base">local_fire_department</span>
+            <span>In the Center</span>
+          </div>
+          <p class="font-body text-gray-700 leading-relaxed">
+            The burner and water pan sit dead center on a heatproof mat. When removing the lid, always lift it tilted <em>away</em> from your guests so the steam vents harmlessly.
+          </p>
+        </div>
+
+        <!-- Middle Ring -->
+        <div class="bg-white border-[2px] border-ink p-4 shadow-[3px_3px_0px_#008190] flex flex-col gap-2">
+          <div class="font-bold text-secondary-cyan font-mono text-xs uppercase flex items-center gap-1">
+            <span class="material-symbols-outlined text-base">lunch_dining</span>
+            <span>Around the Burner</span>
+          </div>
+          <p class="font-body text-gray-700 leading-relaxed">
+            The four bowls of filling and the plate of optional add-ons (prawns, cheese cubes, corn, chilis). Give each bowl its own spoon or butter knife so flavors don't mix.
+          </p>
+        </div>
+
+        <!-- At Each Place -->
+        <div class="bg-white border-[2px] border-ink p-4 shadow-[3px_3px_0px_#1c1b1b] flex flex-col gap-2">
+          <div class="font-bold text-ink font-mono text-xs uppercase flex items-center gap-1">
+            <span class="material-symbols-outlined text-base">person</span>
+            <span>At Each Person's Seat</span>
+          </div>
+          <p class="font-body text-gray-700 leading-relaxed">
+            A small wooden cutting board, a little bowl of water for wetting wrapper edges, a dipping sauce dish, and a small stack of wrappers kept under a damp cloth.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- The Meal Flow -->
+    <div class="bg-white border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b]">
+      <h3 class="font-display font-bold text-lg text-ink uppercase mb-2 flex items-center gap-2">
+        <span class="material-symbols-outlined text-vivid-orange">timer</span>
+        The Meal Rhythm: How the Rounds Work
+      </h3>
+      <p class="font-body text-sm text-gray-700 mb-4 leading-relaxed">
+        You don't fold 48 dumplings at once. You make them in three relaxed waves of 16 dumplings (four dumplings per person, per round).
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+        <div class="p-3 bg-canvas border border-ink">
+          <div class="font-bold text-primary-magenta mb-1">ROUND 1 (STARTING OFF)</div>
+          <p class="text-gray-700 font-body">Everyone makes 4 classic dumplings. Put 8 on the bottom tier, 8 on the top tier. Put the lid on and steam for 7 minutes.</p>
+        </div>
+        <div class="p-3 bg-canvas border border-ink">
+          <div class="font-bold text-secondary-cyan mb-1">ROUND 2 (EAT & FOLD)</div>
+          <p class="text-gray-700 font-body">Take off the lid and eat Round 1 right out of the baskets. While snacking and chatting, everyone folds Round 2 on their boards and puts them in.</p>
+        </div>
+        <div class="p-3 bg-canvas border border-ink">
+          <div class="font-bold text-ink mb-1">ROUND 3 (FREESTYLE)</div>
+          <p class="text-gray-700 font-body">Now everyone is warmed up. People start combining fillings and tucking in wild extras (cheese in kimchi, prawns in beef). Steam the last batch and finish happy.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 2: FOUR EASY FILLINGS & ADD-ONS                               -->
+  <!-- ===================================================================== -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 sm:p-8 flex flex-col gap-6">
+    <div class="flex items-center justify-between border-b-[3px] border-ink pb-3 flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <span class="bg-secondary-cyan text-white font-mono font-bold text-xs px-2.5 py-1 border border-ink">PART 02</span>
+        <h2 class="font-display font-black text-2xl sm:text-3xl uppercase tracking-tight text-ink">
+          Four Easy Fillings & Things to Tuck Inside
+        </h2>
+      </div>
+      <span class="font-mono text-xs text-gray-500 font-bold uppercase">MAKES ~12 DUMPLINGS EACH</span>
+    </div>
+
+    <p class="font-body text-sm text-gray-700 leading-relaxed">
+      Each recipe below makes enough filling for about <strong>12 to 14 dumplings</strong>. Across all four bowls, that gives you around 48 to 50 dumplings—plenty for four people to try three or four of every single kind.
+    </p>
+
+    <!-- 4 FILLING CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- FILLING 1: PORK & CHIVES -->
+      <div class="bg-canvas border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex flex-col justify-between overflow-hidden">
+        <div>
+          <div class="bg-primary-magenta text-white p-3 border-b-[3px] border-ink flex items-center justify-between">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider">FILLING 1 // THE CLASSIC</span>
+            <span class="bg-ink text-white text-[10px] font-mono px-2 py-0.5 border border-white">12-14 DUMPLINGS</span>
+          </div>
+          <div class="p-5 flex flex-col gap-3">
+            <h3 class="font-display font-black text-xl text-ink">Classic Juicy Pork & Garlic Chive</h3>
+            <p class="font-body text-xs text-gray-700 leading-relaxed">
+              The benchmark dumpling. Juicy, savory, and fragrant. Don't use lean pork here—you want good fat so the meat stays soft.
+            </p>
+            
+            <div class="bg-white p-3 border border-ink font-body text-xs space-y-1">
+              <div class="font-mono font-bold text-ink border-b border-gray-200 pb-1 mb-1">WHAT YOU NEED:</div>
+              <div class="flex justify-between"><span>• Ground pork (70/30 shoulder or belly):</span><span class="font-bold">220g</span></div>
+              <div class="flex justify-between"><span>• Chinese garlic chives (or scallions), finely sliced:</span><span class="font-bold">60g</span></div>
+              <div class="flex justify-between"><span>• Fresh grated ginger:</span><span class="font-bold">1 tablespoon</span></div>
+              <div class="flex justify-between"><span>• Soy sauce + Shaoxing wine (or dry sherry):</span><span class="font-bold">1 tbsp + 1 tsp</span></div>
+              <div class="flex justify-between"><span>• Toasted sesame oil:</span><span class="font-bold">1 tsp</span></div>
+              <div class="flex justify-between"><span>• Cold chicken broth or water:</span><span class="font-bold">3 tablespoons</span></div>
+              <div class="flex justify-between"><span>• Salt and white pepper:</span><span class="font-bold">1/4 tsp each</span></div>
+            </div>
+
+            <!-- Add-on -->
+            <div class="bg-neon-pink/10 border border-primary-magenta p-3 text-xs">
+              <span class="font-mono font-bold text-primary-magenta block mb-1 uppercase">TUCK ONE OF THESE INSIDE:</span>
+              <ul class="font-body text-gray-800 list-disc list-inside space-y-1">
+                <li><strong>A piece of raw peeled prawn:</strong> Gives you that classic dim sum pork-and-shrimp bounce.</li>
+                <li><strong>Crispy fried shallots:</strong> Adds a sweet, toasty crunch inside the soft meat.</li>
+                <li><strong>Diced sweet Chinese sausage (lap cheong):</strong> Adds little pockets of sweet cured fat.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILLING 2: CUMIN BEEF -->
+      <div class="bg-canvas border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex flex-col justify-between overflow-hidden">
+        <div>
+          <div class="bg-vivid-orange text-white p-3 border-b-[3px] border-ink flex items-center justify-between">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider">FILLING 2 // BOLD & WARM</span>
+            <span class="bg-ink text-white text-[10px] font-mono px-2 py-0.5 border border-white">12-14 DUMPLINGS</span>
+          </div>
+          <div class="p-5 flex flex-col gap-3">
+            <h3 class="font-display font-black text-xl text-ink">Spiced Cumin Beef & Sweet Onion</h3>
+            <p class="font-body text-xs text-gray-700 leading-relaxed">
+              Inspired by street food in northern China. Grating the onion turns it into sweet liquid as it steams, keeping the beef rich and dripping with juice.
+            </p>
+            
+            <div class="bg-white p-3 border border-ink font-body text-xs space-y-1">
+              <div class="font-mono font-bold text-ink border-b border-gray-200 pb-1 mb-1">WHAT YOU NEED:</div>
+              <div class="flex justify-between"><span>• Minced beef chuck (around 20% fat):</span><span class="font-bold">220g</span></div>
+              <div class="flex justify-between"><span>• White onion, grated fine (keep all the juice):</span><span class="font-bold">1/2 small onion (80g)</span></div>
+              <div class="flex justify-between"><span>• Toasted cumin seeds, roughly crushed:</span><span class="font-bold">1.5 teaspoons</span></div>
+              <div class="flex justify-between"><span>• Soy sauce:</span><span class="font-bold">1 tablespoon</span></div>
+              <div class="flex justify-between"><span>• Finely chopped fresh cilantro/coriander:</span><span class="font-bold">2 tablespoons</span></div>
+              <div class="flex justify-between"><span>• Black pepper + pinch of sugar:</span><span class="font-bold">1/2 tsp each</span></div>
+              <div class="flex justify-between"><span>• Cold water:</span><span class="font-bold">2 tablespoons</span></div>
+            </div>
+
+            <!-- Add-on -->
+            <div class="bg-vivid-orange/10 border border-vivid-orange p-3 text-xs">
+              <span class="font-mono font-bold text-vivid-orange block mb-1 uppercase">TUCK ONE OF THESE INSIDE:</span>
+              <ul class="font-body text-gray-800 list-disc list-inside space-y-1">
+                <li><strong>A slice of pickled jalapeño or green chili:</strong> The vinegary heat cuts straight through the rich beef fat.</li>
+                <li><strong>A small cube of mozzarella or cheddar:</strong> Melts into a gooey, savory cheese core.</li>
+                <li><strong>A pinch of toasted sesame seeds:</strong> Adds a nutty pop with the warm cumin.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILLING 3: CHICKEN & SHIITAKE -->
+      <div class="bg-canvas border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex flex-col justify-between overflow-hidden">
+        <div>
+          <div class="bg-secondary-cyan text-white p-3 border-b-[3px] border-ink flex items-center justify-between">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider">FILLING 3 // LIGHT & FRAGRANT</span>
+            <span class="bg-ink text-white text-[10px] font-mono px-2 py-0.5 border border-white">12-14 DUMPLINGS</span>
+          </div>
+          <div class="p-5 flex flex-col gap-3">
+            <h3 class="font-display font-black text-xl text-ink">Ginger Lemongrass Chicken & Shiitake</h3>
+            <p class="font-body text-xs text-gray-700 leading-relaxed">
+              Bright, citrusy, and savory. Use ground chicken thigh rather than breast so the filling stays tender instead of drying out.
+            </p>
+            
+            <div class="bg-white p-3 border border-ink font-body text-xs space-y-1">
+              <div class="font-mono font-bold text-ink border-b border-gray-200 pb-1 mb-1">WHAT YOU NEED:</div>
+              <div class="flex justify-between"><span>• Ground chicken thigh:</span><span class="font-bold">200g</span></div>
+              <div class="flex justify-between"><span>• Dried shiitake mushrooms (soaked & minced fine):</span><span class="font-bold">3 mushrooms (45g)</span></div>
+              <div class="flex justify-between"><span>• Lemongrass stalk, tender white core minced fine:</span><span class="font-bold">1 tablespoon</span></div>
+              <div class="flex justify-between"><span>• Fresh grated ginger + 1 minced garlic clove:</span><span class="font-bold">1 tablespoon</span></div>
+              <div class="flex justify-between"><span>• Oyster sauce + soy sauce:</span><span class="font-bold">1 tbsp + 1 tsp</span></div>
+              <div class="flex justify-between"><span>• Scallions, finely sliced:</span><span class="font-bold">2 scallions</span></div>
+              <div class="flex justify-between"><span>• Cold mushroom soaking liquid:</span><span class="font-bold">2 tablespoons</span></div>
+            </div>
+
+            <!-- Add-on -->
+            <div class="bg-secondary-cyan/10 border border-secondary-cyan p-3 text-xs">
+              <span class="font-mono font-bold text-secondary-cyan block mb-1 uppercase">TUCK ONE OF THESE INSIDE:</span>
+              <ul class="font-body text-gray-800 list-disc list-inside space-y-1">
+                <li><strong>Diced water chestnuts:</strong> Gives that clean, refreshing crunch under the soft chicken.</li>
+                <li><strong>A whole fresh Thai basil leaf:</strong> Releases an amazing anise-like herbal aroma as the dumpling steams.</li>
+                <li><strong>A drop of chili crisp:</strong> Adds garlic-chili heat straight into the wrapper.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILLING 4: KIMCHI & TOFU -->
+      <div class="bg-canvas border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex flex-col justify-between overflow-hidden">
+        <div>
+          <div class="bg-tertiary-yellow text-ink p-3 border-b-[3px] border-ink flex items-center justify-between">
+            <span class="font-mono text-xs font-black uppercase tracking-wider">FILLING 4 // PUNCHY & VEGETARIAN</span>
+            <span class="bg-ink text-white text-[10px] font-mono px-2 py-0.5 border border-white">12-14 DUMPLINGS</span>
+          </div>
+          <div class="p-5 flex flex-col gap-3">
+            <h3 class="font-display font-black text-xl text-ink">Golden Tofu, Kimchi & Garlic Greens</h3>
+            <p class="font-body text-xs text-gray-700 leading-relaxed">
+              Tangy, spicy, and deeply comforting. Well-fermented kimchi provides big flavor, while pressed tofu soaks up the sesame oil and juices.
+            </p>
+            
+            <div class="bg-white p-3 border border-ink font-body text-xs space-y-1">
+              <div class="font-mono font-bold text-ink border-b border-gray-200 pb-1 mb-1">WHAT YOU NEED:</div>
+              <div class="flex justify-between"><span>• Firm tofu, pressed in a towel and crumbled fine:</span><span class="font-bold">150g</span></div>
+              <div class="flex justify-between"><span>• Ripe kimchi, drained and chopped fine:</span><span class="font-bold">100g (about 1/2 cup)</span></div>
+              <div class="flex justify-between"><span>• Scallions or chives, sliced fine:</span><span class="font-bold">2 scallions</span></div>
+              <div class="flex justify-between"><span>• Minced garlic:</span><span class="font-bold">2 cloves</span></div>
+              <div class="flex justify-between"><span>• Toasted sesame oil:</span><span class="font-bold">1 tablespoon</span></div>
+              <div class="flex justify-between"><span>• Soy sauce + pinch of sugar (to balance tang):</span><span class="font-bold">1 tsp + 1/2 tsp</span></div>
+              <div class="flex justify-between"><span>• Cornstarch (helps hold it together):</span><span class="font-bold">1 teaspoon</span></div>
+            </div>
+
+            <!-- Add-on -->
+            <div class="bg-tertiary-yellow/20 border border-tertiary-yellow p-3 text-xs">
+              <span class="font-mono font-bold text-ink block mb-1 uppercase">TUCK ONE OF THESE INSIDE:</span>
+              <ul class="font-body text-gray-800 list-disc list-inside space-y-1">
+                <li><strong>Sweet corn kernels:</strong> 3 or 4 sweet corn kernels add sweet pops that balance the kimchi heat.</li>
+                <li><strong>A cube of cheddar cheese:</strong> Kimchi and melted cheddar are a match made in heaven.</li>
+                <li><strong>Crushed roasted peanuts:</strong> Adds rich, nutty crunch to the savory tofu.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3 SIMPLE DIPPING SAUCES -->
+    <div class="bg-canvas border-[3px] border-ink p-5 sm:p-6 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-4">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-magenta text-2xl">local_dining</span>
+        <h3 class="font-display font-black text-xl uppercase tracking-tight text-ink">
+          Three Easy Dipping Sauces to Put on the Table
+        </h3>
+      </div>
+      <p class="font-body text-xs sm:text-sm text-gray-700">
+        Set out three little bowls so everyone can mix and match with their dumplings:
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 font-body text-xs">
+        <div class="bg-white p-4 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          <div class="font-mono font-bold text-primary-magenta uppercase mb-1">1. THE CLASSIC</div>
+          <div class="font-bold text-sm text-ink mb-1">Black Vinegar & Ginger</div>
+          <p class="text-gray-600 mb-2">Aged Chinese black vinegar (Chinkiang) mixed with matchstick shreds of fresh ginger and a couple drops of sesame oil.</p>
+          <div class="text-[11px] font-mono text-gray-500">Perfect with: Pork & chive</div>
+        </div>
+
+        <div class="bg-white p-4 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          <div class="font-mono font-bold text-vivid-orange uppercase mb-1">2. THE SPICY</div>
+          <div class="font-bold text-sm text-ink mb-1">Chili Crisp & Garlic</div>
+          <p class="text-gray-600 mb-2">A good spoonful of crispy chili oil, a grated clove of raw garlic, a splash of black vinegar, and a dash of soy sauce.</p>
+          <div class="text-[11px] font-mono text-gray-500">Perfect with: Beef & kimchi tofu</div>
+        </div>
+
+        <div class="bg-white p-4 border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+          <div class="font-mono font-bold text-secondary-cyan uppercase mb-1">3. THE BRIGHT</div>
+          <div class="font-bold text-sm text-ink mb-1">Citrus Soy & Sesame</div>
+          <p class="text-gray-600 mb-2">Two parts soy sauce, one part rice vinegar, a squeeze of fresh lemon, toasted sesame seeds, and thinly sliced scallions.</p>
+          <div class="text-[11px] font-mono text-gray-500">Perfect with: Chicken & shiitake</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 3: THE FOOD SCIENCE (WHY DUMPLINGS SUCCEED OR FAIL)             -->
+  <!-- ===================================================================== -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 sm:p-8 flex flex-col gap-6">
+    <div class="flex items-center justify-between border-b-[3px] border-ink pb-3 flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <span class="bg-acid-lime text-ink font-mono font-bold text-xs px-2.5 py-1 border border-ink">PART 03</span>
+        <h2 class="font-display font-black text-2xl sm:text-3xl uppercase tracking-tight text-ink">
+          The Food Science: Why Dumplings Work or Fail
+        </h2>
+      </div>
+      <span class="font-mono text-xs text-gray-500 font-bold uppercase">GOOD HABITS AT THE TABLE</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- SCIENCE 1: WRAPPER HYDRATION & RETROGRADATION -->
+      <div class="bg-canvas border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-3">
+        <div class="flex items-center gap-2 text-primary-magenta font-mono font-bold text-xs uppercase">
+          <span class="material-symbols-outlined text-lg">water_drop</span>
+          <span>1. Keeping Wrappers Soft (Starch Retrogradation)</span>
+        </div>
+        <h3 class="font-display font-bold text-lg text-ink">Why Wrappers Crack in Four Minutes</h3>
+        <p class="font-body text-sm text-gray-700 leading-relaxed">
+          A dumpling wrapper is thin and has a lot of surface area exposed to room air. If left uncovered on a plate, the moisture on the surface evaporates within three to four minutes.
+        </p>
+        <div class="bg-white p-3 border border-ink space-y-2 text-xs font-body">
+          <div><strong class="text-ink">What happens:</strong> As moisture leaves, the wheat starch contracts and tightens up. When you go to fold or pinch the edges, they crack, tear, or refuse to seal shut.</div>
+          <div><strong class="text-primary-magenta font-bold">The Simple Fix:</strong> Always keep the wrappers under a clean, wrung-out damp dish towel on your board. Only pull out two or three wrappers at a time when you are ready to fill them.</div>
+        </div>
+      </div>
+
+      <!-- SCIENCE 2: HOT-WATER DOUGH VS STORE-BOUGHT -->
+      <div class="bg-canvas border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-3">
+        <div class="flex items-center gap-2 text-secondary-cyan font-mono font-bold text-xs uppercase">
+          <span class="material-symbols-outlined text-lg">egg_alt</span>
+          <span>2. The Dough: Hot Water vs Store-Bought Skins</span>
+        </div>
+        <h3 class="font-display font-bold text-lg text-ink">Why Hot Water Makes Tender Steamed Skins</h3>
+        <p class="font-body text-sm text-gray-700 leading-relaxed">
+          If you make your own dough from flour and water, always use boiling water for steamed dumplings.
+        </p>
+        <div class="bg-white p-3 border border-ink space-y-2 text-xs font-body">
+          <div><strong class="text-ink">Why hot water?</strong> Boiling water cooks some of the starch in the flour and keeps gluten from forming tough, rubbery strands. The dough rolls out soft without springing back, and when steamed it turns silky and tender.</div>
+          <div><strong class="text-secondary-cyan font-bold">If using store-bought wrappers:</strong> They are dusted with dry cornstarch to keep them from sticking in the packet. At the table, dip a finger in water and run it around the top edge of the wrapper before pinching—this activates the starch so it glues shut cleanly.</div>
+        </div>
+      </div>
+
+      <!-- SCIENCE 3: MYOSIN EXTRACTION -->
+      <div class="bg-canvas border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-3">
+        <div class="flex items-center gap-2 text-vivid-orange font-mono font-bold text-xs uppercase">
+          <span class="material-symbols-outlined text-lg">sync</span>
+          <span>3. Stirring the Meat (Myosin Extraction)</span>
+        </div>
+        <h3 class="font-display font-bold text-lg text-ink">Why You Must Stir Vigorously in One Direction</h3>
+        <p class="font-body text-sm text-gray-700 leading-relaxed">
+          Have you ever bitten into a dumpling where the meat cooked into a dry, hard, crumbly little meatball swimming in loose oil? That happens when the meat isn't mixed properly.
+        </p>
+        <div class="bg-white p-3 border border-ink space-y-2 text-xs font-body">
+          <div><strong class="text-ink">The kitchen science:</strong> When you add salt to ground meat and beat it vigorously in one circle for two minutes, salt draws out a protein called <em>myosin</em>. The stirring weaves these protein strands into a sticky, bouncy paste (in Chinese kitchens, this is called <em>dǎ jiāo</em>).</div>
+          <div><strong class="text-vivid-orange font-bold">The Result:</strong> This sticky paste traps the cold water, broth, and melting fat inside the meat. When steamed, that trapped moisture turns into hot, rich broth inside every single bite.</div>
+        </div>
+      </div>
+
+      <!-- SCIENCE 4: BAMBOO STEAMER THERMODYNAMICS -->
+      <div class="bg-canvas border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b] flex flex-col gap-3">
+        <div class="flex items-center gap-2 text-ink font-mono font-bold text-xs uppercase">
+          <span class="material-symbols-outlined text-lg">air</span>
+          <span>4. Why Bamboo Beats Metal Pots</span>
+        </div>
+        <h3 class="font-display font-bold text-lg text-ink">No Drips, No Soggy Dumpling Tops</h3>
+        <p class="font-body text-sm text-gray-700 leading-relaxed">
+          Bamboo steamers have been used for over a thousand years for a very practical reason: bamboo absorbs moisture instead of raining it back down.
+        </p>
+        <div class="bg-white p-3 border border-ink space-y-2 text-xs font-body">
+          <div><strong class="text-ink">The metal lid problem:</strong> Metal pot lids are cold compared to steam. Rising steam hits the metal, condenses into heavy water droplets, and drips right onto your dumplings, turning your delicate folds into soggy mush.</div>
+          <div><strong class="text-ink font-bold">The Bamboo Advantage:</strong> The woven bamboo lid absorbs that extra moisture and lets it breathe out gently. It holds a steady 100°C steam cloud inside without a single drop falling onto your dumplings.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- SECTION 4: MISTAKES & QUICK FIXES                                      -->
+  <!-- ===================================================================== -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 sm:p-8 flex flex-col gap-6">
+    <div class="flex items-center justify-between border-b-[3px] border-ink pb-3 flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <span class="bg-vivid-orange text-white font-mono font-bold text-xs px-2.5 py-1 border border-ink">PART 04</span>
+        <h2 class="font-display font-black text-2xl sm:text-3xl uppercase tracking-tight text-ink">
+          Common Mistakes & Quick Fixes
+        </h2>
+      </div>
+      <span class="font-mono text-xs text-gray-500 font-bold uppercase">TROUBLESHOOTING</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
+      
+      <div class="bg-canvas border-[2px] border-ink p-4 flex flex-col justify-between shadow-[3px_3px_0px_#1c1b1b]">
+        <div>
+          <div class="text-primary-magenta font-bold uppercase mb-1">MISTAKE 1</div>
+          <div class="font-bold text-ink text-sm mb-2">"Dumplings Stick and Tear When Lifted"</div>
+          <p class="text-gray-700 font-body text-xs">The dumpling sticks to the bamboo floor and tears open, losing all its juice.</p>
+        </div>
+        <div class="mt-3 bg-white p-2 border border-ink text-[11px] text-primary-magenta font-body font-bold">
+          FIX: Always line your baskets with perforated silicone mats, or put each dumpling on a little cabbage leaf or slice of carrot.
+        </div>
+      </div>
+
+      <div class="bg-canvas border-[2px] border-ink p-4 flex flex-col justify-between shadow-[3px_3px_0px_#1c1b1b]">
+        <div>
+          <div class="text-vivid-orange font-bold uppercase mb-1">MISTAKE 2</div>
+          <div class="font-bold text-ink text-sm mb-2">"Filling Is Watery and Leaks Out"</div>
+          <p class="text-gray-700 font-body text-xs">Too much liquid in the bowl makes the wrappers wet and impossible to pinch closed.</p>
+        </div>
+        <div class="mt-3 bg-white p-2 border border-ink text-[11px] text-vivid-orange font-body font-bold">
+          FIX: Salt chopped greens or kimchi beforehand and squeeze them dry with your hands in a clean kitchen towel before mixing into the filling.
+        </div>
+      </div>
+
+      <div class="bg-canvas border-[2px] border-ink p-4 flex flex-col justify-between shadow-[3px_3px_0px_#1c1b1b]">
+        <div>
+          <div class="text-secondary-cyan font-bold uppercase mb-1">MISTAKE 3</div>
+          <div class="font-bold text-ink text-sm mb-2">"Dumplings Turn Tough After 5 Minutes"</div>
+          <p class="text-gray-700 font-body text-xs">Cooked dumplings left sitting on a cold plate become firm and chewy.</p>
+        </div>
+        <div class="mt-3 bg-white p-2 border border-ink text-[11px] text-secondary-cyan font-body font-bold">
+          FIX: Eat them straight from the warm bamboo steamer basket! Or place them into warm dipping sauce right away.
+        </div>
+      </div>
+
+      <div class="bg-canvas border-[2px] border-ink p-4 flex flex-col justify-between shadow-[3px_3px_0px_#1c1b1b]">
+        <div>
+          <div class="text-ink font-bold uppercase mb-1">MISTAKE 4</div>
+          <div class="font-bold text-ink text-sm mb-2">"The Water in the Pan Runs Dry"</div>
+          <p class="text-gray-700 font-body text-xs">The pan starts smoking or stops boiling mid-round, ruining the cook.</p>
+        </div>
+        <div class="mt-3 bg-white p-2 border border-ink text-[11px] text-ink font-body font-bold">
+          FIX: Check water depth between every round. Top up only with boiling water from your kettle so you never lose the simmer.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM CALLOUT -->
+  <div class="bg-canvas border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-primary-magenta text-white flex items-center justify-center font-display font-black text-2xl border-[2px] border-ink shadow-[2px_2px_0px_#1c1b1b]">
+        🥟
+      </div>
+      <div>
+        <h4 class="font-display font-black text-lg uppercase tracking-tight text-ink">5 Ideas Daily Showcase // Day 1 Implemented</h4>
+        <p class="font-mono text-xs text-gray-600">Idea #2: Table Steamer, Dumplings Made at the Table</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="/" class="neo-btn neo-btn-white text-xs py-2 px-4 font-bold">
+        HOME TOP PICKS
+      </a>
+      <a href="/day/2026-09-26" class="neo-btn neo-btn-magenta text-xs py-2 px-4 font-bold text-white">
+        VIEW DAY LOG
+      </a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

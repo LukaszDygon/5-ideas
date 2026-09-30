@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+
+{% block title %}Canopy Growing Algorithm - 3D Procedural Rooftop Arboretum{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/prototypes/canopy/style.css"/>
+<div class="flex flex-col gap-4 font-body">
+
+  <!-- TOP RIBBON BAR -->
+  <div class="bg-white border-[3px] border-ink shadow-[5px_5px_0px_#1c1b1b] p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 bg-emerald-800 text-white border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] flex items-center justify-center -rotate-1 shrink-0 rounded-2xl">
+        <span class="material-symbols-outlined text-2xl">forest</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="neo-badge bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-bold tracking-wider rounded-full px-2.5">
+            DAY #1 SHOWCASE
+          </span>
+          <span class="neo-badge bg-[#f4ede4] text-ink text-[10px] font-bold border border-ink/30 rounded-full px-2.5">
+            GREEN ROOFS
+          </span>
+          <span class="text-xs text-gray-500 font-medium">Dual-Model Botanical Engine</span>
+        </div>
+        <h1 class="font-display font-extrabold text-xl sm:text-2xl text-ink leading-tight mt-0.5 tracking-tight">
+          Canopy Growing Algorithm
+        </h1>
+        <p class="text-xs text-gray-600 font-normal">
+          Light organic interface &bull; Charcoal to botanical green &bull; L-System Fractal & Space Colonization
+        </p>
+      </div>
+    </div>
+
+    <!-- Top Action Buttons -->
+    <div class="flex items-center gap-2 flex-wrap w-full md:w-auto justify-start md:justify-end">
+      <button id="fullscreen-btn" onclick="toggleFullScreen()" class="neo-btn neo-btn-white text-xs py-2 px-3.5 rounded-full flex items-center gap-1.5 shadow-[2px_2px_0px_#1c1b1b]" title="Toggle Full Screen">
+        <span id="fullscreen-icon" class="material-symbols-outlined text-base text-emerald-800">fullscreen</span>
+        <span id="fullscreen-label" class="font-bold text-[#1c2419]">Full Screen</span>
+      </button>
+
+      <button id="audio-toggle-btn" onclick="toggleAudio()" class="neo-btn neo-btn-white text-xs py-2 px-3.5 rounded-full flex items-center gap-1.5 shadow-[2px_2px_0px_#1c1b1b]">
+        <span id="audio-icon" class="material-symbols-outlined text-base text-emerald-800">volume_off</span>
+        <span id="audio-label" class="font-bold text-[#1c2419]">Sound: Off</span>
+      </button>
+
+      <button onclick="resetCamera()" class="neo-btn neo-btn-white text-xs py-2 px-3.5 rounded-full flex items-center gap-1 shadow-[2px_2px_0px_#1c1b1b]">
+        <span class="material-symbols-outlined text-base text-emerald-800">center_focus_strong</span>
+        <span class="font-bold text-[#1c2419]">Reset View</span>
+      </button>
+
+      <a href="/day/2026-09-11" class="neo-btn neo-btn-primary text-xs py-2 px-3.5 rounded-full flex items-center gap-1 shadow-[2px_2px_0px_#1c1b1b]">
+        <span class="material-symbols-outlined text-base">arrow_back</span>
+        <span class="font-medium">Back to Day #1</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- MAIN 3D VIEWPORT WITH LIGHT BACKGROUND & LIGHT PEBBLE CONTROLS -->
+  <div class="relative w-full h-[700px] lg:h-[780px] bg-[#f4ede4] border-[3px] border-ink shadow-[6px_6px_0px_#1c1b1b] overflow-hidden select-none" id="viewport-container">
+    
+    <!-- Three.js Canvas Container -->
+    <div id="canvas-3d" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+    <!-- TOP-LEFT: LIGHT OVAL STATUS PILL -->
+    <div class="absolute top-4 left-4 z-20 pointer-events-none">
+      <div class="bg-[#f5f1e8] border-2 border-[#cfc5b4] text-[#1c2419] px-4 py-1.5 rounded-full shadow-md pointer-events-auto flex items-center gap-2.5">
+        <span class="text-xs text-[#1b501e] font-bold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-[#1b501e] animate-pulse"></span>
+          <span id="hud-algo-name">L-System Fractal</span>
+        </span>
+        <span class="text-stone-400">&bull;</span>
+        <span id="tree-stats-badge" class="text-xs text-[#1b501e] font-mono font-bold">
+          0 branches &bull; 0 leaves
+        </span>
+        <span class="text-stone-400 hidden sm:inline">&bull;</span>
+        <span class="text-[11px] text-stone-600 font-semibold hidden sm:inline" id="growth-stage-text">
+          Stage 4: Mature Canopy
+        </span>
+      </div>
+    </div>
+
+    <!-- TOP-RIGHT: LIGHT OVAL PRESETS BAR & FULLSCREEN TOGGLE -->
+    <div class="absolute top-4 right-4 z-20 pointer-events-auto flex items-center gap-2">
+      <div class="bg-[#f5f1e8] border-2 border-[#cfc5b4] p-1.5 rounded-full shadow-md flex items-center gap-1 flex-wrap justify-end text-[#1c2419]">
+        <span class="text-[10px] text-stone-600 font-bold uppercase tracking-wider ml-2 mr-1 hidden sm:inline">Presets:</span>
+        <button onclick="applyPreset('sprawling-oak')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Sprawling Oak
+        </button>
+        <button onclick="applyPreset('colonization-oak')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Ancient Oak
+        </button>
+        <button onclick="applyPreset('nordic-pine')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Nordic Pine
+        </button>
+        <button onclick="applyPreset('cherry-blossom')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Cherry Blossom
+        </button>
+        <button onclick="applyPreset('zen-bonsai')" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full border border-[#d2c7b5] transition-all font-semibold shadow-xs">
+          Zen Bonsai
+        </button>
+      </div>
+
+      <button id="floating-fullscreen-btn" onclick="toggleFullScreen()" class="p-2 bg-[#f5f1e8] hover:bg-[#ede6d8] text-[#1c2419] border-2 border-[#cfc5b4] rounded-full flex items-center justify-center transition-all shadow-md active:scale-95 shrink-0" title="Toggle Full Screen">
+        <span id="floating-fullscreen-icon" class="material-symbols-outlined text-base text-[#1b501e]">fullscreen</span>
+      </button>
+    </div>
+
+    <!-- BOTTOM FLOATING DOCK: LIGHT ORGANIC PEBBLE CONTROLS (UNOBSTRUCTIVE) -->
+    <div class="absolute bottom-4 left-4 right-4 z-20 pointer-events-none flex flex-col items-center gap-2">
+      
+      <!-- SLIM LIGHT OVAL SCRUBBER CAPSULE -->
+      <div class="w-full max-w-4xl bg-[#fcfaf6] border-2 border-[#d0c6b5] px-4 py-2 rounded-full shadow-lg pointer-events-auto flex flex-col sm:flex-row items-center gap-3.5 text-[#1c2419]">
+        
+        <!-- Play / Pause / Rewind buttons -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button id="play-pause-btn" onclick="togglePlayGrowth()" class="px-3.5 py-1 bg-[#1b501e] hover:bg-[#153f17] text-white text-xs font-bold rounded-full flex items-center gap-1 transition-all shadow-sm border border-[#133d15]">
+            <span id="play-pause-icon" class="material-symbols-outlined text-sm">play_arrow</span>
+            <span id="play-pause-label">Play</span>
+          </button>
+          <button onclick="rewindGrowth()" class="p-1 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] text-xs rounded-full flex items-center border border-[#d2c7b5] shadow-xs transition-all" title="Rewind to start">
+            <span class="material-symbols-outlined text-sm">replay</span>
+          </button>
+        </div>
+
+        <!-- Scrubber Slider -->
+        <div class="flex items-center gap-3 w-full">
+          <span class="text-xs font-bold text-[#1b501e] whitespace-nowrap">Growth:</span>
+          <input type="range" id="growth-slider" min="0" max="100" value="100" step="0.5" 
+                 oninput="onScrubGrowth(this.value)" 
+                 class="w-full accent-[#1b501e] h-1.5 bg-[#dcd4c6] rounded-full cursor-pointer"/>
+          <span id="growth-percent-text" class="font-mono text-xs font-extrabold text-[#1c2419] w-10 text-right">
+            100%
+          </span>
+        </div>
+
+        <!-- Speed Selector Pills -->
+        <div class="flex items-center gap-1 shrink-0 text-xs">
+          <button onclick="setSpeed(0.5, this)" class="speed-btn px-2.5 py-0.5 border border-[#d2c7b5] text-[#1c2419] hover:text-black rounded-full transition-colors text-[11px] bg-[#fcfaf6] font-semibold">0.5x</button>
+          <button onclick="setSpeed(1.0, this)" class="speed-btn px-2.5 py-0.5 border border-[#133d15] text-white font-bold bg-[#1b501e] rounded-full transition-colors text-[11px] shadow-sm">1x</button>
+          <button onclick="setSpeed(2.0, this)" class="speed-btn px-2.5 py-0.5 border border-[#d2c7b5] text-[#1c2419] hover:text-black rounded-full transition-colors text-[11px] bg-[#fcfaf6] font-semibold">2x</button>
+        </div>
+
+        <!-- Toggle Controls Drawer Icon Button -->
+        <button onclick="toggleDrawer()" class="p-1.5 bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1b501e] border border-[#d2c7b5] rounded-full flex items-center transition-all shrink-0 shadow-xs" title="Toggle Parameter Panels">
+          <span id="drawer-toggle-icon" class="material-symbols-outlined text-base">tune</span>
+        </button>
+      </div>
+
+      <!-- OVAL TABS BAR (OPAQUE SOLID LIGHT PEBBLE TO PREVENT 3D OVERLAP BLEED) -->
+      <div class="bg-[#ede6d8] border-2 border-[#cfc4b0] p-1.5 rounded-full shadow-md pointer-events-auto flex items-center gap-1.5 text-[#1c2419]">
+        <button onclick="switchTab('architecture')" id="tab-btn-architecture" class="tab-btn px-3.5 py-1.5 text-xs font-extrabold rounded-full bg-[#1b501e] text-white shadow-md border-2 border-[#133d15] transition-all">
+          Branch Architecture
+        </button>
+        <button onclick="switchTab('foliage')" id="tab-btn-foliage" class="tab-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-[#fcfaf6] text-[#1c2419] hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all">
+          Foliage & Species
+        </button>
+        <button onclick="switchTab('algorithm')" id="tab-btn-algorithm" class="tab-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-[#fcfaf6] text-[#1c2419] hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all">
+          Model Guide
+        </button>
+        <button onclick="switchTab('sound')" id="tab-btn-sound" class="tab-btn px-3.5 py-1.5 text-xs font-semibold rounded-full bg-[#fcfaf6] text-[#1c2419] hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all">
+          Soundscape
+        </button>
+        <button onclick="closeDrawer()" class="px-2.5 py-1.5 text-xs font-bold rounded-full bg-[#fcfaf6] text-stone-600 hover:text-black hover:bg-[#f0eae0] border border-[#d2c7b5] shadow-xs transition-all" title="Collapse drawer">
+          <span class="material-symbols-outlined text-xs align-middle">expand_more</span>
+        </button>
+      </div>
+
+      <!-- COMPACT LIGHT PEBBLE DRAWER (OPAQUE SOLID, MAX 200px HEIGHT) -->
+      <div id="controls-drawer" class="w-full max-w-4xl bg-[#fdfbf7] border-2 border-[#d0c6b5] p-4 rounded-3xl shadow-2xl pointer-events-auto text-[#1c2419] max-h-52 overflow-y-auto">
+        
+        <!-- TAB 1: BRANCH ARCHITECTURE -->
+        <div id="tab-panel-architecture" class="tab-panel flex flex-col gap-3">
+          
+          <!-- Model Switcher Pill & Randomise Button -->
+          <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-[#ded5c7] flex-wrap">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[11px] font-bold text-[#1c2419] uppercase tracking-wider">Active Model:</span>
+              <button onclick="selectAlgorithm('fractal')" id="mini-toggle-fractal" class="px-3.5 py-1 text-xs font-bold rounded-full transition-all bg-[#1b501e] text-white shadow-sm border border-[#133d15]">
+                3D Fractal (L-System)
+              </button>
+              <button onclick="selectAlgorithm('colonization')" id="mini-toggle-colonization" class="px-3.5 py-1 text-xs font-semibold rounded-full transition-all bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] shadow-xs">
+                Space Colonization
+              </button>
+              <button onclick="randomizeActiveModel()" id="btn-randomize-model" class="px-3.5 py-1 text-xs font-bold rounded-full transition-all bg-[#e9e1d2] hover:bg-[#dfd5c4] text-[#1c2419] border border-[#c3b6a2] flex items-center gap-1 shadow-sm active:scale-95" title="Randomise current model parameters">
+                <span class="material-symbols-outlined text-sm text-[#1b501e]">casino</span>
+                <span>Randomise Settings</span>
+              </button>
+            </div>
+            <div class="text-[11px] text-[#1b501e] font-bold italic hidden sm:block" id="model-mode-indicator">
+              L-System branching equations
+            </div>
+          </div>
+
+          <!-- 1A: 3D Fractal Parameters (Light Green Tint) -->
+          <div id="panel-fractal-params" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 p-2.5 rounded-2xl border border-emerald-200 bg-[#f2f8f4]">
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Generations:</span>
+                <span id="val-depth" class="text-emerald-800 font-mono font-bold">5</span>
+              </div>
+              <input type="range" id="slider-depth" min="2" max="6" step="1" value="5" oninput="onFractalParamChange('depth', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Splits per Fork:</span>
+                <span id="val-forks" class="text-emerald-800 font-mono font-bold">3</span>
+              </div>
+              <input type="range" id="slider-forks" min="2" max="4" step="1" value="3" oninput="onFractalParamChange('forks', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Branch Angle:</span>
+                <span id="val-angle" class="text-emerald-800 font-mono font-bold">44°</span>
+              </div>
+              <input type="range" id="slider-angle" min="15" max="68" step="1" value="44" oninput="onFractalParamChange('angle', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Length Decay:</span>
+                <span id="val-decay" class="text-emerald-800 font-mono font-bold">0.74</span>
+              </div>
+              <input type="range" id="slider-decay" min="0.55" max="0.85" step="0.01" value="0.74" oninput="onFractalParamChange('decay', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-700 font-medium">Lateral Shoots:</span>
+                <span id="val-shoots" class="text-emerald-800 font-mono font-bold">40%</span>
+              </div>
+              <input type="range" id="slider-shoots" min="0" max="60" step="5" value="40" oninput="onFractalParamChange('shoots', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+            </div>
+          </div>
+
+          <!-- 1B: Space Colonization Parameters (Light Sage Tint) -->
+          <div id="panel-colonization-params" class="hidden flex-col gap-2.5 p-2.5 rounded-2xl border border-emerald-200 bg-[#f4f7f4]">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-[11px] text-[#1c2419] font-bold mr-1">Envelope:</span>
+              <button onclick="setCrownShape('oak-dome')" id="crown-oak-dome-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm">Oak Dome</button>
+              <button onclick="setCrownShape('pyramid')" id="crown-pyramid-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Conical Spire</button>
+              <button onclick="setCrownShape('umbrella')" id="crown-umbrella-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Savanna Umbrella</button>
+              <button onclick="setCrownShape('sphere')" id="crown-sphere-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Sphere</button>
+              <button onclick="setCrownShape('weeping')" id="crown-weeping-btn" class="crown-shape-btn px-2.5 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Weeping</button>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1.5 border-t border-[#e2dccd]">
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-gray-700">Attractors:</span>
+                  <span id="val-col-attractors" class="text-emerald-800 font-mono font-bold">500</span>
+                </div>
+                <input type="range" id="slider-col-attractors" min="200" max="800" step="50" value="500" oninput="onColParamChange('attractors', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-gray-700">Internode Step:</span>
+                  <span id="val-col-step" class="text-emerald-800 font-mono font-bold">0.32</span>
+                </div>
+                <input type="range" id="slider-col-step" min="0.20" max="0.50" step="0.02" value="0.32" oninput="onColParamChange('step', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-gray-700">Pruning Radius:</span>
+                  <span id="val-col-kill" class="text-emerald-800 font-mono font-bold">0.42</span>
+                </div>
+                <input type="range" id="slider-col-kill" min="0.25" max="0.70" step="0.02" value="0.42" oninput="onColParamChange('kill', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between text-[11px]">
+                  <span class="text-gray-700">Phototropic Reach:</span>
+                  <span id="val-col-radius" class="text-emerald-800 font-mono font-bold">2.4</span>
+                </div>
+                <input type="range" id="slider-col-radius" min="1.5" max="3.5" step="0.1" value="2.4" oninput="onColParamChange('radius', this.value)" class="accent-emerald-700 h-1 bg-[#d3e5d8] rounded-full"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1C: Persistent Shared Parameters -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-1.5 border-t border-[#e2dccd]">
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-600">Trunk Girth:</span>
+                <span id="val-trunk" class="text-gray-900 font-mono font-bold">0.44</span>
+              </div>
+              <input type="range" id="slider-trunk" min="0.15" max="0.65" step="0.01" value="0.44" oninput="onSharedParamChange('trunk', this.value)" class="accent-emerald-700 h-1 bg-[#e0dad0] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-600">Crown Spread:</span>
+                <span id="val-spread" class="text-gray-900 font-mono font-bold">1.5x</span>
+              </div>
+              <input type="range" id="slider-spread" min="0.6" max="2.2" step="0.1" value="1.5" oninput="onSharedParamChange('spread', this.value)" class="accent-emerald-700 h-1 bg-[#e0dad0] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-600">Oak Gnarling:</span>
+                <span id="val-jitter" class="text-gray-900 font-mono font-bold">0.50</span>
+              </div>
+              <input type="range" id="slider-jitter" min="0.0" max="0.8" step="0.05" value="0.50" oninput="onSharedParamChange('jitter', this.value)" class="accent-emerald-700 h-1 bg-[#e0dad0] rounded-full"/>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-gray-600">Rooftop Wind:</span>
+                <span id="val-wind" class="text-gray-900 font-mono font-bold">Breeze</span>
+              </div>
+              <input type="range" id="slider-wind" min="0.0" max="1.0" step="0.1" value="0.4" oninput="onSharedParamChange('wind', this.value)" class="accent-emerald-700 h-1 bg-[#e0dad0] rounded-full"/>
+            </div>
+
+            <div class="flex items-end gap-1.5">
+              <button onclick="randomizeTree()" class="px-3 py-1 bg-[#fcfaf6] hover:bg-[#ede6d8] border border-[#d2c7b5] text-[#1c2419] text-xs rounded-full flex items-center gap-1 transition-all font-bold shadow-xs">
+                <span class="material-symbols-outlined text-sm text-[#1b501e]">shuffle</span>
+                <span>Seed</span>
+              </button>
+              <button onclick="rebuildCurrentTree()" class="px-3 py-1 bg-[#1b501e] hover:bg-[#153f17] text-white text-xs rounded-full flex items-center gap-1 transition-all shadow-sm font-bold border border-[#133d15]">
+                <span class="material-symbols-outlined text-sm">refresh</span>
+                <span>Rebuild</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TAB 2: FOLIAGE & SPECIES -->
+        <div id="tab-panel-foliage" class="tab-panel hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Leaf Clump Morphology:</span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button onclick="setLeafShape('broadleaf')" id="shape-broadleaf-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm">
+                Broadleaf Oak
+              </button>
+              <button onclick="setLeafShape('needle')" id="shape-needle-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">
+                Pine Needles
+              </button>
+              <button onclick="setLeafShape('blossom')" id="shape-blossom-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">
+                Cherry Blossom
+              </button>
+              <button onclick="setLeafShape('faceted')" id="shape-faceted-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">
+                Faceted Cloud
+              </button>
+              <button onclick="setLeafShape('ginkgo')" id="shape-ginkgo-btn" class="leaf-shape-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">
+                Ginkgo Fan
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Seasonal Palette:</span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button onclick="setSeason('spring')" id="season-spring-btn" class="season-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Spring Lime</button>
+              <button onclick="setSeason('summer')" id="season-summer-btn" class="season-btn px-3 py-1 rounded-full bg-[#1b501e] text-white text-xs font-bold border border-[#133d15] shadow-sm">Deep Summer</button>
+              <button onclick="setSeason('autumn')" id="season-autumn-btn" class="season-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Autumn Amber</button>
+              <button onclick="setSeason('sakura')" id="season-sakura-btn" class="season-btn px-3 py-1 rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] border border-[#d2c7b5] text-xs font-semibold shadow-xs">Sakura Blush</button>
+              <div class="flex items-center gap-1.5 ml-auto">
+                <span class="text-[11px] text-stone-600 font-medium">Scale:</span>
+                <input type="range" id="leaf-scale-slider" min="0.5" max="2.5" step="0.1" value="1.0" oninput="onLeafScaleChange(this.value)" class="w-20 accent-[#1b501e] h-1 bg-[#dcd4c6] rounded-full"/>
+                <span id="leaf-scale-text" class="text-xs font-mono text-[#1b501e] font-bold">1.0x</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: MODEL GUIDE -->
+        <div id="tab-panel-algorithm" class="tab-panel hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Growth Model Architecture:</span>
+            <div class="flex items-center gap-2">
+              <button onclick="selectAlgorithm('fractal')" id="algo-fractal-btn" class="algo-choice-btn px-3.5 py-1.5 rounded-2xl border-2 border-[#1b501e] bg-[#eef7ee] text-[#123814] text-xs text-left shadow-xs">
+                <div class="font-bold text-[#123814]">3D Fractal / L-System</div>
+                <div class="text-[10px] text-stone-600">Recursive branching with stem tapering & lateral shoots</div>
+              </button>
+              <button onclick="selectAlgorithm('colonization')" id="algo-colonization-btn" class="algo-choice-btn px-3.5 py-1.5 rounded-2xl border border-[#d2c7b5] bg-[#fcfaf6] text-[#1c2419] text-xs text-left shadow-xs">
+                <div class="font-bold text-[#1c2419]">Space Colonization</div>
+                <div class="text-[10px] text-stone-600">Attractor cloud envelope modeling phototropism</div>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1 text-xs text-stone-800 leading-relaxed">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Model Dynamics:</span>
+            <p id="algo-desc-text">
+              <strong class="text-[#123814]">Fractal L-System:</strong> Pure geometric recursion. Excellent for heavy branching, lateral interior shoots, and majestic ancient oak crowns.<br/>
+              <strong class="text-[#1b501e]">Space Colonization:</strong> Biological competition for light attractors across user-chosen crown volumes.
+            </p>
+          </div>
+        </div>
+
+        <!-- TAB 4: AMBIENT NATURE SOUNDSCAPE -->
+        <div id="tab-panel-sound" class="tab-panel hidden grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#1b501e]">Web Audio Generator:</span>
+              <button onclick="toggleAudio()" class="text-xs px-3 py-1 border border-[#d2c7b5] rounded-full bg-[#fcfaf6] hover:bg-[#ede6d8] text-[#1c2419] font-bold shadow-xs">
+                <span id="sound-tab-btn-label">Turn On</span>
+              </button>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs text-stone-600 font-medium">Volume:</span>
+              <input type="range" id="audio-volume-slider" min="0" max="1" step="0.05" value="0.6" oninput="setAudioVolume(this.value)" class="accent-[#1b501e] w-32 h-1 bg-[#dcd4c6] rounded-full"/>
+              <span id="volume-val-text" class="text-xs font-mono text-[#1b501e] font-bold">60%</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap text-xs">
+            <label class="flex items-center gap-1.5 bg-[#fcfaf6] px-3 py-1 rounded-full border border-[#d2c7b5] cursor-pointer text-[#1c2419] font-semibold shadow-xs">
+              <input type="checkbox" id="layer-chords-chk" checked onchange="toggleAudioLayer('chords', this.checked)" class="accent-[#1b501e]"/>
+              <span>Chords</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-[#fcfaf6] px-3 py-1 rounded-full border border-[#d2c7b5] cursor-pointer text-[#1c2419] font-semibold shadow-xs">
+              <input type="checkbox" id="layer-wind-chk" checked onchange="toggleAudioLayer('wind', this.checked)" class="accent-[#1b501e]"/>
+              <span>Breeze</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-[#fcfaf6] px-3 py-1 rounded-full border border-[#d2c7b5] cursor-pointer text-[#1c2419] font-semibold shadow-xs">
+              <input type="checkbox" id="layer-birds-chk" checked onchange="toggleAudioLayer('birds', this.checked)" class="accent-[#1b501e]"/>
+              <span>Birdsong</span>
+            </label>
+            <label class="flex items-center gap-1.5 bg-[#fcfaf6] px-3 py-1 rounded-full border border-[#d2c7b5] cursor-pointer text-[#1c2419] font-semibold shadow-xs">
+              <input type="checkbox" id="layer-leaves-chk" checked onchange="toggleAudioLayer('leaves', this.checked)" class="accent-[#1b501e]"/>
+              <span>Leaf Rustle</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SHOWCASE CONTEXT FOOTER STRIP -->
+  <div class="bg-white border-[3px] border-ink p-4 shadow-[4px_4px_0px_#1c1b1b] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-700">
+    <div class="flex items-center gap-2">
+      <span class="w-3 h-3 bg-emerald-600 border border-ink rounded-full"></span>
+      <span class="font-bold text-ink uppercase">Rooftop Biosphere // Day #1</span>
+      <span class="text-gray-500 font-normal">| Native Three.js WebGL &bull; Web Audio API &bull; Zero Server Storage</span>
+    </div>
+    <div class="flex items-center gap-3 text-gray-600">
+      <span>Left-Click Drag: Rotate</span>
+      <span>&bull;</span>
+      <span>Right-Click Drag: Pan</span>
+      <span>&bull;</span>
+      <span>Scroll: Zoom</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- THREE.JS & ORBITCONTROLS CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<!-- CANOPY BOTANICAL SIMULATION & AUDIO SCRIPT -->
+<script src="/static/prototypes/canopy/app.js"></script>
+{% endblock %}

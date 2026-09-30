@@ -1,0 +1,188 @@
+  /* -------------------------------------------------------------
+     VINTAGE HORROR COMIC / NOIR DOSSIER DESIGN SYSTEM
+     ------------------------------------------------------------- */
+  :root {
+    --dossier-paper: #f4eee1;
+    --dossier-paper-aged: #e8deca;
+    --dossier-folder: #ded0b4;
+    --dossier-ink: #181513;
+    --dossier-ink-muted: #534c44;
+    --dossier-crimson: #a31621;
+    --dossier-crimson-bright: #d90429;
+    --dossier-yellow: #fad02c;
+    --dossier-tape: #f7e076;
+    --dossier-cyan: #0582ca;
+    --dossier-card-bg: #fcf9f2;
+    --dossier-border: 2px solid #181513;
+  }
+
+  .noir-bg {
+    background-color: var(--dossier-paper);
+    background-image: 
+      radial-gradient(rgba(24, 21, 19, 0.08) 1px, transparent 0),
+      radial-gradient(rgba(24, 21, 19, 0.04) 1px, var(--dossier-paper) 1px);
+    background-size: 16px 16px, 32px 32px;
+  }
+
+  .font-typewriter {
+    font-family: 'Special Elite', 'Courier Prime', Courier, monospace;
+  }
+
+  .font-courier {
+    font-family: 'Courier Prime', Courier, monospace;
+  }
+
+  /* Classified Rubber Stamp */
+  .stamp-classified {
+    display: inline-block;
+    padding: 3px 12px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    border: 3px solid var(--dossier-crimson);
+    color: var(--dossier-crimson);
+    border-radius: 4px;
+    transform: rotate(-3deg);
+    mask-image: radial-gradient(circle, black 80%, rgba(0,0,0,0.6) 100%);
+    box-shadow: 0 0 0 1px rgba(163, 22, 33, 0.2);
+  }
+
+  .stamp-penalty {
+    display: inline-block;
+    padding: 4px 14px;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    background-color: var(--dossier-crimson);
+    color: #ffffff;
+    border: 3px solid #181513;
+    box-shadow: 4px 4px 0px #181513;
+    transform: rotate(2deg);
+  }
+
+  .stamp-confidential {
+    display: inline-block;
+    padding: 2px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 11px;
+    text-transform: uppercase;
+    background-color: var(--dossier-yellow);
+    color: #181513;
+    border: 2px solid #181513;
+    box-shadow: 2px 2px 0px #181513;
+  }
+
+  /* Police Line Caution Tape */
+  .police-tape {
+    background: repeating-linear-gradient(
+      -45deg,
+      #fad02c,
+      #fad02c 16px,
+      #181513 16px,
+      #181513 32px
+    );
+    border-top: 3px solid #181513;
+    border-bottom: 3px solid #181513;
+  }
+
+  /* Manila Folder Style Container */
+  .manila-folder {
+    background-color: var(--dossier-folder);
+    border: 3px solid #181513;
+    box-shadow: 8px 8px 0px #181513;
+    position: relative;
+  }
+
+  .manila-tab {
+    background-color: var(--dossier-folder);
+    border-top: 3px solid #181513;
+    border-left: 3px solid #181513;
+    border-right: 3px solid #181513;
+    border-bottom: 3px solid var(--dossier-folder);
+  }
+
+  .dossier-sheet {
+    background-color: var(--dossier-card-bg);
+    border: 2px solid #181513;
+    box-shadow: 4px 4px 0px #181513;
+    position: relative;
+  }
+
+  .paperclip-marker {
+    position: absolute;
+    top: -10px;
+    right: 28px;
+    width: 14px;
+    height: 38px;
+    border: 3px solid #555;
+    border-radius: 8px;
+    background: transparent;
+    z-index: 10;
+  }
+
+  /* Tabs styling */
+  .mystery-tab-btn {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 13px;
+    padding: 10px 18px;
+    border: 3px solid #181513;
+    background-color: #f0e6d2;
+    color: #181513;
+    box-shadow: 3px 3px 0px #181513;
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .mystery-tab-btn:hover {
+    background-color: #fad02c;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #181513;
+  }
+  .mystery-tab-btn.active {
+    background-color: #181513 !important;
+    color: #fad02c !important;
+    box-shadow: 2px 2px 0px #181513;
+  }
+
+  /* Halftone comic effect */
+  .halftone-overlay {
+    background-image: radial-gradient(#181513 15%, transparent 16%);
+    background-size: 8px 8px;
+    opacity: 0.04;
+    pointer-events: none;
+  }
+
+  /* PRINT STYLES */
+  @media print {
+    header, footer, nav, .no-print, .mystery-tab-nav, .quick-assigner-panel {
+      display: none !important;
+    }
+    body {
+      background: white !important;
+      color: black !important;
+      font-size: 11pt !important;
+    }
+    .print-page {
+      page-break-after: always !important;
+      break-after: page !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      border: 2px solid black !important;
+      margin-bottom: 2cm !important;
+    }
+    .dossier-sheet {
+      box-shadow: none !important;
+      border: 2px solid black !important;
+      page-break-inside: avoid !important;
+    }
+    .tab-content {
+      display: block !important;
+    }
+    #solution-tab-pane {
+      page-break-before: always !important;
+    }
+  }

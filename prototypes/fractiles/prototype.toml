@@ -1,0 +1,8 @@
+slug = "fractiles"
+title = "Fractiles: Aperiodic Prime Spiral Tessellation"
+date = "2026-09-18"
+build_type = "webapp"
+template = "template.html"
+description = "Prime spiral driven aperiodic ceramic tile tessellation laboratory."
+extra_paths = []
+routes = false

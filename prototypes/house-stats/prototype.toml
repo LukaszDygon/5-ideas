@@ -1,0 +1,8 @@
+slug = "house-stats"
+title = "House Statistics: Property Intelligence & Home Search Tracker"
+date = "2026-09-14"
+build_type = "webapp"
+template = "template.html"
+description = "Property intelligence dossier generator and home search tracker."
+extra_paths = []
+routes = true
