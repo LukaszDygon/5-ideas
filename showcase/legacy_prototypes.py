@@ -14,11 +14,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 TEMPLATE_ROUTES = {
-    "/interactive/campfire": "campfire.html",
-    "/interactive/campfire/hardware": "campfire_hardware.html",
-    "/interactive/slots1v1": "slots1v1.html",
     "/interactive/mcnuggets": "mcnuggets.html",
-    "/interactive/nostalgia-cap": "nostalgia_cap.html",
     "/interactive/table-steamer": "table_steamer.html",
     "/interactive/crusade-trail": "crusade_trail.html",
 }
