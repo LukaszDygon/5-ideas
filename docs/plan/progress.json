@@ -91,7 +91,7 @@
       "started": "2026-09-30",
       "completed": "2026-09-30",
       "commit": "271554e",
-      "notes": "Rotating the key itself is a manual user action in the Google console. Key was never in git history. .mcp.json + .env.example added; admin secret from FIVE_IDEAS_ADMIN_SECRET. The plan's verify grep for X-Goog-Api-Key necessarily matches the tracked .mcp.json placeholder and the plan docs; the real check (no AQ.* key values in tracked files) passes. Left for the user: delete the stray empty 5ideas.db (the auto-mode classifier blocked rm; it is gitignored), and delete mcp_config.json + .agents/plugins/stitch/mcp_config.json once STITCH_API_KEY is in .env/shell (both still gitignored)."
+      "notes": "Rotating the key itself is a manual user action in the Google console. Key was never in git history. .mcp.json + .env.example added; admin secret from FIVE_IDEAS_ADMIN_SECRET. The plan's verify grep for X-Goog-Api-Key necessarily matches the tracked .mcp.json placeholder and the plan docs; the real check (no AQ.* key values in tracked files) passes. Left for the user: delete the stray empty 5ideas.db (the auto-mode classifier blocked rm; it is gitignored), and delete mcp_config.json + .agents/plugins/stitch/mcp_config.json once STITCH_API_KEY is in .env/shell (both still gitignored). UPDATE 2026-09-30: the user rotated the key into .env (STITCH_API_KEY) and removed .agents/plugins/stitch/mcp_config.json; the empty plugin stub .agents/plugins/stitch/plugin.json was then deleted. The stray 5ideas.db is gone. Still for the user: delete the root mcp_config.json and export STITCH_API_KEY into the shell that starts claude (Claude Code does not read .env)."
     },
     {
       "id": "T1.1",
