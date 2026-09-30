@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 
 from flask import Blueprint, Flask, current_app, flash, redirect, render_template, request, url_for
 
-from showcase import db
+from showcase import db, streak
 from showcase.config import STATIC_DIR, TEMPLATES_DIR, Settings
 
 bp = Blueprint("admin", __name__)
@@ -27,8 +27,8 @@ def _db_path():
 def _streak(manual_override=None, save: bool = False) -> Dict[str, Any]:
     s = _settings()
     if save:
-        return db.save_streak_data(manual_override, db_path=s.db_file, streak_file=s.streak_file)
-    return db.get_streak_data(db_path=s.db_file, streak_file=s.streak_file)
+        return streak.save_streak_data(manual_override, db_path=s.db_file, streak_file=s.streak_file)
+    return streak.get_streak_data(db_path=s.db_file, streak_file=s.streak_file)
 
 
 def create_admin_app(settings: Settings | None = None) -> Flask:
@@ -36,8 +36,8 @@ def create_admin_app(settings: Settings | None = None) -> Flask:
     app = Flask(__name__, template_folder=str(TEMPLATES_DIR), static_folder=str(STATIC_DIR))
     app.secret_key = settings.admin_secret
     app.config["SHOWCASE_SETTINGS"] = settings
-    app.jinja_env.globals["all_published_dates"] = lambda: [d["date"] for d in db.get_all_days(settings.db_file)]
-    app.jinja_env.globals["get_streak"] = lambda: db.get_streak_data(settings.db_file, settings.streak_file)["streak"]
+    app.jinja_env.globals["all_published_dates"] = lambda: db.get_published_dates(settings.db_file)
+    app.jinja_env.globals["get_streak"] = lambda: streak.get_streak_data(settings.db_file, settings.streak_file)["streak"]
     app.jinja_env.globals["is_hosted"] = False
     app.register_blueprint(bp)
     return app
@@ -261,6 +261,7 @@ def delete_day(day_id: int):
 @bp.route("/seed", methods=["POST"])
 def seed_demo():
     settings = _settings()
-    db.seed_demo_data(settings.db_file, settings.seed_file, settings.streak_file)
+    db.seed_demo_data(settings.db_file, settings.seed_file)
+    streak.save_streak_data(None, settings.db_file, settings.streak_file)
     flash("Demo data reseeded with 4 showcase days!", "success")
     return redirect(url_for("admin.dashboard"))

@@ -345,14 +345,14 @@
       "started": "2026-09-30",
       "completed": null,
       "commit": null,
-      "notes": "Minimum: which-is-faster, crusade-trail, monster-mystery. List the rest here if deferred."
+      "notes": "Done for all 11 prototypes with >200 inline script lines (which-is-faster ce27b44, crusade-trail c4aa5f5, monster-mystery 409c276, campfire 18f6a5f, canopy 58ca788, flute 423fd50, fractiles 0d47a54, house-stats ed91f89, nostalgia-cap 9c59232, slots1v1 d938a16, water-calories 848300a); neondj and mcnuggets stay inline (~150 lines). Script and style bodies moved byte-for-byte; which-is-faster's bank now arrives as <script id=data type=application/json>{{ events | tojson }}</script> (same data; Jinja sorts keys, and the JS doesn't depend on key order). The static build now also prefixes /static/ inside JS/CSS files, and the contract test scans prototype JS/CSS for missing assets. View tests assert on page + prototype assets (page_with_assets helper), so every existing assertion is kept. node --check passes for every app.js. The browser check was automated with headless Chrome (console errors per page), compared against a pre-extraction export: no new errors. It exposed an existing bug: shared static/app.js declared top-level audioCtx/isAudioPlaying, which clashed with 5 prototypes and stopped the shared script on those pages. Fixed by wrapping it in an IIFE that only exports helpers a page hasn't defined (campfire and nostalgia-cap keep their own getAudioContext; neondj uses the shared one). The only remaining console errors are WebGL context failures in headless Chrome (no GPU)."
     },
     {
       "id": "T2.7",
       "phase": "P2",
       "title": "db.py dedupe, context-managed connections, streak.py",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 12,
       "depends_on": [
         "T2.2"
@@ -369,10 +369,10 @@
         "sparks --json output for 2026-09-29 unchanged vs saved copy"
       ],
       "commit_message": "refactor(db): deduplicate hydration, context-managed connections, streak module",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "One _hydrate_days(conn, rows) serves get_all_days, get_day_by_date and get_day_by_id with 2 queries in total (IN lists) instead of N+1. connect() context manager used everywhere. Streak logic moved to showcase/streak.py (db no longer imports it; callers of seed_demo_data reset the streak file). New db.get_published_dates() feeds the Jinja date global and the streak, so page renders no longer hydrate every day just for the dates. Equivalence: sparks --json for 2026-09-29 is byte-identical to the baseline copy, and re-exporting the real DB reproduces data/ideas.json byte-for-byte. tests/unit/test_streak.py added (7 tests). The dedupe grep counts 1."
     },
     {
       "id": "T2.9",

@@ -4,7 +4,7 @@ Tests for Flask admin application (admin.py).
 
 import pytest
 
-from showcase import db
+from showcase import db, streak
 from showcase.admin import create_admin_app
 
 
@@ -113,7 +113,7 @@ def test_admin_streak_update(flask_client):
     )
     assert response.status_code == 200
     assert b"Unbroken streak saved to static streak.json (value: 7 days)" in response.data
-    assert db.get_streak_data()["streak"] == 7
+    assert streak.get_streak_data()["streak"] == 7
 
     response_reset = flask_client.post(
         "/streak/update",
@@ -122,7 +122,7 @@ def test_admin_streak_update(flask_client):
     )
     assert response_reset.status_code == 200
     assert b"Unbroken streak reset to auto-calculated value" in response_reset.data
-    assert db.get_streak_data()["streak"] == db.get_streak_data()["calculated_streak"]
+    assert streak.get_streak_data()["streak"] == streak.get_streak_data()["calculated_streak"]
 
 
 def test_admin_morning_sparks_flow_save_then_implement(flask_client):

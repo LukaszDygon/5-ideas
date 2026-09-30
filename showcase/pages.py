@@ -9,7 +9,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-from showcase import db
+from showcase import db, streak
 from showcase.config import Settings
 
 router = APIRouter()
@@ -37,7 +37,7 @@ def home_view(request: Request):
             "today_drop": all_days[0] if all_days else None,
             "ranked_implementations": ranked_impls,
             "all_days": all_days,
-            "current_streak": db.get_streak_data(settings.db_file, settings.streak_file)["streak"],
+            "current_streak": streak.get_streak_data(settings.db_file, settings.streak_file)["streak"],
             "total_ideas": sum(len(d.get("ideas", [])) for d in all_days),
             "total_shipped": len(ranked_impls),
         },

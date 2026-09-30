@@ -31,6 +31,7 @@ uv run python -m showcase.db                                 # wipe DB and resee
 | `showcase/api.py` | Core JSON API under `/api` |
 | `showcase/admin.py` | `create_admin_app()` Flask admin (CRUD, rankings, streak) mounted at `/admin` |
 | `showcase/db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
+| `showcase/streak.py` | Publishing streak (consecutive days) and the `data/streak.json` override |
 | `showcase/registry.py` | Discovers `prototypes/<slug>/prototype.toml` and serves `/interactive/<slug>` |
 | `showcase/static_site.py` | Freezes core pages, prototype pages and day pages into `dist/` |
 | `main.py` | uvicorn launcher |

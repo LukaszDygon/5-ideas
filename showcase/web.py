@@ -14,7 +14,7 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import ChoiceLoader
 from starlette.middleware.wsgi import WSGIMiddleware
 
-from showcase import api, db, pages, registry
+from showcase import api, db, pages, registry, streak
 from showcase.admin import create_admin_app
 from showcase.config import STATIC_DIR, TEMPLATES_DIR, Settings, is_hosted
 
@@ -31,8 +31,8 @@ def create_templates(settings: Settings, prototypes: list[registry.Prototype]) -
     # Site templates by name ("base.html"), prototype templates as "<slug>/template.html".
     templates.env.loader = ChoiceLoader([templates.env.loader, registry.template_loader(prototypes)])
     templates.env.globals["is_hosted"] = _HostedCheck()
-    templates.env.globals["all_published_dates"] = lambda: [d["date"] for d in db.get_all_days(settings.db_file)]
-    templates.env.globals["get_streak"] = lambda: db.get_streak_data(settings.db_file, settings.streak_file)["streak"]
+    templates.env.globals["all_published_dates"] = lambda: db.get_published_dates(settings.db_file)
+    templates.env.globals["get_streak"] = lambda: streak.get_streak_data(settings.db_file, settings.streak_file)["streak"]
     return templates
 
 
