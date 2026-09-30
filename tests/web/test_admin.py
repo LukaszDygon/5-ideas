@@ -2,33 +2,22 @@
 Tests for Flask admin application (admin.py).
 """
 
-import pytest
-
 from showcase import db, streak
-from showcase.admin import create_admin_app
 
 
-@pytest.fixture
-def flask_client():
-    admin_app = create_admin_app()
-    admin_app.config["TESTING"] = True
-    with admin_app.test_client() as client:
-        yield client
-
-
-def test_admin_dashboard(flask_client):
-    response = flask_client.get("/")
+def test_admin_dashboard(admin_client):
+    response = admin_client.get("/")
     assert response.status_code == 200
     assert b"Showcase Content Manager" in response.data
     assert b"Implementation Rankings" in response.data
     assert b"Daily Log Archive" in response.data
 
 
-def test_admin_update_rankings(flask_client):
-    impls = db.get_ranked_implementations()
+def test_admin_update_rankings(admin_client, settings):
+    impls = db.get_ranked_implementations(settings.db_file)
     first_id = impls[0]["id"]
 
-    response = flask_client.post(
+    response = admin_client.post(
         "/rankings/update",
         data={f"rank_{first_id}": "42"},
         follow_redirects=True,
@@ -36,18 +25,18 @@ def test_admin_update_rankings(flask_client):
     assert response.status_code == 200
     assert b"Implementation rankings updated" in response.data
 
-    updated = [i for i in db.get_ranked_implementations() if i["id"] == first_id]
+    updated = [i for i in db.get_ranked_implementations(settings.db_file) if i["id"] == first_id]
     assert updated[0]["rank"] == 42
 
 
-def test_admin_new_day_get(flask_client):
-    response = flask_client.get("/day/new")
+def test_admin_new_day_get(admin_client):
+    response = admin_client.get("/day/new")
     assert response.status_code == 200
     assert b"Create New Daily Drop" in response.data
     assert b"The 5 Morning Sparks" in response.data
 
 
-def test_admin_new_day_post(flask_client):
+def test_admin_new_day_post(admin_client, settings):
     test_date = "2029-12-31"
     post_data = {
         "date": test_date,
@@ -77,55 +66,58 @@ def test_admin_new_day_post(flask_client):
         "idea_4_title": "Test Idea 4",
         "idea_5_title": "Test Idea 5",
     }
-    response = flask_client.post("/day/new", data=post_data, follow_redirects=True)
+    response = admin_client.post("/day/new", data=post_data, follow_redirects=True)
     assert response.status_code == 200
     assert b"created successfully" in response.data
 
-    day = db.get_day_by_date(test_date)
+    day = db.get_day_by_date(test_date, settings.db_file)
     assert day is not None
     assert day["theme"] == "Flask Admin Integration Test Theme"
     assert day["implemented_idea"]["title"] == "Implemented Test Idea 2"
     assert day["implemented_idea"]["implementation"]["build_type"] == "poetry"
 
 
-def test_admin_edit_day_get(flask_client):
-    days = db.get_all_days()
+def test_admin_edit_day_get(admin_client, settings):
+    days = db.get_all_days(settings.db_file)
     first_date = days[0]["date"]
-    response = flask_client.get(f"/day/{first_date}/edit")
+    response = admin_client.get(f"/day/{first_date}/edit")
     assert response.status_code == 200
     assert b"Edit Day:" in response.data
     assert days[0]["theme"].encode("utf-8") in response.data
 
 
-def test_admin_seed(flask_client):
-    response = flask_client.post("/seed", follow_redirects=True)
+def test_admin_seed(admin_client, settings):
+    response = admin_client.post("/seed", follow_redirects=True)
     assert response.status_code == 200
     assert b"Demo data reseeded" in response.data
-    days = db.get_all_days()
+    days = db.get_all_days(settings.db_file)
     assert len(days) >= 1
 
 
-def test_admin_streak_update(flask_client):
-    response = flask_client.post(
+def test_admin_streak_update(admin_client, settings):
+    response = admin_client.post(
         "/streak/update",
         data={"action": "save", "streak_value": "7"},
         follow_redirects=True,
     )
     assert response.status_code == 200
     assert b"Unbroken streak saved to static streak.json (value: 7 days)" in response.data
-    assert streak.get_streak_data()["streak"] == 7
+    assert streak.get_streak_data(settings.db_file, settings.streak_file)["streak"] == 7
 
-    response_reset = flask_client.post(
+    response_reset = admin_client.post(
         "/streak/update",
         data={"action": "reset"},
         follow_redirects=True,
     )
     assert response_reset.status_code == 200
     assert b"Unbroken streak reset to auto-calculated value" in response_reset.data
-    assert streak.get_streak_data()["streak"] == streak.get_streak_data()["calculated_streak"]
+    assert (
+        streak.get_streak_data(settings.db_file, settings.streak_file)["streak"]
+        == streak.get_streak_data(settings.db_file, settings.streak_file)["calculated_streak"]
+    )
 
 
-def test_admin_morning_sparks_flow_save_then_implement(flask_client):
+def test_admin_morning_sparks_flow_save_then_implement(admin_client, settings):
     """
     Test user workflow:
     1. Morning: Come up with 5 ideas, save without an implementation (in progress).
@@ -162,12 +154,12 @@ def test_admin_morning_sparks_flow_save_then_implement(flask_client):
     }
 
     # 1. Save morning ideas
-    res1 = flask_client.post("/day/new", data=morning_data, follow_redirects=True)
+    res1 = admin_client.post("/day/new", data=morning_data, follow_redirects=True)
     assert res1.status_code == 200
     assert b"created successfully" in res1.data
     assert b"prototype in progress" in res1.data
 
-    day = db.get_day_by_date(test_date)
+    day = db.get_day_by_date(test_date, settings.db_file)
     assert day is not None
     assert day["theme"] == "Modular Audio Synthesizers"
     assert len(day["ideas"]) == 5
@@ -175,12 +167,12 @@ def test_admin_morning_sparks_flow_save_then_implement(flask_client):
     assert day["implemented_idea"] is None
 
     # Check that the dashboard shows in-progress badge and ship prototype action
-    dash_res = flask_client.get("/")
+    dash_res = admin_client.get("/")
     assert b"IN PROGRESS (Sparks Logged)" in dash_res.data
     assert b"Ship Prototype" in dash_res.data
 
     # 2. Check edit page loads in-progress state correctly
-    edit_get = flask_client.get(f"/day/{test_date}/edit")
+    edit_get = admin_client.get(f"/day/{test_date}/edit")
     assert edit_get.status_code == 200
     assert b"Euclidean Drum Sequencer" in edit_get.data
     assert b"In Progress (None yet)" in edit_get.data
@@ -228,12 +220,12 @@ def test_admin_morning_sparks_flow_save_then_implement(flask_client):
         "impl_transcript": "User: Let's build Idea #3...\nAgent: Built canvas renderer and audio loop...",
     }
 
-    res2 = flask_client.post(f"/day/{test_date}/edit", data=update_data, follow_redirects=True)
+    res2 = admin_client.post(f"/day/{test_date}/edit", data=update_data, follow_redirects=True)
     assert res2.status_code == 200
     assert b"updated successfully" in res2.data
     assert b"shipped prototype" in res2.data
 
-    updated_day = db.get_day_by_date(test_date)
+    updated_day = db.get_day_by_date(test_date, settings.db_file)
     assert updated_day is not None
     impl_idea = updated_day["implemented_idea"]
     assert impl_idea is not None
@@ -249,17 +241,17 @@ def test_admin_morning_sparks_flow_save_then_implement(flask_client):
     assert len(impl_idea["implementation"]["what_broke"]) == 1
 
     # Check dashboard shows completed shipped prototype
-    dash_res2 = flask_client.get("/")
+    dash_res2 = admin_client.get("/")
     assert b"Euclidean Matrix 9000" in dash_res2.data
 
 
-def test_admin_edit_preserves_steps_in_textarea(flask_client):
+def test_admin_edit_preserves_steps_in_textarea(admin_client, settings):
     """Verifies that loading an existing day in edit mode preserves process steps in the textarea."""
-    days = db.get_all_days()
+    days = db.get_all_days(settings.db_file)
     day_with_impl = next((d for d in days if d.get("implemented_idea")), None)
     assert day_with_impl is not None
 
-    res = flask_client.get(f"/day/{day_with_impl['date']}/edit")
+    res = admin_client.get(f"/day/{day_with_impl['date']}/edit")
     assert res.status_code == 200
     # Process steps should not be empty in the textarea
     impl = day_with_impl["implemented_idea"]["implementation"]
@@ -273,11 +265,11 @@ def test_admin_edit_preserves_steps_in_textarea(flask_client):
         )
 
 
-def test_admin_edit_by_id_route(flask_client):
+def test_admin_edit_by_id_route(admin_client, settings):
     """Test accessing edit by day_id."""
-    days = db.get_all_days()
+    days = db.get_all_days(settings.db_file)
     first_day = days[0]
-    res = flask_client.get(f"/day/{first_day['id']}/edit")
+    res = admin_client.get(f"/day/{first_day['id']}/edit")
     assert res.status_code == 200
     assert b"CONTENT EDITOR" in res.data
     assert first_day["date"].encode("utf-8") in res.data

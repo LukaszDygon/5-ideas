@@ -10,10 +10,10 @@ from showcase import db
 
 
 @pytest.fixture
-def temp_db(tmp_path: Path):
+def temp_db(tmp_path: Path, settings):
     db_file = tmp_path / "test_ideas.db"
     db.init_db(db_file)
-    db.seed_demo_data(db_file)
+    db.seed_demo_data(db_file, settings.seed_file)
     return db_file
 
 

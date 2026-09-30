@@ -535,7 +535,7 @@
       "phase": "P3",
       "title": "Restructure tests around app factory and settings",
       "priority": "must",
-      "status": "in_progress",
+      "status": "done",
       "order": 19,
       "depends_on": [
         "T2.1",
@@ -553,9 +553,9 @@
       ],
       "commit_message": "test: restructure suite around app factory and settings",
       "started": "2026-09-30",
-      "completed": null,
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "Layout: tests/unit (db, streak, registry, cli, capture), tests/web (pages, api, admin), tests/prototypes (every_prototype contract + prototype_content), tests/ai_setup (T3.2), tests/build (T3.3). conftest: autouse 'settings' copies data/ideas.json and streak.json to tmp_path/data and sets FIVE_IDEAS_DATA_DIR (an env var, not a module global) so CLI subprocesses stay isolated too; 'client' = TestClient(create_app(settings)); 'admin_client' = Flask test client of create_admin_app(settings). Tests pass settings.db_file / settings.streak_file explicitly. Every original assertion kept (test_api.py split by function into web/test_pages.py, web/test_api.py, prototypes/test_prototype_content.py). 173 tests excluding ai_setup (baseline 49). No monkeypatch.setattr anywhere. tests/web/test_admin.py runs alone. --durations=5 is added in CI (T3.4)."
     },
     {
       "id": "T3.2",

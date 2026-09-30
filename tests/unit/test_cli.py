@@ -103,7 +103,7 @@ def test_save_impl_marks_the_idea_shipped():
     assert len(impl["implementation"]["process_steps"]) == 2
 
 
-def test_new_prototype_scaffold_renders_in_the_app(tmp_path):
+def test_new_prototype_scaffold_renders_in_the_app(tmp_path, settings):
     env = {"FIVE_IDEAS_PROTOTYPES_DIR": str(tmp_path)}
     result = cli("new-prototype", "--slug", "demo", "--title", "Demo Thing", "--date", "2031-01-02", env=env)
     assert result.returncode == 0, result.stderr
@@ -113,9 +113,8 @@ def test_new_prototype_scaffold_renders_in_the_app(tmp_path):
     bad = cli("new-prototype", "--slug", "Bad Slug", "--title", "x", env=env)
     assert bad.returncode == 1
 
-    settings = Settings.from_env()
-    settings = Settings(data_dir=settings.data_dir, prototypes_dir=tmp_path)
-    with TestClient(create_app(settings)) as client:
+    scaffolded = Settings(data_dir=settings.data_dir, prototypes_dir=tmp_path)
+    with TestClient(create_app(scaffolded)) as client:
         page = client.get("/interactive/demo")
     assert page.status_code == 200
     assert "Demo Thing" in page.text and "IDEAS DAILY" in page.text

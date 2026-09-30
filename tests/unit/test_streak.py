@@ -61,6 +61,6 @@ def test_corrupt_streak_file_falls_back_to_calculated(empty_db, tmp_path):
     assert streak.get_streak_data(empty_db, bad)["streak"] == 1
 
 
-def test_published_dates_are_newest_first(isolate_test_environment):
-    dates = db.get_published_dates()
+def test_published_dates_are_newest_first(settings):
+    dates = db.get_published_dates(settings.db_file)
     assert dates and dates == sorted(dates, reverse=True)
