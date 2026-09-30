@@ -1,0 +1,668 @@
+{
+  "plan": "docs/plan/PLAN.md",
+  "schema_version": 1,
+  "created": "2026-09-30",
+  "updated": "2026-09-30",
+  "how_to_update": "Set status (todo|in_progress|blocked|done|skipped), started/completed as YYYY-MM-DD, commit as short SHA, notes for anything the next person must know. Follow the order field unless depends_on is unmet. Keep this file valid JSON; tests/ai_setup/test_plan_progress.py checks it after T3.2.",
+  "status_values": [
+    "todo",
+    "in_progress",
+    "blocked",
+    "done",
+    "skipped"
+  ],
+  "priority_values": {
+    "must": "required for the plan to be done",
+    "should": "do unless time-boxed out; note if deferred",
+    "could": "optional stretch"
+  },
+  "baseline": {
+    "tests_passing_before": 49,
+    "prototype_routes_before": 19,
+    "notes": "Recorded at planning time on 2026-09-30."
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "title": "Baseline and hygiene"
+    },
+    {
+      "id": "P1a",
+      "title": "Claude Code core setup"
+    },
+    {
+      "id": "P2",
+      "title": "Structure"
+    },
+    {
+      "id": "P1b",
+      "title": "Skills, subagents, transcript capture"
+    },
+    {
+      "id": "P3",
+      "title": "Test suite"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T0.1",
+      "phase": "P0",
+      "title": "Golden baseline snapshot",
+      "priority": "must",
+      "status": "todo",
+      "order": 1,
+      "depends_on": [],
+      "touches": [
+        ".gitignore",
+        ".baseline/"
+      ],
+      "verify": [
+        "uv run pytest -q  # record count",
+        "uv run python scripts/build_static.py --base-path /5-ideas/ && cp -r dist .baseline/dist-before",
+        "test -f .baseline/dist-before/index.html && grep -c '^/interactive/' .baseline/routes-before.txt  # expect 19"
+      ],
+      "commit_message": "chore: ignore .baseline snapshots",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T0.2",
+      "phase": "P0",
+      "title": "Secret hygiene: MCP key to env, admin secret, gitignore",
+      "priority": "must",
+      "status": "todo",
+      "order": 2,
+      "depends_on": [],
+      "touches": [
+        ".env.example",
+        ".mcp.json",
+        ".gitignore",
+        "admin.py",
+        "5ideas.db"
+      ],
+      "verify": [
+        "git ls-files | xargs grep -lE 'AQ\\.[A-Za-z0-9_-]{20,}|X-Goog-Api-Key'  # expect no output",
+        "uv run pytest -q",
+        "git status --porcelain | grep -c '^?? .env$'  # expect 0"
+      ],
+      "commit_message": "chore(security): move MCP key to env, parametrise admin secret",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": "Rotating the key itself is a manual user action in the Google console."
+    },
+    {
+      "id": "T1.1",
+      "phase": "P1a",
+      "title": "CLAUDE.md imports AGENTS.md; rewrite AGENTS.md; path-scoped rules",
+      "priority": "must",
+      "status": "todo",
+      "order": 3,
+      "depends_on": [
+        "T0.2"
+      ],
+      "touches": [
+        "CLAUDE.md",
+        "AGENTS.md",
+        ".claude/rules/python.md",
+        ".claude/rules/prototypes.md",
+        ".claude/rules/design-system.md",
+        "README.md"
+      ],
+      "verify": [
+        "claude → /memory shows CLAUDE.md with AGENTS.md imported",
+        "open a .py file → /context shows .claude/rules/python.md loaded",
+        "every path mentioned in AGENTS.md exists (automated later by T3.2)"
+      ],
+      "commit_message": "docs(agents): CLAUDE.md imports AGENTS.md; add path-scoped rules",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T1.2",
+      "phase": "P1a",
+      "title": "Permissions and sandbox in .claude/settings.json",
+      "priority": "must",
+      "status": "todo",
+      "order": 4,
+      "depends_on": [
+        "T0.2"
+      ],
+      "touches": [
+        ".claude/settings.json",
+        ".gitignore"
+      ],
+      "verify": [
+        "python3 -m json.tool .claude/settings.json",
+        "new session: uv run pytest, git status, editing prototypes/ do not prompt",
+        "Bash cat ~/.ssh/config refused; Read tool on ~/.ssh refused; git push --force refused; uv add prompts",
+        "/permissions lists project rules"
+      ],
+      "commit_message": "feat(claude): project permissions and sandbox settings",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": "Confirm key names against code.claude.com/docs/en/settings.md and sandboxing.md."
+    },
+    {
+      "id": "T1.3",
+      "phase": "P1a",
+      "title": "Hooks: session-start, guard-bash, protect-files, post-edit, stop-check, prompt-context",
+      "priority": "must",
+      "status": "todo",
+      "order": 5,
+      "depends_on": [
+        "T1.2"
+      ],
+      "touches": [
+        ".claude/hooks/",
+        ".claude/settings.json"
+      ],
+      "verify": [
+        "echo '{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"git push --force\"}}' | .claude/hooks/guard-bash.py; echo $?  # 2",
+        "echo '{\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"data/ideas.json\"}}' | .claude/hooks/protect-files.py; echo $?  # 2",
+        "/hooks lists all six; editing a .py file triggers ruff (no-op until T2.9)",
+        "break a test, say 'done' → Stop hook blocks; revert"
+      ],
+      "commit_message": "feat(claude): session, guard, protect, post-edit and stop hooks",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.1",
+      "phase": "P2",
+      "title": "showcase/ package with app factory and lifespan",
+      "priority": "must",
+      "status": "todo",
+      "order": 6,
+      "depends_on": [
+        "T0.1",
+        "T0.2"
+      ],
+      "touches": [
+        "showcase/config.py",
+        "showcase/db.py",
+        "showcase/admin.py",
+        "showcase/web.py",
+        "showcase/api.py",
+        "main.py",
+        "tests/",
+        ".github/workflows/deploy-pages.yml",
+        "README.md",
+        "AGENTS.md"
+      ],
+      "verify": [
+        "uv run pytest -q  # green, no on_event DeprecationWarning",
+        "uv run python main.py → / , /admin , /docs respond",
+        "uv run python -c 'import app'  # must fail: old module removed"
+      ],
+      "commit_message": "refactor: move app into showcase/ package with app factory",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.2",
+      "phase": "P2",
+      "title": "Move data files under data/",
+      "priority": "must",
+      "status": "todo",
+      "order": 7,
+      "depends_on": [
+        "T2.1"
+      ],
+      "touches": [
+        "data/ideas.json",
+        "data/streak.json",
+        ".gitignore",
+        "showcase/config.py"
+      ],
+      "verify": [
+        "uv run python scripts/get_day_sparks.py --date 2026-09-29  # prints entry",
+        "git status shows two renames only",
+        "uv run pytest -q"
+      ],
+      "commit_message": "refactor: move data files under data/",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.3",
+      "phase": "P2",
+      "title": "Prototype registry + pilot migration (which-is-faster)",
+      "priority": "must",
+      "status": "todo",
+      "order": 8,
+      "depends_on": [
+        "T2.2"
+      ],
+      "touches": [
+        "showcase/registry.py",
+        "showcase/static_site.py",
+        "showcase/web.py",
+        "prototypes/which-is-faster/",
+        "tests/unit/test_registry.py",
+        "tests/prototypes/test_every_prototype.py"
+      ],
+      "verify": [
+        "curl -s localhost:8000/interactive/which-is-faster | head",
+        "uv run pytest -q tests/prototypes",
+        "build → dist/interactive/which-is-faster/index.html equals baseline after normalising asset paths"
+      ],
+      "commit_message": "feat(registry): prototype discovery from prototypes/<slug>/prototype.toml (pilot: which-is-faster)",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.4",
+      "phase": "P2",
+      "title": "Migrate remaining 14 prototypes into prototypes/ (3–4 batches)",
+      "priority": "must",
+      "status": "todo",
+      "order": 9,
+      "depends_on": [
+        "T2.3"
+      ],
+      "touches": [
+        "prototypes/*/",
+        "templates/",
+        "static/",
+        "showcase/web.py",
+        "showcase/static_site.py"
+      ],
+      "verify": [
+        "per batch: uv run pytest -q",
+        "grep -rn '/static/audio\\|/static/images/caps\\|/static/images/slots\\|/static/data/' templates prototypes  # only new prefixed paths",
+        "every route in .baseline/routes-before.txt has dist/<route>/index.html",
+        "diff -r baseline vs new dist shows only asset-path changes",
+        "browser: campfire, nostalgia-cap, slots1v1 load media without 404s"
+      ],
+      "commit_message": "refactor(prototypes): migrate <batch> into prototypes/",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.5",
+      "phase": "P2",
+      "title": "Per-prototype routes.py; de-personalise house-stats",
+      "priority": "must",
+      "status": "todo",
+      "order": 10,
+      "depends_on": [
+        "T2.4"
+      ],
+      "touches": [
+        "prototypes/house-stats/routes.py",
+        "prototypes/house-stats/static/data/sample_listings.json",
+        "showcase/web.py",
+        "showcase/config.py"
+      ],
+      "verify": [
+        "uv run pytest -q",
+        "grep -rn lukaszdygon showcase prototypes  # nothing",
+        "wc -l showcase/web.py  # < 150"
+      ],
+      "commit_message": "refactor(prototypes): move per-prototype APIs into routes.py; de-personalise house-stats",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.6",
+      "phase": "P2",
+      "title": "Extract inline JS/CSS for large prototypes (incremental)",
+      "priority": "should",
+      "status": "todo",
+      "order": 11,
+      "depends_on": [
+        "T2.5"
+      ],
+      "touches": [
+        "prototypes/*/static/app.js",
+        "prototypes/*/static/style.css",
+        "prototypes/*/template.html"
+      ],
+      "verify": [
+        "node --check prototypes/<slug>/static/app.js (skip if no node)",
+        "browser: exercise main interaction with console open, zero errors",
+        "uv run pytest -q tests/prototypes"
+      ],
+      "commit_message": "refactor(<slug>): extract inline JS/CSS to static assets",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": "Minimum: which-is-faster, crusade-trail, monster-mystery. List the rest here if deferred."
+    },
+    {
+      "id": "T2.7",
+      "phase": "P2",
+      "title": "db.py dedupe, context-managed connections, streak.py",
+      "priority": "must",
+      "status": "todo",
+      "order": 12,
+      "depends_on": [
+        "T2.2"
+      ],
+      "touches": [
+        "showcase/db.py",
+        "showcase/streak.py",
+        "tests/unit/test_db.py",
+        "tests/unit/test_streak.py"
+      ],
+      "verify": [
+        "uv run pytest -q",
+        "grep -c 'SELECT \\* FROM implementations WHERE idea_id' showcase/db.py  # 1",
+        "sparks --json output for 2026-09-29 unchanged vs saved copy"
+      ],
+      "commit_message": "refactor(db): deduplicate hydration, context-managed connections, streak module",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.9",
+      "phase": "P2",
+      "title": "Tooling: ruff, dev groups, project script, warnings-as-errors",
+      "priority": "must",
+      "status": "todo",
+      "order": 13,
+      "depends_on": [
+        "T2.1"
+      ],
+      "touches": [
+        "pyproject.toml",
+        "uv.lock"
+      ],
+      "verify": [
+        "uv run ruff check .",
+        "uv run ruff format --check .",
+        "uv run pytest -q  # no warnings from showcase.*"
+      ],
+      "commit_message": "chore: ruff config, dev dependency groups, project script",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.10",
+      "phase": "P2",
+      "title": "CLI consolidation: showcase.cli with new-day and new-prototype",
+      "priority": "must",
+      "status": "todo",
+      "order": 14,
+      "depends_on": [
+        "T2.3",
+        "T2.9"
+      ],
+      "touches": [
+        "showcase/cli.py",
+        "scripts/",
+        "tests/unit/test_cli.py",
+        "README.md",
+        "AGENTS.md"
+      ],
+      "verify": [
+        "uv run python -m showcase.cli --help  # seven sub-commands",
+        "new-prototype --slug demo in a tmp copy passes tests/prototypes",
+        "new-day then sparks round-trips",
+        "seed without --yes exits non-zero"
+      ],
+      "commit_message": "feat(cli): single showcase.cli entry point with new-day and new-prototype",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T1.4",
+      "phase": "P1b",
+      "title": "Skills in .claude/skills (migrate 3, add new-day, new-prototype, ship, design-system)",
+      "priority": "must",
+      "status": "todo",
+      "order": 15,
+      "depends_on": [
+        "T1.1",
+        "T2.10"
+      ],
+      "touches": [
+        ".claude/skills/",
+        ".agents/skills/"
+      ],
+      "verify": [
+        "ls -la .agents/skills  # symlinks",
+        "in session: /new-day /new-prototype /ship autocomplete",
+        "/skill-doctor lists no invalid skills (if available)",
+        "uv run pytest tests/ai_setup/test_skills.py (after T3.2)"
+      ],
+      "commit_message": "feat(claude): skills for the daily workflow; .agents/skills symlink to .claude/skills",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T1.5",
+      "phase": "P1b",
+      "title": "Subagents: design-reviewer, prototype-qa",
+      "priority": "should",
+      "status": "todo",
+      "order": 16,
+      "depends_on": [
+        "T1.4"
+      ],
+      "touches": [
+        ".claude/agents/design-reviewer.md",
+        ".claude/agents/prototype-qa.md"
+      ],
+      "verify": [
+        "/agents lists both",
+        "@design-reviewer review which-is-faster → findings, git status clean"
+      ],
+      "commit_message": "feat(claude): design-reviewer and prototype-qa subagents",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T1.6",
+      "phase": "P1b",
+      "title": "MCP project config verified",
+      "priority": "should",
+      "status": "todo",
+      "order": 17,
+      "depends_on": [
+        "T0.2"
+      ],
+      "touches": [
+        ".mcp.json",
+        "AGENTS.md"
+      ],
+      "verify": [
+        "claude mcp list includes stitch",
+        "git grep -n X-Goog-Api-Key shows only the ${STITCH_API_KEY} placeholder"
+      ],
+      "commit_message": "docs: MCP setup",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T1.7",
+      "phase": "P1b",
+      "title": "Claude Code transcript source for capture",
+      "priority": "should",
+      "status": "todo",
+      "order": 18,
+      "depends_on": [
+        "T1.3",
+        "T2.10"
+      ],
+      "touches": [
+        "showcase/cli.py",
+        "tests/fixtures/claude_transcript.jsonl",
+        "tests/unit/test_capture.py"
+      ],
+      "verify": [
+        "uv run pytest tests/unit/test_capture.py",
+        "live: cli capture --title Demo → Genesis Prompt is the session's first real user message"
+      ],
+      "commit_message": "feat(capture): Claude Code transcript source",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T3.1",
+      "phase": "P3",
+      "title": "Restructure tests around app factory and settings",
+      "priority": "must",
+      "status": "todo",
+      "order": 19,
+      "depends_on": [
+        "T2.1",
+        "T2.2"
+      ],
+      "touches": [
+        "tests/conftest.py",
+        "tests/unit/",
+        "tests/web/"
+      ],
+      "verify": [
+        "uv run pytest -q  # count >= 49",
+        "grep -rn 'monkeypatch.setattr(db' tests  # nothing",
+        "uv run pytest tests/web/test_admin.py"
+      ],
+      "commit_message": "test: restructure suite around app factory and settings",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T3.2",
+      "phase": "P3",
+      "title": "AI-setup quality tests (tests/ai_setup)",
+      "priority": "must",
+      "status": "todo",
+      "order": 20,
+      "depends_on": [
+        "T1.3",
+        "T1.4",
+        "T3.1"
+      ],
+      "touches": [
+        "tests/ai_setup/"
+      ],
+      "verify": [
+        "uv run pytest -q tests/ai_setup  # green, < 15 s",
+        "add Bash(*) to allow → test_settings fails; revert",
+        "test_plan_progress validates docs/plan/progress.json"
+      ],
+      "commit_message": "test(ai-setup): validate instructions, skills, hooks, settings, agents, secrets, docs",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T3.3",
+      "phase": "P3",
+      "title": "Static build and page tests",
+      "priority": "must",
+      "status": "todo",
+      "order": 21,
+      "depends_on": [
+        "T2.5",
+        "T3.1"
+      ],
+      "touches": [
+        "tests/build/test_static_site.py",
+        "tests/web/test_pages.py",
+        "showcase/static_site.py"
+      ],
+      "verify": [
+        "uv run pytest -q tests/build tests/web",
+        "remove a prototype static/ folder → build test fails; restore"
+      ],
+      "commit_message": "test: static build and page rendering coverage",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T3.4",
+      "phase": "P3",
+      "title": "CI: lint, tests, build artifact; optional gated LLM evals",
+      "priority": "must",
+      "status": "todo",
+      "order": 22,
+      "depends_on": [
+        "T2.9",
+        "T2.10",
+        "T3.2",
+        "T3.3"
+      ],
+      "touches": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/deploy-pages.yml",
+        "evals/"
+      ],
+      "verify": [
+        "open a PR → ci and deploy jobs green",
+        "download dist artifact, serve with python3 -m http.server, links work under /5-ideas/"
+      ],
+      "commit_message": "ci: lint, tests, static build artifact; deploy uses the CLI",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    },
+    {
+      "id": "T2.8",
+      "phase": "P2",
+      "title": "Fold Flask admin into FastAPI (optional)",
+      "priority": "could",
+      "status": "todo",
+      "order": 23,
+      "depends_on": [
+        "T2.7",
+        "T3.1"
+      ],
+      "touches": [
+        "showcase/admin.py",
+        "templates/admin/",
+        "pyproject.toml"
+      ],
+      "verify": [
+        "admin tests pass on FastAPI client",
+        "manual: create/edit/reorder/delete a day at /admin",
+        "flask absent from venv after uv sync"
+      ],
+      "commit_message": "refactor(admin): port Flask admin to FastAPI router, drop Flask",
+      "started": null,
+      "completed": null,
+      "commit": null,
+      "notes": ""
+    }
+  ]
+}
