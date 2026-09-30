@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from showcase import capture, db, registry, streak
-from showcase.config import DIST_DIR, Settings
+from showcase.config import DIST_DIR, ROOT, Settings
 
 IDEA_FIELDS = ("title", "tagline", "description", "tags")
 
@@ -272,7 +272,7 @@ def save_prototype_implementation(
 
     # Auto-extract AI Interaction Summary from transcript if requested
     if auto_extract_transcript and not prompt_transcript:
-        t_path = capture.find_latest_transcript()
+        t_path = capture.find_transcript("auto", ROOT)
         if t_path and t_path.exists():
             steps_data = capture.parse_transcript(t_path)
             prompt_transcript = capture.generate_interaction_summary(
@@ -390,10 +390,12 @@ def cmd_save_impl(args: argparse.Namespace, settings: Settings) -> int:
 # capture
 # ---------------------------------------------------------------------------
 def cmd_capture(args: argparse.Namespace, settings: Settings) -> int:
-    t_path = Path(args.transcript) if args.transcript else capture.find_latest_transcript()
+    t_path = Path(args.transcript) if args.transcript else capture.find_transcript(args.source, ROOT)
     if not t_path or not t_path.exists():
-        return fail("no transcript found; pass --transcript <path>")
-    summary = capture.extract_turns_summary(capture.parse_transcript(t_path))
+        return fail(f"no {args.source} transcript found; pass --transcript <path>")
+    entries = capture.parse_transcript(t_path)
+    source = capture.detect_source(entries) if args.source == "auto" else args.source
+    summary = capture.extract_turns_summary(entries, source)
     if args.json:
         output = json.dumps(
             {
@@ -407,7 +409,11 @@ def cmd_capture(args: argparse.Namespace, settings: Settings) -> int:
         )
     else:
         output = capture.generate_presentable_report(
-            summary=summary, idea_title=args.title, build_type=args.type, time_spent=args.time
+            summary=summary,
+            idea_title=args.title,
+            build_type=args.type,
+            time_spent=args.time,
+            ai_stack="Claude Code" if source == "claude" else "Gemini, Antigravity CLI",
         )
     if args.out:
         Path(args.out).write_text(output, encoding="utf-8")
@@ -581,7 +587,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_save_impl)
 
     p = sub.add_parser("capture", help="leak-free AI interaction summary from an agent transcript")
-    p.add_argument("--transcript", help="path to a transcript .jsonl (auto-detected if omitted)")
+    p.add_argument(
+        "--source", default="auto", choices=capture.SOURCES, help="transcript format (default: auto)"
+    )
+    p.add_argument(
+        "--transcript", help="path to a transcript .jsonl (default: this session's Claude Code transcript)"
+    )
     p.add_argument("--title", default="Prototype Build", help="implementation title")
     p.add_argument("--type", default="webapp", choices=db.BUILD_TYPES, help="build type")
     p.add_argument("--time", type=float, default=4.0, help="hours spent")

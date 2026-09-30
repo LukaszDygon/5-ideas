@@ -13,9 +13,18 @@ import re
 from pathlib import Path
 from typing import Any
 
+SOURCES = ("auto", "claude", "antigravity")
+CLAUDE_WRAPPER_PREFIXES = (
+    "<system-reminder>",
+    "<command-name>",
+    "<local-command-stdout>",
+    "<local-command-caveat>",
+)
+REMINDER_RE = re.compile(r"<system-reminder>.*?</system-reminder>", re.DOTALL)
+
 
 def find_latest_transcript(app_data_dir: str | None = None) -> Path | None:
-    """Finds the most recent transcript in the AGY brain directory."""
+    """Finds the most recent Antigravity transcript in the AGY brain directory."""
     base = Path(app_data_dir or os.path.expanduser("~/.gemini/antigravity-cli/brain"))
     if not base.exists():
         return None
@@ -27,6 +36,37 @@ def find_latest_transcript(app_data_dir: str | None = None) -> Path | None:
     # Sort by modification time, most recent first
     candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     return candidates[0]
+
+
+def claude_project_dir(project: Path, projects_root: Path | None = None) -> Path:
+    """Claude Code keeps transcripts in ~/.claude/projects/<project path with non-alphanumerics as '-'>/."""
+    root = projects_root or Path.home() / ".claude" / "projects"
+    return root / re.sub(r"[^A-Za-z0-9]", "-", str(project.resolve()))
+
+
+def find_claude_transcript(project: Path, projects_root: Path | None = None) -> Path | None:
+    """The current session's transcript (recorded by the SessionStart hook), else the newest one for the project."""
+    state = project / ".claude" / "state" / "session.json"
+    if state.exists():
+        try:
+            recorded = json.loads(state.read_text(encoding="utf-8")).get("transcript_path")
+        except (json.JSONDecodeError, OSError):
+            recorded = None
+        if recorded and Path(recorded).is_file():
+            return Path(recorded)
+    candidates = sorted(
+        claude_project_dir(project, projects_root).glob("*.jsonl"), key=lambda p: p.stat().st_mtime
+    )
+    return candidates[-1] if candidates else None
+
+
+def find_transcript(source: str, project: Path, projects_root: Path | None = None) -> Path | None:
+    """Resolves the transcript for --source auto|claude|antigravity (auto prefers Claude Code)."""
+    if source in ("auto", "claude"):
+        found = find_claude_transcript(project, projects_root)
+        if found or source == "claude":
+            return found
+    return find_latest_transcript()
 
 
 def parse_transcript(transcript_path: Path) -> list[dict[str, Any]]:
@@ -77,48 +117,99 @@ def extract_clean_user_prompt(content: str) -> str:
     return text
 
 
-def extract_turns_summary(steps: list[dict[str, Any]]) -> dict[str, Any]:
-    """Extracts human prompts, tool calls, and files modified cleanly without leaks."""
-    user_prompts = []
-    tools_called = []
-    key_files_modified = set()
+def detect_source(entries: list[dict[str, Any]]) -> str:
+    """'claude' for Claude Code JSONL (entries carry `message`), otherwise 'antigravity'."""
+    return (
+        "claude"
+        if any(e.get("type") in ("user", "assistant") and "message" in e for e in entries)
+        else "antigravity"
+    )
 
+
+def _summarise(
+    user_prompts: list[str], tools: list[str], files: set[str], total_steps: int
+) -> dict[str, Any]:
+    return {
+        "initial_prompt": user_prompts[0] if user_prompts else "Project genesis prompt",
+        "total_user_turns": len(user_prompts),
+        "total_steps": total_steps,
+        "user_prompts": user_prompts,
+        "tools_called_summary": {t: tools.count(t) for t in sorted(set(tools))},
+        "key_files": sorted(files),
+    }
+
+
+def _extract_antigravity(steps: list[dict[str, Any]]) -> dict[str, Any]:
+    user_prompts, tools_called, key_files_modified = [], [], set()
     for s in steps:
-        source = s.get("source", "")
-        step_type = s.get("type", "")
-        content = s.get("content", "")
-
-        if step_type == "USER_INPUT" or source == "USER_EXPLICIT":
-            clean = extract_clean_user_prompt(content)
+        if s.get("type", "") == "USER_INPUT" or s.get("source", "") == "USER_EXPLICIT":
+            clean = extract_clean_user_prompt(s.get("content", ""))
             if clean:
                 user_prompts.append(clean)
 
-        tool_calls = s.get("tool_calls", [])
-        for tc in tool_calls:
+        for tc in s.get("tool_calls", []):
             name = tc.get("name") or tc.get("function", {}).get("name", "unknown")
             args = tc.get("args") or tc.get("function", {}).get("arguments", {})
             if isinstance(args, str):
                 try:
                     args = json.loads(args)
-                except Exception:
+                except json.JSONDecodeError:
                     pass
             tools_called.append(name)
             if isinstance(args, dict):
                 target = args.get("TargetFile") or args.get("AbsolutePath")
                 if target and isinstance(target, str):
-                    target = target.strip("\"'")
-                    key_files_modified.add(Path(target).name)
+                    key_files_modified.add(Path(target.strip("\"'")).name)
+    return _summarise(user_prompts, tools_called, key_files_modified, len(steps))
 
-    initial_prompt = user_prompts[0] if user_prompts else "Project genesis prompt"
 
-    return {
-        "initial_prompt": initial_prompt,
-        "total_user_turns": len(user_prompts),
-        "total_steps": len(steps),
-        "user_prompts": user_prompts,
-        "tools_called_summary": {t: tools_called.count(t) for t in sorted(set(tools_called))},
-        "key_files": sorted(list(key_files_modified)),
-    }
+def _claude_prompt_text(entry: dict[str, Any]) -> str:
+    """The human-typed text of a Claude Code user entry, or '' for anything machine-generated."""
+    if entry.get("isMeta") or entry.get("isSidechain") or "toolUseResult" in entry:
+        return ""
+    content = (entry.get("message") or {}).get("content")
+    if isinstance(content, list):
+        if any(isinstance(b, dict) and b.get("type") == "tool_result" for b in content):
+            return ""
+        content = "\n".join(
+            b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text"
+        )
+    if not isinstance(content, str):
+        return ""
+    content = REMINDER_RE.sub("", content).strip()
+    if not content or content.startswith(CLAUDE_WRAPPER_PREFIXES) or "tool_result" in content:
+        return ""
+    return extract_clean_user_prompt(content)
+
+
+def _extract_claude(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    user_prompts, tools_called, files = [], [], set()
+    steps = 0
+    for entry in entries:
+        if entry.get("isSidechain") or entry.get("type") not in ("user", "assistant"):
+            continue
+        steps += 1
+        if entry["type"] == "user":
+            text = _claude_prompt_text(entry)
+            if text:
+                user_prompts.append(text)
+            continue
+        for block in (entry.get("message") or {}).get("content") or []:
+            if isinstance(block, dict) and block.get("type") == "tool_use":
+                tools_called.append(block.get("name", "unknown"))
+                target = (block.get("input") or {}).get("file_path") or (block.get("input") or {}).get(
+                    "notebook_path"
+                )
+                if isinstance(target, str) and target:
+                    files.add(Path(target).name)
+    return _summarise(user_prompts, tools_called, files, steps)
+
+
+def extract_turns_summary(entries: list[dict[str, Any]], source: str = "auto") -> dict[str, Any]:
+    """Extracts human prompts, tool calls, and files modified cleanly without leaks."""
+    if source == "auto":
+        source = detect_source(entries)
+    return _extract_claude(entries) if source == "claude" else _extract_antigravity(entries)
 
 
 def generate_interaction_summary(summary: dict[str, Any]) -> str:
@@ -154,7 +245,7 @@ def generate_presentable_report(
     idea_title: str = "Daily Implemented Prototype",
     build_type: str = "webapp",
     time_spent: float = 4.0,
-    ai_stack: str = "Gemini 2.5, Antigravity CLI",
+    ai_stack: str = "Claude Code",
 ) -> str:
     """Formats the captured process into a clean 90s Memphis-style Markdown report."""
     md = []
@@ -180,21 +271,10 @@ def generate_presentable_report(
     )
 
     md.append("## 3. Architecture & Build Steps")
-    md.append(
-        "1. **Genesis & Requirements Framing:** Scoped core minimal working prototype under YAGNI principles."
-    )
-    md.append("2. **Core Engine & Data Model:** Stdlib SQLite layer with schema, queries, and ranking index.")
-    md.append(
-        "3. **Design System & UI Components:** Radical Memphis Pop neo-brutalist styling with zero-blur shadows."
-    )
-    md.append("4. **Verification & Tests:** Pytest test suite covering endpoints, ranking, and CRUD.\n")
+    md.append("_Provided by the user (see /record-implementation); never generated._\n")
 
     md.append("## 4. Retrospective (What Rocked vs What Broke)")
-    md.append("### What Rocked")
-    md.append("- High execution velocity with zero unnecessary external abstractions.")
-    md.append("- Native browser APIs and stdlib SQLite eliminate infrastructure debt.")
-    md.append("\n### What Broke & Fixed")
-    md.append("- Verified tool arguments and edge-case error guards during initial harness setup.")
+    md.append("_Provided by the user (see /record-implementation); never generated._")
     md.append("")
 
     return "\n".join(md)

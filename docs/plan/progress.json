@@ -501,7 +501,7 @@
       "commit_message": "docs: MCP setup",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "1892e46",
       "notes": "claude mcp list shows 'stitch: https://stitch.googleapis.com/mcp (HTTP)' from project config .mcp.json, 'Pending approval (run claude to approve)', with a warning that STITCH_API_KEY is missing, as expected until the user exports it (Claude Code does not read .env). .mcp.json is tracked; git grep X-Goog-Api-Key outside docs/plan shows only the placeholder. AGENTS.md documents: export the key, approve the server once. User action still pending: rotate the old key, put the new one in STITCH_API_KEY, then delete mcp_config.json and .agents/plugins/stitch/mcp_config.json."
     },
     {
@@ -509,7 +509,7 @@
       "phase": "P1b",
       "title": "Claude Code transcript source for capture",
       "priority": "should",
-      "status": "todo",
+      "status": "done",
       "order": 18,
       "depends_on": [
         "T1.3",
@@ -525,10 +525,10 @@
         "live: cli capture --title Demo → Genesis Prompt is the session's first real user message"
       ],
       "commit_message": "feat(capture): Claude Code transcript source",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "capture --source auto|claude|antigravity and --transcript. auto uses the Claude Code transcript: .claude/state/session.json (SessionStart hook) first, else the newest ~/.claude/projects/<project-slug>/*.jsonl, and falls back to Antigravity if neither exists. Kept as human prompts: user entries that are not isMeta, not isSidechain, not tool results, and don't start with <system-reminder>/<command-name>/<local-command-*>; inline <system-reminder> blocks are stripped. Tools and file basenames come from assistant tool_use blocks; thinking and text are never read. The format is auto-detected per file. The Markdown report no longer fills 'Build Steps' and 'Retrospective' with canned text (it now says they come from the user, per the skills' rule). tests/fixtures/claude_transcript.jsonl (15 lines) plus tests/unit/test_capture.py (8 tests). Live check in this session (hook not installed, so the fallback path ran): Genesis Prompt equals the session's first real user message, 1 human turn."
     },
     {
       "id": "T3.1",
