@@ -79,7 +79,7 @@
       "Edit(./dist/**)",
       "Edit(./.baseline/**)",
       "Bash(sudo *)",
-      "Bash(rm -rf /*)",
+      "Bash(rm -rf /*)"
     ]
   },
   "sandbox": {
