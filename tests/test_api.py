@@ -4,17 +4,15 @@ Tests for FastAPI application endpoints and views.
 
 import pytest
 from starlette.testclient import TestClient
-from app import app
-import db
+
+from showcase import db
+from showcase.web import create_app
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def client():
-    # Ensure test database is seeded
-    db.init_db()
-    if not db.get_all_days():
-        db.seed_demo_data()
-    return TestClient(app)
+    with TestClient(create_app()) as client:
+        yield client
 
 
 def test_home_view(client):

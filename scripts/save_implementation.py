@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-import db
+from showcase import db
 from scripts.capture_process import (
     extract_turns_summary,
     find_latest_transcript,

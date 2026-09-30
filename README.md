@@ -32,14 +32,14 @@ AI coding agents: start with [AGENTS.md](AGENTS.md) (Claude Code loads it throug
 uv sync
 
 # Run development server (FastAPI + Flask admin on port 8000)
-uv run uvicorn app:app --reload --port 8000
+uv run uvicorn showcase.web:app --reload --port 8000
 # Or: uv run python main.py
 
 # Run test suite
 uv run pytest
 
-# Re-seed SQLite demo database from ideas.json
-uv run python db.py
+# Re-seed SQLite demo database from ideas.json (wipes the DB)
+uv run python -m showcase.db
 
 # Freeze static bundle for GitHub Pages / static CDN
 uv run python scripts/build_static.py

@@ -18,16 +18,19 @@ uv run python scripts/get_day_sparks.py --date today         # show a day's spar
 uv run python scripts/save_implementation.py --idea N ...    # record a shipped prototype
 uv run python scripts/capture_process.py --title "Name"      # leak-free AI interaction summary
 uv run python scripts/build_static.py --base-path /5-ideas/  # freeze site into dist/
-uv run python db.py                                          # wipe DB and reseed from ideas.json
+uv run python -m showcase.db                                 # wipe DB and reseed from ideas.json
 ```
 
 ## Repo map
 
 | Path | Purpose |
 | :--- | :--- |
-| `app.py` | FastAPI app: public pages, `/api/*`, one route per prototype |
-| `admin.py` | Flask admin (CRUD, rankings, streak) mounted at `/admin` |
-| `db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
+| `showcase/config.py` | `Settings` (data dir, secrets) read from the environment |
+| `showcase/web.py` | `create_app()` FastAPI factory and the public pages |
+| `showcase/api.py` | Core JSON API under `/api` |
+| `showcase/admin.py` | `create_admin_app()` Flask admin (CRUD, rankings, streak) mounted at `/admin` |
+| `showcase/db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
+| `showcase/legacy_prototypes.py` | Prototype routes not yet moved into `prototypes/` |
 | `main.py` | uvicorn launcher |
 | `scripts/` | CLI helpers: sparks, save implementation, capture, static build |
 | `templates/` | Site templates, `templates/admin/`, and one template per prototype |
@@ -70,7 +73,7 @@ uv run python db.py                                          # wipe DB and resee
 | Design tokens and components | `templates/design_system.html`, `static/style.css`, `.claude/rules/design-system.md` |
 | Python conventions | `.claude/rules/python.md` |
 | Prototype conventions | `.claude/rules/prototypes.md` |
-| Schema for `days`, `ideas`, `implementations` | `db.py` |
+| Schema for `days`, `ideas`, `implementations` | `showcase/db.py` |
 | Spec, record, capture workflows | `.agents/skills/` |
 | MCP servers (Stitch) | `.mcp.json`; the key comes from `STITCH_API_KEY` (see `.env.example`) |
 | Restructure plan and status | `docs/plan/PLAN.md`, `docs/plan/progress.json` |

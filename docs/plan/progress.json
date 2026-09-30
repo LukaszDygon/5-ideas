@@ -171,7 +171,7 @@
       "commit_message": "feat(claude): session, guard, protect, post-edit and stop hooks",
       "started": "2026-09-30",
       "completed": null,
-      "commit": null,
+      "commit": "39250ad",
       "notes": "Six hook scripts written and table-tested (guard-bash 17 deny / 13 allow cases, protect-files 10/6, stop-check blocks on a deliberately failing test and passes on a clean tree, session-start writes .claude/state/session.json, post-edit flags bad JSON/Jinja). post-edit is Python rather than sh, so it can parse the JSON payload with the stdlib. Hooks also allow the system temp dir, and protect-files allows ~/.claude/projects (agent memory). BLOCKED on T1.2: registration lives in .claude/settings.json (hooks section of docs/plan/settings.proposed.json). Live checks (/hooks, a real force-push refusal) need the user's session after installing."
     },
     {
@@ -179,7 +179,7 @@
       "phase": "P2",
       "title": "showcase/ package with app factory and lifespan",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 6,
       "depends_on": [
         "T0.1",
@@ -203,10 +203,10 @@
         "uv run python -c 'import app'  # must fail: old module removed"
       ],
       "commit_message": "refactor: move app into showcase/ package with app factory",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "showcase/{config,db,admin,web,api}.py plus a temporary showcase/legacy_prototypes.py that holds the 15 per-prototype routes and 2 prototype APIs until T2.3-T2.5. Lifespan replaces on_event. Paths resolve from Settings.from_env() at call time, so the conftest now isolates tests by setting FIVE_IDEAS_DATA_DIR (no module-global monkeypatching). db.py dropped its 'pytest in sys.modules' export guard: exports now go next to whichever DB was written. Verified: 49 tests pass, no on_event warning; uvicorn showcase.web:app serves /, /admin/, /docs (checked on port 8765 because the user's own main.py server from 18 Sep holds :8000 and needs a restart); 'import app' fails; static build byte-identical to the baseline. The remaining Starlette WSGIMiddleware deprecation goes away with T2.8."
     },
     {
       "id": "T2.2",

@@ -18,8 +18,9 @@ if str(BASE_DIR) not in sys.path:
 
 from starlette.testclient import TestClient
 
-import db
-from app import app
+from showcase import db
+from showcase.config import Settings
+from showcase.web import create_app
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -69,13 +70,13 @@ def rewrite_html_links(html: str, base_path: str) -> str:
 
 def build_static(base_path: str = "/5-ideas/"):
     os.environ["HOSTED_STATIC"] = "1"
+    settings = Settings.from_env()
+    # Entering the client runs the app lifespan, which seeds an empty database from ideas.json.
+    with TestClient(create_app(settings)) as client:
+        _freeze(client, settings, base_path)
 
-    # Ensure database has demo content
-    db.init_db()
-    if not db.get_all_days():
-        db.seed_demo_data()
 
-    client = TestClient(app)
+def _freeze(client: TestClient, settings: Settings, base_path: str) -> None:
 
     # Clean and re-create dist/
     if DIST_DIR.exists():
@@ -110,7 +111,7 @@ def build_static(base_path: str = "/5-ideas/"):
     ]
 
     # Dynamic day routes
-    days = db.get_all_days()
+    days = db.get_all_days(settings.db_file)
     all_dates = [d["date"] for d in days]
     for d in days:
         date_str = d["date"]
@@ -131,7 +132,7 @@ def build_static(base_path: str = "/5-ideas/"):
         print(f"  ✓ {route_path} -> {out_file.relative_to(BASE_DIR)}")
 
     # Copy static streak.json and dates.json into dist
-    streak_src = BASE_DIR / "streak.json"
+    streak_src = settings.streak_file
     if streak_src.exists():
         shutil.copyfile(streak_src, DIST_DIR / "streak.json")
 

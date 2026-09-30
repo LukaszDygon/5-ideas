@@ -1,34 +1,53 @@
 """
 Flask Admin Application for 5 Ideas Daily Showcase.
-Mounted under FastAPI via Starlette WSGIMiddleware.
+Mounted under FastAPI via Starlette WSGIMiddleware; build it with `create_admin_app(settings)`.
 """
 
 from __future__ import annotations
 
-import json
-import os
 from datetime import datetime
 from typing import Any, Dict, List
-from flask import Flask, flash, redirect, render_template, request, url_for
 
-import db
+from flask import Blueprint, Flask, current_app, flash, redirect, render_template, request, url_for
 
-admin_app = Flask(
-    __name__,
-    template_folder="templates",
-    static_folder="static",
-)
-admin_app.secret_key = os.environ.get("FIVE_IDEAS_ADMIN_SECRET", "dev-only-secret")
-admin_app.jinja_env.globals["all_published_dates"] = lambda: [d["date"] for d in db.get_all_days()]
-admin_app.jinja_env.globals["get_streak"] = lambda: db.get_streak_data()["streak"]
-admin_app.jinja_env.globals["is_hosted"] = False
+from showcase import db
+from showcase.config import STATIC_DIR, TEMPLATES_DIR, Settings
+
+bp = Blueprint("admin", __name__)
 
 
-@admin_app.route("/")
+def _settings() -> Settings:
+    return current_app.config["SHOWCASE_SETTINGS"]
+
+
+def _db_path():
+    return _settings().db_file
+
+
+def _streak(manual_override=None, save: bool = False) -> Dict[str, Any]:
+    s = _settings()
+    if save:
+        return db.save_streak_data(manual_override, db_path=s.db_file, streak_file=s.streak_file)
+    return db.get_streak_data(db_path=s.db_file, streak_file=s.streak_file)
+
+
+def create_admin_app(settings: Settings | None = None) -> Flask:
+    settings = settings or Settings.from_env()
+    app = Flask(__name__, template_folder=str(TEMPLATES_DIR), static_folder=str(STATIC_DIR))
+    app.secret_key = settings.admin_secret
+    app.config["SHOWCASE_SETTINGS"] = settings
+    app.jinja_env.globals["all_published_dates"] = lambda: [d["date"] for d in db.get_all_days(settings.db_file)]
+    app.jinja_env.globals["get_streak"] = lambda: db.get_streak_data(settings.db_file, settings.streak_file)["streak"]
+    app.jinja_env.globals["is_hosted"] = False
+    app.register_blueprint(bp)
+    return app
+
+
+@bp.route("/")
 def dashboard():
-    days = db.get_all_days()
-    ranked_impls = db.get_ranked_implementations()
-    streak_data = db.get_streak_data()
+    days = db.get_all_days(_db_path())
+    ranked_impls = db.get_ranked_implementations(_db_path())
+    streak_data = _streak()
     return render_template(
         "admin/index.html",
         days=days,
@@ -40,11 +59,11 @@ def dashboard():
     )
 
 
-@admin_app.route("/streak/update", methods=["POST"])
+@bp.route("/streak/update", methods=["POST"])
 def update_streak():
     action = request.form.get("action", "save")
     if action == "reset":
-        db.save_streak_data(None)
+        _streak(None, save=True)
         flash("Unbroken streak reset to auto-calculated value.", "success")
     else:
         raw_val = request.form.get("streak_value", "").strip()
@@ -52,14 +71,14 @@ def update_streak():
             val = int(raw_val)
             if val < 0:
                 raise ValueError("Streak must be non-negative")
-            db.save_streak_data(val)
+            _streak(val, save=True)
             flash(f"Unbroken streak saved to static streak.json (value: {val} days).", "success")
         except ValueError:
             flash("Invalid streak number. Please enter a valid non-negative integer.", "error")
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("admin.dashboard"))
 
 
-@admin_app.route("/rankings/update", methods=["POST"])
+@bp.route("/rankings/update", methods=["POST"])
 def update_rankings():
     """Updates the ranks of implementations from the admin form."""
     form_data = request.form
@@ -68,11 +87,11 @@ def update_rankings():
             try:
                 impl_id = int(key.replace("rank_", ""))
                 new_rank = int(value)
-                db.update_implementation_rank(impl_id, new_rank)
+                db.update_implementation_rank(impl_id, new_rank, _db_path())
             except ValueError:
                 continue
     flash("Implementation rankings updated successfully!", "success")
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("admin.dashboard"))
 
 
 def parse_day_form_data(form_data, fallback_streak: int = 1) -> Dict[str, Any]:
@@ -171,7 +190,7 @@ def parse_day_form_data(form_data, fallback_streak: int = 1) -> Dict[str, Any]:
     }
 
 
-@admin_app.route("/day/new", methods=["GET", "POST"])
+@bp.route("/day/new", methods=["GET", "POST"])
 def new_day():
     if request.method == "POST":
         parsed = parse_day_form_data(request.form, fallback_streak=1)
@@ -182,24 +201,25 @@ def new_day():
             streak_count=parsed["streak_count"],
             notes=parsed["notes"],
             ideas_data=parsed["ideas_data"],
+            db_path=_db_path(),
         )
         if parsed["implemented_idx"] > 0:
             flash(f"Day {parsed['date']} created successfully with shipped prototype!", "success")
         else:
             flash(f"Day {parsed['date']} created successfully with 5 morning sparks (prototype in progress)!", "success")
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("admin.dashboard"))
 
     # GET
     default_date = datetime.now().strftime("%Y-%m-%d")
     return render_template("admin/edit_day.html", day=None, default_date=default_date, is_new=True)
 
 
-@admin_app.route("/day/<date_str>/edit", methods=["GET", "POST"])
+@bp.route("/day/<date_str>/edit", methods=["GET", "POST"])
 def edit_day(date_str: str):
-    day = db.get_day_by_date(date_str)
+    day = db.get_day_by_date(date_str, _db_path())
     if not day:
         flash(f"Day {date_str} not found.", "error")
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("admin.dashboard"))
 
     if request.method == "POST":
         parsed = parse_day_form_data(request.form, fallback_streak=day["streak_count"])
@@ -211,34 +231,36 @@ def edit_day(date_str: str):
             notes=parsed["notes"],
             ideas_data=parsed["ideas_data"],
             day_id=day["id"],
+            db_path=_db_path(),
         )
         if parsed["implemented_idx"] > 0:
             flash(f"Day {parsed['date']} updated successfully with shipped prototype!", "success")
         else:
             flash(f"Day {parsed['date']} updated successfully with morning sparks (prototype in progress).", "success")
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("admin.dashboard"))
 
     return render_template("admin/edit_day.html", day=day, default_date=date_str, is_new=False)
 
 
-@admin_app.route("/day/<int:day_id>/edit", methods=["GET", "POST"])
+@bp.route("/day/<int:day_id>/edit", methods=["GET", "POST"])
 def edit_day_by_id(day_id: int):
-    day = db.get_day_by_id(day_id)
+    day = db.get_day_by_id(day_id, _db_path())
     if not day:
         flash(f"Day #{day_id} not found.", "error")
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("admin.dashboard"))
     return edit_day(day["date"])
 
 
-@admin_app.route("/day/<int:day_id>/delete", methods=["POST"])
+@bp.route("/day/<int:day_id>/delete", methods=["POST"])
 def delete_day(day_id: int):
-    db.delete_day(day_id)
-    flash(f"Day deleted.", "info")
-    return redirect(url_for("dashboard"))
+    db.delete_day(day_id, _db_path())
+    flash("Day deleted.", "info")
+    return redirect(url_for("admin.dashboard"))
 
 
-@admin_app.route("/seed", methods=["POST"])
+@bp.route("/seed", methods=["POST"])
 def seed_demo():
-    db.seed_demo_data()
+    settings = _settings()
+    db.seed_demo_data(settings.db_file, settings.seed_file, settings.streak_file)
     flash("Demo data reseeded with 4 showcase days!", "success")
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("admin.dashboard"))

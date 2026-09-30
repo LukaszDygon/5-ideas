@@ -1,35 +1,30 @@
 """
-Pytest configuration ensuring tests run in complete database isolation.
+Pytest configuration: every test gets its own data directory.
+
+FIVE_IDEAS_DATA_DIR points at a tmp copy of the committed data, so code that resolves
+paths from the environment (db defaults, create_app(), the admin) never touches real files.
 """
 
 import shutil
-from pathlib import Path
+
 import pytest
-import db
-import admin
-import app
+
+from showcase import db
+from showcase.config import DEFAULT_DATA_DIR, SEED_FILENAME, STREAK_FILENAME
+
 
 @pytest.fixture(autouse=True)
 def isolate_test_environment(tmp_path, monkeypatch):
-    test_db = tmp_path / "test_ideas.db"
-    test_streak = tmp_path / "test_streak.json"
-    
-    # Initialize test db from ideas.json
-    db.init_db(test_db)
-    if db.SEED_FILE.exists():
-        db.load_from_json(db.SEED_FILE, db_path=test_db)
-        
-    # Copy or create test streak
-    if db.STREAK_FILE.exists():
-        shutil.copyfile(db.STREAK_FILE, test_streak)
+    data_dir = tmp_path / "data"
+    data_dir.mkdir()
+    shutil.copyfile(DEFAULT_DATA_DIR / SEED_FILENAME, data_dir / SEED_FILENAME)
+    streak = DEFAULT_DATA_DIR / STREAK_FILENAME
+    if streak.exists():
+        shutil.copyfile(streak, data_dir / STREAK_FILENAME)
     else:
-        test_streak.write_text("{\"streak\": 1, \"manual_override\": null, \"last_updated\": \"2026-09-10\"}")
+        (data_dir / STREAK_FILENAME).write_text('{"streak": 1, "manual_override": null, "last_updated": "2026-09-10"}')
 
-    monkeypatch.setattr(db, "DB_FILE", test_db)
-    monkeypatch.setattr(admin.db, "DB_FILE", test_db)
-    monkeypatch.setattr(app.db, "DB_FILE", test_db)
-    monkeypatch.setattr(db, "STREAK_FILE", test_streak)
-    monkeypatch.setattr(admin.db, "STREAK_FILE", test_streak)
-    monkeypatch.setattr(app.db, "STREAK_FILE", test_streak)
-    
-    yield test_db
+    monkeypatch.setenv("FIVE_IDEAS_DATA_DIR", str(data_dir))
+    monkeypatch.delenv("HOSTED_STATIC", raising=False)
+    db.ensure_database()
+    yield data_dir / "ideas.db"

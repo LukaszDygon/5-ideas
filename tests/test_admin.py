@@ -3,16 +3,15 @@ Tests for Flask admin application (admin.py).
 """
 
 import pytest
-from admin import admin_app
-import db
+
+from showcase import db
+from showcase.admin import create_admin_app
 
 
 @pytest.fixture
 def flask_client():
+    admin_app = create_admin_app()
     admin_app.config["TESTING"] = True
-    db.init_db()
-    if not db.get_all_days():
-        db.seed_demo_data()
     with admin_app.test_client() as client:
         yield client
 

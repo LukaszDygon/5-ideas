@@ -14,7 +14,7 @@ def main():
     print("   • Design System Gallery: http://localhost:8000/design-system")
     print("   • Flask Admin Dashboard: http://localhost:8000/admin")
     print("   • Interactive Swagger Docs: http://localhost:8000/docs")
-    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("showcase.web:app", host="127.0.0.1", port=8000, reload=True)
 
 
 if __name__ == "__main__":

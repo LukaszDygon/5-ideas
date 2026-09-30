@@ -3,8 +3,10 @@ Tests for SQLite database layer in db.py.
 """
 
 from pathlib import Path
+
 import pytest
-import db
+
+from showcase import db
 
 
 @pytest.fixture

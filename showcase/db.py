@@ -11,14 +11,17 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-DB_FILE = Path(__file__).parent / "ideas.db"
-SEED_FILE = Path(__file__).parent / "ideas.json"
-STREAK_FILE = Path(__file__).parent / "streak.json"
+from showcase.config import SEED_FILENAME, get_settings
 
+
+def resolve_db_path(db_path: Path | str | None = None) -> Path:
+    """Explicit path wins; otherwise the configured data directory (read at call time)."""
+    return Path(db_path) if db_path else get_settings().db_file
 
 
 def get_db(db_path: Path | str | None = None) -> sqlite3.Connection:
-    path = db_path or DB_FILE
+    path = resolve_db_path(db_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
@@ -79,20 +82,25 @@ def init_db(db_path: Path | str | None = None) -> None:
         )
     conn.close()
 
-    # If initializing main DB and empty, load legit content from ideas.json
-    if db_path is None and SEED_FILE.exists():
-        conn = get_db(db_path)
-        cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM days")
-        count = cur.fetchone()[0]
-        conn.close()
-        if count == 0:
-            load_from_json(SEED_FILE)
+
+def ensure_database(db_path: Path | str | None = None, seed_file: Path | str | None = None) -> None:
+    """Creates the schema and, when the database is empty, loads the committed seed/export file."""
+    init_db(db_path)
+    conn = get_db(db_path)
+    count = conn.execute("SELECT COUNT(*) FROM days").fetchone()[0]
+    conn.close()
+    if count == 0:
+        load_from_json(seed_file, db_path=db_path)
+
+
+def export_path_for(db_path: Path | str | None = None) -> Path:
+    """The JSON export lives next to the database it mirrors."""
+    return resolve_db_path(db_path).with_name(SEED_FILENAME)
 
 
 def export_to_json(json_path: Path | str | None = None, db_path: Path | str | None = None) -> None:
     """Exports all days and ideas to a JSON file."""
-    path = Path(json_path or SEED_FILE)
+    path = Path(json_path) if json_path else export_path_for(db_path)
     days = get_all_days(db_path)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(days, f, indent=2)
@@ -100,7 +108,7 @@ def export_to_json(json_path: Path | str | None = None, db_path: Path | str | No
 
 def load_from_json(json_path: Path | str | None = None, db_path: Path | str | None = None) -> None:
     """Loads days and ideas from a JSON file into the database."""
-    path = Path(json_path or SEED_FILE)
+    path = Path(json_path) if json_path else get_settings().seed_file
     if not path.exists():
         return
     with open(path, "r", encoding="utf-8") as f:
@@ -261,10 +269,7 @@ def get_calendar_days(
 
 
 def _can_auto_export(db_path: Path | str | None, auto_export: bool = True) -> bool:
-    import sys
-    if "pytest" in sys.modules:
-        return False
-    return auto_export and (db_path is None or str(db_path) == str(DB_FILE))
+    return auto_export
 
 
 def save_day(
@@ -360,7 +365,7 @@ def save_day(
                     )
     conn.close()
     if _can_auto_export(db_path, auto_export):
-        export_to_json()
+        export_to_json(db_path=db_path)
     return day_id
 
 
@@ -370,7 +375,7 @@ def update_implementation_rank(impl_id: int, new_rank: int, db_path: Path | str 
         conn.execute("UPDATE implementations SET rank = ? WHERE id = ?", (new_rank, impl_id))
     conn.close()
     if _can_auto_export(db_path):
-        export_to_json()
+        export_to_json(db_path=db_path)
 
 
 def reorder_ranks(ordered_impl_ids: List[int], db_path: Path | str | None = None) -> None:
@@ -380,7 +385,7 @@ def reorder_ranks(ordered_impl_ids: List[int], db_path: Path | str | None = None
             conn.execute("UPDATE implementations SET rank = ? WHERE id = ?", (index, impl_id))
     conn.close()
     if _can_auto_export(db_path):
-        export_to_json()
+        export_to_json(db_path=db_path)
 
 
 def delete_day(day_id: int, db_path: Path | str | None = None) -> None:
@@ -389,7 +394,7 @@ def delete_day(day_id: int, db_path: Path | str | None = None) -> None:
         conn.execute("DELETE FROM days WHERE id = ?", (day_id,))
     conn.close()
     if _can_auto_export(db_path):
-        export_to_json()
+        export_to_json(db_path=db_path)
 
 
 
@@ -421,12 +426,15 @@ def calculate_streak(db_path: Path | str | None = None) -> int:
     return streak
 
 
-def get_streak_data(db_path: Path | str | None = None) -> Dict[str, Any]:
+def get_streak_data(
+    db_path: Path | str | None = None, streak_file: Path | str | None = None
+) -> Dict[str, Any]:
     """Reads streak.json and returns streak data with real calculated streak."""
+    path = Path(streak_file) if streak_file else get_settings().streak_file
     manual_override = None
-    if STREAK_FILE.exists():
+    if path.exists():
         try:
-            with open(STREAK_FILE, "r", encoding="utf-8") as f:
+            with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 manual_override = data.get("manual_override")
         except Exception:
@@ -443,8 +451,13 @@ def get_streak_data(db_path: Path | str | None = None) -> Dict[str, Any]:
     }
 
 
-def save_streak_data(manual_override: Optional[int], db_path: Path | str | None = None) -> Dict[str, Any]:
+def save_streak_data(
+    manual_override: Optional[int],
+    db_path: Path | str | None = None,
+    streak_file: Path | str | None = None,
+) -> Dict[str, Any]:
     """Saves streak configuration to streak.json."""
+    path = Path(streak_file) if streak_file else get_settings().streak_file
     calculated = calculate_streak(db_path)
     current = manual_override if (manual_override is not None and manual_override >= 0) else calculated
     streak_data = {
@@ -453,27 +466,30 @@ def save_streak_data(manual_override: Optional[int], db_path: Path | str | None 
         "manual_override": manual_override,
         "last_updated": datetime.now().strftime("%Y-%m-%d"),
     }
-    with open(STREAK_FILE, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(streak_data, f, indent=2)
     return streak_data
 
 
-def seed_demo_data(db_path: Path | str | None = None) -> None:
-    """Seeds content strictly from ideas.json."""
+def seed_demo_data(
+    db_path: Path | str | None = None,
+    seed_file: Path | str | None = None,
+    streak_file: Path | str | None = None,
+) -> None:
+    """Wipes the database and reloads it strictly from ideas.json."""
     init_db(db_path)
     conn = get_db(db_path)
     with conn:
         conn.execute("DELETE FROM days;")
     conn.close()
 
-    if SEED_FILE.exists():
-        load_from_json(SEED_FILE, db_path=db_path)
+    load_from_json(seed_file, db_path=db_path)
     # Ensure streak file is updated
-    save_streak_data(None, db_path=db_path)
+    save_streak_data(None, db_path=db_path, streak_file=streak_file)
 
 
 if __name__ == "__main__":
-    print(f"Initializing database at {DB_FILE}...")
+    print(f"Initializing database at {resolve_db_path()}...")
     init_db()
     seed_demo_data()
     days = get_all_days()
