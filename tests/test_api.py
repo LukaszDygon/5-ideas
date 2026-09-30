@@ -186,13 +186,14 @@ def test_interactive_crusade_trail_view(client):
 def test_interactive_monster_mystery_view(client):
     response = client.get("/interactive/monster-mystery")
     assert response.status_code == 200
-    assert "The Monster Gala Murder" in response.text
-    assert "CORPSE PENALTY" in response.text
-    assert "Host Master One-Pager" in response.text
-    assert "Count Vladimir of HR" in response.text
-    assert "Fenrir the Agile Scrum Master" in response.text
-    assert "EXHIBIT A: PHYSICAL TRACE" in response.text
-    assert "EXHIBIT D: THE MURDER WEAPON" in response.text
+    text = page_with_assets(client, "/interactive/monster-mystery")
+    assert "The Monster Gala Murder" in text
+    assert "CORPSE PENALTY" in text
+    assert "Host Master One-Pager" in text
+    assert "Count Vladimir of HR" in text
+    assert "Fenrir the Agile Scrum Master" in text
+    assert "EXHIBIT A: PHYSICAL TRACE" in text
+    assert "EXHIBIT D: THE MURDER WEAPON" in text
 
 
 
