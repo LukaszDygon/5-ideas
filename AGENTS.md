@@ -82,8 +82,9 @@ uv run five-ideas seed --yes                               # wipe the DB and rel
 | Routes, stack, developer commands | [README.md](README.md) |
 | Design tokens and components | `templates/design_system.html`, `static/style.css`, `.claude/rules/design-system.md` |
 | Python conventions | `.claude/rules/python.md` |
+| Review a prototype | subagents `design-reviewer` (design + a11y, read-only) and `prototype-qa` (tests, build, assets) in `.claude/agents/` |
 | Prototype conventions | `.claude/rules/prototypes.md` |
 | Schema for `days`, `ideas`, `implementations` | `showcase/db.py` |
 | Daily-workflow skills and UI snippets | `.claude/skills/` (`design-system` holds copy-paste components) |
-| MCP servers (Stitch) | `.mcp.json`; the key comes from `STITCH_API_KEY` (see `.env.example`) |
+| MCP servers (Stitch) | `.mcp.json`; export `STITCH_API_KEY` (see `.env.example`) before starting `claude`, approve the server once |
 | Restructure plan and status | `docs/plan/PLAN.md`, `docs/plan/progress.json` |

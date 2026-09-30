@@ -453,7 +453,7 @@
       "commit_message": "feat(claude): skills for the daily workflow; .agents/skills symlink to .claude/skills",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "5c7604f",
       "notes": "7 skills in .claude/skills: spec-implementation, record-implementation, capture-implementation (moved with git mv, commands switched to 'uv run five-ideas', ask-before-generating rules kept), plus new-day, new-prototype, ship (disable-model-invocation: true, never pushes, stages explicit paths) and design-system (4 rules + 6 snippets from templates/design_system.html and templates/index.html). .agents/skills/<name> are relative symlinks for all 7. tests/ai_setup/test_skills.py (committed with T3.2) checks frontmatter, CLI commands, symlinks, duplicate descriptions and ship's flag. Interactive checks (autocomplete of /new-day /new-prototype /ship, /skill-doctor) need the user's session."
     },
     {
@@ -461,7 +461,7 @@
       "phase": "P1b",
       "title": "Subagents: design-reviewer, prototype-qa",
       "priority": "should",
-      "status": "todo",
+      "status": "in_progress",
       "order": 16,
       "depends_on": [
         "T1.4"
@@ -475,7 +475,7 @@
         "@design-reviewer review which-is-faster → findings, git status clean"
       ],
       "commit_message": "feat(claude): design-reviewer and prototype-qa subagents",
-      "started": null,
+      "started": "2026-09-30",
       "completed": null,
       "commit": null,
       "notes": ""
@@ -485,7 +485,7 @@
       "phase": "P1b",
       "title": "MCP project config verified",
       "priority": "should",
-      "status": "todo",
+      "status": "done",
       "order": 17,
       "depends_on": [
         "T0.2"
@@ -499,10 +499,10 @@
         "git grep -n X-Goog-Api-Key shows only the ${STITCH_API_KEY} placeholder"
       ],
       "commit_message": "docs: MCP setup",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "claude mcp list shows 'stitch: https://stitch.googleapis.com/mcp (HTTP)' from project config .mcp.json, 'Pending approval (run claude to approve)', with a warning that STITCH_API_KEY is missing, as expected until the user exports it (Claude Code does not read .env). .mcp.json is tracked; git grep X-Goog-Api-Key outside docs/plan shows only the placeholder. AGENTS.md documents: export the key, approve the server once. User action still pending: rotate the old key, put the new one in STITCH_API_KEY, then delete mcp_config.json and .agents/plugins/stitch/mcp_config.json."
     },
     {
       "id": "T1.7",
