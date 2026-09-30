@@ -67,8 +67,9 @@ def test_interactive_neondj_view(client):
 def test_interactive_canopy_view(client):
     response = client.get("/interactive/canopy")
     assert response.status_code == 200
-    assert "Canopy Growing Algorithm" in response.text
-    assert "Growth Model" in response.text
+    text = page_with_assets(client, "/interactive/canopy")
+    assert "Canopy Growing Algorithm" in text
+    assert "Growth Model" in text
 
 
 def test_interactive_campfire_view(client):
