@@ -74,3 +74,30 @@ def test_admin_visibility_and_transcript_label(client, monkeypatch):
     assert day_resp_hosted.status_code == 200
     assert 'href="/admin/day/2026-09-10/edit"' not in day_resp_hosted.text
     assert "AI Interaction Summary" in day_resp_hosted.text
+
+
+def test_core_pages_render(client, settings):
+    latest = db.get_published_dates(settings.db_file)[0]
+    for path in ("/", "/calendar", "/stream", f"/day/{latest}", "/design-system"):
+        response = client.get(path)
+        assert response.status_code == 200, path
+        assert "IDEAS DAILY" in response.text, path
+
+
+def test_header_shows_the_streak(client, settings):
+    from showcase import streak
+
+    value = streak.get_streak_data(settings.db_file, settings.streak_file)["streak"]
+    assert f"UNBROKEN STREAK: {value} DAYS" in client.get("/").text
+
+
+def test_day_page_links_to_its_prototype(client):
+    html = client.get("/day/2026-09-29").text
+    assert 'href="/interactive/which-is-faster"' in html
+    assert "Which One is Faster?" in html
+
+
+def test_calendar_month_navigation(client):
+    response = client.get("/calendar?year=2026&month=9")
+    assert response.status_code == 200
+    assert "September" in response.text
