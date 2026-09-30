@@ -75,9 +75,6 @@
       "Read(~/.config/gcloud/**)",
       "Read(~/.claude/.credentials.json)",
       "Read(~/.claude.json)",
-      "Edit(./data/**)",
-      "Edit(./dist/**)",
-      "Edit(./.baseline/**)",
       "Bash(sudo *)",
       "Bash(rm -rf /*)"
     ]
@@ -85,6 +82,9 @@
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
+    "excludedCommands": [
+      "gh *"
+    ],
     "network": {
       "allowedDomains": [
         "pypi.org",
