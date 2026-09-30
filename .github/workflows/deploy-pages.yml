@@ -35,8 +35,11 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
+      - name: Lint
+        run: uv run ruff check . && uv run ruff format --check .
+
       - name: Run tests
-        run: uv run pytest
+        run: uv run pytest -q --durations=5
 
       - name: Build static site
         run: uv run five-ideas build --base-path /5-ideas/
