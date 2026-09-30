@@ -58,11 +58,16 @@
       "Bash(rm *)",
       "Edit(./.claude/settings.json)",
       "Edit(./.github/**)",
-      "Edit(./uv.lock)"
+      "Edit(./uv.lock)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push *--force*)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)",
+      "Bash(git rebase *)"
     ],
     "deny": [
       "Read(./.env)",
-      "Read(./.env.*)",
       "Read(**/mcp_config.json)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
@@ -75,12 +80,6 @@
       "Edit(./.baseline/**)",
       "Bash(sudo *)",
       "Bash(rm -rf /*)",
-      "Bash(git push --force *)",
-      "Bash(git push -f *)",
-      "Bash(git push *--force*)",
-      "Bash(git reset --hard *)",
-      "Bash(git clean *)",
-      "Bash(git rebase *)"
     ]
   },
   "sandbox": {
@@ -104,26 +103,85 @@
       ]
     },
     "filesystem": {
-      "allowWrite": ["~/.cache/uv", "~/.local/share/uv"],
-      "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg", "~/.config/gcloud"]
+      "allowWrite": [
+        "~/.cache/uv",
+        "~/.local/share/uv"
+      ],
+      "denyRead": [
+        "~/.ssh",
+        "~/.aws",
+        "~/.gnupg",
+        "~/.config/gcloud"
+      ]
     }
   },
   "hooks": {
     "SessionStart": [
-      {"hooks": [{"type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-start.py", "timeout": 10}]}
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-start.py",
+            "timeout": 10
+          }
+        ]
+      }
     ],
     "UserPromptSubmit": [
-      {"hooks": [{"type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/prompt-context.py", "timeout": 5}]}
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/prompt-context.py",
+            "timeout": 5
+          }
+        ]
+      }
     ],
     "PreToolUse": [
-      {"matcher": "Bash", "hooks": [{"type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-bash.py", "timeout": 5}]},
-      {"matcher": "Edit|Write|MultiEdit|NotebookEdit", "hooks": [{"type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.py", "timeout": 5}]}
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-bash.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.py",
+            "timeout": 5
+          }
+        ]
+      }
     ],
     "PostToolUse": [
-      {"matcher": "Edit|Write|MultiEdit", "hooks": [{"type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit.py", "timeout": 30}]}
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit.py",
+            "timeout": 30
+          }
+        ]
+      }
     ],
     "Stop": [
-      {"hooks": [{"type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/stop-check.py", "timeout": 120}]}
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/stop-check.py",
+            "timeout": 120
+          }
+        ]
+      }
     ]
   }
 }
