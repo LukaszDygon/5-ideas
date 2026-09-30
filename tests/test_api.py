@@ -74,11 +74,12 @@ def test_interactive_canopy_view(client):
 def test_interactive_campfire_view(client):
     response = client.get("/interactive/campfire")
     assert response.status_code == 200
-    assert "A Campfire Made Out of LED Blocks" in response.text
-    assert "DARK MATTER BERLIN" in response.text.upper()
-    assert "SOUNDSCAPE_MATRIX" in response.text
-    assert "audio-stem-music" in response.text
-    assert "audio-stem-crackle" in response.text
+    text = page_with_assets(client, "/interactive/campfire")
+    assert "A Campfire Made Out of LED Blocks" in text
+    assert "DARK MATTER BERLIN" in text.upper()
+    assert "SOUNDSCAPE_MATRIX" in text
+    assert "audio-stem-music" in text
+    assert "audio-stem-crackle" in text
 
 
 def test_interactive_campfire_hardware_view(client):
