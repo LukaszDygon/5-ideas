@@ -119,7 +119,7 @@
       "commit_message": "docs(agents): CLAUDE.md imports AGENTS.md; add path-scoped rules",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "3092292",
       "notes": "AGENTS.md (76 lines, 559 words) describes the current layout; it is updated as T2.x/T1.4 land. All backtick paths in AGENTS.md exist (scripted check). rules/prototypes.md documents the target prototypes/<slug>/ contract and only loads once that folder exists (T2.3). Interactive checks (/memory shows AGENTS.md imported, /context shows python.md on .py) need a fresh claude session by the user."
     },
     {
@@ -127,7 +127,7 @@
       "phase": "P1a",
       "title": "Permissions and sandbox in .claude/settings.json",
       "priority": "must",
-      "status": "todo",
+      "status": "blocked",
       "order": 4,
       "depends_on": [
         "T0.2"
@@ -143,17 +143,17 @@
         "/permissions lists project rules"
       ],
       "commit_message": "feat(claude): project permissions and sandbox settings",
-      "started": null,
+      "started": "2026-09-30",
       "completed": null,
       "commit": null,
-      "notes": "Confirm key names against code.claude.com/docs/en/settings.md and sandboxing.md."
+      "notes": "Confirmed against the docs: Write(path) rules are ignored (use Edit(path)), 'Bash(x *)' is the current form (':*' still accepted), sandbox keys are sandbox.network.allowedDomains and sandbox.filesystem.{allowWrite,denyRead}, and Read deny rules are merged into the sandbox, so a blanket Read(~/.claude/**) would also stop the T1.7 capture script from reading transcripts (narrowed to ~/.claude/.credentials.json and ~/.claude.json). Sandbox also needs allowWrite for ~/.cache/uv and ~/.local/share/uv, or uv run fails. BLOCKED: the agent's auto-mode classifier refuses to write .claude/settings.json (self-modification). Draft is ready for the user to review and install. Proposed file: docs/plan/settings.proposed.json (permissions + sandbox + hook registration). To finish T1.2/T1.3 the user reviews it and runs: cp docs/plan/settings.proposed.json .claude/settings.json"
     },
     {
       "id": "T1.3",
       "phase": "P1a",
       "title": "Hooks: session-start, guard-bash, protect-files, post-edit, stop-check, prompt-context",
       "priority": "must",
-      "status": "todo",
+      "status": "blocked",
       "order": 5,
       "depends_on": [
         "T1.2"
@@ -169,10 +169,10 @@
         "break a test, say 'done' → Stop hook blocks; revert"
       ],
       "commit_message": "feat(claude): session, guard, protect, post-edit and stop hooks",
-      "started": null,
+      "started": "2026-09-30",
       "completed": null,
       "commit": null,
-      "notes": ""
+      "notes": "Six hook scripts written and table-tested (guard-bash 17 deny / 13 allow cases, protect-files 10/6, stop-check blocks on a deliberately failing test and passes on a clean tree, session-start writes .claude/state/session.json, post-edit flags bad JSON/Jinja). post-edit is Python rather than sh, so it can parse the JSON payload with the stdlib. Hooks also allow the system temp dir, and protect-files allows ~/.claude/projects (agent memory). BLOCKED on T1.2: registration lives in .claude/settings.json (hooks section of docs/plan/settings.proposed.json). Live checks (/hooks, a real force-push refusal) need the user's session after installing."
     },
     {
       "id": "T2.1",
