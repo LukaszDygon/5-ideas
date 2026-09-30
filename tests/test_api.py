@@ -141,12 +141,13 @@ def test_interactive_mcnuggets_view(client):
 def test_interactive_nostalgia_cap_view(client):
     response = client.get("/interactive/nostalgia-cap")
     assert response.status_code == 200
-    assert "Nostalgia Cap-o-Matic '99" in response.text
-    assert "hatCanvas" in response.text
-    assert "SURPRISE DROP" in response.text
-    assert "Radical Magenta" in response.text
-    assert "Synthwave Sunset" in response.text
-    assert "receiptModal" in response.text
+    text = page_with_assets(client, "/interactive/nostalgia-cap")
+    assert "Nostalgia Cap-o-Matic '99" in text
+    assert "hatCanvas" in text
+    assert "SURPRISE DROP" in text
+    assert "Radical Magenta" in text
+    assert "Synthwave Sunset" in text
+    assert "receiptModal" in text
 
 
 def test_interactive_tortoise_view(client):

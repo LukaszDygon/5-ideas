@@ -1,0 +1,18 @@
+  /* Pulse animation for scarcity pill */
+  @keyframes scarcityPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .scarcity-pulse {
+    animation: scarcityPulse 1.8s infinite ease-in-out;
+  }
+
+  /* Range sliders styled with Radical Memphis Pop */
+  input[type=range] {
+    accent-color: #b40065;
+  }
+
+  /* Canvas preview box */
+  .hat-canvas-wrapper {
+    background: radial-gradient(circle, #ffffff 40%, #e2e8f0 100%);
+  }
