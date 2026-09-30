@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "templates"
 STATIC_DIR = ROOT / "static"
-DEFAULT_DATA_DIR = ROOT
+DEFAULT_DATA_DIR = ROOT / "data"
 
 DB_FILENAME = "ideas.db"
 SEED_FILENAME = "ideas.json"

@@ -36,7 +36,7 @@ uv run python -m showcase.db                                 # wipe DB and resee
 | `templates/` | Site templates, `templates/admin/`, and one template per prototype |
 | `static/` | Shared `static/style.css` and `static/app.js`, plus prototype media and data |
 | `tests/` | pytest suite (`tests/conftest.py` isolates the DB per test) |
-| `ideas.json`, `streak.json` | Committed seed/export data |
+| `data/` | `data/ideas.json` and `data/streak.json` (committed seed/export), `ideas.db` (local, ignored) |
 | `.claude/` | Claude Code settings, rules, hooks, skills |
 | `.agents/skills/` | Workflow skills (spec, record, capture) |
 | `docs/plan/` | Current restructure plan and its progress tracker |
@@ -53,13 +53,13 @@ uv run python -m showcase.db                                 # wipe DB and resee
 
 - Simplicity first: stdlib before packages, native browser APIs before dependencies, minimal code.
 - Commits: `feat(YYYY-MM-DD): <what shipped>` for daily work; `refactor:`, `test:`, `docs:`, `chore:` otherwise.
-- Data files (`ideas.json`, `streak.json`, `*.db`) change only through the scripts or the admin.
+- Data files (`data/ideas.json`, `data/streak.json`, `*.db`) change only through the scripts or the admin.
 - UI follows the design system: [README.md#design-system-rules-radical-memphis-pop](README.md#design-system-rules-radical-memphis-pop), live at `/design-system` (`templates/design_system.html`).
 - Every prototype template extends `templates/base.html`.
 
 ## Do not
 
-- Hand-edit `ideas.json`, `streak.json` or any `*.db` file.
+- Hand-edit anything in `data/` (`ideas.json`, `streak.json`, `*.db`).
 - Add dependencies without asking.
 - Touch `dist/` (build output) or `.baseline/` (restructure snapshots).
 - Print, copy or commit secrets (`.env`, `mcp_config.json`). Use `.env.example` for new variables.

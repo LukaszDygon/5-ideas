@@ -205,7 +205,7 @@
       "commit_message": "refactor: move app into showcase/ package with app factory",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "8cdf05f",
       "notes": "showcase/{config,db,admin,web,api}.py plus a temporary showcase/legacy_prototypes.py that holds the 15 per-prototype routes and 2 prototype APIs until T2.3-T2.5. Lifespan replaces on_event. Paths resolve from Settings.from_env() at call time, so the conftest now isolates tests by setting FIVE_IDEAS_DATA_DIR (no module-global monkeypatching). db.py dropped its 'pytest in sys.modules' export guard: exports now go next to whichever DB was written. Verified: 49 tests pass, no on_event warning; uvicorn showcase.web:app serves /, /admin/, /docs (checked on port 8765 because the user's own main.py server from 18 Sep holds :8000 and needs a restart); 'import app' fails; static build byte-identical to the baseline. The remaining Starlette WSGIMiddleware deprecation goes away with T2.8."
     },
     {
@@ -213,7 +213,7 @@
       "phase": "P2",
       "title": "Move data files under data/",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 7,
       "depends_on": [
         "T2.1"
@@ -230,10 +230,10 @@
         "uv run pytest -q"
       ],
       "commit_message": "refactor: move data files under data/",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "git mv of ideas.json and streak.json; local ideas.db moved with mv (no -wal/-shm present). DEFAULT_DATA_DIR is now ROOT/data. The sparks script prints 2026-09-29; tests pass; static build still byte-identical to the baseline."
     },
     {
       "id": "T2.3",

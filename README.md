@@ -17,7 +17,7 @@ Every day:
 - **Runtime & Package Manager:** Python `>=3.13` managed with `uv`.
 - **Web & API Framework:** `FastAPI` (ASGI) for public routes, REST API, Swagger `/docs`, and static files.
 - **Admin Panel Framework:** `Flask` (WSGI) mounted at `/admin` via Starlette `WSGIMiddleware`.
-- **Database:** Python stdlib `sqlite3` (`ideas.db`) in WAL mode with foreign keys and zero external ORM bloat.
+- **Database:** Python stdlib `sqlite3` (`data/ideas.db`, seeded from `data/ideas.json`) in WAL mode with foreign keys and zero external ORM bloat.
 - **Design System:** Radical Memphis Pop neo-brutalist Tailwind CSS + custom tokens (`style.css`), Bricolage Grotesque, Space Grotesk, and JetBrains Mono.
 - **Testing:** `pytest` + `httpx` (`TestClient`).
 

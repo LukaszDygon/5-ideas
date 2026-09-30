@@ -17,6 +17,7 @@ mcp_config.json
 *.db
 *.db-wal
 *.db-shm
+data/*.db*
 
 
 
