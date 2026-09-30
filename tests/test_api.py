@@ -98,10 +98,11 @@ def test_interactive_campfire_hardware_view(client):
 def test_interactive_house_stats_view(client):
     response = client.get("/interactive/house-stats")
     assert response.status_code == 200
-    assert "House Statistics & Dossier Generator" in response.text
-    assert "Walkability Index" in response.text
-    assert "Nearby Schools & Ofsted Inspection Ratings" in response.text
-    assert "Criminal Activity Per Capita vs UK Benchmarks" in response.text
+    text = page_with_assets(client, "/interactive/house-stats")
+    assert "House Statistics & Dossier Generator" in text
+    assert "Walkability Index" in text
+    assert "Nearby Schools & Ofsted Inspection Ratings" in text
+    assert "Criminal Activity Per Capita vs UK Benchmarks" in text
 
 
 def test_interactive_flute_view(client):
@@ -276,16 +277,17 @@ def test_interactive_slots1v1(client):
 def test_interactive_house_stats(client):
     response = client.get("/interactive/house-stats")
     assert response.status_code == 200
-    assert "House Statistics & Dossier Generator: Home Search Tracker" in response.text
-    assert "Home Search Portfolio" in response.text
-    assert "Heuristic Valuation Engine" in response.text
-    assert "Admin Criteria & Places" in response.text
-    assert "Area Dossier & Walk Routes" in response.text
-    assert "Sold STC" in response.text
-    assert "Under Offer" in response.text
-    assert "Active" in response.text
-    assert "Quick Auto-Populate from Listing URL" in response.text
-    assert "https://github.com/LukaszDygon/house_stats" in response.text
+    text = page_with_assets(client, "/interactive/house-stats")
+    assert "House Statistics & Dossier Generator: Home Search Tracker" in text
+    assert "Home Search Portfolio" in text
+    assert "Heuristic Valuation Engine" in text
+    assert "Admin Criteria & Places" in text
+    assert "Area Dossier & Walk Routes" in text
+    assert "Sold STC" in text
+    assert "Under Offer" in text
+    assert "Active" in text
+    assert "Quick Auto-Populate from Listing URL" in text
+    assert "https://github.com/LukaszDygon/house_stats" in text
 
 
 def test_api_house_stats_parse_url(client):
