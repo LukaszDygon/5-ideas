@@ -1,0 +1,26 @@
+  /* Portuguese ceramic wall backdrop */
+  .ceramic-wall-bg {
+    background-color: #f1f5f9;
+    background-image: 
+      radial-gradient(#0038a8 0.85px, transparent 0.85px),
+      radial-gradient(#0038a8 0.85px, #f1f5f9 0.85px);
+    background-size: 28px 28px;
+    background-position: 0 0, 14px 14px;
+  }
+
+  /* Prime pulse indicator */
+  @keyframes primeGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+    50% { box-shadow: 0 0 0 8px rgba(251, 191, 36, 0); }
+  }
+  .prime-pulse {
+    animation: primeGlow 1.6s infinite;
+  }
+
+  #fractile-canvas {
+    cursor: grab;
+    touch-action: none;
+  }
+  #fractile-canvas:active {
+    cursor: grabbing;
+  }

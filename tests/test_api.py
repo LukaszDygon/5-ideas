@@ -119,10 +119,11 @@ def test_interactive_flute_view(client):
 def test_interactive_fractiles_view(client):
     response = client.get("/interactive/fractiles")
     assert response.status_code == 200
-    assert "FRACTILES" in response.text
-    assert "Aperiodic Prime Spiral" in response.text
-    assert "PORTO AZULEJO PROTOCOL" in response.text
-    assert "fractile-canvas" in response.text
+    text = page_with_assets(client, "/interactive/fractiles")
+    assert "FRACTILES" in text
+    assert "Aperiodic Prime Spiral" in text
+    assert "PORTO AZULEJO PROTOCOL" in text
+    assert "fractile-canvas" in text
 
 
 def test_interactive_mcnuggets_view(client):
