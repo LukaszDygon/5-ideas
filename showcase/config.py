@@ -1,7 +1,8 @@
-"""Paths and environment-driven settings.
+"""Paths and settings.
 
-Everything that depends on the environment is read when `Settings.from_env()` is called,
-so tests and the CLI can point the app at another data directory via `FIVE_IDEAS_DATA_DIR`.
+`Settings` is plain data passed explicitly to the app, the CLI and the static build.
+Only `Settings.from_env()` reads the environment (the variables in ENV_VARS), for the
+dev server and the CLI defaults; tests construct `Settings` directly.
 """
 
 from __future__ import annotations
@@ -17,6 +18,9 @@ DEFAULT_DATA_DIR = ROOT / "data"
 DEFAULT_PROTOTYPES_DIR = ROOT / "prototypes"
 DIST_DIR = ROOT / "dist"
 
+# The only environment variables the app reads (all optional).
+ENV_VARS = ("FIVE_IDEAS_DATA_DIR", "FIVE_IDEAS_PROTOTYPES_DIR", "HOUSE_STATS_DIR")
+
 DB_FILENAME = "ideas.db"
 SEED_FILENAME = "ideas.json"
 STREAK_FILENAME = "streak.json"
@@ -27,6 +31,7 @@ class Settings:
     data_dir: Path
     house_stats_dir: Path | None = None
     prototypes_dir: Path = DEFAULT_PROTOTYPES_DIR
+    hosted: bool = False  # True while freezing the static site: admin links are hidden
 
     @property
     def db_file(self) -> Path:
@@ -52,8 +57,3 @@ class Settings:
 
 def get_settings() -> Settings:
     return Settings.from_env()
-
-
-def is_hosted() -> bool:
-    """True while freezing the static site (admin links are hidden)."""
-    return os.environ.get("HOSTED_STATIC") == "1"

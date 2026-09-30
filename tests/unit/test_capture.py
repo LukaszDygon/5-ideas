@@ -86,12 +86,14 @@ def test_find_claude_transcript_falls_back_to_newest_project_log(tmp_path):
     assert logs.name.startswith("-") and " " not in logs.name
 
 
-def test_cli_capture_json_from_claude_transcript():
+def test_cli_capture_json_from_claude_transcript(settings):
     result = subprocess.run(
         [
             sys.executable,
             "-m",
             "showcase.cli",
+            "--data-dir",
+            str(settings.data_dir),
             "capture",
             "--source",
             "claude",

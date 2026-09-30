@@ -49,8 +49,7 @@ def test_api_house_stats_parse_url(client):
     assert err_resp.status_code == 400
 
 
-def test_api_house_stats_parse_url_fallback(client, monkeypatch):
-    monkeypatch.delenv("HOUSE_STATS_DIR", raising=False)
+def test_api_house_stats_parse_url_fallback(client):
     url = "https://www.rightmove.co.uk/properties/123"
     data = client.post("/api/house-stats/parse-url", json={"url": url}).json()
     assert data["portal"] == "Rightmove"

@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 
 from showcase import registry
+from showcase.config import ENV_VARS
 from showcase.pages import CORE_PAGES
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,3 +46,8 @@ def test_agents_md_mentions_every_showcase_module():
             assert f"showcase/{module.name}" in agents, (
                 f"AGENTS.md repo map is missing showcase/{module.name}"
             )
+
+
+def test_env_example_documents_every_setting_variable():
+    documented = set(re.findall(r"^([A-Z0-9_]+)=", (ROOT / ".env.example").read_text(), re.M))
+    assert set(ENV_VARS) <= documented, set(ENV_VARS) - documented

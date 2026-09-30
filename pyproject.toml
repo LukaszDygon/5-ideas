@@ -31,6 +31,8 @@ dev = [
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+# Collect from tests/ only: never scan the repo root, where the sandbox denies .env.
+addopts = ["--confcutdir=tests"]
 # Our own code must not use deprecated APIs.
 filterwarnings = ["error::DeprecationWarning:showcase.*"]
 

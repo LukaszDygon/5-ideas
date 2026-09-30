@@ -14,21 +14,14 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import ChoiceLoader
 
 from showcase import admin, api, db, pages, registry, streak
-from showcase.config import STATIC_DIR, TEMPLATES_DIR, Settings, is_hosted
-
-
-class _HostedCheck:
-    """Truthy while freezing the static site, evaluated at render time (`{% if is_hosted %}`)."""
-
-    def __bool__(self) -> bool:
-        return is_hosted()
+from showcase.config import STATIC_DIR, TEMPLATES_DIR, Settings
 
 
 def create_templates(settings: Settings, prototypes: list[registry.Prototype]) -> Jinja2Templates:
     templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
     # Site templates by name ("base.html"), prototype templates as "<slug>/template.html".
     templates.env.loader = ChoiceLoader([templates.env.loader, registry.template_loader(prototypes)])
-    templates.env.globals["is_hosted"] = _HostedCheck()
+    templates.env.globals["is_hosted"] = settings.hosted
     templates.env.globals["all_published_dates"] = lambda: db.get_published_dates(settings.db_file)
     templates.env.globals["get_streak"] = lambda: streak.get_streak_data(
         settings.db_file, settings.streak_file

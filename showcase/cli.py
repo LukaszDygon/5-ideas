@@ -1,8 +1,8 @@
 """Command line for the daily workflow: `uv run five-ideas <command>` (or `python -m showcase.cli`).
 
 Commands: sparks, new-day, save-impl, capture, new-prototype, build, seed.
-Every command reads paths from the environment (see showcase/config.py), so tests can point
-FIVE_IDEAS_DATA_DIR / FIVE_IDEAS_PROTOTYPES_DIR at a temporary directory.
+Paths default to data/ and prototypes/ (or FIVE_IDEAS_DATA_DIR / FIVE_IDEAS_PROTOTYPES_DIR);
+`--data-dir` and `--prototypes-dir` override them, which is what the tests use.
 """
 
 from __future__ import annotations
@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import replace
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -527,6 +528,12 @@ def cmd_seed(args: argparse.Namespace, settings: Settings) -> int:
 # ---------------------------------------------------------------------------
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="five-ideas", description="5 Ideas Daily Showcase tools.")
+    parser.add_argument(
+        "--data-dir", type=Path, help="folder with ideas.json, streak.json and ideas.db (default: data/)"
+    )
+    parser.add_argument(
+        "--prototypes-dir", type=Path, help="folder of prototype folders (default: prototypes/)"
+    )
     sub = parser.add_subparsers(dest="command", required=True, metavar="<command>")
 
     p = sub.add_parser("sparks", help="show a day's five sparks and its shipped prototype")
@@ -624,6 +631,10 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     settings = Settings.from_env()
+    if args.data_dir:
+        settings = replace(settings, data_dir=args.data_dir)
+    if args.prototypes_dir:
+        settings = replace(settings, prototypes_dir=args.prototypes_dir)
     if args.command != "seed":
         db.ensure_database(settings.db_file, settings.seed_file)
     return args.func(args, settings)

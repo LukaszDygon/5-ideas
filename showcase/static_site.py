@@ -6,11 +6,10 @@ Pages: the core site pages, every registry prototype page, and one /day/<date> p
 from __future__ import annotations
 
 import json
-import os
 import re
 import shutil
-from collections.abc import Callable, Iterator
-from contextlib import contextmanager
+from collections.abc import Callable
+from dataclasses import replace
 from pathlib import Path
 
 from starlette.testclient import TestClient
@@ -84,19 +83,6 @@ def output_file(out: Path, route: str) -> Path:
     return out.joinpath(*route.strip("/").split("/"), "index.html") if route != "/" else out / "index.html"
 
 
-@contextmanager
-def _hosted_mode() -> Iterator[None]:
-    previous = os.environ.get("HOSTED_STATIC")
-    os.environ["HOSTED_STATIC"] = "1"
-    try:
-        yield
-    finally:
-        if previous is None:
-            os.environ.pop("HOSTED_STATIC", None)
-        else:
-            os.environ["HOSTED_STATIC"] = previous
-
-
 def build_static(
     out: Path = DIST_DIR,
     base_path: str = "/5-ideas/",
@@ -122,7 +108,7 @@ def build_static(
             )
 
     failures: list[str] = []
-    with _hosted_mode(), TestClient(create_app(settings)) as client:
+    with TestClient(create_app(replace(settings, hosted=True))) as client:
         days = db.get_all_days(settings.db_file)
         routes = page_routes(prototypes, days)
         log(f"Freezing {len(routes)} routes to {out} (base_path={base_path!r})")
