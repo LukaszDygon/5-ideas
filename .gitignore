@@ -19,3 +19,6 @@ mcp_config.json
 *.db-shm
 
 
+
+# Restructure reference snapshots (docs/plan T0.1)
+.baseline/

@@ -49,7 +49,7 @@
       "phase": "P0",
       "title": "Golden baseline snapshot",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 1,
       "depends_on": [],
       "touches": [
@@ -62,10 +62,10 @@
         "test -f .baseline/dist-before/index.html && grep -c '^/interactive/' .baseline/routes-before.txt  # expect 19"
       ],
       "commit_message": "chore: ignore .baseline snapshots",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "Baseline: 49 tests passing. routes-before.txt has 16 /interactive/ paths (15 prototypes + campfire/hardware), not 19: the 19 in the plan is build_static's route list (4 core + 15 interactive; house-stats missing from it). Static build froze 39 pages. Also saved .baseline/sparks-2026-09-29.json for T2.7. Test run shows on_event, httpx->httpx2 and starlette WSGIMiddleware deprecation warnings."
     },
     {
       "id": "T0.2",
