@@ -1,0 +1,8 @@
+slug = "canopy"
+title = "Canopy growing algorithm"
+date = "2026-09-11"
+build_type = "webapp"
+template = "template.html"
+description = "3D procedural rooftop canopy growing algorithm simulation."
+extra_paths = []
+routes = false

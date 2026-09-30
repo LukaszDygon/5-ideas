@@ -261,7 +261,7 @@
       "commit_message": "feat(registry): prototype discovery from prototypes/<slug>/prototype.toml (pilot: which-is-faster)",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "dd3771f",
       "notes": "Registry validates slug/folder, required and unknown keys, date, build_type, templates, routes.py. routes.py may define page_context(request) for server-side template data (which-is-faster needs it for its embedded question bank). FastAPI 0.141 keeps included routers lazy (_IncludedRouter), so the build uses an explicit page list (CORE_PAGES + registry pages + legacy routes + days) rather than walking app.routes. The link rewriter is now a regex over href/src/action/poster, CSS url() and JS '/static/' strings; page hrefs get a trailing slash. Normalised dist diff vs baseline: which-is-faster differs only by that slash; house-stats page added; previously un-prefixed links (calendar ?month nav, house-stats links, JS asset strings in nostalgia-cap/slots1v1/crusade-trail) now work under /5-ideas/. 69 tests pass."
     },
     {
@@ -269,7 +269,7 @@
       "phase": "P2",
       "title": "Migrate remaining 14 prototypes into prototypes/ (3–4 batches)",
       "priority": "must",
-      "status": "todo",
+      "status": "in_progress",
       "order": 9,
       "depends_on": [
         "T2.3"
@@ -289,7 +289,7 @@
         "browser: campfire, nostalgia-cap, slots1v1 load media without 404s"
       ],
       "commit_message": "refactor(prototypes): migrate <batch> into prototypes/",
-      "started": null,
+      "started": "2026-09-30",
       "completed": null,
       "commit": null,
       "notes": ""

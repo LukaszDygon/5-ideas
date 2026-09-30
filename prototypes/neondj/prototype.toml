@@ -1,0 +1,8 @@
+slug = "neondj"
+title = "NeonDJ: 90s Turntable & Synth Matrix"
+date = "2026-09-10"
+build_type = "interactive"
+template = "template.html"
+description = "Interactive vinyl turntable and synth matrix showcase."
+extra_paths = []
+routes = false

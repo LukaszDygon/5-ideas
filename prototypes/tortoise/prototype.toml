@@ -1,0 +1,8 @@
+slug = "tortoise"
+title = "Morty's Caretaker Sheet"
+date = "2026-09-24"
+build_type = "interactive"
+template = "template.html"
+description = "Printable caretaker handover sheet and daily sitter guide for a tortoise."
+extra_paths = []
+routes = false

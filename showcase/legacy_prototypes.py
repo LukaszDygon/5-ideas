@@ -14,14 +14,10 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
 TEMPLATE_ROUTES = {
-    "/interactive/neondj": "neondj.html",
-    "/interactive/canopy": "canopy.html",
     "/interactive/campfire": "campfire.html",
     "/interactive/campfire/hardware": "campfire_hardware.html",
     "/interactive/slots1v1": "slots1v1.html",
-    "/interactive/tortoise": "tortoise.html",
     "/interactive/house-stats": "house_stats.html",
-    "/interactive/flute": "flute.html",
     "/interactive/water-calories": "water_calories.html",
     "/interactive/fractiles": "fractiles.html",
     "/interactive/mcnuggets": "mcnuggets.html",
