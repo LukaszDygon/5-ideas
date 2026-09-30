@@ -326,7 +326,7 @@
       "phase": "P2",
       "title": "Extract inline JS/CSS for large prototypes (incremental)",
       "priority": "should",
-      "status": "in_progress",
+      "status": "done",
       "order": 11,
       "depends_on": [
         "T2.5"
@@ -343,9 +343,9 @@
       ],
       "commit_message": "refactor(<slug>): extract inline JS/CSS to static assets",
       "started": "2026-09-30",
-      "completed": null,
-      "commit": null,
-      "notes": "Done for all 11 prototypes with >200 inline script lines (which-is-faster ce27b44, crusade-trail c4aa5f5, monster-mystery 409c276, campfire 18f6a5f, canopy 58ca788, flute 423fd50, fractiles 0d47a54, house-stats ed91f89, nostalgia-cap 9c59232, slots1v1 d938a16, water-calories 848300a); neondj and mcnuggets stay inline (~150 lines). Script and style bodies moved byte-for-byte; which-is-faster's bank now arrives as <script id=data type=application/json>{{ events | tojson }}</script> (same data; Jinja sorts keys, and the JS doesn't depend on key order). The static build now also prefixes /static/ inside JS/CSS files, and the contract test scans prototype JS/CSS for missing assets. View tests assert on page + prototype assets (page_with_assets helper), so every existing assertion is kept. node --check passes for every app.js. The browser check was automated with headless Chrome (console errors per page), compared against a pre-extraction export: no new errors. It exposed an existing bug: shared static/app.js declared top-level audioCtx/isAudioPlaying, which clashed with 5 prototypes and stopped the shared script on those pages. Fixed by wrapping it in an IIFE that only exports helpers a page hasn't defined (campfire and nostalgia-cap keep their own getAudioContext; neondj uses the shared one). The only remaining console errors are WebGL context failures in headless Chrome (no GPU)."
+      "completed": "2026-09-30",
+      "commit": "848300a",
+      "notes": "Done for all 11 prototypes with >200 inline script lines (which-is-faster ce27b44, crusade-trail c4aa5f5, monster-mystery 409c276, campfire 18f6a5f, canopy 58ca788, flute 423fd50, fractiles 0d47a54, house-stats ed91f89, nostalgia-cap 9c59232, slots1v1 d938a16, water-calories 848300a); neondj and mcnuggets stay inline (~150 lines). Script and style bodies moved byte-for-byte; which-is-faster's bank now arrives as <script id=data type=application/json>{{ events | tojson }}</script> (same data; Jinja sorts keys, and the JS doesn't depend on key order). The static build now also prefixes /static/ inside JS/CSS files, and the contract test scans prototype JS/CSS for missing assets. View tests assert on page + prototype assets (page_with_assets helper), so every existing assertion is kept. node --check passes for every app.js. The browser check was automated with headless Chrome (console errors per page), compared against a pre-extraction export: no new errors. It exposed an existing bug: shared static/app.js declared top-level audioCtx/isAudioPlaying, which clashed with 5 prototypes and stopped the shared script on those pages. Fixed by wrapping it in an IIFE that only exports helpers a page hasn't defined (campfire and nostalgia-cap keep their own getAudioContext; neondj uses the shared one). The only remaining console errors are WebGL context failures in headless Chrome (no GPU). Shared-script fix in c9f39b3. Final headless run over all 21 pages: zero JS errors except WebGL context creation (headless has no GPU)."
     },
     {
       "id": "T2.7",
@@ -371,7 +371,7 @@
       "commit_message": "refactor(db): deduplicate hydration, context-managed connections, streak module",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "ff6aa3c",
       "notes": "One _hydrate_days(conn, rows) serves get_all_days, get_day_by_date and get_day_by_id with 2 queries in total (IN lists) instead of N+1. connect() context manager used everywhere. Streak logic moved to showcase/streak.py (db no longer imports it; callers of seed_demo_data reset the streak file). New db.get_published_dates() feeds the Jinja date global and the streak, so page renders no longer hydrate every day just for the dates. Equivalence: sparks --json for 2026-09-29 is byte-identical to the baseline copy, and re-exporting the real DB reproduces data/ideas.json byte-for-byte. tests/unit/test_streak.py added (7 tests). The dedupe grep counts 1."
     },
     {
@@ -379,7 +379,7 @@
       "phase": "P2",
       "title": "Tooling: ruff, dev groups, project script, warnings-as-errors",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 13,
       "depends_on": [
         "T2.1"
@@ -394,17 +394,17 @@
         "uv run pytest -q  # no warnings from showcase.*"
       ],
       "commit_message": "chore: ruff config, dev dependency groups, project script",
-      "started": null,
-      "completed": null,
-      "commit": null,
-      "notes": ""
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "4d7f924",
+      "notes": "Config commit 4d7f924, formatting commit b46649e (style:). ruff check and ruff format --check are clean. E501 is ignored because the formatter owns line length and long literal strings (HTML, messages) stay as written. httpx is replaced by httpx2 (Starlette's TestClient deprecates httpx); it is a runtime dependency because static_site uses TestClient. Hatchling build backend (packages = showcase) so [project.scripts] five-ideas is installed. filterwarnings errors on DeprecationWarning from showcase.*. Two warnings remain, neither a DeprecationWarning from us: anyio's BlockingPortal alias (third-party, inside Starlette's TestClient) and Starlette's WSGIMiddleware warning (a UserWarning subclass, emitted at showcase/web.py's import; goes away with T2.8). 'uv run five-ideas --help' is verified in T2.10."
     },
     {
       "id": "T2.10",
       "phase": "P2",
       "title": "CLI consolidation: showcase.cli with new-day and new-prototype",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 14,
       "depends_on": [
         "T2.3",
@@ -424,10 +424,10 @@
         "seed without --yes exits non-zero"
       ],
       "commit_message": "feat(cli): single showcase.cli entry point with new-day and new-prototype",
-      "started": null,
-      "completed": null,
-      "commit": null,
-      "notes": ""
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "c457d80",
+      "notes": "showcase/cli.py (argparse) with sparks, new-day, save-impl, capture, new-prototype, build, seed; run it as 'uv run five-ideas' or 'python -m showcase.cli'. scripts/ deleted rather than shimmed (the plan's preference); README, AGENTS.md and deploy-pages.yml updated; .agents skills are updated in T1.4. capture_process.py moved to showcase/capture.py (library only). new-day requires exactly 5 ideas and refuses an existing date unless --replace (which would drop its prototype record). new-prototype scaffolds prototype.toml, a design-system hero template and static/.gitkeep, then validates via the registry. Settings.prototypes_dir (FIVE_IDEAS_PROTOTYPES_DIR) makes scaffolds testable in tmp. Every command except seed calls ensure_database, so fresh clones work. The 'python -m showcase.db' reseed entry point is replaced by 'five-ideas seed --yes'. main.py gained argparse (--port, --no-reload) so --help no longer starts a server. tests/unit/test_cli.py: 15 subprocess tests."
     },
     {
       "id": "T1.4",

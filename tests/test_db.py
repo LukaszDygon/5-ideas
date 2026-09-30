@@ -182,7 +182,7 @@ def test_save_day_without_implementation_then_update(temp_db):
 
 
 def test_save_prototype_implementation_helper(temp_db):
-    from scripts.save_implementation import save_prototype_implementation
+    from showcase.cli import save_prototype_implementation
 
     days = db.get_all_days(temp_db)
     target_date = days[0]["date"]

@@ -53,7 +53,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         version="1.0.0",
         lifespan=lifespan,
     )
-    prototypes = registry.discover()
+    prototypes = registry.discover(settings.prototypes_dir)
     app.state.settings = settings
     app.state.prototypes = prototypes
     app.state.templates = create_templates(settings, prototypes)

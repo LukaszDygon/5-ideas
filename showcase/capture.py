@@ -1,17 +1,15 @@
-#!/usr/bin/env python3
 """
-Implementation Capture Tool for 5 Ideas Daily Showcase.
-Extracts prompts, human + computer conversation turns, and generates
-presentable implementation summaries, steps, and retrospectives.
+Implementation capture: turn an agent transcript into a leak-free AI interaction summary.
+
+Extracts clean human prompts, turn counts, tools executed and files modified; never raw
+system prompts, skill bodies or timestamps. The CLI entry point is `five-ideas capture`.
 """
 
 from __future__ import annotations
 
-import argparse
 import json
 import os
 import re
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -200,58 +198,3 @@ def generate_presentable_report(
     md.append("")
 
     return "\n".join(md)
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Capture implementation process from transcripts.")
-    parser.add_argument("--transcript", help="Path to transcript.jsonl (auto-detected if omitted)")
-    parser.add_argument("--title", default="Prototype Build", help="Implementation title")
-    parser.add_argument(
-        "--type", default="webapp", help="Build type (webapp, poetry, song, image, interactive)"
-    )
-    parser.add_argument("--time", type=float, default=4.0, help="Hours spent")
-    parser.add_argument("--out", help="Output file path (prints to stdout if omitted)")
-    parser.add_argument("--json", action="store_true", help="Output JSON suitable for DB import")
-
-    args = parser.parse_args()
-
-    t_path = Path(args.transcript) if args.transcript else find_latest_transcript()
-    if not t_path or not t_path.exists():
-        print("Error: No transcript found. Please provide --transcript path.", file=sys.stderr)
-        sys.exit(1)
-
-    steps = parse_transcript(t_path)
-    summary = extract_turns_summary(steps)
-
-    if args.json:
-        payload = {
-            "title": args.title,
-            "build_type": args.type,
-            "time_spent_hours": args.time,
-            "summary": summary["initial_prompt"][:250],
-            "what_rocked": [
-                "Fast iterative implementation under Ponytail simplicity guidelines.",
-                "Zero external dependency overhead using stdlib and native features.",
-            ],
-            "what_broke": ["Handled edge cases and verified with comprehensive pytest suite."],
-            "prompt_transcript": generate_interaction_summary(summary),
-        }
-        output = json.dumps(payload, indent=2)
-    else:
-        output = generate_presentable_report(
-            summary=summary,
-            idea_title=args.title,
-            build_type=args.type,
-            time_spent=args.time,
-        )
-
-    if args.out:
-        with open(args.out, "w", encoding="utf-8") as f:
-            f.write(output)
-        print(f"Report written to {args.out}")
-    else:
-        print(output)
-
-
-if __name__ == "__main__":
-    main()

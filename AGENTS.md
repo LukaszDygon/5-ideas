@@ -11,14 +11,18 @@ The site is frozen to static HTML and deployed to GitHub Pages under `/5-ideas/`
 ## Commands
 
 ```bash
-uv sync                                                      # install
-uv run python main.py                                        # dev server on http://127.0.0.1:8000
-uv run pytest -q                                             # tests (run after every code change)
-uv run python scripts/get_day_sparks.py --date today         # show a day's sparks (add --idea N, --json)
-uv run python scripts/save_implementation.py --idea N ...    # record a shipped prototype
-uv run python scripts/capture_process.py --title "Name"      # leak-free AI interaction summary
-uv run python scripts/build_static.py --base-path /5-ideas/  # freeze site into dist/
-uv run python -m showcase.db                                 # wipe DB and reseed from ideas.json
+uv sync                                                    # install (dev tools included)
+uv run python main.py                                      # dev server on http://127.0.0.1:8000
+uv run pytest -q                                           # tests (run after every code change)
+uv run ruff check . && uv run ruff format .                # lint and format
+uv run five-ideas --help                                   # the daily-workflow CLI (showcase/cli.py):
+uv run five-ideas new-day --theme "..." --idea "title|tagline|description|tags"   # x5
+uv run five-ideas sparks --date today                      # show a day's sparks (--idea N, --json)
+uv run five-ideas new-prototype --slug my-idea --title "My Idea"
+uv run five-ideas save-impl --idea N ...                   # record the shipped prototype
+uv run five-ideas capture --title "Name"                   # leak-free AI interaction summary
+uv run five-ideas build --base-path /5-ideas/              # freeze the site into dist/
+uv run five-ideas seed --yes                               # wipe the DB and reload data/ideas.json
 ```
 
 ## Repo map
@@ -31,11 +35,12 @@ uv run python -m showcase.db                                 # wipe DB and resee
 | `showcase/api.py` | Core JSON API under `/api` |
 | `showcase/admin.py` | `create_admin_app()` Flask admin (CRUD, rankings, streak) mounted at `/admin` |
 | `showcase/db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
+| `showcase/cli.py` | `five-ideas` CLI: sparks, new-day, save-impl, capture, new-prototype, build, seed |
+| `showcase/capture.py` | Transcript parsing for leak-free AI interaction summaries |
 | `showcase/streak.py` | Publishing streak (consecutive days) and the `data/streak.json` override |
 | `showcase/registry.py` | Discovers `prototypes/<slug>/prototype.toml` and serves `/interactive/<slug>` |
 | `showcase/static_site.py` | Freezes core pages, prototype pages and day pages into `dist/` |
 | `main.py` | uvicorn launcher |
-| `scripts/` | CLI helpers: sparks, save implementation, capture, static build |
 | `prototypes/` | One folder per prototype: manifest, template, `static/`, optional `routes.py` |
 | `templates/` | Site templates (`templates/base.html` and friends) and `templates/admin/` |
 | `static/` | Shared assets only: `static/style.css`, `static/app.js`, `static/images/` |
@@ -57,7 +62,7 @@ uv run python -m showcase.db                                 # wipe DB and resee
 
 - Simplicity first: stdlib before packages, native browser APIs before dependencies, minimal code.
 - Commits: `feat(YYYY-MM-DD): <what shipped>` for daily work; `refactor:`, `test:`, `docs:`, `chore:` otherwise.
-- Data files (`data/ideas.json`, `data/streak.json`, `*.db`) change only through the scripts or the admin.
+- Data files (`data/ideas.json`, `data/streak.json`, `*.db`) change only through `five-ideas` or the admin.
 - UI follows the design system: [README.md#design-system-rules-radical-memphis-pop](README.md#design-system-rules-radical-memphis-pop), live at `/design-system` (`templates/design_system.html`).
 - One prototype = one folder under `prototypes/`; its template extends `templates/base.html`.
 

@@ -16,11 +16,9 @@ from pathlib import Path
 from starlette.testclient import TestClient
 
 from showcase import db, registry
-from showcase.config import ROOT, STATIC_DIR, Settings
+from showcase.config import DIST_DIR, STATIC_DIR, Settings
 from showcase.pages import CORE_PAGES
 from showcase.web import create_app
-
-DIST_DIR = ROOT / "dist"
 
 # Root-relative URLs in attributes, CSS url(), and JS string literals pointing at /static/.
 _ATTR_RE = re.compile(r"""(?P<lead>\b(?:href|src|action|poster)=(?P<q>["']))/(?!/)(?P<path>[^"']*)""")
@@ -113,7 +111,7 @@ def build_static(
     out.mkdir(parents=True)
 
     shutil.copytree(STATIC_DIR, out / "static")
-    prototypes = registry.discover()
+    prototypes = registry.discover(settings.prototypes_dir)
     for proto in prototypes:
         if proto.static_dir.is_dir():
             shutil.copytree(proto.static_dir, out / "static" / "prototypes" / proto.slug)

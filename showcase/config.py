@@ -14,6 +14,8 @@ ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "templates"
 STATIC_DIR = ROOT / "static"
 DEFAULT_DATA_DIR = ROOT / "data"
+DEFAULT_PROTOTYPES_DIR = ROOT / "prototypes"
+DIST_DIR = ROOT / "dist"
 
 DB_FILENAME = "ideas.db"
 SEED_FILENAME = "ideas.json"
@@ -25,6 +27,7 @@ class Settings:
     data_dir: Path
     admin_secret: str = "dev-only-secret"
     house_stats_dir: Path | None = None
+    prototypes_dir: Path = DEFAULT_PROTOTYPES_DIR
 
     @property
     def db_file(self) -> Path:
@@ -45,6 +48,7 @@ class Settings:
             data_dir=Path(os.environ.get("FIVE_IDEAS_DATA_DIR") or DEFAULT_DATA_DIR),
             admin_secret=os.environ.get("FIVE_IDEAS_ADMIN_SECRET") or "dev-only-secret",
             house_stats_dir=Path(house_stats) if house_stats else None,
+            prototypes_dir=Path(os.environ.get("FIVE_IDEAS_PROTOTYPES_DIR") or DEFAULT_PROTOTYPES_DIR),
         )
 
 

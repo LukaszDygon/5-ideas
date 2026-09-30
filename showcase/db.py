@@ -368,16 +368,3 @@ def seed_demo_data(db_path: DbPath = None, seed_file: DbPath = None) -> None:
     with connect(db_path) as conn, conn:
         conn.execute("DELETE FROM days;")
     load_from_json(seed_file, db_path=db_path)
-
-
-if __name__ == "__main__":
-    from showcase import streak
-
-    print(f"Reseeding database at {resolve_db_path()} from {get_settings().seed_file}...")
-    seed_demo_data()
-    streak.save_streak_data(None)
-    for d in get_all_days():
-        impl = d.get("implemented_idea")
-        print(
-            f"  • {d['date']}: {d['theme']} (Ranked Build: {impl['implementation']['title'] if impl else 'None'})"
-        )

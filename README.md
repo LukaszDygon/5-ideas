@@ -28,31 +28,25 @@ Every day:
 AI coding agents: start with [AGENTS.md](AGENTS.md) (Claude Code loads it through `CLAUDE.md`).
 
 ```bash
-# Install dependencies
+# Install dependencies (dev tools included)
 uv sync
 
 # Run development server (FastAPI + Flask admin on port 8000)
-uv run uvicorn showcase.web:app --reload --port 8000
-# Or: uv run python main.py
+uv run python main.py
+# Or: uv run uvicorn showcase.web:app --reload --port 8000
 
-# Run test suite
+# Tests, lint and format
 uv run pytest
+uv run ruff check . && uv run ruff format --check .
 
-# Re-seed SQLite demo database from ideas.json (wipes the DB)
-uv run python -m showcase.db
-
-# Freeze static bundle for GitHub Pages / static CDN
-uv run python scripts/build_static.py
-
-# Inspect day entry and sparks (defaults to today)
-uv run python scripts/get_day_sparks.py --date today
-uv run python scripts/get_day_sparks.py --date today --idea 2
-
-# Record shipped prototype into database
-uv run python scripts/save_implementation.py --date today --idea 2 --title "Prototype" --type webapp
-
-# Capture AI + human implementation turns from transcripts
-uv run python scripts/capture_process.py --title "Prototype Name" --type webapp
+# Daily workflow CLI (`uv run five-ideas --help` lists every command)
+uv run five-ideas new-day --date today --theme "Theme" --idea "Title|Tagline|Description|Tags"  # repeat --idea 5x
+uv run five-ideas sparks --date today --idea 2
+uv run five-ideas new-prototype --slug my-idea --title "My Idea"
+uv run five-ideas save-impl --date today --idea 2 --title "Prototype" --type webapp
+uv run five-ideas capture --title "Prototype Name" --type webapp
+uv run five-ideas build --base-path /5-ideas/
+uv run five-ideas seed --yes  # wipes data/ideas.db and reloads data/ideas.json
 ```
 
 ---
