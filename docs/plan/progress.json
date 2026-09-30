@@ -461,7 +461,7 @@
       "phase": "P1b",
       "title": "Subagents: design-reviewer, prototype-qa",
       "priority": "should",
-      "status": "in_progress",
+      "status": "done",
       "order": 16,
       "depends_on": [
         "T1.4"
@@ -476,9 +476,9 @@
       ],
       "commit_message": "feat(claude): design-reviewer and prototype-qa subagents",
       "started": "2026-09-30",
-      "completed": null,
-      "commit": null,
-      "notes": ""
+      "completed": "2026-09-30",
+      "commit": "9133aaa",
+      "notes": "Project agents load only at session start, so '@design-reviewer' could not be called from the session that created it. Proxy verification: a read-only Explore agent ran the design-reviewer body verbatim on which-is-faster and returned 24 file:line findings plus a verdict; git status stayed clean. Its top finding is confirmed: bg-accent-orange / bg-accent-lime are used 11 times but defined nowhere, so some controls render invisible (a pre-existing prototype bug, reported, not fixed). prototype-qa commands were run by hand: pytest -k slug (5 passed), build to a temp dir, asset refs (4, none missing). '/agents lists both' needs the user's next session. tests/ai_setup/test_agents.py (with T3.2) checks frontmatter and least-privilege tools."
     },
     {
       "id": "T1.6",
@@ -527,7 +527,7 @@
       "commit_message": "feat(capture): Claude Code transcript source",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "eac374b",
       "notes": "capture --source auto|claude|antigravity and --transcript. auto uses the Claude Code transcript: .claude/state/session.json (SessionStart hook) first, else the newest ~/.claude/projects/<project-slug>/*.jsonl, and falls back to Antigravity if neither exists. Kept as human prompts: user entries that are not isMeta, not isSidechain, not tool results, and don't start with <system-reminder>/<command-name>/<local-command-*>; inline <system-reminder> blocks are stripped. Tools and file basenames come from assistant tool_use blocks; thinking and text are never read. The format is auto-detected per file. The Markdown report no longer fills 'Build Steps' and 'Retrospective' with canned text (it now says they come from the user, per the skills' rule). tests/fixtures/claude_transcript.jsonl (15 lines) plus tests/unit/test_capture.py (8 tests). Live check in this session (hook not installed, so the fallback path ran): Genesis Prompt equals the session's first real user message, 1 human turn."
     },
     {
@@ -535,7 +535,7 @@
       "phase": "P3",
       "title": "Restructure tests around app factory and settings",
       "priority": "must",
-      "status": "todo",
+      "status": "in_progress",
       "order": 19,
       "depends_on": [
         "T2.1",
@@ -552,7 +552,7 @@
         "uv run pytest tests/web/test_admin.py"
       ],
       "commit_message": "test: restructure suite around app factory and settings",
-      "started": null,
+      "started": "2026-09-30",
       "completed": null,
       "commit": null,
       "notes": ""
