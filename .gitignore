@@ -22,3 +22,15 @@ mcp_config.json
 
 # Restructure reference snapshots (docs/plan T0.1)
 .baseline/
+
+# Secrets and local environment (docs/plan T0.2)
+.env
+.env.*
+!.env.example
+
+# Claude Code local state
+.claude/settings.local.json
+.claude/state/
+
+# Eval run output
+evals/results/

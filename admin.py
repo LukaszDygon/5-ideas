@@ -6,6 +6,7 @@ Mounted under FastAPI via Starlette WSGIMiddleware.
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime
 from typing import Any, Dict, List
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -17,7 +18,7 @@ admin_app = Flask(
     template_folder="templates",
     static_folder="static",
 )
-admin_app.secret_key = "five-ideas-memphis-pop-secret-key"
+admin_app.secret_key = os.environ.get("FIVE_IDEAS_ADMIN_SECRET", "dev-only-secret")
 admin_app.jinja_env.globals["all_published_dates"] = lambda: [d["date"] for d in db.get_all_days()]
 admin_app.jinja_env.globals["get_streak"] = lambda: db.get_streak_data()["streak"]
 admin_app.jinja_env.globals["is_hosted"] = False

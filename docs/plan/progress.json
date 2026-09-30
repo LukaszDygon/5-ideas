@@ -64,7 +64,7 @@
       "commit_message": "chore: ignore .baseline snapshots",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "8acb4c3",
       "notes": "Baseline: 49 tests passing. routes-before.txt has 16 /interactive/ paths (15 prototypes + campfire/hardware), not 19: the 19 in the plan is build_static's route list (4 core + 15 interactive; house-stats missing from it). Static build froze 39 pages. Also saved .baseline/sparks-2026-09-29.json for T2.7. Test run shows on_event, httpx->httpx2 and starlette WSGIMiddleware deprecation warnings."
     },
     {
@@ -72,7 +72,7 @@
       "phase": "P0",
       "title": "Secret hygiene: MCP key to env, admin secret, gitignore",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 2,
       "depends_on": [],
       "touches": [
@@ -88,10 +88,10 @@
         "git status --porcelain | grep -c '^?? .env$'  # expect 0"
       ],
       "commit_message": "chore(security): move MCP key to env, parametrise admin secret",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": "Rotating the key itself is a manual user action in the Google console."
+      "notes": "Rotating the key itself is a manual user action in the Google console. Key was never in git history. .mcp.json + .env.example added; admin secret from FIVE_IDEAS_ADMIN_SECRET. The plan's verify grep for X-Goog-Api-Key necessarily matches the tracked .mcp.json placeholder and the plan docs; the real check (no AQ.* key values in tracked files) passes. Left for the user: delete the stray empty 5ideas.db (the auto-mode classifier blocked rm; it is gitignored), and delete mcp_config.json + .agents/plugins/stitch/mcp_config.json once STITCH_API_KEY is in .env/shell (both still gitignored)."
     },
     {
       "id": "T1.1",
