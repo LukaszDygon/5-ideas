@@ -32,12 +32,12 @@ uv run python -m showcase.db                                 # wipe DB and resee
 | `showcase/db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
 | `showcase/registry.py` | Discovers `prototypes/<slug>/prototype.toml` and serves `/interactive/<slug>` |
 | `showcase/static_site.py` | Freezes core pages, prototype pages and day pages into `dist/` |
-| `showcase/legacy_prototypes.py` | Prototype routes not yet moved into `prototypes/` |
+| `showcase/legacy_prototypes.py` | house-stats API awaiting its move into `prototypes/house-stats/` |
 | `main.py` | uvicorn launcher |
 | `scripts/` | CLI helpers: sparks, save implementation, capture, static build |
 | `prototypes/` | One folder per prototype: manifest, template, `static/`, optional `routes.py` |
-| `templates/` | Site templates, `templates/admin/`, and prototype templates awaiting migration |
-| `static/` | Shared `static/style.css` and `static/app.js`, plus prototype media and data |
+| `templates/` | Site templates (`templates/base.html` and friends) and `templates/admin/` |
+| `static/` | Shared assets only: `static/style.css`, `static/app.js`, `static/images/` |
 | `tests/` | pytest suite (`tests/conftest.py` isolates the DB per test) |
 | `data/` | `data/ideas.json` and `data/streak.json` (committed seed/export), `ideas.db` (local, ignored) |
 | `.claude/` | Claude Code settings, rules, hooks, skills |

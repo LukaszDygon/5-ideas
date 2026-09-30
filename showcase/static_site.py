@@ -15,7 +15,7 @@ from pathlib import Path
 
 from starlette.testclient import TestClient
 
-from showcase import db, legacy_prototypes, registry
+from showcase import db, registry
 from showcase.config import ROOT, STATIC_DIR, Settings
 from showcase.web import CORE_PAGES, create_app
 
@@ -62,8 +62,7 @@ def rewrite_html_links(html: str, base_path: str) -> str:
 
 def page_routes(prototypes: list[registry.Prototype], days: list[dict]) -> list[str]:
     """Core pages, then every prototype page, then one page per day."""
-    routes = list(CORE_PAGES) + sorted(legacy_prototypes.TEMPLATE_ROUTES)
-    routes += [url for proto in prototypes for url, _ in proto.pages()]
+    routes = list(CORE_PAGES) + [url for proto in prototypes for url, _ in proto.pages()]
     return routes + [f"/day/{d['date']}" for d in days]
 
 

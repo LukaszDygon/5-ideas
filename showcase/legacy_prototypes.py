@@ -1,7 +1,4 @@
-"""Prototype routes that predate the prototype registry.
-
-Each entry disappears as its prototype moves into prototypes/<slug>/ (docs/plan T2.3-T2.5).
-"""
+"""Prototype API routes that predate the prototype registry (moves to prototypes/house-stats/routes.py in T2.5)."""
 
 from __future__ import annotations
 
@@ -11,26 +8,8 @@ import subprocess
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse
-
-TEMPLATE_ROUTES = {
-    "/interactive/mcnuggets": "mcnuggets.html",
-    "/interactive/table-steamer": "table_steamer.html",
-    "/interactive/crusade-trail": "crusade_trail.html",
-}
 
 router = APIRouter()
-
-
-def _template_view(template: str):
-    def view(request: Request):
-        return request.app.state.templates.TemplateResponse(request=request, name=template, context={})
-
-    return view
-
-
-for _path, _template in TEMPLATE_ROUTES.items():
-    router.add_api_route(_path, _template_view(_template), methods=["GET"], response_class=HTMLResponse)
 
 
 @router.post("/api/house-stats/parse-url")

@@ -1,0 +1,8 @@
+slug = "mcnuggets"
+title = "Pasta McNuggetini"
+date = "2026-09-20"
+build_type = "interactive"
+template = "template.html"
+description = "WikiPasta encyclopedia and shape hydrodynamics lab for McNugget pasta."
+extra_paths = []
+routes = false

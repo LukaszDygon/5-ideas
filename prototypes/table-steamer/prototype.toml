@@ -1,0 +1,8 @@
+slug = "table-steamer"
+title = "The Communal Table Steamer"
+date = "2026-09-26"
+build_type = "webapp"
+template = "template.html"
+description = "Four-person hosting blueprint and food science dossier for a table steamer."
+extra_paths = []
+routes = false

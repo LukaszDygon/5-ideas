@@ -922,8 +922,8 @@
 
   // DATA FETCH & INITIALIZATION
   Promise.all([
-    fetch('/static/data/crusade_geo.json').then(r => r.json()),
-    fetch('/static/data/crusade_waypoints.json').then(r => r.json())
+    fetch('/static/prototypes/crusade-trail/data/crusade_geo.json').then(r => r.json()),
+    fetch('/static/prototypes/crusade-trail/data/crusade_waypoints.json').then(r => r.json())
   ]).then(([geo, wp]) => {
     geoData = geo;
     waypointsData = wp;

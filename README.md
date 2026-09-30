@@ -66,7 +66,7 @@ uv run python scripts/capture_process.py --title "Prototype Name" --type webapp
 | `/stream` | Continuous scroll feed with flexible media viewers | FastAPI |
 | `/day/{date}` | Daily deep-dive with retrospective and prompt logs | FastAPI |
 | `/design-system` | Reusable Memphis Pop UI component reference & sandbox | FastAPI |
-| `/interactive/neondj` | Live Web Audio 90s vinyl turntable & synth simulator | FastAPI |
+| `/interactive/<slug>` | One page per prototype, discovered from [prototypes/](prototypes/) (`prototype.toml`) | FastAPI registry |
 | `/admin` | Flask Admin dashboard & ranking manager | Flask (via WSGI) |
 | `/admin/day/new` | Create daily drop (morning sparks or shipped build) | Flask |
 | `/admin/day/{date}/edit`| Edit daily entry, ideas, and prototype details | Flask |
