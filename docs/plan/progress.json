@@ -642,7 +642,7 @@
       "phase": "P2",
       "title": "Fold Flask admin into FastAPI (optional)",
       "priority": "could",
-      "status": "todo",
+      "status": "done",
       "order": 23,
       "depends_on": [
         "T2.7",
@@ -659,10 +659,10 @@
         "flask absent from venv after uv sync"
       ],
       "commit_message": "refactor(admin): port Flask admin to FastAPI router, drop Flask",
-      "started": null,
-      "completed": null,
-      "commit": null,
-      "notes": ""
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
+      "commit": "b41d5ed",
+      "notes": "Admin is now a FastAPI APIRouter at /admin sharing app.state.templates; Flask, Werkzeug and itsdangerous are gone from the venv after uv remove flask. Flash messages use a 60 s base64-JSON cookie (path /admin, httponly), read and cleared by the rendering route, so the admin templates are unchanged. /admin/day/{date|id}/edit is one route; POSTs redirect with 303. FIVE_IDEAS_ADMIN_SECRET removed from Settings and .env.example (nothing to sign). All 10 original admin tests pass on the FastAPI client (.data became .content), plus 4 new ones: /admin redirects to /admin/, flash shows once, delete day, unknown-day error. Headless Chrome: /admin/, /admin/day/new and /admin/day/2026-09-29/edit load with zero console errors. The only warning left in pytest is third-party (anyio, inside Starlette's TestClient)."
     }
   ]
 }
