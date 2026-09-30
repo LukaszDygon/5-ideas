@@ -324,9 +324,10 @@ def test_api_house_stats_parse_url_fallback(client, monkeypatch):
 def test_interactive_water_calories(client):
     response = client.get("/interactive/water-calories")
     assert response.status_code == 200
-    assert "Aqueous Caloric Spectrometer" in response.text
-    assert "Certificate of Analytical Determination" in response.text
-    assert "0.00000" in response.text
+    text = page_with_assets(client, "/interactive/water-calories")
+    assert "Aqueous Caloric Spectrometer" in text
+    assert "Certificate of Analytical Determination" in text
+    assert "0.00000" in text
 
 
 def test_interactive_which_is_faster(client):
