@@ -101,3 +101,11 @@ def test_calendar_month_navigation(client):
     response = client.get("/calendar?year=2026&month=9")
     assert response.status_code == 200
     assert "September" in response.text
+
+
+def test_favicon_is_linked_and_served(client):
+    assert '<link rel="icon" type="image/svg+xml" href="/static/favicon.svg"/>' in client.get("/").text
+    icon = client.get("/static/favicon.svg")
+    assert icon.status_code == 200
+    assert icon.headers["content-type"].startswith("image/svg+xml")
+    assert "<svg" in icon.text
