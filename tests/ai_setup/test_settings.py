@@ -17,13 +17,9 @@ ROOT = Path(__file__).resolve().parents[2]
 INSTALLED = ROOT / ".claude" / "settings.json"
 PROPOSED = ROOT / "docs" / "plan" / "settings.proposed.json"
 CANDIDATES = [p for p in (INSTALLED, PROPOSED) if p.exists()]
-REQUIRED_DENY = {
-    "Read(./.env)",
-    "Read(~/.ssh/**)",
-    "Bash(sudo *)",
-    "Bash(git push --force *)",
-    "Edit(./data/**)",
-}
+REQUIRED_DENY = {"Read(./.env)", "Read(~/.ssh/**)", "Bash(sudo *)", "Edit(./data/**)"}
+# History-rewriting git commands may prompt (ask) or be refused (deny), never run silently.
+GUARDED = {"Bash(git push --force *)", "Bash(git reset --hard *)", "Bash(git clean *)", "Bash(git rebase *)"}
 FORBIDDEN_ALLOW = {"Bash", "Bash(*)", "Bash(:*)", "Bash( *)", "*"}
 IGNORED = [".env", ".claude/settings.local.json", ".claude/state/x", "data/ideas.db", "data/ideas.db-wal"]
 
@@ -58,6 +54,14 @@ def test_no_blanket_permissions(config):
 def test_required_denies(config):
     deny = {normalise(r) for r in config["permissions"].get("deny", [])}
     assert deny >= REQUIRED_DENY, REQUIRED_DENY - deny
+
+
+def test_history_rewriting_git_commands_need_approval(config):
+    permissions = config["permissions"]
+    guarded = {normalise(r) for key in ("deny", "ask") for r in permissions.get(key, [])}
+    assert guarded >= GUARDED, GUARDED - guarded
+    allow = {normalise(r) for r in permissions.get("allow", [])}
+    assert not allow & GUARDED
 
 
 def test_no_write_path_rules(config):

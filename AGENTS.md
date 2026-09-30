@@ -73,7 +73,7 @@ uv run five-ideas seed --yes                               # wipe the DB and rel
 - Add dependencies without asking.
 - Touch `dist/` (build output) or `.baseline/` (restructure snapshots).
 - Print, copy or commit secrets (`.env`, `mcp_config.json`). Use `.env.example` for new variables.
-- Push, force-push, or rewrite git history.
+- Push unless the user asks; never force-push or rewrite history (`.claude/hooks/guard-bash.py` blocks it).
 
 ## Where to look
 
