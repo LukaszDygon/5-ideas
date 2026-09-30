@@ -1,5 +1,172 @@
 [
   {
+    "id": 70,
+    "date": "2026-09-30",
+    "theme": "Creating a world",
+    "subtitle": "Build a small version of the real thing",
+    "streak_count": 1,
+    "notes": "Had a pretty productive day, got Claude Code Max subscription. It said some funny things.",
+    "created_at": "2026-09-30 21:00:45",
+    "ideas": [
+      {
+        "id": 586,
+        "day_id": 70,
+        "idea_number": 1,
+        "title": "Petri Dish Nation",
+        "tagline": "A bowl whose citizens are bacteria",
+        "description": "A bowl with bacteria living on it as its citizens.",
+        "tags": "simulation, biology",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 587,
+        "day_id": 70,
+        "idea_number": 2,
+        "title": "Evolution Sim",
+        "tagline": "Real genetic algorithm, real trade-offs",
+        "description": "An evolution simulation using a real genetic algorithm, with different traits and an environment much like ours. It has resources like water and different types of food that need certain features in an animal. New features cost energy, and both carnivores and herbivores can evolve.",
+        "tags": "simulation, genetic algorithm, ecology",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 588,
+        "day_id": 70,
+        "idea_number": 3,
+        "title": "Pixel Planet Flyover",
+        "tagline": "Scroll over a procedurally generated planet",
+        "description": "Scroll over game-like environments from above, looking down on a planet drawn in procedurally generated pixel graphics.",
+        "tags": "procedural, pixel art, generative",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 103,
+          "idea_id": 588,
+          "title": "Pixel Planet Flyover",
+          "build_type": "interactive",
+          "rank": 1,
+          "summary": "Drift north over an endless, seeded pixel-art planet by paraglider, balloon or crane, snapping postcards of towns and landmarks as you pass.",
+          "content": "/interactive/pixel-planet",
+          "external_url": "",
+          "time_spent_hours": 2.0,
+          "ai_tools_used": "Claude Code",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Voice ideas",
+              "desc": "Used voice-to-text to generate the ideas for the first time."
+            },
+            {
+              "step": 2,
+              "title": "Review the plan",
+              "desc": "Reviewed the plan and added some additional ideas. It is much easier with voice."
+            },
+            {
+              "step": 3,
+              "title": "Tune the feel",
+              "desc": "Adjusted the feel of the game a little bit to look better."
+            },
+            {
+              "step": 4,
+              "title": "Compare",
+              "desc": "Marvelled at how much better Claude Code is than Gemini."
+            }
+          ],
+          "what_rocked": [
+            "The quality of Claude Code is really impressive.",
+            "The simulation looks great."
+          ],
+          "what_broke": [
+            "Very expensive and probably slower, at least on xhigh effort. May need to dial the effort down and see how it does."
+          ],
+          "prompt_transcript": "Genesis Prompt: \"I would like it to be also a standalone repository in the parent of the current repository. I think it would be really nice to have good variety of things and it running full screen with some controls around speed of scroll and some pop-ups... like an old shooter game. It's not really a game, it's just a simulation that is meant to help me relax. So the sound should be pretty relaxing, minimal. Let me choose how I explore it. I think a paraglider or some other leisurely activity model would be perfect.\"\nInteraction Turns: 5 human turns across 354 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Okay, let's just add it to this repository. I think it works as a standalone, but doesn't need a new repository. Let's keep it here.\n  \u2022 Turn 3: proceed\n  \u2022 Turn 4: there is too many entities I think, and the cities are all the same size. It would be cool to see some locations being bigger...\n  \u2022 Turn 5: (retrospective dictated for this record)\n\nTools Executed: Bash (61), Read (28), Write (7), AskUserQuestion (5), Agent (2), Skill (2)\nFiles Modified: template.html, app.js, world.js, settlements.js, biomes.js, audio.js, noise.js, style.css, test_prototype_content.py",
+          "created_at": "2026-09-30 22:23:19"
+        }
+      },
+      {
+        "id": 589,
+        "day_id": 70,
+        "idea_number": 4,
+        "title": "Travel Cork Board",
+        "tagline": "Memories pinned to a map of the world",
+        "description": "A cork board holding memories from your travels, with a map of the world on it.",
+        "tags": "map, travel, memories",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 590,
+        "day_id": 70,
+        "idea_number": 5,
+        "title": "Mini City 3D",
+        "tagline": "See how a city's utilities connect",
+        "description": "A small-scale 3D city where you can see how the plumbing and electrical systems connect the whole city. It also covers sewage disposal and how much material the city needs. You choose the city's size.",
+        "tags": "3D, infrastructure, city",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 588,
+      "day_id": 70,
+      "idea_number": 3,
+      "title": "Pixel Planet Flyover",
+      "tagline": "Scroll over a procedurally generated planet",
+      "description": "Scroll over game-like environments from above, looking down on a planet drawn in procedurally generated pixel graphics.",
+      "tags": "procedural, pixel art, generative",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 103,
+        "idea_id": 588,
+        "title": "Pixel Planet Flyover",
+        "build_type": "interactive",
+        "rank": 1,
+        "summary": "Drift north over an endless, seeded pixel-art planet by paraglider, balloon or crane, snapping postcards of towns and landmarks as you pass.",
+        "content": "/interactive/pixel-planet",
+        "external_url": "",
+        "time_spent_hours": 2.0,
+        "ai_tools_used": "Claude Code",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Voice ideas",
+            "desc": "Used voice-to-text to generate the ideas for the first time."
+          },
+          {
+            "step": 2,
+            "title": "Review the plan",
+            "desc": "Reviewed the plan and added some additional ideas. It is much easier with voice."
+          },
+          {
+            "step": 3,
+            "title": "Tune the feel",
+            "desc": "Adjusted the feel of the game a little bit to look better."
+          },
+          {
+            "step": 4,
+            "title": "Compare",
+            "desc": "Marvelled at how much better Claude Code is than Gemini."
+          }
+        ],
+        "what_rocked": [
+          "The quality of Claude Code is really impressive.",
+          "The simulation looks great."
+        ],
+        "what_broke": [
+          "Very expensive and probably slower, at least on xhigh effort. May need to dial the effort down and see how it does."
+        ],
+        "prompt_transcript": "Genesis Prompt: \"I would like it to be also a standalone repository in the parent of the current repository. I think it would be really nice to have good variety of things and it running full screen with some controls around speed of scroll and some pop-ups... like an old shooter game. It's not really a game, it's just a simulation that is meant to help me relax. So the sound should be pretty relaxing, minimal. Let me choose how I explore it. I think a paraglider or some other leisurely activity model would be perfect.\"\nInteraction Turns: 5 human turns across 354 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Okay, let's just add it to this repository. I think it works as a standalone, but doesn't need a new repository. Let's keep it here.\n  \u2022 Turn 3: proceed\n  \u2022 Turn 4: there is too many entities I think, and the cities are all the same size. It would be cool to see some locations being bigger...\n  \u2022 Turn 5: (retrospective dictated for this record)\n\nTools Executed: Bash (61), Read (28), Write (7), AskUserQuestion (5), Agent (2), Skill (2)\nFiles Modified: template.html, app.js, world.js, settlements.js, biomes.js, audio.js, noise.js, style.css, test_prototype_content.py",
+        "created_at": "2026-09-30 22:23:19"
+      }
+    }
+  },
+  {
     "id": 69,
     "date": "2026-09-29",
     "theme": "Time goes so quick",

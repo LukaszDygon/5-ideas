@@ -1,0 +1,8 @@
+slug = "pixel-planet"
+title = "Pixel Planet Flyover"
+date = "2026-09-30"
+build_type = "interactive"
+template = "template.html"
+description = "Paraglide north over an endless, seeded pixel-art planet, snapping postcards of the places you discover."
+extra_paths = []
+routes = false

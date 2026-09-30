@@ -197,3 +197,17 @@ def test_interactive_which_is_faster(client):
     assert "WHICH ONE IS FASTER?" in response.text
     assert "KING OF THE HILL SURVIVOR" in response.text
     assert "Fleeting Time Discovery Bank" in response.text
+
+
+def test_interactive_pixel_planet(client):
+    text = page_with_assets(client, "/interactive/pixel-planet")
+    assert "Pixel Planet Flyover" in text
+    assert 'type="module"' in text
+    for craft in ("Paraglider", "Hot-air balloon", "Crane"):
+        assert craft in text
+    assert "Postcard journal" in text
+    assert "snapPostcard" in text
+    for module in ("world.js", "settlements.js", "biomes.js", "audio.js", "noise.js"):
+        response = client.get(f"/static/prototypes/pixel-planet/{module}")
+        assert response.status_code == 200, module
+        assert "export" in response.text

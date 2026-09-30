@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}{{ prototype.title }} | 5 Ideas Daily{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/prototypes/pixel-planet/style.css"/>
+
+<div id="pp-stage" class="pp-stage" data-mode="menu">
+  <canvas id="pp-canvas" class="pp-canvas" aria-label="A pixel-art planet scrolling beneath you" role="img"></canvas>
+  <div id="pp-flash" class="pp-flash" hidden></div>
+  <div id="pp-popups" class="pp-popups" aria-hidden="true"></div>
+  <p id="pp-live" class="sr-only" aria-live="polite"></p>
+
+  <!-- HUD: flight readouts -->
+  <section class="pp-hud pp-hud-left" aria-label="Flight readouts">
+    <div class="pp-panel">
+      <div class="pp-kicker"><span class="material-symbols-outlined" aria-hidden="true">explore</span><span id="pp-craft-name">Paraglider</span></div>
+      <div class="pp-readouts">
+        <div><span class="pp-label">Alt</span><span id="pp-alt" class="pp-value">0 m</span></div>
+        <div><span class="pp-label">Speed</span><span id="pp-speed" class="pp-value">0 km/h</span></div>
+        <div><span class="pp-label">Flown</span><span id="pp-dist" class="pp-value">0.0 km</span></div>
+        <div><span class="pp-label">Found</span><span id="pp-found" class="pp-value">0</span></div>
+      </div>
+      <div class="pp-altbar" aria-hidden="true"><div id="pp-altbar-fill"></div></div>
+      <div class="pp-over"><span id="pp-climate" class="neo-badge pp-climate">Temperate</span> <span id="pp-over">over green pastures</span></div>
+    </div>
+  </section>
+
+  <!-- HUD: actions -->
+  <nav class="pp-hud pp-hud-right" aria-label="Flight controls">
+    <button type="button" id="pp-btn-journal" class="neo-btn neo-btn-yellow pp-icon-btn" title="Postcard journal (J)" aria-label="Open postcard journal">
+      <span class="material-symbols-outlined" aria-hidden="true">menu_book</span><span id="pp-journal-count" class="pp-count" aria-hidden="true">0</span>
+    </button>
+    <button type="button" id="pp-btn-sound" class="neo-btn neo-btn-white pp-icon-btn" title="Mute (M)" aria-label="Mute sound" aria-pressed="false">
+      <span class="material-symbols-outlined">volume_up</span>
+    </button>
+    <button type="button" id="pp-btn-pause" class="neo-btn neo-btn-white pp-icon-btn" title="Pause (P)" aria-label="Pause" aria-pressed="false">
+      <span class="material-symbols-outlined">pause</span>
+    </button>
+    <button type="button" id="pp-btn-full" class="neo-btn neo-btn-white pp-icon-btn" title="Fullscreen (F)" aria-label="Toggle fullscreen">
+      <span class="material-symbols-outlined">fullscreen</span>
+    </button>
+    <button type="button" id="pp-btn-menu" class="neo-btn neo-btn-secondary pp-icon-btn" title="Land and change craft" aria-label="Land and change craft">
+      <span class="material-symbols-outlined">flight_land</span>
+    </button>
+  </nav>
+
+  <!-- HUD: bottom bar -->
+  <section class="pp-hud pp-hud-bottom" aria-label="Speed and sound">
+    <div class="pp-panel pp-sliders">
+      <label class="pp-slider"><span class="pp-label">Pace <kbd aria-hidden="true">↑</kbd><kbd aria-hidden="true">↓</kbd></span>
+        <input id="pp-speed-range" type="range" min="1" max="10" step="1" value="5"/>
+      </label>
+      <label class="pp-slider"><span class="pp-label">Volume</span>
+        <input id="pp-volume-range" type="range" min="0" max="100" step="1" value="70"/>
+      </label>
+    </div>
+    <div class="pp-actions">
+      <button type="button" id="pp-lift-btn" class="neo-btn neo-btn-lime" hidden>
+        <span class="material-symbols-outlined" aria-hidden="true">keyboard_double_arrow_up</span><span id="pp-lift-label">Burner</span> <kbd aria-hidden="true">Shift</kbd>
+      </button>
+      <button type="button" id="pp-snap-btn" class="neo-btn neo-btn-primary">
+        <span class="material-symbols-outlined" aria-hidden="true">photo_camera</span>Postcard <kbd aria-hidden="true">Space</kbd>
+      </button>
+    </div>
+  </section>
+
+  <div id="pp-hint" class="pp-hint" hidden></div>
+  <div id="pp-toast" class="pp-toast" role="status" hidden></div>
+  <div id="pp-paused" class="pp-paused" hidden><span>Paused</span><small>press P or the play button to fly on</small></div>
+
+  <!-- Start screen -->
+  <div id="pp-menu" class="pp-menu">
+    <div class="pp-menu-card">
+      <div class="pp-menu-head">
+        <span class="neo-badge pp-date">{{ prototype.date }} // {{ prototype.build_type }}</span>
+        <h1 class="font-display font-black text-3xl sm:text-5xl uppercase leading-none tracking-tight">Pixel Planet Flyover</h1>
+        <p class="font-body text-base">Drift north over an endless, hand-sized planet. Nothing to win, nowhere to be. Snap postcards of the places you pass.</p>
+      </div>
+
+      <fieldset class="pp-crafts">
+        <legend class="pp-label">Choose how you explore</legend>
+        <button type="button" class="pp-craft" data-craft="paraglider" aria-pressed="true">
+          <canvas width="84" height="60" data-preview="paraglider" aria-hidden="true"></canvas>
+          <strong>Paraglider</strong>
+          <span>Steady and balanced. Ride glowing thermal rings to climb.</span>
+          <em>Pace: steady</em>
+        </button>
+        <button type="button" class="pp-craft" data-craft="balloon" aria-pressed="false">
+          <canvas width="84" height="60" data-preview="balloon" aria-hidden="true"></canvas>
+          <strong>Hot-air balloon</strong>
+          <span>The calmest ride. Drifts on the wind; fire the burner to rise.</span>
+          <em>Pace: slow</em>
+        </button>
+        <button type="button" class="pp-craft" data-craft="bird" aria-pressed="false">
+          <canvas width="84" height="60" data-preview="bird" aria-hidden="true"></canvas>
+          <strong>Crane</strong>
+          <span>Quick and nimble. Flap to climb, glide to rest.</span>
+          <em>Pace: brisk</em>
+        </button>
+      </fieldset>
+
+      <div class="pp-seed-row">
+        <label class="pp-seed"><span class="pp-label">Planet seed</span>
+          <input id="pp-seed" class="neo-input" type="text" maxlength="40" spellcheck="false" autocomplete="off"/>
+        </label>
+        <button type="button" id="pp-dice" class="neo-btn neo-btn-white" title="Random planet" aria-label="Random planet">
+          <span class="material-symbols-outlined">casino</span>
+        </button>
+        <button type="button" id="pp-takeoff" class="neo-btn neo-btn-primary pp-takeoff">
+          <span class="material-symbols-outlined" aria-hidden="true">flight_takeoff</span>Take off
+        </button>
+      </div>
+
+      <p class="pp-keys"><kbd>←</kbd><kbd>→</kbd> or drag to steer · <kbd>↑</kbd><kbd>↓</kbd> pace · <kbd>Shift</kbd> lift · <kbd>Space</kbd> postcard · <kbd>J</kbd> journal · <kbd>P</kbd> pause · <kbd>M</kbd> mute · <kbd>F</kbd> fullscreen</p>
+    </div>
+  </div>
+
+  <!-- Postcard journal -->
+  <aside id="pp-journal" class="pp-journal" aria-label="Postcard journal" hidden>
+    <header class="pp-journal-head">
+      <h2 class="font-display font-black text-2xl uppercase">Postcard journal</h2>
+      <button type="button" id="pp-journal-close" class="neo-btn neo-btn-white pp-icon-btn" aria-label="Close journal">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </header>
+    <p id="pp-journal-empty" class="pp-journal-empty">No postcards yet. When a place pops up, press <kbd>Space</kbd> to keep it.</p>
+    <ol id="pp-journal-list" class="pp-journal-list"></ol>
+    <button type="button" id="pp-journal-clear" class="neo-btn neo-btn-white pp-clear">Clear journal</button>
+  </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/prototypes/pixel-planet/app.js"></script>
+{% endblock %}
