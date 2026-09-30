@@ -22,7 +22,6 @@ def test_home_view(client):
     assert any(term in response.text for term in ("RADICAL MEMPHIS POP", "SHIPPED PROTOTYPE", "LATEST DROP"))
 
 
-
 def test_calendar_view(client):
     response = client.get("/calendar")
     assert response.status_code == 200
@@ -115,8 +114,6 @@ def test_interactive_flute_view(client):
     assert "Harmonic Spectrum Analyzer" in text
 
 
-
-
 def test_interactive_fractiles_view(client):
     response = client.get("/interactive/fractiles")
     assert response.status_code == 200
@@ -200,8 +197,6 @@ def test_interactive_monster_mystery_view(client):
     assert "Fenrir the Agile Scrum Master" in text
     assert "EXHIBIT A: PHYSICAL TRACE" in text
     assert "EXHIBIT D: THE MURDER WEAPON" in text
-
-
 
 
 def test_api_get_days(client):
@@ -352,9 +347,3 @@ def test_api_which_is_faster_events(client):
     assert "duration_display" in first
     assert "scientific_fact" in first
     assert "source" in first
-
-
-
-
-
-

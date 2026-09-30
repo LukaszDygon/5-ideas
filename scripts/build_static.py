@@ -15,7 +15,9 @@ from showcase.static_site import DIST_DIR, build_static  # noqa: E402
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Freeze site to static HTML bundle")
-    parser.add_argument("--base-path", default="/5-ideas/", help="Base path for URL prefixing (default: /5-ideas/)")
+    parser.add_argument(
+        "--base-path", default="/5-ideas/", help="Base path for URL prefixing (default: /5-ideas/)"
+    )
     parser.add_argument("--out", type=Path, default=DIST_DIR, help="Output directory (default: dist/)")
     args = parser.parse_args()
     build_static(out=args.out, base_path=args.base_path, log=print)

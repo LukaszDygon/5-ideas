@@ -6,7 +6,7 @@ Mounted under FastAPI via Starlette WSGIMiddleware; build it with `create_admin_
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any
 
 from flask import Blueprint, Flask, current_app, flash, redirect, render_template, request, url_for
 
@@ -24,7 +24,7 @@ def _db_path():
     return _settings().db_file
 
 
-def _streak(manual_override=None, save: bool = False) -> Dict[str, Any]:
+def _streak(manual_override=None, save: bool = False) -> dict[str, Any]:
     s = _settings()
     if save:
         return streak.save_streak_data(manual_override, db_path=s.db_file, streak_file=s.streak_file)
@@ -37,7 +37,9 @@ def create_admin_app(settings: Settings | None = None) -> Flask:
     app.secret_key = settings.admin_secret
     app.config["SHOWCASE_SETTINGS"] = settings
     app.jinja_env.globals["all_published_dates"] = lambda: db.get_published_dates(settings.db_file)
-    app.jinja_env.globals["get_streak"] = lambda: streak.get_streak_data(settings.db_file, settings.streak_file)["streak"]
+    app.jinja_env.globals["get_streak"] = lambda: streak.get_streak_data(
+        settings.db_file, settings.streak_file
+    )["streak"]
     app.jinja_env.globals["is_hosted"] = False
     app.register_blueprint(bp)
     return app
@@ -94,7 +96,7 @@ def update_rankings():
     return redirect(url_for("admin.dashboard"))
 
 
-def parse_day_form_data(form_data, fallback_streak: int = 1) -> Dict[str, Any]:
+def parse_day_form_data(form_data, fallback_streak: int = 1) -> dict[str, Any]:
     """Helper to parse day metadata, ideas, and optional implementation from admin form."""
     date_str = form_data.get("date", "").strip() or datetime.now().strftime("%Y-%m-%d")
     theme = form_data.get("theme", "").strip()
@@ -111,16 +113,16 @@ def parse_day_form_data(form_data, fallback_streak: int = 1) -> Dict[str, Any]:
     except ValueError:
         implemented_idx = 0
 
-    ideas_data: List[Dict[str, Any]] = []
+    ideas_data: list[dict[str, Any]] = []
     for i in range(1, 6):
         title = form_data.get(f"idea_{i}_title", "").strip() or f"Spark #{i}"
         tagline = form_data.get(f"idea_{i}_tagline", "").strip()
         desc = form_data.get(f"idea_{i}_desc", "").strip()
         tags = form_data.get(f"idea_{i}_tags", "").strip()
         icon = form_data.get(f"idea_{i}_icon", "lightbulb").strip()
-        is_impl = (i == implemented_idx and implemented_idx in range(1, 6))
+        is_impl = i == implemented_idx and implemented_idx in range(1, 6)
 
-        idea_entry: Dict[str, Any] = {
+        idea_entry: dict[str, Any] = {
             "idea_number": i,
             "title": title,
             "tagline": tagline,
@@ -206,7 +208,10 @@ def new_day():
         if parsed["implemented_idx"] > 0:
             flash(f"Day {parsed['date']} created successfully with shipped prototype!", "success")
         else:
-            flash(f"Day {parsed['date']} created successfully with 5 morning sparks (prototype in progress)!", "success")
+            flash(
+                f"Day {parsed['date']} created successfully with 5 morning sparks (prototype in progress)!",
+                "success",
+            )
         return redirect(url_for("admin.dashboard"))
 
     # GET
@@ -236,7 +241,10 @@ def edit_day(date_str: str):
         if parsed["implemented_idx"] > 0:
             flash(f"Day {parsed['date']} updated successfully with shipped prototype!", "success")
         else:
-            flash(f"Day {parsed['date']} updated successfully with morning sparks (prototype in progress).", "success")
+            flash(
+                f"Day {parsed['date']} updated successfully with morning sparks (prototype in progress).",
+                "success",
+            )
         return redirect(url_for("admin.dashboard"))
 
     return render_template("admin/edit_day.html", day=day, default_date=date_str, is_new=False)

@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from showcase import db
+from showcase import db  # noqa: E402
 
 
 def get_sparks(date_str: str | None = None) -> dict | None:

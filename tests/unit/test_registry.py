@@ -31,7 +31,11 @@ def make(tmp_path: Path, manifest: str = VALID, slug: str = "demo", files=("temp
 def test_valid_manifest(tmp_path):
     proto = load_manifest(make(tmp_path))
     assert proto == Prototype(
-        slug="demo", title="Demo", date="2026-09-30", build_type="interactive", folder=tmp_path / "demo",
+        slug="demo",
+        title="Demo",
+        date="2026-09-30",
+        build_type="interactive",
+        folder=tmp_path / "demo",
         description="A demo.",
     )
     assert proto.url == "/interactive/demo"

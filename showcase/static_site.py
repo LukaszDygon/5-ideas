@@ -67,7 +67,12 @@ def rewrite_asset_links(text: str, base_path: str) -> str:
         return text
     base = "/" + base_path.strip("/") + "/"
     prefix = base.lstrip("/")
-    text = _CSS_RE.sub(lambda m: m.group(0) if m.group("path").startswith(prefix) else f"{m.group('lead')}{base}{m.group('path')}", text)
+    text = _CSS_RE.sub(
+        lambda m: (
+            m.group(0) if m.group("path").startswith(prefix) else f"{m.group('lead')}{base}{m.group('path')}"
+        ),
+        text,
+    )
     return _JS_STATIC_RE.sub(lambda m: f"{m.group('lead')}{base}static/", text)
 
 
@@ -114,7 +119,9 @@ def build_static(
             shutil.copytree(proto.static_dir, out / "static" / "prototypes" / proto.slug)
     for asset in (out / "static").rglob("*"):
         if asset.suffix in (".js", ".css"):
-            asset.write_text(rewrite_asset_links(asset.read_text(encoding="utf-8"), base_path), encoding="utf-8")
+            asset.write_text(
+                rewrite_asset_links(asset.read_text(encoding="utf-8"), base_path), encoding="utf-8"
+            )
 
     failures: list[str] = []
     with _hosted_mode(), TestClient(create_app(settings)) as client:

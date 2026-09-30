@@ -32,7 +32,9 @@ def create_templates(settings: Settings, prototypes: list[registry.Prototype]) -
     templates.env.loader = ChoiceLoader([templates.env.loader, registry.template_loader(prototypes)])
     templates.env.globals["is_hosted"] = _HostedCheck()
     templates.env.globals["all_published_dates"] = lambda: db.get_published_dates(settings.db_file)
-    templates.env.globals["get_streak"] = lambda: streak.get_streak_data(settings.db_file, settings.streak_file)["streak"]
+    templates.env.globals["get_streak"] = lambda: streak.get_streak_data(
+        settings.db_file, settings.streak_file
+    )["streak"]
     return templates
 
 

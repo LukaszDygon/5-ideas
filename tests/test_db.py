@@ -29,7 +29,6 @@ def test_seed_demo_data(temp_db):
             assert implemented[0]["implementation"] is not None
 
 
-
 def test_ranked_implementations_order(temp_db):
     ranked = db.get_ranked_implementations(temp_db)
     assert len(ranked) >= 1
@@ -47,16 +46,15 @@ def test_update_rank(temp_db):
     assert any(r["id"] == first_impl["id"] and r["rank"] == 42 for r in new_ranked)
 
 
-
 def test_get_calendar_days(temp_db):
     from datetime import datetime
+
     now = datetime.now()
     cal_days = db.get_calendar_days(now.year, now.month, temp_db)
     assert len(cal_days) >= 1
     for cd in cal_days:
         assert cd["idea_count"] == 5
         assert cd["has_implementation"] in (0, 1)
-
 
 
 def test_save_day_and_delete(temp_db):
@@ -185,6 +183,7 @@ def test_save_day_without_implementation_then_update(temp_db):
 
 def test_save_prototype_implementation_helper(temp_db):
     from scripts.save_implementation import save_prototype_implementation
+
     days = db.get_all_days(temp_db)
     target_date = days[0]["date"]
 
@@ -209,5 +208,3 @@ def test_save_prototype_implementation_helper(temp_db):
     assert impl_idea["implementation"]["build_type"] == "interactive"
     assert len(impl_idea["implementation"]["process_steps"]) == 2
     assert impl_idea["implementation"]["process_steps"][0]["title"] == "Step 1"
-
-

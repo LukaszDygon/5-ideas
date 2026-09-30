@@ -76,7 +76,7 @@ def test_admin_new_day_post(flask_client):
         "idea_3_title": "Test Idea 3",
         "idea_4_title": "Test Idea 4",
         "idea_5_title": "Test Idea 5",
-      }
+    }
     response = flask_client.post("/day/new", data=post_data, follow_redirects=True)
     assert response.status_code == 200
     assert b"created successfully" in response.data
@@ -265,6 +265,7 @@ def test_admin_edit_preserves_steps_in_textarea(flask_client):
     impl = day_with_impl["implemented_idea"]["implementation"]
     if impl.get("process_steps"):
         import html
+
         first_step = impl["process_steps"][0]
         assert (
             first_step["title"].encode("utf-8") in res.data
@@ -280,5 +281,3 @@ def test_admin_edit_by_id_route(flask_client):
     assert res.status_code == 200
     assert b"CONTENT EDITOR" in res.data
     assert first_day["date"].encode("utf-8") in res.data
-
-

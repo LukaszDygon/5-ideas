@@ -36,7 +36,14 @@ def main() -> int:
     if result.returncode in (0, 5):  # 5 = no tests collected
         return 0
     tail = "\n".join((result.stdout + result.stderr).strip().splitlines()[-20:])
-    print(json.dumps({"decision": "block", "reason": f"Tests fail after your changes; fix them before finishing:\n{tail}"}))
+    print(
+        json.dumps(
+            {
+                "decision": "block",
+                "reason": f"Tests fail after your changes; fix them before finishing:\n{tail}",
+            }
+        )
+    )
     return 0
 
 

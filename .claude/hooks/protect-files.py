@@ -14,7 +14,9 @@ from _lib import project_root, read_payload
 
 DATA_HINT = "data changes go through the project CLI (see AGENTS.md > Commands) or the admin at /admin"
 TEMP_DIRS = {Path(tempfile.gettempdir()).resolve(), Path("/tmp").resolve(), Path("/var/folders").resolve()}
-ALLOWED_OUTSIDE = TEMP_DIRS | {(Path.home() / ".claude" / "projects").resolve()}  # scratch files, agent memory
+ALLOWED_OUTSIDE = TEMP_DIRS | {
+    (Path.home() / ".claude" / "projects").resolve()
+}  # scratch files, agent memory
 
 
 def inside(p: Path, base: Path) -> bool:

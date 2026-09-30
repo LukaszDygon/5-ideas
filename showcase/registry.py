@@ -157,4 +157,6 @@ def register(app: FastAPI, prototypes: list[Prototype]) -> None:
         if module is not None and hasattr(module, "router"):
             app.include_router(module.router)
         if proto.static_dir.is_dir():
-            app.mount(proto.static_url, StaticFiles(directory=str(proto.static_dir)), name=f"static:{proto.slug}")
+            app.mount(
+                proto.static_url, StaticFiles(directory=str(proto.static_dir)), name=f"static:{proto.slug}"
+            )

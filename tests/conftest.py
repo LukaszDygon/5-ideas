@@ -22,7 +22,9 @@ def isolate_test_environment(tmp_path, monkeypatch):
     if streak.exists():
         shutil.copyfile(streak, data_dir / STREAK_FILENAME)
     else:
-        (data_dir / STREAK_FILENAME).write_text('{"streak": 1, "manual_override": null, "last_updated": "2026-09-10"}')
+        (data_dir / STREAK_FILENAME).write_text(
+            '{"streak": 1, "manual_override": null, "last_updated": "2026-09-10"}'
+        )
 
     monkeypatch.setenv("FIVE_IDEAS_DATA_DIR", str(data_dir))
     monkeypatch.delenv("HOSTED_STATIC", raising=False)

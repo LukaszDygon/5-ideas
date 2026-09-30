@@ -81,7 +81,7 @@ def git_subcommand(tokens: list[str]) -> tuple[str, list[str]]:
 
 def check_segment(tokens: list[str], root: Path, cwd: Path) -> str | None:
     # Output redirections to absolute paths outside the repo.
-    for op, target in zip(tokens, tokens[1:]):
+    for op, target in zip(tokens, tokens[1:], strict=False):
         if op in REDIRECT_OPS and target not in SAFE_DEVICES:
             p = resolve(target, cwd)
             if p is not None and not is_safe_location(p, root):
@@ -98,7 +98,10 @@ def check_segment(tokens: list[str], root: Path, cwd: Path) -> str | None:
 
     if name == "rm":
         flags = [a for a in args if a.startswith("-")]
-        recursive = any(f in {"--recursive", "-r", "-R"} or (not f.startswith("--") and ("r" in f or "R" in f)) for f in flags)
+        recursive = any(
+            f in {"--recursive", "-r", "-R"} or (not f.startswith("--") and ("r" in f or "R" in f))
+            for f in flags
+        )
         if recursive:
             for target in (a for a in args if not a.startswith("-")):
                 p = resolve(target, cwd)
@@ -110,7 +113,10 @@ def check_segment(tokens: list[str], root: Path, cwd: Path) -> str | None:
     if name == "git":
         sub, rest = git_subcommand(tokens)
         if sub == "push" and any(
-            a in {"-f", "--force"} or a.startswith("--force") or re.fullmatch(r"-[a-eg-zA-Z]*f[a-zA-Z]*", a) or a.startswith("+")
+            a in {"-f", "--force"}
+            or a.startswith("--force")
+            or re.fullmatch(r"-[a-eg-zA-Z]*f[a-zA-Z]*", a)
+            or a.startswith("+")
             for a in rest
         ):
             return "force-push is not allowed"

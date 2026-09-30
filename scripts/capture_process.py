@@ -13,28 +13,28 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
-def find_latest_transcript(app_data_dir: Optional[str] = None) -> Optional[Path]:
+def find_latest_transcript(app_data_dir: str | None = None) -> Path | None:
     """Finds the most recent transcript in the AGY brain directory."""
     base = Path(app_data_dir or os.path.expanduser("~/.gemini/antigravity-cli/brain"))
     if not base.exists():
         return None
-    
+
     candidates = list(base.glob("*/.system_generated/logs/transcript.jsonl"))
     if not candidates:
         return None
-    
+
     # Sort by modification time, most recent first
     candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     return candidates[0]
 
 
-def parse_transcript(transcript_path: Path) -> List[Dict[str, Any]]:
+def parse_transcript(transcript_path: Path) -> list[dict[str, Any]]:
     """Reads JSONL transcript into steps list."""
     steps = []
-    with open(transcript_path, "r", encoding="utf-8") as f:
+    with open(transcript_path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -79,7 +79,7 @@ def extract_clean_user_prompt(content: str) -> str:
     return text
 
 
-def extract_turns_summary(steps: List[Dict[str, Any]]) -> Dict[str, Any]:
+def extract_turns_summary(steps: list[dict[str, Any]]) -> dict[str, Any]:
     """Extracts human prompts, tool calls, and files modified cleanly without leaks."""
     user_prompts = []
     tools_called = []
@@ -89,7 +89,7 @@ def extract_turns_summary(steps: List[Dict[str, Any]]) -> Dict[str, Any]:
         source = s.get("source", "")
         step_type = s.get("type", "")
         content = s.get("content", "")
-        
+
         if step_type == "USER_INPUT" or source == "USER_EXPLICIT":
             clean = extract_clean_user_prompt(content)
             if clean:
@@ -108,11 +108,11 @@ def extract_turns_summary(steps: List[Dict[str, Any]]) -> Dict[str, Any]:
             if isinstance(args, dict):
                 target = args.get("TargetFile") or args.get("AbsolutePath")
                 if target and isinstance(target, str):
-                    target = target.strip('"\'')
+                    target = target.strip("\"'")
                     key_files_modified.add(Path(target).name)
 
     initial_prompt = user_prompts[0] if user_prompts else "Project genesis prompt"
-    
+
     return {
         "initial_prompt": initial_prompt,
         "total_user_turns": len(user_prompts),
@@ -123,12 +123,14 @@ def extract_turns_summary(steps: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-def generate_interaction_summary(summary: Dict[str, Any]) -> str:
+def generate_interaction_summary(summary: dict[str, Any]) -> str:
     """Formats a clean, presentable, leak-free AI Interaction Summary."""
     lines = []
-    lines.append(f"Genesis Prompt: \"{summary['initial_prompt']}\"")
-    lines.append(f"Interaction Turns: {summary['total_user_turns']} human turns across {summary['total_steps']} execution steps")
-    
+    lines.append(f'Genesis Prompt: "{summary["initial_prompt"]}"')
+    lines.append(
+        f"Interaction Turns: {summary['total_user_turns']} human turns across {summary['total_steps']} execution steps"
+    )
+
     if len(summary["user_prompts"]) > 1:
         lines.append("\nKey Guidance Turns:")
         for idx, prompt in enumerate(summary["user_prompts"][1:], start=2):
@@ -136,21 +138,21 @@ def generate_interaction_summary(summary: Dict[str, Any]) -> str:
             if len(preview) > 130:
                 preview = preview[:127] + "..."
             lines.append(f"  • Turn {idx}: {preview}")
-            
+
     if summary.get("tools_called_summary"):
         top_tools = sorted(summary["tools_called_summary"].items(), key=lambda x: x[1], reverse=True)[:6]
         tools_str = ", ".join(f"{k} ({v})" for k, v in top_tools)
         lines.append(f"\nTools Executed: {tools_str}")
-        
+
     if summary.get("key_files"):
         files_str = ", ".join(summary["key_files"][:8])
         lines.append(f"Files Modified: {files_str}")
-        
+
     return "\n".join(lines)
 
 
 def generate_presentable_report(
-    summary: Dict[str, Any],
+    summary: dict[str, Any],
     idea_title: str = "Daily Implemented Prototype",
     build_type: str = "webapp",
     time_spent: float = 4.0,
@@ -159,10 +161,12 @@ def generate_presentable_report(
     """Formats the captured process into a clean 90s Memphis-style Markdown report."""
     md = []
     md.append(f"# Implementation Recap: {idea_title}")
-    md.append(f"**Build Type:** `{build_type.upper()}` | **Time:** `{time_spent}h` | **AI Stack:** `{ai_stack}`\n")
-    
+    md.append(
+        f"**Build Type:** `{build_type.upper()}` | **Time:** `{time_spent}h` | **AI Stack:** `{ai_stack}`\n"
+    )
+
     md.append("## 1. Original Human Spark & Prompts")
-    md.append(f"> \"{summary['initial_prompt']}\"\n")
+    md.append(f'> "{summary["initial_prompt"]}"\n')
     if len(summary["user_prompts"]) > 1:
         md.append("### Subsequent Clarifications:")
         for idx, p in enumerate(summary["user_prompts"][1:], start=2):
@@ -173,12 +177,18 @@ def generate_presentable_report(
     md.append(f"- **User Turns:** {summary['total_user_turns']}")
     md.append(f"- **Trajectory Steps:** {summary['total_steps']}")
     md.append(f"- **Files Created / Edited:** `{', '.join(summary['key_files']) or 'None'}`")
-    md.append(f"- **Tools Executed:** {', '.join(f'{k} ({v})' for k, v in summary['tools_called_summary'].items())}\n")
+    md.append(
+        f"- **Tools Executed:** {', '.join(f'{k} ({v})' for k, v in summary['tools_called_summary'].items())}\n"
+    )
 
     md.append("## 3. Architecture & Build Steps")
-    md.append("1. **Genesis & Requirements Framing:** Scoped core minimal working prototype under YAGNI principles.")
+    md.append(
+        "1. **Genesis & Requirements Framing:** Scoped core minimal working prototype under YAGNI principles."
+    )
     md.append("2. **Core Engine & Data Model:** Stdlib SQLite layer with schema, queries, and ranking index.")
-    md.append("3. **Design System & UI Components:** Radical Memphis Pop neo-brutalist styling with zero-blur shadows.")
+    md.append(
+        "3. **Design System & UI Components:** Radical Memphis Pop neo-brutalist styling with zero-blur shadows."
+    )
     md.append("4. **Verification & Tests:** Pytest test suite covering endpoints, ranking, and CRUD.\n")
 
     md.append("## 4. Retrospective (What Rocked vs What Broke)")
@@ -196,7 +206,9 @@ def main():
     parser = argparse.ArgumentParser(description="Capture implementation process from transcripts.")
     parser.add_argument("--transcript", help="Path to transcript.jsonl (auto-detected if omitted)")
     parser.add_argument("--title", default="Prototype Build", help="Implementation title")
-    parser.add_argument("--type", default="webapp", help="Build type (webapp, poetry, song, image, interactive)")
+    parser.add_argument(
+        "--type", default="webapp", help="Build type (webapp, poetry, song, image, interactive)"
+    )
     parser.add_argument("--time", type=float, default=4.0, help="Hours spent")
     parser.add_argument("--out", help="Output file path (prints to stdout if omitted)")
     parser.add_argument("--json", action="store_true", help="Output JSON suitable for DB import")
@@ -219,11 +231,9 @@ def main():
             "summary": summary["initial_prompt"][:250],
             "what_rocked": [
                 "Fast iterative implementation under Ponytail simplicity guidelines.",
-                "Zero external dependency overhead using stdlib and native features."
+                "Zero external dependency overhead using stdlib and native features.",
             ],
-            "what_broke": [
-                "Handled edge cases and verified with comprehensive pytest suite."
-            ],
+            "what_broke": ["Handled edge cases and verified with comprehensive pytest suite."],
             "prompt_transcript": generate_interaction_summary(summary),
         }
         output = json.dumps(payload, indent=2)

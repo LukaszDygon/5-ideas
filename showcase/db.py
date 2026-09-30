@@ -378,4 +378,6 @@ if __name__ == "__main__":
     streak.save_streak_data(None)
     for d in get_all_days():
         impl = d.get("implemented_idea")
-        print(f"  • {d['date']}: {d['theme']} (Ranked Build: {impl['implementation']['title'] if impl else 'None'})")
+        print(
+            f"  • {d['date']}: {d['theme']} (Ranked Build: {impl['implementation']['title'] if impl else 'None'})"
+        )
