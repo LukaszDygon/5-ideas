@@ -426,7 +426,7 @@
       "commit_message": "feat(cli): single showcase.cli entry point with new-day and new-prototype",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": "c457d80",
+      "commit": "e733c7c",
       "notes": "showcase/cli.py (argparse) with sparks, new-day, save-impl, capture, new-prototype, build, seed; run it as 'uv run five-ideas' or 'python -m showcase.cli'. scripts/ deleted rather than shimmed (the plan's preference); README, AGENTS.md and deploy-pages.yml updated; .agents skills are updated in T1.4. capture_process.py moved to showcase/capture.py (library only). new-day requires exactly 5 ideas and refuses an existing date unless --replace (which would drop its prototype record). new-prototype scaffolds prototype.toml, a design-system hero template and static/.gitkeep, then validates via the registry. Settings.prototypes_dir (FIVE_IDEAS_PROTOTYPES_DIR) makes scaffolds testable in tmp. Every command except seed calls ensure_database, so fresh clones work. The 'python -m showcase.db' reseed entry point is replaced by 'five-ideas seed --yes'. main.py gained argparse (--port, --no-reload) so --help no longer starts a server. tests/unit/test_cli.py: 15 subprocess tests."
     },
     {
@@ -434,7 +434,7 @@
       "phase": "P1b",
       "title": "Skills in .claude/skills (migrate 3, add new-day, new-prototype, ship, design-system)",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 15,
       "depends_on": [
         "T1.1",
@@ -451,10 +451,10 @@
         "uv run pytest tests/ai_setup/test_skills.py (after T3.2)"
       ],
       "commit_message": "feat(claude): skills for the daily workflow; .agents/skills symlink to .claude/skills",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "7 skills in .claude/skills: spec-implementation, record-implementation, capture-implementation (moved with git mv, commands switched to 'uv run five-ideas', ask-before-generating rules kept), plus new-day, new-prototype, ship (disable-model-invocation: true, never pushes, stages explicit paths) and design-system (4 rules + 6 snippets from templates/design_system.html and templates/index.html). .agents/skills/<name> are relative symlinks for all 7. tests/ai_setup/test_skills.py (committed with T3.2) checks frontmatter, CLI commands, symlinks, duplicate descriptions and ship's flag. Interactive checks (autocomplete of /new-day /new-prototype /ship, /skill-doctor) need the user's session."
     },
     {
       "id": "T1.5",

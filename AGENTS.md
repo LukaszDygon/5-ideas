@@ -46,17 +46,18 @@ uv run five-ideas seed --yes                               # wipe the DB and rel
 | `static/` | Shared assets only: `static/style.css`, `static/app.js`, `static/images/` |
 | `tests/` | pytest suite (`tests/conftest.py` isolates the DB per test) |
 | `data/` | `data/ideas.json` and `data/streak.json` (committed seed/export), `ideas.db` (local, ignored) |
-| `.claude/` | Claude Code settings, rules, hooks, skills |
-| `.agents/skills/` | Workflow skills (spec, record, capture) |
+| `.claude/` | Claude Code rules, hooks and skills (`.claude/skills/`) |
+| `.agents/skills/` | Symlinks to `.claude/skills/` for other agent tools |
 | `docs/plan/` | Current restructure plan and its progress tracker |
 
 ## Daily workflow
 
-1. Morning: log the theme and five sparks (admin `/admin/day/new`).
+1. `/new-day` logs the theme and five sparks (`five-ideas new-day`).
 2. `/spec-implementation` picks the spark and confirms a build spec.
-3. Build the prototype (template + route), keep tests green.
-4. `/record-implementation` saves process steps and the retrospective (always ask the user; never invent them).
-5. Build the static site, commit, and let the user push.
+3. `/new-prototype <slug>` scaffolds `prototypes/<slug>/`; build it there and keep `uv run pytest -q` green.
+4. `/record-implementation` saves process steps and the retrospective (always ask the user; never invent them);
+   `/capture-implementation` adds the leak-free AI interaction summary.
+5. `/ship` (user-invoked) formats, tests, builds and commits locally; the user pushes.
 
 ## Conventions
 
@@ -83,6 +84,6 @@ uv run five-ideas seed --yes                               # wipe the DB and rel
 | Python conventions | `.claude/rules/python.md` |
 | Prototype conventions | `.claude/rules/prototypes.md` |
 | Schema for `days`, `ideas`, `implementations` | `showcase/db.py` |
-| Spec, record, capture workflows | `.agents/skills/` |
+| Daily-workflow skills and UI snippets | `.claude/skills/` (`design-system` holds copy-paste components) |
 | MCP servers (Stitch) | `.mcp.json`; the key comes from `STITCH_API_KEY` (see `.env.example`) |
 | Restructure plan and status | `docs/plan/PLAN.md`, `docs/plan/progress.json` |
