@@ -614,7 +614,7 @@
       "phase": "P3",
       "title": "CI: lint, tests, build artifact; optional gated LLM evals",
       "priority": "must",
-      "status": "in_progress",
+      "status": "done",
       "order": 22,
       "depends_on": [
         "T2.9",
@@ -633,9 +633,9 @@
       ],
       "commit_message": "ci: lint, tests, static build artifact; deploy uses the CLI",
       "started": "2026-09-30",
-      "completed": null,
-      "commit": null,
-      "notes": ""
+      "completed": "2026-09-30",
+      "commit": "85b1cdc",
+      "notes": "ci.yml runs on pull_request and on pushes to non-main branches: uv sync, ruff check, ruff format --check, pytest -q --durations=5, five-ideas build, and uploads dist (hidden files included for .nojekyll). deploy-pages.yml runs the same lint/test/build steps through the CLI and deploys only from main. Not pushed and no PR opened (outward-facing; the user's call). Verified by running the CI steps in two fresh clones: the first run found 3 issues, fixed in f8d1c70 (one unformatted file; hook tests that used ../ paths, which resolve into the temp dir the hooks allow; progress SHAs lagging behind commits). The second clone: all green, 284 passed, 1 skipped. Served dist under /5-ideas/ with python3 -m http.server and crawled 39 pages / 71 URLs: every internal link and asset loads except '../power-desk', a relative external_url in the 2026-09-25 data that only resolves from the site root (pre-existing, user data). Optional LLM evals skipped: 'claude plugin eval' loads no project-level config (no .claude/, CLAUDE.md or .mcp.json per the docs), so it cannot test this repo's skills without repackaging them as a plugin."
     },
     {
       "id": "T2.8",
