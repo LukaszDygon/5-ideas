@@ -19,7 +19,7 @@ def load_events() -> list[dict]:
 
 
 def page_context(request: Request) -> dict:
-    return {"events_json": json.dumps(load_events())}
+    return {"events": load_events()}
 
 
 @router.get("/api/which-is-faster/events")

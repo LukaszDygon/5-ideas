@@ -61,6 +61,16 @@ def rewrite_html_links(html: str, base_path: str) -> str:
     return _JS_STATIC_RE.sub(lambda m: f"{m.group('lead')}{base}static/", html)
 
 
+def rewrite_asset_links(text: str, base_path: str) -> str:
+    """Same prefixing for extracted JS/CSS files: '/static/...' string literals and CSS url(/...)."""
+    if base_path in ("", "/"):
+        return text
+    base = "/" + base_path.strip("/") + "/"
+    prefix = base.lstrip("/")
+    text = _CSS_RE.sub(lambda m: m.group(0) if m.group("path").startswith(prefix) else f"{m.group('lead')}{base}{m.group('path')}", text)
+    return _JS_STATIC_RE.sub(lambda m: f"{m.group('lead')}{base}static/", text)
+
+
 def page_routes(prototypes: list[registry.Prototype], days: list[dict]) -> list[str]:
     """Core pages, then every prototype page, then one page per day."""
     routes = list(CORE_PAGES) + [url for proto in prototypes for url, _ in proto.pages()]
@@ -102,6 +112,9 @@ def build_static(
     for proto in prototypes:
         if proto.static_dir.is_dir():
             shutil.copytree(proto.static_dir, out / "static" / "prototypes" / proto.slug)
+    for asset in (out / "static").rglob("*"):
+        if asset.suffix in (".js", ".css"):
+            asset.write_text(rewrite_asset_links(asset.read_text(encoding="utf-8"), base_path), encoding="utf-8")
 
     failures: list[str] = []
     with _hosted_mode(), TestClient(create_app(settings)) as client:

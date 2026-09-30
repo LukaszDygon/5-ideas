@@ -1,0 +1,83 @@
+/* Radical Memphis Pop Aesthetic & Physics */
+.memphis-box {
+  background-color: #ffffff;
+  border: 4px solid #1c1b1b;
+  box-shadow: 6px 6px 0px #1c1b1b;
+  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.memphis-box-sm {
+  background-color: #ffffff;
+  border: 3px solid #1c1b1b;
+  box-shadow: 4px 4px 0px #1c1b1b;
+}
+.btn-tactile {
+  border: 3px solid #1c1b1b;
+  box-shadow: 4px 4px 0px #1c1b1b;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.btn-tactile:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #1c1b1b;
+}
+.btn-tactile:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #1c1b1b;
+}
+
+/* Card Interaction States */
+.duel-card {
+  position: relative;
+  border: 4px solid #1c1b1b;
+  box-shadow: 8px 8px 0px #1c1b1b;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+.duel-card.clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 12px 12px 0px #1c1b1b;
+}
+.duel-card.winner {
+  border-color: #1c1b1b;
+  background-color: #f0fff4 !important;
+  box-shadow: 8px 8px 0px #1c1b1b;
+}
+.duel-card.loser {
+  opacity: 0.78;
+  filter: grayscale(25%);
+}
+
+@keyframes popStamp {
+  0% { transform: scale(2.5) rotate(-15deg); opacity: 0; }
+  60% { transform: scale(0.9) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+}
+.stamp-badge {
+  animation: popStamp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes slideChallenger {
+  0% { transform: translateX(30px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.animate-challenger {
+  animation: slideChallenger 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Category Pill Styling */
+.badge-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 2px solid #1c1b1b;
+  box-shadow: 2px 2px 0px #1c1b1b;
+}
+
+.ratio-meter-bar {
+  transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}

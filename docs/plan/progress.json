@@ -318,7 +318,7 @@
       "commit_message": "refactor(prototypes): move per-prototype APIs into routes.py; de-personalise house-stats",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "e92175e",
       "notes": "house-stats API now lives in prototypes/house-stats/routes.py (routes = true); presets come from static/data/sample_listings.json with obviously synthetic ZZ postcodes and round prices, still matched by the listing ids the page's sample buttons use. The external parser runs only when HOUSE_STATS_DIR is set. showcase/legacy_prototypes.py deleted. HTML page routes moved to showcase/pages.py, so web.py is 66 lines (target < 150). Test updated to the sample data, plus a fallback test. Not done, needs the user: prototypes/house-stats/template.html still embeds real listing ids, street addresses and local-area data from the original home search (published content, outside this task's API scope)."
     },
     {
@@ -326,7 +326,7 @@
       "phase": "P2",
       "title": "Extract inline JS/CSS for large prototypes (incremental)",
       "priority": "should",
-      "status": "todo",
+      "status": "in_progress",
       "order": 11,
       "depends_on": [
         "T2.5"
@@ -342,7 +342,7 @@
         "uv run pytest -q tests/prototypes"
       ],
       "commit_message": "refactor(<slug>): extract inline JS/CSS to static assets",
-      "started": null,
+      "started": "2026-09-30",
       "completed": null,
       "commit": null,
       "notes": "Minimum: which-is-faster, crusade-trail, monster-mystery. List the rest here if deferred."

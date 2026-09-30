@@ -39,3 +39,16 @@ def test_external_scripts_come_from_allowed_cdns(client, proto, url):
 def test_manifest_matches_folder(proto):
     assert proto.folder.name == proto.slug
     assert (proto.folder / proto.template).is_file()
+
+
+@pytest.mark.parametrize("proto", PROTOTYPES, ids=[p.slug for p in PROTOTYPES])
+def test_static_js_and_css_references_exist(proto):
+    """Extracted app.js / style.css may reference their own assets too."""
+    missing = []
+    for asset in proto.static_dir.rglob("*") if proto.static_dir.is_dir() else []:
+        if asset.suffix in (".js", ".css"):
+            text = asset.read_text(encoding="utf-8")
+            for ref in re.findall(rf"/static/prototypes/{re.escape(proto.slug)}/([^\"'\s)?#`]+)", text):
+                if not (proto.static_dir / ref).is_file():
+                    missing.append(f"{asset.name}: {ref}")
+    assert not missing, missing
