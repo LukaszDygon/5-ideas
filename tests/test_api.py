@@ -2,7 +2,16 @@
 Tests for FastAPI application endpoints and views.
 """
 
+import re
+
 from showcase import db
+
+
+def page_with_assets(client, url):
+    """Page HTML plus the prototype's own app.js / style.css, for assertions about what the page ships."""
+    html = client.get(url).text
+    assets = re.findall(r'(?:src|href)="(/static/prototypes/[^"]+\.(?:js|css))"', html)
+    return "\n".join([html] + [client.get(a).text for a in assets])
 
 
 def test_home_view(client):
@@ -163,14 +172,15 @@ def test_interactive_table_steamer_view(client):
 def test_interactive_crusade_trail_view(client):
     response = client.get("/interactive/crusade-trail")
     assert response.status_code == 200
-    assert "Iter Hierosolymitanum" in response.text
-    assert "cartoCanvas" in response.text
-    assert "Cinzel" in response.text
-    assert "EB Garamond" in response.text
-    assert "crusade_geo.json" in response.text
-    assert "crusade_waypoints.json" in response.text
-    assert "Bouillon & Cologne" in response.text
-    assert "Holy Sepulchre" in response.text
+    text = page_with_assets(client, "/interactive/crusade-trail")
+    assert "Iter Hierosolymitanum" in text
+    assert "cartoCanvas" in text
+    assert "Cinzel" in text
+    assert "EB Garamond" in text
+    assert "crusade_geo.json" in text
+    assert "crusade_waypoints.json" in text
+    assert "Bouillon & Cologne" in text
+    assert "Holy Sepulchre" in text
 
 
 def test_interactive_monster_mystery_view(client):
