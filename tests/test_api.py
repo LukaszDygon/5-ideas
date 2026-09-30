@@ -107,10 +107,11 @@ def test_interactive_house_stats_view(client):
 def test_interactive_flute_view(client):
     response = client.get("/interactive/flute")
     assert response.status_code == 200
-    assert "A Flute: Custom Woodwind Simulator" in response.text
-    assert "Acoustic Geometry Parameters" in response.text
-    assert "TONE HOLE FINGERING MATRIX" in response.text
-    assert "Harmonic Spectrum Analyzer" in response.text
+    text = page_with_assets(client, "/interactive/flute")
+    assert "A Flute: Custom Woodwind Simulator" in text
+    assert "Acoustic Geometry Parameters" in text
+    assert "TONE HOLE FINGERING MATRIX" in text
+    assert "Harmonic Spectrum Analyzer" in text
 
 
 
