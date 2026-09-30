@@ -42,3 +42,5 @@ prototypes/<slug>/
 ## Extra routes
 
 `routes.py` exposes `router = APIRouter()`; keep paths under `/api/<slug>/...` and load files relative to `Path(__file__).parent`.
+If the page needs server-side data, also define `page_context(request) -> dict`; its keys become template variables
+(see `prototypes/which-is-faster/routes.py`). Registration, discovery and validation live in `showcase/registry.py`.

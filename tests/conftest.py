@@ -28,3 +28,14 @@ def isolate_test_environment(tmp_path, monkeypatch):
     monkeypatch.delenv("HOSTED_STATIC", raising=False)
     db.ensure_database()
     yield data_dir / "ideas.db"
+
+
+@pytest.fixture
+def client(isolate_test_environment):
+    """TestClient for an app built from the isolated environment (lifespan runs on enter)."""
+    from starlette.testclient import TestClient
+
+    from showcase.web import create_app
+
+    with TestClient(create_app()) as test_client:
+        yield test_client

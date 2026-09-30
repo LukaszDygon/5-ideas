@@ -30,10 +30,13 @@ uv run python -m showcase.db                                 # wipe DB and resee
 | `showcase/api.py` | Core JSON API under `/api` |
 | `showcase/admin.py` | `create_admin_app()` Flask admin (CRUD, rankings, streak) mounted at `/admin` |
 | `showcase/db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
+| `showcase/registry.py` | Discovers `prototypes/<slug>/prototype.toml` and serves `/interactive/<slug>` |
+| `showcase/static_site.py` | Freezes core pages, prototype pages and day pages into `dist/` |
 | `showcase/legacy_prototypes.py` | Prototype routes not yet moved into `prototypes/` |
 | `main.py` | uvicorn launcher |
 | `scripts/` | CLI helpers: sparks, save implementation, capture, static build |
-| `templates/` | Site templates, `templates/admin/`, and one template per prototype |
+| `prototypes/` | One folder per prototype: manifest, template, `static/`, optional `routes.py` |
+| `templates/` | Site templates, `templates/admin/`, and prototype templates awaiting migration |
 | `static/` | Shared `static/style.css` and `static/app.js`, plus prototype media and data |
 | `tests/` | pytest suite (`tests/conftest.py` isolates the DB per test) |
 | `data/` | `data/ideas.json` and `data/streak.json` (committed seed/export), `ideas.db` (local, ignored) |
@@ -55,7 +58,7 @@ uv run python -m showcase.db                                 # wipe DB and resee
 - Commits: `feat(YYYY-MM-DD): <what shipped>` for daily work; `refactor:`, `test:`, `docs:`, `chore:` otherwise.
 - Data files (`data/ideas.json`, `data/streak.json`, `*.db`) change only through the scripts or the admin.
 - UI follows the design system: [README.md#design-system-rules-radical-memphis-pop](README.md#design-system-rules-radical-memphis-pop), live at `/design-system` (`templates/design_system.html`).
-- Every prototype template extends `templates/base.html`.
+- One prototype = one folder under `prototypes/`; its template extends `templates/base.html`.
 
 ## Do not
 

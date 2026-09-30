@@ -15,9 +15,10 @@ from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from jinja2 import ChoiceLoader
 from starlette.middleware.wsgi import WSGIMiddleware
 
-from showcase import api, db, legacy_prototypes
+from showcase import api, db, legacy_prototypes, registry
 from showcase.admin import create_admin_app
 from showcase.config import STATIC_DIR, TEMPLATES_DIR, Settings, is_hosted
 
@@ -32,8 +33,10 @@ class _HostedCheck:
         return is_hosted()
 
 
-def create_templates(settings: Settings) -> Jinja2Templates:
+def create_templates(settings: Settings, prototypes: list[registry.Prototype]) -> Jinja2Templates:
     templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+    # Site templates by name ("base.html"), prototype templates as "<slug>/template.html".
+    templates.env.loader = ChoiceLoader([templates.env.loader, registry.template_loader(prototypes)])
     templates.env.globals["is_hosted"] = _HostedCheck()
     templates.env.globals["all_published_dates"] = lambda: [d["date"] for d in db.get_all_days(settings.db_file)]
     templates.env.globals["get_streak"] = lambda: db.get_streak_data(settings.db_file, settings.streak_file)["streak"]
@@ -55,8 +58,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         version="1.0.0",
         lifespan=lifespan,
     )
+    prototypes = registry.discover()
     app.state.settings = settings
-    app.state.templates = create_templates(settings)
+    app.state.prototypes = prototypes
+    app.state.templates = create_templates(settings, prototypes)
+    registry.register(app, prototypes)  # before the /static mount so /static/prototypes/<slug> wins
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
     app.mount("/admin", WSGIMiddleware(create_admin_app(settings)))
     app.include_router(api.router)
@@ -66,6 +72,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
 
 pages = APIRouter()
+CORE_PAGES = ("/", "/calendar", "/stream", "/design-system")  # frozen by the static build
 
 
 def _render(request: Request, name: str, context: dict | None = None):

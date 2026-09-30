@@ -13,8 +13,6 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
-from showcase.config import STATIC_DIR
-
 TEMPLATE_ROUTES = {
     "/interactive/neondj": "neondj.html",
     "/interactive/canopy": "canopy.html",
@@ -33,8 +31,6 @@ TEMPLATE_ROUTES = {
     "/interactive/monster-mystery": "monster_mystery.html",
 }
 
-FLEETING_BANK = STATIC_DIR / "data" / "fleeting_time_bank.json"
-
 router = APIRouter()
 
 
@@ -47,32 +43,6 @@ def _template_view(template: str):
 
 for _path, _template in TEMPLATE_ROUTES.items():
     router.add_api_route(_path, _template_view(_template), methods=["GET"], response_class=HTMLResponse)
-
-
-def _load_events() -> list:
-    if not FLEETING_BANK.exists():
-        return []
-    with open(FLEETING_BANK, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-@router.get("/interactive/which-is-faster", response_class=HTMLResponse)
-def interactive_which_is_faster(request: Request):
-    """Which One is Faster? Survivor trivia showdown comparing fleeting moments and cosmic durations."""
-    return request.app.state.templates.TemplateResponse(
-        request=request,
-        name="which_is_faster.html",
-        context={"events_json": json.dumps(_load_events())},
-    )
-
-
-@router.get("/api/which-is-faster/events")
-def api_which_is_faster_events():
-    """Returns the verified question bank of fleeting time events."""
-    if not FLEETING_BANK.exists():
-        raise HTTPException(status_code=404, detail="Question bank not found")
-    events = _load_events()
-    return {"count": len(events), "events": events}
 
 
 @router.post("/api/house-stats/parse-url")
