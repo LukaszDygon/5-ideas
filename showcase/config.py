@@ -25,7 +25,6 @@ STREAK_FILENAME = "streak.json"
 @dataclass(frozen=True)
 class Settings:
     data_dir: Path
-    admin_secret: str = "dev-only-secret"
     house_stats_dir: Path | None = None
     prototypes_dir: Path = DEFAULT_PROTOTYPES_DIR
 
@@ -46,7 +45,6 @@ class Settings:
         house_stats = os.environ.get("HOUSE_STATS_DIR")
         return cls(
             data_dir=Path(os.environ.get("FIVE_IDEAS_DATA_DIR") or DEFAULT_DATA_DIR),
-            admin_secret=os.environ.get("FIVE_IDEAS_ADMIN_SECRET") or "dev-only-secret",
             house_stats_dir=Path(house_stats) if house_stats else None,
             prototypes_dir=Path(os.environ.get("FIVE_IDEAS_PROTOTYPES_DIR") or DEFAULT_PROTOTYPES_DIR),
         )

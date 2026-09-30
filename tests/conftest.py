@@ -12,7 +12,6 @@ import pytest
 from starlette.testclient import TestClient
 
 from showcase import db
-from showcase.admin import create_admin_app
 from showcase.config import DEFAULT_DATA_DIR, SEED_FILENAME, STREAK_FILENAME, Settings
 from showcase.web import create_app
 
@@ -39,8 +38,6 @@ def client(settings):
 
 @pytest.fixture
 def admin_client(settings):
-    """Flask test client for the admin app (routes without the /admin prefix)."""
-    app = create_admin_app(settings)
-    app.config["TESTING"] = True
-    with app.test_client() as test_client:
+    """TestClient whose relative URLs start at /admin (e.g. client.get("/day/new"))."""
+    with TestClient(create_app(settings), base_url="http://testserver/admin") as test_client:
         yield test_client

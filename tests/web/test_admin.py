@@ -1,5 +1,5 @@
 """
-Tests for Flask admin application (admin.py).
+Tests for the admin router (showcase/admin.py) mounted at /admin.
 """
 
 from showcase import db, streak
@@ -8,9 +8,9 @@ from showcase import db, streak
 def test_admin_dashboard(admin_client):
     response = admin_client.get("/")
     assert response.status_code == 200
-    assert b"Showcase Content Manager" in response.data
-    assert b"Implementation Rankings" in response.data
-    assert b"Daily Log Archive" in response.data
+    assert b"Showcase Content Manager" in response.content
+    assert b"Implementation Rankings" in response.content
+    assert b"Daily Log Archive" in response.content
 
 
 def test_admin_update_rankings(admin_client, settings):
@@ -23,7 +23,7 @@ def test_admin_update_rankings(admin_client, settings):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert b"Implementation rankings updated" in response.data
+    assert b"Implementation rankings updated" in response.content
 
     updated = [i for i in db.get_ranked_implementations(settings.db_file) if i["id"] == first_id]
     assert updated[0]["rank"] == 42
@@ -32,8 +32,8 @@ def test_admin_update_rankings(admin_client, settings):
 def test_admin_new_day_get(admin_client):
     response = admin_client.get("/day/new")
     assert response.status_code == 200
-    assert b"Create New Daily Drop" in response.data
-    assert b"The 5 Morning Sparks" in response.data
+    assert b"Create New Daily Drop" in response.content
+    assert b"The 5 Morning Sparks" in response.content
 
 
 def test_admin_new_day_post(admin_client, settings):
@@ -68,7 +68,7 @@ def test_admin_new_day_post(admin_client, settings):
     }
     response = admin_client.post("/day/new", data=post_data, follow_redirects=True)
     assert response.status_code == 200
-    assert b"created successfully" in response.data
+    assert b"created successfully" in response.content
 
     day = db.get_day_by_date(test_date, settings.db_file)
     assert day is not None
@@ -82,14 +82,14 @@ def test_admin_edit_day_get(admin_client, settings):
     first_date = days[0]["date"]
     response = admin_client.get(f"/day/{first_date}/edit")
     assert response.status_code == 200
-    assert b"Edit Day:" in response.data
-    assert days[0]["theme"].encode("utf-8") in response.data
+    assert b"Edit Day:" in response.content
+    assert days[0]["theme"].encode("utf-8") in response.content
 
 
 def test_admin_seed(admin_client, settings):
     response = admin_client.post("/seed", follow_redirects=True)
     assert response.status_code == 200
-    assert b"Demo data reseeded" in response.data
+    assert b"Demo data reseeded" in response.content
     days = db.get_all_days(settings.db_file)
     assert len(days) >= 1
 
@@ -101,7 +101,7 @@ def test_admin_streak_update(admin_client, settings):
         follow_redirects=True,
     )
     assert response.status_code == 200
-    assert b"Unbroken streak saved to static streak.json (value: 7 days)" in response.data
+    assert b"Unbroken streak saved to static streak.json (value: 7 days)" in response.content
     assert streak.get_streak_data(settings.db_file, settings.streak_file)["streak"] == 7
 
     response_reset = admin_client.post(
@@ -110,7 +110,7 @@ def test_admin_streak_update(admin_client, settings):
         follow_redirects=True,
     )
     assert response_reset.status_code == 200
-    assert b"Unbroken streak reset to auto-calculated value" in response_reset.data
+    assert b"Unbroken streak reset to auto-calculated value" in response_reset.content
     assert (
         streak.get_streak_data(settings.db_file, settings.streak_file)["streak"]
         == streak.get_streak_data(settings.db_file, settings.streak_file)["calculated_streak"]
@@ -156,8 +156,8 @@ def test_admin_morning_sparks_flow_save_then_implement(admin_client, settings):
     # 1. Save morning ideas
     res1 = admin_client.post("/day/new", data=morning_data, follow_redirects=True)
     assert res1.status_code == 200
-    assert b"created successfully" in res1.data
-    assert b"prototype in progress" in res1.data
+    assert b"created successfully" in res1.content
+    assert b"prototype in progress" in res1.content
 
     day = db.get_day_by_date(test_date, settings.db_file)
     assert day is not None
@@ -168,14 +168,14 @@ def test_admin_morning_sparks_flow_save_then_implement(admin_client, settings):
 
     # Check that the dashboard shows in-progress badge and ship prototype action
     dash_res = admin_client.get("/")
-    assert b"IN PROGRESS (Sparks Logged)" in dash_res.data
-    assert b"Ship Prototype" in dash_res.data
+    assert b"IN PROGRESS (Sparks Logged)" in dash_res.content
+    assert b"Ship Prototype" in dash_res.content
 
     # 2. Check edit page loads in-progress state correctly
     edit_get = admin_client.get(f"/day/{test_date}/edit")
     assert edit_get.status_code == 200
-    assert b"Euclidean Drum Sequencer" in edit_get.data
-    assert b"In Progress (None yet)" in edit_get.data
+    assert b"Euclidean Drum Sequencer" in edit_get.content
+    assert b"In Progress (None yet)" in edit_get.content
 
     # 3. Afternoon: Implement Idea #3 and update the entry
     update_data = {
@@ -222,8 +222,8 @@ def test_admin_morning_sparks_flow_save_then_implement(admin_client, settings):
 
     res2 = admin_client.post(f"/day/{test_date}/edit", data=update_data, follow_redirects=True)
     assert res2.status_code == 200
-    assert b"updated successfully" in res2.data
-    assert b"shipped prototype" in res2.data
+    assert b"updated successfully" in res2.content
+    assert b"shipped prototype" in res2.content
 
     updated_day = db.get_day_by_date(test_date, settings.db_file)
     assert updated_day is not None
@@ -242,7 +242,7 @@ def test_admin_morning_sparks_flow_save_then_implement(admin_client, settings):
 
     # Check dashboard shows completed shipped prototype
     dash_res2 = admin_client.get("/")
-    assert b"Euclidean Matrix 9000" in dash_res2.data
+    assert b"Euclidean Matrix 9000" in dash_res2.content
 
 
 def test_admin_edit_preserves_steps_in_textarea(admin_client, settings):
@@ -260,8 +260,8 @@ def test_admin_edit_preserves_steps_in_textarea(admin_client, settings):
 
         first_step = impl["process_steps"][0]
         assert (
-            first_step["title"].encode("utf-8") in res.data
-            or html.escape(first_step["title"]).encode("utf-8") in res.data
+            first_step["title"].encode("utf-8") in res.content
+            or html.escape(first_step["title"]).encode("utf-8") in res.content
         )
 
 
@@ -271,5 +271,33 @@ def test_admin_edit_by_id_route(admin_client, settings):
     first_day = days[0]
     res = admin_client.get(f"/day/{first_day['id']}/edit")
     assert res.status_code == 200
-    assert b"CONTENT EDITOR" in res.data
-    assert first_day["date"].encode("utf-8") in res.data
+    assert b"CONTENT EDITOR" in res.content
+    assert first_day["date"].encode("utf-8") in res.content
+
+
+def test_admin_without_trailing_slash_redirects(client):
+    response = client.get("/admin", follow_redirects=False)
+    assert response.status_code in (307, 308)
+    assert response.headers["location"].endswith("/admin/")
+    assert client.get("/admin").status_code == 200
+
+
+def test_flash_message_shows_once(admin_client):
+    first = admin_client.post("/streak/update", data={"action": "reset"}, follow_redirects=True)
+    assert b"reset to auto-calculated value" in first.content
+    again = admin_client.get("/")
+    assert b"reset to auto-calculated value" not in again.content
+
+
+def test_admin_delete_day(admin_client, settings):
+    day = db.get_day_by_date("2026-09-10", settings.db_file)
+    response = admin_client.post(f"/day/{day['id']}/delete", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Day deleted." in response.content
+    assert db.get_day_by_date("2026-09-10", settings.db_file) is None
+
+
+def test_admin_edit_unknown_day_redirects_with_error(admin_client):
+    response = admin_client.get("/day/1999-01-01/edit", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Day 1999-01-01 not found." in response.content

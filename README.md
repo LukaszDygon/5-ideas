@@ -8,7 +8,7 @@ Every day:
 3. **Top-Ranked Implementations** welcome visitors in order of builder preference.
 4. **Calendar View** provides interactive monthly archive navigation.
 5. **Day-By-Day Stream** displays chronological ideas with flexible embedded renderers.
-6. **Flask Admin** (`/admin`) provides full CRUD content management and one-click ranking reordering.
+6. **Admin** (`/admin`) provides full CRUD content management and one-click ranking reordering.
 
 ---
 
@@ -16,7 +16,7 @@ Every day:
 
 - **Runtime & Package Manager:** Python `>=3.13` managed with `uv`.
 - **Web & API Framework:** `FastAPI` (ASGI) for public routes, REST API, Swagger `/docs`, and static files.
-- **Admin Panel Framework:** `Flask` (WSGI) mounted at `/admin` via Starlette `WSGIMiddleware`.
+- **Admin Panel:** a FastAPI router at `/admin` (`showcase/admin.py`) sharing the site's Jinja templates.
 - **Database:** Python stdlib `sqlite3` (`data/ideas.db`, seeded from `data/ideas.json`) in WAL mode with foreign keys and zero external ORM bloat.
 - **Design System:** Radical Memphis Pop neo-brutalist Tailwind CSS + custom tokens (`style.css`), Bricolage Grotesque, Space Grotesk, and JetBrains Mono.
 - **Testing:** `pytest` + `httpx` (`TestClient`).
@@ -31,7 +31,7 @@ AI coding agents: start with [AGENTS.md](AGENTS.md) (Claude Code loads it throug
 # Install dependencies (dev tools included)
 uv sync
 
-# Run development server (FastAPI + Flask admin on port 8000)
+# Run development server (site + admin on port 8000)
 uv run python main.py
 # Or: uv run uvicorn showcase.web:app --reload --port 8000
 
@@ -61,9 +61,9 @@ uv run five-ideas seed --yes  # wipes data/ideas.db and reloads data/ideas.json
 | `/day/{date}` | Daily deep-dive with retrospective and prompt logs | FastAPI |
 | `/design-system` | Reusable Memphis Pop UI component reference & sandbox | FastAPI |
 | `/interactive/<slug>` | One page per prototype, discovered from [prototypes/](prototypes/) (`prototype.toml`) | FastAPI registry |
-| `/admin` | Flask Admin dashboard & ranking manager | Flask (via WSGI) |
-| `/admin/day/new` | Create daily drop (morning sparks or shipped build) | Flask |
-| `/admin/day/{date}/edit`| Edit daily entry, ideas, and prototype details | Flask |
+| `/admin` | Admin dashboard & ranking manager | FastAPI |
+| `/admin/day/new` | Create daily drop (morning sparks or shipped build) | FastAPI |
+| `/admin/day/{date}/edit`| Edit daily entry, ideas, and prototype details | FastAPI |
 | `/docs` | Interactive Swagger API documentation | FastAPI |
 
 ---

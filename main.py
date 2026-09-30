@@ -1,6 +1,6 @@
 """
 Main entry point for 5 Ideas Daily Showcase.
-Runs FastAPI + Flask Admin on http://localhost:8000 (use --port to change).
+Runs the FastAPI site and admin on http://localhost:8000 (use --port to change).
 """
 
 import argparse
@@ -21,7 +21,7 @@ def main() -> None:
     print(f"   • Calendar (Biggest View): {base}/calendar")
     print(f"   • Day-by-Day Stream: {base}/stream")
     print(f"   • Design System Gallery: {base}/design-system")
-    print(f"   • Flask Admin Dashboard: {base}/admin")
+    print(f"   • Admin Dashboard: {base}/admin")
     print(f"   • Interactive Swagger Docs: {base}/docs")
     uvicorn.run("showcase.web:app", host=args.host, port=args.port, reload=not args.no_reload)
 

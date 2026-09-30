@@ -1,1 +1,1 @@
-"""5 Ideas Daily Showcase: FastAPI site, Flask admin, SQLite data layer, prototype registry."""
+"""5 Ideas Daily Showcase: FastAPI site and admin, SQLite data layer, prototype registry."""

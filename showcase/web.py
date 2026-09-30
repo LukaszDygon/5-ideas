@@ -1,4 +1,4 @@
-"""FastAPI application factory: public pages, JSON API, Flask admin, prototypes.
+"""FastAPI application factory: public pages, JSON API, admin, prototypes.
 
 `uvicorn showcase.web:app` serves the module-level app built from the environment;
 tests and the static build call `create_app(settings)` directly.
@@ -12,10 +12,8 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import ChoiceLoader
-from starlette.middleware.wsgi import WSGIMiddleware
 
-from showcase import api, db, pages, registry, streak
-from showcase.admin import create_admin_app
+from showcase import admin, api, db, pages, registry, streak
 from showcase.config import STATIC_DIR, TEMPLATES_DIR, Settings, is_hosted
 
 
@@ -59,8 +57,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.templates = create_templates(settings, prototypes)
     registry.register(app, prototypes)  # before the /static mount so /static/prototypes/<slug> wins
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-    app.mount("/admin", WSGIMiddleware(create_admin_app(settings)))
     app.include_router(api.router)
+    app.include_router(admin.router)
     app.include_router(pages.router)
     return app
 

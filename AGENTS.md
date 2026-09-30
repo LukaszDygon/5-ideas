@@ -5,7 +5,7 @@ Single source of truth for AI agents working in the **5 Ideas Daily Showcase** r
 ## What this repo is
 
 Every day: 5 idea "sparks" on a theme, 1 prototype shipped before sundown, all shown on a Radical Memphis Pop site.
-FastAPI serves the public site and JSON API, a Flask admin is mounted at `/admin`, data lives in SQLite (stdlib `sqlite3`).
+FastAPI serves the public site, the JSON API and the admin at `/admin`; data lives in SQLite (stdlib `sqlite3`).
 The site is frozen to static HTML and deployed to GitHub Pages under `/5-ideas/`.
 
 ## Commands
@@ -33,7 +33,7 @@ uv run five-ideas seed --yes                               # wipe the DB and rel
 | `showcase/web.py` | `create_app()` FastAPI factory: templates, registry, static, admin mounts |
 | `showcase/pages.py` | Public HTML pages (home, calendar, stream, day, design system) |
 | `showcase/api.py` | Core JSON API under `/api` |
-| `showcase/admin.py` | `create_admin_app()` Flask admin (CRUD, rankings, streak) mounted at `/admin` |
+| `showcase/admin.py` | Admin router at `/admin` (CRUD, rankings, streak; cookie flash messages) |
 | `showcase/db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
 | `showcase/cli.py` | `five-ideas` CLI: sparks, new-day, save-impl, capture, new-prototype, build, seed |
 | `showcase/capture.py` | Transcript parsing for leak-free AI interaction summaries |
