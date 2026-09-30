@@ -5,4 +5,4 @@ build_type = "webapp"
 template = "template.html"
 description = "Property intelligence dossier generator and home search tracker."
 extra_paths = []
-routes = false
+routes = true

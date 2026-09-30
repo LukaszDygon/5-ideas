@@ -26,13 +26,13 @@ uv run python -m showcase.db                                 # wipe DB and resee
 | Path | Purpose |
 | :--- | :--- |
 | `showcase/config.py` | `Settings` (data dir, secrets) read from the environment |
-| `showcase/web.py` | `create_app()` FastAPI factory and the public pages |
+| `showcase/web.py` | `create_app()` FastAPI factory: templates, registry, static, admin mounts |
+| `showcase/pages.py` | Public HTML pages (home, calendar, stream, day, design system) |
 | `showcase/api.py` | Core JSON API under `/api` |
 | `showcase/admin.py` | `create_admin_app()` Flask admin (CRUD, rankings, streak) mounted at `/admin` |
 | `showcase/db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
 | `showcase/registry.py` | Discovers `prototypes/<slug>/prototype.toml` and serves `/interactive/<slug>` |
 | `showcase/static_site.py` | Freezes core pages, prototype pages and day pages into `dist/` |
-| `showcase/legacy_prototypes.py` | house-stats API awaiting its move into `prototypes/house-stats/` |
 | `main.py` | uvicorn launcher |
 | `scripts/` | CLI helpers: sparks, save implementation, capture, static build |
 | `prototypes/` | One folder per prototype: manifest, template, `static/`, optional `routes.py` |

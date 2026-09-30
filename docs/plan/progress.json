@@ -291,7 +291,7 @@
       "commit_message": "refactor(prototypes): migrate <batch> into prototypes/",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "a7c08db",
       "notes": "Migrated in 4 commits: (neondj, canopy, tortoise, flute) a8390e6, (water-calories, fractiles, monster-mystery, house-stats) c230d03, (campfire+hardware, slots1v1, nostalgia-cap) 7d0e2a2, (mcnuggets, table-steamer, crusade-trail) in the commit recorded here. Assets moved with git mv, keeping their subpaths (static/audio/x.mp3 -> prototypes/campfire/static/audio/x.mp3). Dates/titles/types come from data/ideas.json; neondj has no implementation record, so it uses 2026-09-10 (day 1). After each batch: tests green, every baseline /interactive/ route built, normalised dist diff shows only the intended link fixes. Browser check replaced by an automated one: all 105 /5-ideas/static/ references in dist resolve to files (please still eyeball campfire audio once). static/images/macau_game.png and macau_training.png are referenced by nothing; left in place for the user to keep or delete."
     },
     {
@@ -299,7 +299,7 @@
       "phase": "P2",
       "title": "Per-prototype routes.py; de-personalise house-stats",
       "priority": "must",
-      "status": "todo",
+      "status": "done",
       "order": 10,
       "depends_on": [
         "T2.4"
@@ -316,10 +316,10 @@
         "wc -l showcase/web.py  # < 150"
       ],
       "commit_message": "refactor(prototypes): move per-prototype APIs into routes.py; de-personalise house-stats",
-      "started": null,
-      "completed": null,
+      "started": "2026-09-30",
+      "completed": "2026-09-30",
       "commit": null,
-      "notes": ""
+      "notes": "house-stats API now lives in prototypes/house-stats/routes.py (routes = true); presets come from static/data/sample_listings.json with obviously synthetic ZZ postcodes and round prices, still matched by the listing ids the page's sample buttons use. The external parser runs only when HOUSE_STATS_DIR is set. showcase/legacy_prototypes.py deleted. HTML page routes moved to showcase/pages.py, so web.py is 66 lines (target < 150). Test updated to the sample data, plus a fallback test. Not done, needs the user: prototypes/house-stats/template.html still embeds real listing ids, street addresses and local-area data from the original home search (published content, outside this task's API scope)."
     },
     {
       "id": "T2.6",

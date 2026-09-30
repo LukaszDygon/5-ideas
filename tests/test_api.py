@@ -283,14 +283,23 @@ def test_api_house_stats_parse_url(client):
     data = resp.json()
     assert data["success"] is True
     assert data["portal"] == "Zoopla"
-    assert "EN2" in data["postcode"]
-    assert data["price"] == 675000
+    assert data["postcode"] == "ZZ1 1AA"  # synthetic sample from sample_listings.json
+    assert data["price"] == 500000
     assert data["beds"] == 4
-    assert data["sqft"] == 1334
+    assert data["sqft"] == 1300
 
     # Test empty URL
     err_resp = client.post("/api/house-stats/parse-url", json={"url": ""})
     assert err_resp.status_code == 400
+
+
+def test_api_house_stats_parse_url_fallback(client, monkeypatch):
+    monkeypatch.delenv("HOUSE_STATS_DIR", raising=False)
+    url = "https://www.rightmove.co.uk/properties/123"
+    data = client.post("/api/house-stats/parse-url", json={"url": url}).json()
+    assert data["portal"] == "Rightmove"
+    assert data["postcode"].startswith("ZZ")
+    assert data["notes"] == f"Pasted link: {url}"
 
 
 def test_interactive_water_calories(client):

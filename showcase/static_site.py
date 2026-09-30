@@ -17,7 +17,8 @@ from starlette.testclient import TestClient
 
 from showcase import db, registry
 from showcase.config import ROOT, STATIC_DIR, Settings
-from showcase.web import CORE_PAGES, create_app
+from showcase.pages import CORE_PAGES
+from showcase.web import create_app
 
 DIST_DIR = ROOT / "dist"
 
