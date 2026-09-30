@@ -87,7 +87,10 @@ def test_no_unprefixed_static_urls_in_assets(built):
         ('<a href="/day/2026-09-29#impl">', '<a href="/5-ideas/day/2026-09-29/#impl">'),
         ('<link href="/static/style.css">', '<link href="/5-ideas/static/style.css">'),
         ('<img src="/static/a.png">', '<img src="/5-ideas/static/a.png">'),
-        ("<div style=\"background:url('/static/a.png')\">", "<div style=\"background:url('/5-ideas/static/a.png')\">"),
+        (
+            "<div style=\"background:url('/static/a.png')\">",
+            "<div style=\"background:url('/5-ideas/static/a.png')\">",
+        ),
         ("fetch('/static/prototypes/x/data.json')", "fetch('/5-ideas/static/prototypes/x/data.json')"),
         ('<script src="//cdn.example.com/x.js">', '<script src="//cdn.example.com/x.js">'),
         ('<a href="/5-ideas/stream/">', '<a href="/5-ideas/stream/">'),
@@ -106,5 +109,11 @@ def test_rewrite_is_a_no_op_at_the_root():
 
 def test_rewrite_asset_links():
     js = "const a = '/static/prototypes/x/a.png'; const b = \"/5-ideas/static/b.png\";"
-    assert rewrite_asset_links(js, BASE) == "const a = '/5-ideas/static/prototypes/x/a.png'; const b = \"/5-ideas/static/b.png\";"
-    assert rewrite_asset_links("body { background: url(/static/bg.png) }", BASE) == "body { background: url(/5-ideas/static/bg.png) }"
+    assert (
+        rewrite_asset_links(js, BASE)
+        == "const a = '/5-ideas/static/prototypes/x/a.png'; const b = \"/5-ideas/static/b.png\";"
+    )
+    assert (
+        rewrite_asset_links("body { background: url(/static/bg.png) }", BASE)
+        == "body { background: url(/5-ideas/static/bg.png) }"
+    )

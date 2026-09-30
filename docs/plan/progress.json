@@ -606,7 +606,7 @@
       "commit_message": "test: static build and page rendering coverage",
       "started": "2026-09-30",
       "completed": "2026-09-30",
-      "commit": null,
+      "commit": "891256c",
       "notes": "tests/build/test_static_site.py (18 tests): one module-scoped build into tmp with its own data copy. Checks that every core, registry and day page is frozen (and exactly those), the GitHub Pages extras (dates.json matches the DB), no un-prefixed href/src/action/poster, every /5-ideas/static reference in HTML, JS and CSS resolves, and no raw '/static/' is left in shipped JS/CSS; plus unit tests for rewrite_html_links and rewrite_asset_links. web/test_pages.py adds core pages, the streak value in the header, the day-to-prototype link and calendar month navigation. Negative check done: moving prototypes/crusade-trail/static away fails test_every_static_reference_resolves; restoring it passes. build_static(out=...) already existed (T2.3)."
     },
     {
@@ -614,7 +614,7 @@
       "phase": "P3",
       "title": "CI: lint, tests, build artifact; optional gated LLM evals",
       "priority": "must",
-      "status": "todo",
+      "status": "in_progress",
       "order": 22,
       "depends_on": [
         "T2.9",
@@ -632,7 +632,7 @@
         "download dist artifact, serve with python3 -m http.server, links work under /5-ideas/"
       ],
       "commit_message": "ci: lint, tests, static build artifact; deploy uses the CLI",
-      "started": null,
+      "started": "2026-09-30",
       "completed": null,
       "commit": null,
       "notes": ""
