@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}{{ prototype.title }} | 5 Ideas Daily{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/prototypes/grow-your-own/style.css"/>
+
+<div class="gyo flex flex-col gap-6">
+  <section class="gyo-hero bg-acid-lime text-ink border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-5 md:p-6">
+    <div>
+      <div class="inline-flex items-center gap-2 bg-white text-ink px-3 py-1 font-mono text-xs font-black uppercase border-2 border-ink shadow-[3px_3px_0px_#1c1b1b] -rotate-1 mb-3">
+        {{ prototype.date }} // {{ prototype.build_type }}
+      </div>
+      <h1 class="font-display font-black text-3xl sm:text-5xl uppercase leading-none tracking-tight">{{ prototype.title }}</h1>
+      <p class="font-body text-base max-w-2xl mt-2">{{ prototype.description }}</p>
+    </div>
+    <dl class="gyo-hero-stats">
+      <div class="gyo-stat bg-tertiary-yellow"><dt>Lessons</dt><dd id="gyo-stat-lessons">0/16</dd></div>
+      <div class="gyo-stat bg-white"><dt>Gates</dt><dd id="gyo-stat-gates">0/4</dd></div>
+    </dl>
+  </section>
+
+  <div class="gyo-layout">
+    <div class="gyo-stage-col">
+      <div class="gyo-stage" id="gyo-stage">
+        <canvas id="gyo-canvas" class="gyo-canvas" width="240" height="176" tabindex="-1" role="application"
+                aria-label="A pixel-art garden seen from above. Walk with the arrow keys or W A S D, press E to read what you are facing, and C to open your codex."></canvas>
+
+        <div id="gyo-banner" class="gyo-banner" aria-hidden="true">
+          <span id="gyo-banner-kicker" class="gyo-banner-kicker"></span>
+          <strong id="gyo-banner-name" class="gyo-banner-name"></strong>
+        </div>
+
+        <div id="gyo-prompt" class="gyo-prompt" aria-live="polite" hidden>
+          <kbd aria-hidden="true">E</kbd><span id="gyo-prompt-text"></span>
+        </div>
+        <div id="gyo-toast" class="gyo-toast" aria-hidden="true" hidden></div>
+
+        <div id="gyo-start" class="gyo-start">
+          <div class="gyo-start-card">
+            <span class="neo-badge bg-tertiary-yellow">Practical gardening in the UK</span>
+            <h2 class="font-display font-black text-2xl sm:text-4xl uppercase leading-none">Walk the plot. Learn the season.</h2>
+            <p>Four garden areas, four lessons in each. Walk into anything with a yellow <strong>!</strong> to read it, then answer the gate's question to move on.</p>
+            <button type="button" id="gyo-start-go" class="neo-btn neo-btn-primary gyo-start-btn">Start growing</button>
+          </div>
+        </div>
+      </div>
+      <p class="gyo-keys">
+        <span class="gyo-keys-kbd"><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd> or <kbd>WASD</kbd> walk · <kbd>E</kbd> read · <kbd>C</kbd> codex · or click where you want to go</span>
+        <span class="gyo-keys-touch">Tap where you want to go. Tap an object to walk over and read it.</span>
+      </p>
+    </div>
+
+    <aside class="gyo-panel" aria-label="Where you are">
+      <section class="gyo-card gyo-area">
+        <span id="gyo-area-kicker" class="neo-badge bg-electric-cyan">Start</span>
+        <h2 id="gyo-area-name" class="font-display font-black text-2xl uppercase leading-none">The Garden Gate</h2>
+        <p id="gyo-area-blurb" class="gyo-blurb"></p>
+        <ul id="gyo-area-lessons" class="gyo-checklist" aria-label="Lessons in this area" hidden></ul>
+        <p id="gyo-gate-status" class="gyo-gate" data-state="open"></p>
+      </section>
+
+      <section class="gyo-card">
+        <h2 class="gyo-card-title">Your plot</h2>
+        <ol id="gyo-trail" class="gyo-trail"></ol>
+        <div class="gyo-progress" aria-hidden="true"><div id="gyo-progress-bar"></div></div>
+        <p id="gyo-progress-text" class="gyo-progress-text"></p>
+        <div class="gyo-panel-actions">
+          <button type="button" id="gyo-codex-btn" class="neo-btn neo-btn-yellow">
+            <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>Codex <span id="gyo-codex-btn-count" class="gyo-count">0/16</span>
+          </button>
+          <button type="button" id="gyo-reset" class="neo-btn neo-btn-white">
+            <span class="material-symbols-outlined" aria-hidden="true">restart_alt</span>Start over
+          </button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Lesson and sign card -->
+  <dialog id="gyo-lesson" class="gyo-dialog" aria-labelledby="gyo-lesson-title">
+    <form method="dialog" class="gyo-dialog-inner">
+      <header class="gyo-dialog-head">
+        <canvas id="gyo-lesson-art" class="gyo-art" width="16" height="16" aria-hidden="true"></canvas>
+        <div>
+          <p id="gyo-lesson-kicker" class="gyo-kicker"></p>
+          <h2 id="gyo-lesson-title" class="font-display font-black text-2xl sm:text-3xl uppercase leading-none"></h2>
+          <p id="gyo-lesson-when" class="neo-badge bg-electric-cyan gyo-when-badge" hidden></p>
+        </div>
+      </header>
+      <div id="gyo-lesson-body" class="gyo-prose"></div>
+      <dl id="gyo-lesson-list" class="gyo-list" hidden></dl>
+      <aside id="gyo-lesson-tip" class="gyo-tip">
+        <strong>Do this</strong>
+        <p id="gyo-lesson-tip-text"></p>
+      </aside>
+      <p id="gyo-lesson-status" class="gyo-status"></p>
+      <div class="gyo-actions">
+        <button type="submit" value="codex" class="neo-btn neo-btn-white">
+          <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>Open codex
+        </button>
+        <button type="submit" value="ok" class="neo-btn neo-btn-primary" autofocus>Got it</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Gate question -->
+  <dialog id="gyo-quiz" class="gyo-dialog" aria-labelledby="gyo-quiz-question">
+    <form method="dialog" class="gyo-dialog-inner">
+      <p id="gyo-quiz-kicker" class="gyo-kicker"></p>
+      <h2 id="gyo-quiz-question" class="font-display font-black text-xl sm:text-2xl leading-tight"></h2>
+      <div id="gyo-quiz-options" class="gyo-options" role="group" aria-label="Answers"></div>
+      <p id="gyo-quiz-feedback" class="gyo-feedback" aria-live="polite"></p>
+      <div class="gyo-actions">
+        <button type="submit" id="gyo-quiz-later" value="later" class="neo-btn neo-btn-white">Not yet</button>
+        <button type="submit" id="gyo-quiz-open" value="open" class="neo-btn neo-btn-lime" hidden>
+          <span class="material-symbols-outlined" aria-hidden="true">lock_open</span>Through the gate
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Codex -->
+  <dialog id="gyo-codex" class="gyo-dialog gyo-dialog-wide" aria-labelledby="gyo-codex-title">
+    <form method="dialog" class="gyo-dialog-inner">
+      <header class="gyo-codex-top">
+        <div>
+          <p class="gyo-kicker">Everything you've learned</p>
+          <h2 id="gyo-codex-title" class="font-display font-black text-3xl uppercase leading-none">Codex</h2>
+        </div>
+        <button type="submit" value="close" class="neo-btn neo-btn-white gyo-icon-btn" aria-label="Close codex">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </header>
+      <p id="gyo-codex-count" class="gyo-progress-text"></p>
+      <div class="gyo-progress" aria-hidden="true"><div id="gyo-codex-bar"></div></div>
+      <div id="gyo-codex-list" class="gyo-codex-list"></div>
+    </form>
+  </dialog>
+
+  <!-- Finish -->
+  <dialog id="gyo-end" class="gyo-dialog" aria-labelledby="gyo-end-title">
+    <form method="dialog" class="gyo-dialog-inner gyo-end">
+      <span class="neo-badge bg-tertiary-yellow">The Harvest</span>
+      <h2 id="gyo-end-title" class="font-display font-black text-3xl sm:text-5xl uppercase leading-none">Plot complete!</h2>
+      <p>You walked the whole garden, filled your codex and opened every gate. That's a season's worth of growing know-how.</p>
+      <dl class="gyo-end-stats">
+        <div class="gyo-stat bg-acid-lime"><dt>Lessons</dt><dd>16/16</dd></div>
+        <div class="gyo-stat bg-electric-cyan"><dt>Gates</dt><dd>4/4</dd></div>
+        <div class="gyo-stat bg-tertiary-yellow"><dt>Steps</dt><dd id="gyo-end-steps">0</dd></div>
+      </dl>
+      <div class="gyo-actions">
+        <button type="submit" value="restart" class="neo-btn neo-btn-white">Start over</button>
+        <button type="submit" value="codex" class="neo-btn neo-btn-yellow">Open codex</button>
+        <button type="submit" value="stay" class="neo-btn neo-btn-primary" autofocus>Keep wandering</button>
+      </div>
+    </form>
+  </dialog>
+
+  <p id="gyo-live" class="sr-only" aria-live="polite"></p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/prototypes/grow-your-own/app.js"></script>
+{% endblock %}

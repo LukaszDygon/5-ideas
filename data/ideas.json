@@ -1,5 +1,162 @@
 [
   {
+    "id": 71,
+    "date": "2026-10-02",
+    "theme": "Organizing knowledge",
+    "subtitle": "Give every thought a place to live",
+    "streak_count": 1,
+    "notes": "Feeling a little bit sleepy after waking up, but it's a nice day.",
+    "created_at": "2026-10-02 07:23:23",
+    "ideas": [
+      {
+        "id": 601,
+        "day_id": 71,
+        "idea_number": 1,
+        "title": "Voice to Brainstorm",
+        "tagline": "Think out loud, get a mind map",
+        "description": "Voice to brainstorming.",
+        "tags": "voice, brainstorming, speech-to-text",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 602,
+        "day_id": 71,
+        "idea_number": 2,
+        "title": "Explorable Topic World",
+        "tagline": "Every room is a chapter",
+        "description": "A traversable environment where interacting with different objects teaches you about a specific topic. Each location is a chapter.",
+        "tags": "exploration, learning, game",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 105,
+          "idea_id": 602,
+          "title": "Grow Your Own",
+          "build_type": "interactive",
+          "rank": 1,
+          "summary": "Walk a pixel-art garden, collect 16 practical UK growing lessons in your codex and answer a question at each gate to reach the harvest.",
+          "content": "/interactive/grow-your-own",
+          "external_url": "",
+          "time_spent_hours": 2.0,
+          "ai_tools_used": "Claude Code",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Idea",
+              "desc": "Came up with the idea"
+            },
+            {
+              "step": 2,
+              "title": "Approvals",
+              "desc": "Approved some dangerous tool calls"
+            },
+            {
+              "step": 3,
+              "title": "Review",
+              "desc": "Looks good"
+            }
+          ],
+          "what_rocked": [
+            "The agents optimised it for mobile",
+            "The theme follows the topic of the information presented"
+          ],
+          "what_broke": [
+            "The controls don't play super well with browser behaviour"
+          ],
+          "prompt_transcript": "Genesis Prompt: \"create a new theme uh, the theme is organizing knowledge my daily spark is feeling a little bit sleepy after waking up but it's a nice day\"\nInteraction Turns: 7 human turns across 282 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Spark number one is voice to brainstorming. Spark number two is some kind of a traversable environment where interacting with d...\n  \u2022 Turn 4: 2\n  \u2022 Turn 5: change the topic to growing a garden (aiming at what is practical in UK)\n  \u2022 Turn 6: yes\n  \u2022 Turn 7: Uh, looks good, record implementation. The steps were one, come up with the idea, two, approve some dangerous tool calls. Three...\n\nTools Executed: Bash (39), Edit (18), Read (14), Write (8), AskUserQuestion (3), Skill (3), Agent (2)\nFiles Modified: prototype.toml, template.html, app.js, content.js, sprites.js, style.css, test_prototype_content.py",
+          "created_at": "2026-10-02 08:18:55"
+        }
+      },
+      {
+        "id": 603,
+        "day_id": 71,
+        "idea_number": 3,
+        "title": "Conference Replay",
+        "tagline": "Rewatch a conference from its best moments",
+        "description": "Collect snippets from a conference that let you replay the conference.",
+        "tags": "events, snippets, timeline",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 604,
+        "day_id": 71,
+        "idea_number": 4,
+        "title": "Annotated Speech",
+        "tagline": "Every name and concept, explained inline",
+        "description": "Capture a speech or a dialogue and annotate the named entities and concepts with explanations.",
+        "tags": "transcription, entities, annotation",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 605,
+        "day_id": 71,
+        "idea_number": 5,
+        "title": "Shelf to Database",
+        "tagline": "Snap your bookshelf, get a catalogue",
+        "description": "Take a photo of books on a shelf and store them in a database.",
+        "tags": "vision, books, catalogue",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 602,
+      "day_id": 71,
+      "idea_number": 2,
+      "title": "Explorable Topic World",
+      "tagline": "Every room is a chapter",
+      "description": "A traversable environment where interacting with different objects teaches you about a specific topic. Each location is a chapter.",
+      "tags": "exploration, learning, game",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 105,
+        "idea_id": 602,
+        "title": "Grow Your Own",
+        "build_type": "interactive",
+        "rank": 1,
+        "summary": "Walk a pixel-art garden, collect 16 practical UK growing lessons in your codex and answer a question at each gate to reach the harvest.",
+        "content": "/interactive/grow-your-own",
+        "external_url": "",
+        "time_spent_hours": 2.0,
+        "ai_tools_used": "Claude Code",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Idea",
+            "desc": "Came up with the idea"
+          },
+          {
+            "step": 2,
+            "title": "Approvals",
+            "desc": "Approved some dangerous tool calls"
+          },
+          {
+            "step": 3,
+            "title": "Review",
+            "desc": "Looks good"
+          }
+        ],
+        "what_rocked": [
+          "The agents optimised it for mobile",
+          "The theme follows the topic of the information presented"
+        ],
+        "what_broke": [
+          "The controls don't play super well with browser behaviour"
+        ],
+        "prompt_transcript": "Genesis Prompt: \"create a new theme uh, the theme is organizing knowledge my daily spark is feeling a little bit sleepy after waking up but it's a nice day\"\nInteraction Turns: 7 human turns across 282 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: Spark number one is voice to brainstorming. Spark number two is some kind of a traversable environment where interacting with d...\n  \u2022 Turn 4: 2\n  \u2022 Turn 5: change the topic to growing a garden (aiming at what is practical in UK)\n  \u2022 Turn 6: yes\n  \u2022 Turn 7: Uh, looks good, record implementation. The steps were one, come up with the idea, two, approve some dangerous tool calls. Three...\n\nTools Executed: Bash (39), Edit (18), Read (14), Write (8), AskUserQuestion (3), Skill (3), Agent (2)\nFiles Modified: prototype.toml, template.html, app.js, content.js, sprites.js, style.css, test_prototype_content.py",
+        "created_at": "2026-10-02 08:18:55"
+      }
+    }
+  },
+  {
     "id": 70,
     "date": "2026-09-30",
     "theme": "Creating a world",

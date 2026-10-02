@@ -1,0 +1,8 @@
+slug = "grow-your-own"
+title = "Grow Your Own"
+date = "2026-10-02"
+build_type = "interactive"
+template = "template.html"
+description = "Walk a pixel-art garden, read practical UK growing lessons in each area, fill your codex and answer gate quizzes to reach the next plot."
+extra_paths = []
+routes = false

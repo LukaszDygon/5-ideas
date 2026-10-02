@@ -211,3 +211,19 @@ def test_interactive_pixel_planet(client):
         response = client.get(f"/static/prototypes/pixel-planet/{module}")
         assert response.status_code == 200, module
         assert "export" in response.text
+
+
+def test_interactive_grow_your_own(client):
+    text = page_with_assets(client, "/interactive/grow-your-own")
+    assert "Grow Your Own" in text
+    assert 'type="module"' in text
+    for dialog in ("gyo-lesson", "gyo-quiz", "gyo-codex", "gyo-end"):
+        assert f'id="{dialog}"' in text
+    content = client.get("/static/prototypes/grow-your-own/content.js").text
+    for area in ("The Potting Shed", "The Greenhouse", "The Veg Patch", "The Compost Corner"):
+        assert area in content
+    assert content.count("sprite: '") == 16
+    assert content.count("quiz: {") == 4
+    sprites = client.get("/static/prototypes/grow-your-own/sprites.js")
+    assert sprites.status_code == 200
+    assert "export function paintTile" in sprites.text
