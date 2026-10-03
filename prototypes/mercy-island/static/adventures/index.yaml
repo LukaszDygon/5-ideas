@@ -1,0 +1,3 @@
+# Adventures the gamebook engine lists on its cover screen. Add a file here to add an adventure.
+adventures:
+  - file: mercy-island.yaml

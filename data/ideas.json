@@ -1,5 +1,202 @@
 [
   {
+    "id": 72,
+    "date": "2026-10-03",
+    "theme": "Cthulhu",
+    "subtitle": "Lovecraft's mythos for digital medium",
+    "streak_count": 1,
+    "notes": "Had a wonderful sleep and a lie-in, a delicious brunch, and a relaxing day so far.",
+    "created_at": "2026-10-03 11:36:25",
+    "ideas": [
+      {
+        "id": 611,
+        "day_id": 72,
+        "idea_number": 1,
+        "title": "Choose Your Own Adventure",
+        "tagline": "Classic gamebooks meet Call of Cthulhu",
+        "description": "A browser-based choose-your-own-adventure based on the classic books and the Call of Cthulhu RPG system. Adventures are stored in a configurable format.",
+        "tags": "gamebook, call of cthulhu, rpg, interactive fiction",
+        "icon": "lightbulb",
+        "is_implemented": 1,
+        "implementation": {
+          "id": 106,
+          "idea_id": 611,
+          "title": "Fog Over Mercy Island",
+          "build_type": "interactive",
+          "rank": 1,
+          "summary": "A 1920s Call of Cthulhu-style solo gamebook: lead an expedition to a fog-bound Aleutian island, roll d100 against your skills and keep your companions sane.",
+          "content": "/interactive/mercy-island",
+          "external_url": "",
+          "time_spent_hours": 4.0,
+          "ai_tools_used": "Claude Code",
+          "process_steps": [
+            {
+              "step": 1,
+              "title": "Ideas",
+              "desc": "Came up with the ideas as usual."
+            },
+            {
+              "step": 2,
+              "title": "Style and design",
+              "desc": "Provided parameters for the writing style and the design."
+            },
+            {
+              "step": 3,
+              "title": "Story",
+              "desc": "Refined the story through the follow-up questions."
+            },
+            {
+              "step": 4,
+              "title": "Play",
+              "desc": "Played the game."
+            },
+            {
+              "step": 5,
+              "title": "Full screen",
+              "desc": "Fixed the awkward scrolling by implementing a full screen mode."
+            },
+            {
+              "step": 6,
+              "title": "Continuity",
+              "desc": "Playing showed what could break. I gave five or six examples of what was wrong, and the agent ran a general continuity check so nothing happens without a reason earlier in the story where converging paths meet."
+            },
+            {
+              "step": 7,
+              "title": "Ship",
+              "desc": "Ship it, and play it one more time."
+            }
+          ],
+          "what_rocked": [
+            "The agent figured out that it needed a general continuity check, since I had only played about 20% of the game.",
+            "It did a pretty good job of fixing more than the problems I reported."
+          ],
+          "what_broke": [
+            "Nothing really beyond what is expected of an AI-generated story: it was a little discontinuous."
+          ],
+          "prompt_transcript": "Genesis Prompt: \"I want to record a new day on a theme of Cthulhu. The tagline is going to be Lovecraft's mythos for digital medium. The seats for today are had wonderful sleep and the li-in, delicious brunch, and a relaxing day so far.\"\nInteraction Turns: 11 human turns across 524 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: one. Choose your own adventure. It's based on classic books and the Call of Cthulhu RPG system. This is a browser-based version...\n  \u2022 Turn 3: That looks good. So let's proceed to spec implementation. I would like to do number one.\n  \u2022 Turn 4: For this story, I would like an original story. It should be set in the original 1920s Lovecraftian setting. Maybe something to...\n  \u2022 Turn 5: PyAML sounds good. I actually would like there to be more variety. So the average gameplay should be between between 20 and 30 ...\n  \u2022 Turn 6: are you alive?\n  \u2022 Turn 7: are you getting stuck?\n  \u2022 Turn 8: can we get a better full screen version going (so I don't have to scroll my stats? I want to just scroll the story bit of it\n  \u2022 Turn 9: there are a few moments in the story where an action leads to a place in the story that kind of skips time. For example, after ...\n  \u2022 Turn 11: The steps really were just number one, come up with the ideas as usual. Number two, provide some parameters for the writing sty...\n\nTools Executed: Bash (90), Read (23), Edit (19), Write (10), Skill (4), Agent (3), AskUserQuestion (2), SendMessage (1), ToolSearch (1)\nFiles Modified: prototype.toml, template.html, app.js, style.css, adventures/index.yaml, adventures/mercy-island.yaml, test_mercy_island.py",
+          "created_at": "2026-10-03 14:52:39"
+        }
+      },
+      {
+        "id": 612,
+        "day_id": 72,
+        "idea_number": 2,
+        "title": "Tamagotchi Cthulhu",
+        "tagline": "A digital pet that grows into an eldritch monster",
+        "description": "A digital pet you can revisit that grows into an eldritch monster. A few extra features keep it from getting boring, but it stays minimal, in pixel graphics using real Cthulhu pixel images.",
+        "tags": "virtual pet, pixel art, game",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 613,
+        "day_id": 72,
+        "idea_number": 3,
+        "title": "Shoggoth Life Simulator",
+        "tagline": "A day in the life of a Shoggoth",
+        "description": "A day-to-day life simulator with scripted events in the life of a Shoggoth. It takes about half an hour to play and has multiple endings.",
+        "tags": "life sim, narrative, multiple endings, game",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 614,
+        "day_id": 72,
+        "idea_number": 4,
+        "title": "Player Sheets Designer",
+        "tagline": "A character designer for the RPG",
+        "description": "A character designer for the Call of Cthulhu RPG.",
+        "tags": "character creator, rpg, call of cthulhu",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      },
+      {
+        "id": 615,
+        "day_id": 72,
+        "idea_number": 5,
+        "title": "Cthulhu Mythos Resources",
+        "tagline": "Browse Lovecraftian stories, aggregators and zines",
+        "description": "A single-page app for browsing and listing Cthulhu Mythos and Lovecraftian stories. Resources are sourced from book databases and online research, with links to online aggregators and zines.",
+        "tags": "spa, library, reference, lovecraft",
+        "icon": "lightbulb",
+        "is_implemented": 0,
+        "implementation": null
+      }
+    ],
+    "implemented_idea": {
+      "id": 611,
+      "day_id": 72,
+      "idea_number": 1,
+      "title": "Choose Your Own Adventure",
+      "tagline": "Classic gamebooks meet Call of Cthulhu",
+      "description": "A browser-based choose-your-own-adventure based on the classic books and the Call of Cthulhu RPG system. Adventures are stored in a configurable format.",
+      "tags": "gamebook, call of cthulhu, rpg, interactive fiction",
+      "icon": "lightbulb",
+      "is_implemented": 1,
+      "implementation": {
+        "id": 106,
+        "idea_id": 611,
+        "title": "Fog Over Mercy Island",
+        "build_type": "interactive",
+        "rank": 1,
+        "summary": "A 1920s Call of Cthulhu-style solo gamebook: lead an expedition to a fog-bound Aleutian island, roll d100 against your skills and keep your companions sane.",
+        "content": "/interactive/mercy-island",
+        "external_url": "",
+        "time_spent_hours": 4.0,
+        "ai_tools_used": "Claude Code",
+        "process_steps": [
+          {
+            "step": 1,
+            "title": "Ideas",
+            "desc": "Came up with the ideas as usual."
+          },
+          {
+            "step": 2,
+            "title": "Style and design",
+            "desc": "Provided parameters for the writing style and the design."
+          },
+          {
+            "step": 3,
+            "title": "Story",
+            "desc": "Refined the story through the follow-up questions."
+          },
+          {
+            "step": 4,
+            "title": "Play",
+            "desc": "Played the game."
+          },
+          {
+            "step": 5,
+            "title": "Full screen",
+            "desc": "Fixed the awkward scrolling by implementing a full screen mode."
+          },
+          {
+            "step": 6,
+            "title": "Continuity",
+            "desc": "Playing showed what could break. I gave five or six examples of what was wrong, and the agent ran a general continuity check so nothing happens without a reason earlier in the story where converging paths meet."
+          },
+          {
+            "step": 7,
+            "title": "Ship",
+            "desc": "Ship it, and play it one more time."
+          }
+        ],
+        "what_rocked": [
+          "The agent figured out that it needed a general continuity check, since I had only played about 20% of the game.",
+          "It did a pretty good job of fixing more than the problems I reported."
+        ],
+        "what_broke": [
+          "Nothing really beyond what is expected of an AI-generated story: it was a little discontinuous."
+        ],
+        "prompt_transcript": "Genesis Prompt: \"I want to record a new day on a theme of Cthulhu. The tagline is going to be Lovecraft's mythos for digital medium. The seats for today are had wonderful sleep and the li-in, delicious brunch, and a relaxing day so far.\"\nInteraction Turns: 11 human turns across 524 execution steps\n\nKey Guidance Turns:\n  \u2022 Turn 2: one. Choose your own adventure. It's based on classic books and the Call of Cthulhu RPG system. This is a browser-based version...\n  \u2022 Turn 3: That looks good. So let's proceed to spec implementation. I would like to do number one.\n  \u2022 Turn 4: For this story, I would like an original story. It should be set in the original 1920s Lovecraftian setting. Maybe something to...\n  \u2022 Turn 5: PyAML sounds good. I actually would like there to be more variety. So the average gameplay should be between between 20 and 30 ...\n  \u2022 Turn 6: are you alive?\n  \u2022 Turn 7: are you getting stuck?\n  \u2022 Turn 8: can we get a better full screen version going (so I don't have to scroll my stats? I want to just scroll the story bit of it\n  \u2022 Turn 9: there are a few moments in the story where an action leads to a place in the story that kind of skips time. For example, after ...\n  \u2022 Turn 11: The steps really were just number one, come up with the ideas as usual. Number two, provide some parameters for the writing sty...\n\nTools Executed: Bash (90), Read (23), Edit (19), Write (10), Skill (4), Agent (3), AskUserQuestion (2), SendMessage (1), ToolSearch (1)\nFiles Modified: prototype.toml, template.html, app.js, style.css, adventures/index.yaml, adventures/mercy-island.yaml, test_mercy_island.py",
+        "created_at": "2026-10-03 14:52:39"
+      }
+    }
+  },
+  {
     "id": 71,
     "date": "2026-10-02",
     "theme": "Organizing knowledge",

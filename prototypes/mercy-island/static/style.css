@@ -1,0 +1,308 @@
+/* Fog Over Mercy Island: a 1920s campaign book inside the Memphis frame.
+   Ink borders and hard zero-blur shadows stay; the palette inside the book is paper, oxblood, sea-teal and brass. */
+.mi {
+  --mi-paper: #f3ead3;
+  --mi-paper-2: #e9dcb9;
+  --mi-paper-3: #dccb9f;
+  --mi-ink: #1c1b1b;
+  --mi-oxblood: #7d1d22;
+  --mi-teal: #0b4f52;
+  --mi-cyan: #008190;
+  --mi-brass: #b8892b;
+  --mi-night: #0f2526;
+  --mi-deco-font: "Limelight", "Bricolage Grotesque", serif;
+  --mi-serif: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --mi-type: "Special Elite", "Courier New", monospace;
+}
+
+.mi-app { min-height: 24rem; }
+.mi-loading { font-family: var(--mi-type); font-size: 1.1rem; padding: 2rem 0; }
+.mi-deco { font-family: var(--mi-deco-font); font-weight: 400; letter-spacing: 0.02em; line-height: 1.05; }
+.mi-kicker {
+  font-family: var(--mi-type); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--mi-oxblood); margin: 0 0 0.25rem;
+}
+
+/* ---------- cards and buttons ---------- */
+.mi-card {
+  background: var(--mi-paper); color: var(--mi-ink);
+  border: 3px solid var(--mi-ink); box-shadow: 6px 6px 0 var(--mi-ink);
+  padding: 1.25rem;
+}
+.mi-error { border-color: var(--mi-oxblood); }
+
+.mi-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  font-family: var(--mi-type); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--mi-paper-2); color: var(--mi-ink);
+  border: 3px solid var(--mi-ink); box-shadow: 4px 4px 0 var(--mi-ink);
+  padding: 0.6rem 1rem; cursor: pointer; transition: transform 80ms ease, box-shadow 80ms ease;
+}
+.mi-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--mi-ink); }
+.mi-btn:active { transform: translate(4px, 4px); box-shadow: none; }
+.mi-btn-primary { background: var(--mi-oxblood); color: var(--mi-paper); }
+.mi-btn-small { font-size: 0.85rem; padding: 0.35rem 0.65rem; box-shadow: 3px 3px 0 var(--mi-ink); }
+.mi-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
+
+.mi :focus-visible { outline: 3px dashed var(--mi-cyan); outline-offset: 3px; }
+
+/* ---------- cover / title screen ---------- */
+.mi-title-screen { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; }
+.mi-cover { position: relative; padding: 2rem 1.75rem 1.75rem; border-width: 4px; box-shadow: 8px 8px 0 var(--mi-ink); }
+.mi-cover::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 14px; border-bottom: 3px solid var(--mi-ink);
+  background: repeating-linear-gradient(90deg, var(--mi-teal) 0 18px, var(--mi-brass) 18px 24px, var(--mi-oxblood) 24px 30px, var(--mi-brass) 30px 36px);
+}
+.mi-cover-title { font-size: clamp(2.2rem, 6vw, 4.2rem); margin: 0.6rem 0 0.25rem; color: var(--mi-teal); }
+.mi-cover-sub { font-family: var(--mi-serif); font-style: italic; font-size: 1.15rem; margin: 0 0 1rem; }
+.mi-facts { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; list-style: none; padding: 0; margin: 1rem 0 0; font-family: var(--mi-type); }
+.mi-facts strong { font-family: var(--mi-deco-font); font-weight: 400; font-size: 1.4rem; color: var(--mi-oxblood); margin-right: 0.25rem; }
+.mi-howto { background: var(--mi-paper-2); font-family: var(--mi-serif); line-height: 1.6; }
+.mi-howto h3 { font-size: 1.5rem; margin: 0 0 0.5rem; color: var(--mi-oxblood); }
+.mi-howto p { margin: 0 0 0.75rem; }
+
+/* ---------- investigator picker ---------- */
+.mi-pick-head { display: grid; gap: 0.5rem; margin-bottom: 1.25rem; justify-items: start; }
+.mi-pick-head h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin: 0; }
+.mi-pick-head p { font-family: var(--mi-serif); max-width: 70ch; margin: 0; }
+.mi-pick-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); }
+.mi-inv { display: flex; flex-direction: column; gap: 0.6rem; }
+.mi-inv-name { font-family: var(--mi-deco-font); font-weight: 400; font-size: 1.55rem; line-height: 1.1; margin: 0; color: var(--mi-teal); }
+.mi-inv-name span { font-family: var(--mi-type); font-size: 0.9rem; color: var(--mi-ink); }
+.mi-inv-bio { font-family: var(--mi-serif); font-size: 0.95rem; line-height: 1.55; margin: 0; }
+.mi-inv-stats, .mi-chars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; margin: 0; }
+.mi-inv-stats div, .mi-chars div { border: 2px solid var(--mi-ink); background: var(--mi-paper-2); text-align: center; padding: 0.25rem; }
+.mi-inv-stats dt, .mi-chars dt { font-family: var(--mi-type); font-size: 0.85rem; letter-spacing: 0.08em; }
+.mi-inv-stats dd, .mi-chars dd { font-family: var(--mi-deco-font); font-size: 1.25rem; margin: 0; }
+.mi-inv-skills, .mi-skill-list { list-style: none; padding: 0; margin: 0; font-family: var(--mi-type); font-size: 0.88rem; }
+.mi-inv-skills li, .mi-skill-list li { display: flex; justify-content: space-between; gap: 0.5rem; border-bottom: 1px dotted var(--mi-ink); padding: 0.15rem 0; }
+.mi-inv-kit { font-family: var(--mi-serif); font-size: 0.88rem; margin: 0 0 0.25rem; flex: 1; }
+.mi-inv .mi-btn { align-self: flex-start; }
+
+/* ---------- play layout ---------- */
+.mi-play { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr) 340px; align-items: start; scroll-margin-top: 1rem; }
+.mi-toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.9rem;
+}
+.mi-toolbar-title { font-family: var(--mi-deco-font); font-size: 1.15rem; margin-right: auto; color: var(--mi-teal); }
+
+.mi-page {
+  position: relative; background: var(--mi-paper); color: var(--mi-ink);
+  border: 4px solid var(--mi-ink); box-shadow: 8px 8px 0 var(--mi-ink);
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+}
+.mi-sec-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 3px double var(--mi-ink); }
+.mi-sec-num {
+  flex: none; min-width: 4.2rem; height: 4.2rem; padding: 0 0.5rem;
+  display: grid; place-items: center;
+  font-family: var(--mi-deco-font); font-size: 2.3rem; line-height: 1;
+  background: var(--mi-teal); color: var(--mi-paper);
+  border: 3px solid var(--mi-ink); box-shadow: 4px 4px 0 var(--mi-ink);
+}
+.mi-sec-title { font-size: clamp(1.5rem, 3.6vw, 2.3rem); margin: 0; color: var(--mi-ink); }
+.mi-sec-title:focus { outline: none; }
+
+.mi-ledger {
+  list-style: none; margin: 0 0 1.25rem; padding: 0.6rem 0.9rem;
+  font-family: var(--mi-type); font-size: 0.9rem; line-height: 1.45;
+  background: var(--mi-paper-2); border: 2px dashed var(--mi-ink);
+}
+.mi-ledger li { padding-left: 1rem; position: relative; }
+.mi-ledger-after { margin: 0.25rem 0 0; }
+.mi-ledger li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 0.45rem; height: 0.45rem; background: var(--mi-oxblood); }
+
+.mi-prose { font-family: var(--mi-serif); font-size: 1.08rem; line-height: 1.72; max-width: 68ch; }
+.mi-prose p { margin: 0 0 1rem; }
+/* flow-root keeps the drop cap inside a short first paragraph */
+.mi-page .mi-prose > p:first-child { display: flow-root; }
+.mi-page .mi-prose > p:first-child::first-letter {
+  font-family: var(--mi-deco-font); float: left; font-size: 3.4rem; line-height: 0.9;
+  padding: 0.2rem 0.45rem 0 0; color: var(--mi-oxblood);
+}
+
+/* ---------- choices ---------- */
+.mi-choices { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 0.9rem; }
+.mi-choice {
+  width: 100%; text-align: left; display: grid; gap: 0.45rem;
+  font-family: var(--mi-serif); font-size: 1.02rem; line-height: 1.45; color: var(--mi-ink);
+  background: var(--mi-paper-2); border: 3px solid var(--mi-ink); box-shadow: 4px 4px 0 var(--mi-ink);
+  padding: 0.8rem 1rem; cursor: pointer; transition: transform 80ms ease, box-shadow 80ms ease, background-color 80ms ease;
+}
+.mi-choice:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--mi-ink); background: var(--mi-paper); }
+.mi-choice:active { transform: translate(4px, 4px); box-shadow: none; }
+.mi-choice-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; font-family: var(--mi-type); font-size: 0.85rem; }
+.mi-tag { background: var(--mi-brass); color: var(--mi-ink); border: 2px solid var(--mi-ink); padding: 0.05rem 0.4rem; }
+.mi-roll-tag { background: var(--mi-teal); color: var(--mi-paper); border: 2px solid var(--mi-ink); padding: 0.05rem 0.4rem; }
+.mi-turn { margin-left: auto; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mi-oxblood); }
+.mi-dead-end { font-family: var(--mi-type); color: var(--mi-oxblood); }
+
+/* ---------- dice ---------- */
+.mi-roll {
+  margin-top: 1.5rem; padding: 1.25rem; background: var(--mi-night); color: var(--mi-paper);
+  border: 3px solid var(--mi-ink); box-shadow: 6px 6px 0 var(--mi-oxblood);
+}
+.mi-roll-what { font-family: var(--mi-serif); font-style: italic; margin: 0 0 0.35rem; }
+.mi-roll-need { font-family: var(--mi-type); font-size: 0.9rem; margin: 0 0 1rem; color: var(--mi-paper-3); }
+.mi-dice { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.mi-die {
+  width: 3.6rem; height: 3.6rem; display: grid; place-items: center;
+  font-family: var(--mi-type); font-size: 1.6rem;
+  background: var(--mi-paper); color: var(--mi-ink); border: 3px solid var(--mi-ink); box-shadow: 4px 4px 0 var(--mi-brass);
+}
+.mi-die-tens { background: var(--mi-paper-3); }
+.mi-die-dropped { opacity: 0.4; text-decoration: line-through; box-shadow: none; }
+.is-rolling .mi-die { transform: rotate(-4deg); }
+.is-rolling .mi-die:nth-child(even) { transform: rotate(5deg); }
+.mi-roll-result { font-family: var(--mi-deco-font); font-size: 1.6rem; margin: 1rem 0 0; display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
+.is-rolling .mi-roll-result { visibility: hidden; }
+.mi-roll-value { font-size: 2.6rem; }
+.mi-roll-result.is-pass { color: #fae100; }
+.mi-roll-result.is-fail { color: #ff8f80; }
+.mi-roll .mi-btn { background: var(--mi-paper); }
+.mi-roll .mi-btn-primary { background: var(--mi-brass); color: var(--mi-ink); }
+
+/* ---------- ending ---------- */
+.mi-ending { margin-top: 1.75rem; padding-top: 1.25rem; border-top: 3px double var(--mi-ink); }
+.mi-ending-stamp {
+  display: inline-block; font-family: var(--mi-deco-font); font-size: 2rem; color: var(--mi-oxblood);
+  border: 4px solid var(--mi-oxblood); padding: 0.2rem 1rem; transform: rotate(-3deg); margin: 0 0 1rem;
+}
+.mi-fates { list-style: none; padding: 0; margin: 0 0 0.75rem; font-family: var(--mi-type); max-width: 32rem; }
+.mi-fates li { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px dotted var(--mi-ink); padding: 0.25rem 0; }
+.mi-ending-count { font-family: var(--mi-serif); font-style: italic; }
+
+/* ---------- investigator sheet ---------- */
+.mi-sheet { position: sticky; top: calc(var(--mi-head, 0px) + 1rem); max-height: calc(100vh - var(--mi-head, 0px) - 2rem); overflow-y: auto;
+  padding: 4px 8px 8px 4px; /* room for the hard shadow and focus ring inside the scroll box */
+}
+.mi-sheet-inner {
+  background: var(--mi-paper); border: 4px solid var(--mi-ink); box-shadow: 6px 6px 0 var(--mi-ink);
+  font-family: var(--mi-type);
+}
+.mi-sheet-inner summary {
+  cursor: pointer; padding: 0.9rem 1rem; display: grid; gap: 0.15rem;
+  background: var(--mi-teal); color: var(--mi-paper); border-bottom: 3px solid var(--mi-ink); list-style: none;
+}
+.mi-sheet-inner summary::-webkit-details-marker { display: none; }
+.mi-sheet-inner summary { position: relative; padding-right: 3rem; }
+.mi-sheet-inner summary::after {
+  content: "+"; position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%);
+  width: 1.6rem; height: 1.6rem; display: grid; place-items: center; font-family: var(--mi-type); font-size: 1.2rem;
+  background: var(--mi-paper); color: var(--mi-ink); border: 2px solid var(--mi-ink); box-shadow: 2px 2px 0 var(--mi-ink);
+}
+.mi-sheet-inner[open] summary::after { content: "\2212"; }
+.mi-sheet-inner summary:hover { background: #0e5d61; }
+.mi-sheet-inner summary:active::after { transform: translate(2px, calc(-50% + 2px)); box-shadow: none; }
+.mi-sheet-inner summary:focus-visible { outline-color: var(--mi-paper); outline-offset: -6px; }
+.mi-roll :focus-visible { outline-color: var(--mi-paper); }
+.mi-sheet-inner summary .mi-kicker { color: var(--mi-paper-3); }
+.mi-sheet-name { font-family: var(--mi-deco-font); font-size: 1.35rem; line-height: 1.1; }
+.mi-sheet-occ { font-size: 0.85rem; }
+.mi-sheet-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+/* The two groups only matter in wide full screen; elsewhere their blocks interleave in this order. */
+.mi-sheet-a, .mi-sheet-b { display: contents; }
+.mi-block { display: grid; gap: 0.5rem; }
+.mi-block-vitals { order: 1; }
+.mi-block-party { order: 2; }
+.mi-block-items { order: 3; }
+.mi-block-journal { order: 4; }
+.mi-block-chars { order: 5; }
+.mi-block-skills { order: 6; }
+.mi-block-foot { order: 7; }
+.mi-sheet-quick { display: none; font-size: 0.85rem; color: var(--mi-paper-3); }
+.mi-sheet-inner:not([open]) .mi-sheet-quick { display: block; }
+.mi-chars { grid-template-columns: repeat(4, 1fr); }
+.mi-sheet-h {
+  font-family: var(--mi-deco-font); font-weight: 400; font-size: 1.1rem; margin: 0.4rem 0 0;
+  border-bottom: 3px solid var(--mi-ink); color: var(--mi-oxblood);
+}
+.mi-skill-base { opacity: 0.75; }
+.mi-items, .mi-notes, .mi-party { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; font-size: 0.85rem; }
+.mi-items li, .mi-notes li { display: grid; gap: 0.1rem; }
+.mi-items span, .mi-notes span { font-family: var(--mi-serif); font-size: 0.88rem; line-height: 1.4; }
+.mi-notes strong { color: var(--mi-oxblood); letter-spacing: 0.08em; }
+.mi-empty { font-family: var(--mi-serif); font-style: italic; }
+.mi-party li { border: 2px solid var(--mi-ink); background: var(--mi-paper-2); padding: 0.5rem; display: grid; gap: 0.3rem; }
+.mi-party p { margin: 0; font-family: var(--mi-serif); font-size: 0.85rem; }
+.mi-party-name { display: flex; justify-content: space-between; gap: 0.5rem; }
+.mi-party-name em { font-style: normal; color: var(--mi-paper); background: var(--mi-oxblood); padding: 0 0.35rem; }
+.mi-party-lost, .mi-party-dead { opacity: 0.7; }
+.mi-warn { margin: 0; color: var(--mi-oxblood); font-size: 0.85rem; }
+.mi-sheet-foot { margin: 0; font-size: 0.85rem; }
+
+.mi-bar-label { display: flex; justify-content: space-between; font-size: 0.85rem; }
+.mi-bar-label small { font-size: 0.85rem; }
+.mi-bar-track { height: 0.8rem; border: 2px solid var(--mi-ink); background: var(--mi-paper-2); }
+.mi-bar-track > div { height: 100%; transition: width 300ms ease; }
+.mi-bar-hp .mi-bar-track > div { background: var(--mi-oxblood); }
+.mi-bar-san .mi-bar-track > div { background: var(--mi-cyan); }
+.mi-bar-luck .mi-bar-track > div { background: var(--mi-brass); }
+
+/* ---------- source viewer ---------- */
+.mi-source {
+  width: min(960px, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); padding: 1.25rem;
+  background: var(--mi-paper); color: var(--mi-ink); border: 4px solid var(--mi-ink); box-shadow: 8px 8px 0 var(--mi-ink);
+}
+.mi-source::backdrop { background: rgb(15 37 38 / 0.75); }
+.mi-source-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.mi-source-head h2 { font-size: 1.8rem; margin: 0; color: var(--mi-teal); }
+.mi-source-note { font-family: var(--mi-serif); margin: 0.5rem 0 0.75rem; }
+.mi-source-text {
+  font-family: "JetBrains Mono", monospace; font-size: 0.8rem; line-height: 1.5; white-space: pre-wrap;
+  max-height: 65vh; overflow: auto; margin: 0; padding: 1rem; background: var(--mi-paper-2); border: 2px solid var(--mi-ink);
+}
+
+/* ---------- full screen: only the story scrolls ---------- */
+html.mi-lock, html.mi-lock body { overflow: hidden; }
+.mi-app.is-immersive {
+  position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column;
+  padding: 12px 16px 16px; background: var(--mi-paper-3);
+}
+.is-immersive .mi-play { flex: 1; min-height: 0; grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+.is-immersive .mi-book-col { display: flex; flex-direction: column; min-height: 0; }
+.is-immersive .mi-toolbar { margin-bottom: 0.6rem; }
+.is-immersive .mi-page { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin-right: 8px; }
+.is-immersive .mi-sheet { position: static; height: 100%; max-height: none; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.is-immersive .mi-skill-list li { padding: 0.05rem 0; }
+.is-immersive .mi-party p { display: none; }
+.is-immersive .mi-sheet-inner summary { padding-top: 0.6rem; padding-bottom: 0.6rem; }
+
+/* Wide displays: the sheet opens into two columns so stats, party, kit and journal all fit without scrolling. */
+@media (min-width: 1200px) {
+  .is-immersive .mi-play { grid-template-columns: minmax(0, 1fr) minmax(520px, 40%); }
+  .is-immersive .mi-sheet-body { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+  .is-immersive .mi-sheet-a, .is-immersive .mi-sheet-b { display: flex; flex-direction: column; gap: 0.75rem; }
+  .is-immersive .mi-items span { display: none; }
+  .is-immersive .mi-sheet-body { padding: 0.75rem; row-gap: 0.6rem; }
+  .is-immersive .mi-block { gap: 0.35rem; }
+  .is-immersive .mi-items, .is-immersive .mi-notes, .is-immersive .mi-party { gap: 0.35rem; }
+  .is-immersive .mi-notes span { line-height: 1.3; }
+  .is-immersive .mi-party li { padding: 0.35rem 0.5rem; gap: 0.15rem; }
+  .is-immersive .mi-sheet-inner summary { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.75rem; }
+  .is-immersive .mi-sheet-inner summary .mi-kicker { display: none; }
+  .is-immersive .mi-chars div { padding: 0.1rem; }
+  .is-immersive .mi-chars dd { font-size: 1.05rem; }
+}
+
+/* ---------- small screens ---------- */
+@media (max-width: 900px) {
+  .mi-title-screen, .mi-play { grid-template-columns: minmax(0, 1fr); }
+  .mi-sheet { position: static; max-height: none; overflow: visible; padding: 0; }
+  .mi-btn-small { min-height: 2.75rem; }
+  .mi-sec-num { min-width: 3.2rem; height: 3.2rem; font-size: 1.7rem; }
+  .mi-prose { font-size: 1.02rem; }
+}
+
+/* Phones in full screen: the story fills the screen, the sheet is a bar along the bottom that opens upward. */
+@media (max-width: 900px) {
+  .mi-app.is-immersive { padding: 8px 8px 10px; }
+  .is-immersive .mi-play { display: flex; flex-direction: column; gap: 0.6rem; }
+  .is-immersive .mi-book-col { flex: 1; }
+  .is-immersive .mi-page { margin-right: 6px; }
+  .is-immersive .mi-sheet { flex: none; height: auto; max-height: 55vh; padding: 0 6px 6px 0; }
+  .is-immersive .mi-toolbar-title, .is-immersive .mi-wide-only { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mi-btn, .mi-choice, .mi-bar-track > div { transition: none; }
+}

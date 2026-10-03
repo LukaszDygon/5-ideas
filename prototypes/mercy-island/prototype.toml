@@ -1,0 +1,8 @@
+slug = "mercy-island"
+title = "Fog Over Mercy Island"
+date = "2026-10-03"
+build_type = "interactive"
+template = "template.html"
+description = "A 1920s solo gamebook in the Call of Cthulhu style: lead a naturalist expedition to a fog-bound Aleutian island, roll d100 against your investigator's skills, keep your companions sane and find out what the islanders sing to beneath the ice."
+extra_paths = []
+routes = false
