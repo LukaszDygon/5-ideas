@@ -80,8 +80,3 @@ def api_get_ranked_implementations(settings: SettingsDep):
 def api_update_rank(impl_id: int, payload: RankUpdate, settings: SettingsDep):
     db.update_implementation_rank(impl_id, payload.rank, settings.db_file)
     return {"status": "success", "impl_id": impl_id, "new_rank": payload.rank}
-
-
-@router.get("/calendar/{year}/{month}")
-def api_get_calendar(year: int, month: int, settings: SettingsDep):
-    return db.get_calendar_days(year, month, settings.db_file)

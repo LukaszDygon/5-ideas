@@ -1,6 +1,6 @@
 """Command line for the daily workflow: `uv run five-ideas <command>` (or `python -m showcase.cli`).
 
-Commands: sparks, new-day, save-impl, capture, new-prototype, build, seed.
+Commands: sparks, new-day, save-impl, capture, new-prototype, rank, tags, build, seed.
 Paths default to data/ and prototypes/ (or FIVE_IDEAS_DATA_DIR / FIVE_IDEAS_PROTOTYPES_DIR);
 `--data-dir` and `--prototypes-dir` override them, which is what the tests use.
 """
@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections import Counter
 from dataclasses import replace
 from datetime import date, datetime
 from pathlib import Path
@@ -502,6 +503,58 @@ def cmd_new_prototype(args: argparse.Namespace, settings: Settings) -> int:
 
 
 # ---------------------------------------------------------------------------
+# rank / tags
+# ---------------------------------------------------------------------------
+def cmd_rank(args: argparse.Namespace, settings: Settings) -> int:
+    ranked = db.get_ranked_implementations(settings.db_file)
+    if args.dates:
+        id_by_date = {impl["day_date"]: impl["id"] for impl in ranked}
+        dates = [resolve_date(d) for d in args.dates]
+        unknown = [d for d in dates if d not in id_by_date]
+        if unknown:
+            return fail(f"no shipped prototype on {', '.join(unknown)}")
+        repeated = sorted({d for d in dates if dates.count(d) > 1})
+        if repeated:
+            return fail(f"listed more than once: {', '.join(repeated)}")
+        rest = [impl["day_date"] for impl in ranked if impl["day_date"] not in dates]
+        db.reorder_ranks([id_by_date[d] for d in dates + rest], settings.db_file)
+        ranked = db.get_ranked_implementations(settings.db_file)
+    for impl in ranked:
+        print(f"{impl['rank']:>3}. {impl['day_date']}  {impl['title']}")
+    return 0
+
+
+def split_tags(tags: str) -> list[str]:
+    return [t.strip() for t in (tags or "").split(",") if t.strip()]
+
+
+def cmd_tags(args: argparse.Namespace, settings: Settings) -> int:
+    if args.apply:
+        try:
+            mapping = json.loads(Path(args.apply).read_text(encoding="utf-8"))
+            updates = {
+                (date_str, int(number)): ", ".join(split_tags(tags))
+                for date_str, ideas in mapping.items()
+                for number, tags in ideas.items()
+            }
+        except (OSError, ValueError, AttributeError) as exc:
+            return fail(f"{args.apply} must map dates to {{idea number: 'Tag, Tag'}}: {exc}")
+        try:
+            print(f"Retagged {db.set_idea_tags(updates, settings.db_file)} ideas")
+        except KeyError as exc:
+            return fail(exc.args[0])
+    counts = Counter(
+        tag
+        for day in db.get_all_days(settings.db_file)
+        for idea in day["ideas"]
+        for tag in split_tags(idea["tags"])
+    )
+    for tag, count in sorted(counts.items(), key=lambda item: (-item[1], item[0].lower())):
+        print(f"{count:>4}  {tag}")
+    return 0
+
+
+# ---------------------------------------------------------------------------
 # build / seed
 # ---------------------------------------------------------------------------
 def cmd_build(args: argparse.Namespace, settings: Settings) -> int:
@@ -614,6 +667,19 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--type", default="interactive", choices=registry.BUILD_TYPES, help="build type")
     p.add_argument("--description", default="", help="one sentence")
     p.set_defaults(func=cmd_new_prototype)
+
+    p = sub.add_parser("rank", help="show the ranking of shipped prototypes, or set it from their dates")
+    p.add_argument(
+        "dates",
+        nargs="*",
+        metavar="DATE",
+        help="days of shipped prototypes, best first (unlisted ones follow)",
+    )
+    p.set_defaults(func=cmd_rank)
+
+    p = sub.add_parser("tags", help="count every tag in use, or retag ideas from a JSON file first")
+    p.add_argument("--apply", metavar="FILE", help='JSON like {"YYYY-MM-DD": {"1": "Tag, Tag"}}')
+    p.set_defaults(func=cmd_tags)
 
     p = sub.add_parser("build", help="freeze the site into static HTML")
     p.add_argument(

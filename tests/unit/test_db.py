@@ -46,15 +46,28 @@ def test_update_rank(temp_db):
     assert any(r["id"] == first_impl["id"] and r["rank"] == 42 for r in new_ranked)
 
 
-def test_get_calendar_days(temp_db):
-    from datetime import datetime
+def test_get_totals(temp_db):
+    days = db.get_all_days(temp_db)
+    assert db.get_totals(temp_db) == {
+        "days": len(days),
+        "ideas": sum(len(d["ideas"]) for d in days),
+        "implementations": len(db.get_ranked_implementations(temp_db)),
+    }
 
-    now = datetime.now()
-    cal_days = db.get_calendar_days(now.year, now.month, temp_db)
-    assert len(cal_days) >= 1
-    for cd in cal_days:
-        assert cd["idea_count"] == 5
-        assert cd["has_implementation"] in (0, 1)
+
+def test_set_idea_tags(temp_db):
+    date = db.get_published_dates(temp_db)[0]
+    assert db.set_idea_tags({(date, 1): "Game, Horror", (date, 2): "Tool"}, temp_db) == 2
+    ideas = db.get_day_by_date(date, temp_db)["ideas"]
+    assert [ideas[0]["tags"], ideas[1]["tags"]] == ["Game, Horror", "Tool"]
+
+
+def test_set_idea_tags_rejects_unknown_ideas_and_writes_nothing(temp_db):
+    date = db.get_published_dates(temp_db)[0]
+    before = db.get_day_by_date(date, temp_db)["ideas"][0]["tags"]
+    with pytest.raises(KeyError, match="1999-01-01"):
+        db.set_idea_tags({(date, 1): "Changed", ("1999-01-01", 1): "Nope"}, temp_db)
+    assert db.get_day_by_date(date, temp_db)["ideas"][0]["tags"] == before
 
 
 def test_save_day_and_delete(temp_db):

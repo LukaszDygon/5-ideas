@@ -2,9 +2,12 @@
 
 from dataclasses import replace
 
+import pytest
+from markupsafe import escape
 from starlette.testclient import TestClient
 
 from showcase import db
+from showcase.pages import output_link
 from showcase.web import create_app
 
 
@@ -12,15 +15,31 @@ def test_home_view(client):
     response = client.get("/")
     assert response.status_code == 200
     assert "IDEAS DAILY" in response.text
-    assert "Top-Ranked Implementations" in response.text
-    assert any(term in response.text for term in ("RADICAL MEMPHIS POP", "SHIPPED PROTOTYPE", "LATEST DROP"))
+    assert "The Final Ranking" in response.text
+    assert "PROJECT COMPLETE" in response.text
 
 
-def test_calendar_view(client):
-    response = client.get("/calendar")
-    assert response.status_code == 200
-    assert "THE BIGGEST VIEW" in response.text
-    assert "MON" in response.text and "SUN" in response.text
+def test_home_ranks_every_shipped_prototype_in_order(client, settings):
+    html = client.get("/").text
+    ranked = db.get_ranked_implementations(settings.db_file)
+    positions = [html.find(f">{escape(impl['title'])}</h3>") for impl in ranked]
+    assert -1 not in positions
+    assert positions == sorted(positions)
+    assert f">#{len(ranked)}</span>" in html
+
+
+def test_home_no_longer_shows_stats_or_the_latest_drop(client):
+    html = client.get("/").text
+    main = html[html.index("<main") : html.index("</main>")]
+    for gone in ("TOTAL IDEAS SPARKED", "SHIPPED BUILDS", "UNBROKEN STREAK", "LATEST DROP", "IDEAS SPARKED"):
+        assert gone not in main, gone
+
+
+def test_calendar_is_gone(client):
+    assert client.get("/calendar").status_code == 404
+    assert client.get("/api/calendar/2026/9").status_code == 404
+    for path in ("/", "/stream", "/day/2026-09-29"):
+        assert 'href="/calendar' not in client.get(path).text, path
 
 
 def test_stream_view(client):
@@ -82,17 +101,20 @@ def test_admin_visibility_and_transcript_label(client, settings):
 
 def test_core_pages_render(client, settings):
     latest = db.get_published_dates(settings.db_file)[0]
-    for path in ("/", "/calendar", "/stream", f"/day/{latest}", "/design-system"):
+    for path in ("/", "/stream", f"/day/{latest}", "/design-system"):
         response = client.get(path)
         assert response.status_code == 200, path
         assert "IDEAS DAILY" in response.text, path
 
 
-def test_header_shows_the_streak(client, settings):
-    from showcase import streak
-
-    value = streak.get_streak_data(settings.db_file, settings.streak_file)["streak"]
-    assert f"UNBROKEN STREAK: {value} DAYS" in client.get("/").text
+def test_banner_announces_the_finished_project(client, settings):
+    totals = db.get_totals(settings.db_file)
+    for path in ("/", "/stream", "/day/2026-09-29"):
+        html = client.get(path).text
+        assert "PROJECT COMPLETE" in html, path
+        assert f"{totals['ideas']} IDEAS SPARKED" in html, path
+        assert f"{totals['implementations']} PROTOTYPES SHIPPED" in html, path
+        assert "UNBROKEN STREAK" not in html, path
 
 
 def test_day_page_links_to_its_prototype(client):
@@ -101,10 +123,43 @@ def test_day_page_links_to_its_prototype(client):
     assert "Which One is Faster?" in html
 
 
-def test_calendar_month_navigation(client):
-    response = client.get("/calendar?year=2026&month=9")
-    assert response.status_code == 200
-    assert "September" in response.text
+def test_day_page_puts_the_prototype_before_the_sparks(client, settings):
+    html = client.get("/day/2026-09-29").text
+    launch = html.index('href="/interactive/which-is-faster"')
+    assert launch < html.index('id="output"') < html.index('id="sparks"')
+    for anchor in ('href="#output"', 'href="#sparks"', 'href="#process"', 'href="#retro"'):
+        assert anchor in html, anchor
+    dates = sorted(db.get_published_dates(settings.db_file))
+    assert f"DAY {dates.index('2026-09-29') + 1} OF {len(dates)}" in html
+
+
+def test_day_page_links_external_projects_and_their_source(client):
+    html = client.get("/day/2026-09-13").text
+    assert 'href="/interactive/slots1v1"' in html
+    assert 'href="https://github.com/LukaszDygon/slot-battles"' in html and "Source Repo" in html
+    repo_only = client.get("/day/2026-09-17").text
+    assert 'href="https://github.com/LukaszDygon/macau-rl"' in repo_only and "View on GitHub" in repo_only
+
+
+@pytest.mark.parametrize(
+    ("impl", "depth", "url", "external"),
+    [
+        ({"content": "/interactive/flute", "external_url": ""}, 0, "/interactive/flute", False),
+        ({"content": "", "external_url": "/interactive/tortoise"}, 2, "/interactive/tortoise", False),
+        ({"content": "/interactive/x", "external_url": "https://github.com/a/b"}, 0, "/interactive/x", False),
+        ({"content": "", "external_url": "https://github.com/a/b"}, 2, "https://github.com/a/b", True),
+        ({"content": "/", "external_url": "../power-desk"}, 2, "../../../power-desk", True),
+        ({"content": "/", "external_url": "../power-desk"}, 0, "../power-desk", True),
+    ],
+)
+def test_output_link(impl, depth, url, external):
+    link = output_link(impl, depth)
+    assert (link["url"], link["external"]) == (url, external)
+
+
+def test_output_link_without_a_destination():
+    assert output_link(None) is None
+    assert output_link({"content": "You are looking at it", "external_url": ""}) is None
 
 
 def test_favicon_is_linked_and_served(client):

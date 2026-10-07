@@ -54,7 +54,7 @@
           <div>
             <div class="inline-flex items-center gap-2">
               <span class="neo-badge bg-primary-magenta text-white text-[10px] font-bold">
-                STREAK: {{ day.streak_count }} DAYS
+                DAY {{ days | length - loop.index0 }}
               </span>
             </div>
             <h2 class="font-display font-black text-2xl uppercase text-ink leading-tight mt-0.5">
@@ -138,8 +138,9 @@
         <!-- DYNAMIC CONTENT RENDERER BASED ON BUILD TYPE -->
         <div class="mt-2">
           
-          <!-- 1. WEBAPP IMPLEMENTATION -->
-          {% if im.build_type == 'webapp' %}
+          <!-- 1. WEBAPP / INTERACTIVE IMPLEMENTATION -->
+          {% if im.build_type in ('webapp', 'interactive') %}
+          {% set out = output_link(im, 1) %}
           <div class="bg-white border-[3px] border-ink p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[4px_4px_0px_#1c1b1b]">
             <div class="flex items-center gap-3">
               <div class="w-12 h-12 bg-primary-magenta text-white border-2 border-ink flex items-center justify-center font-display font-black text-xl">
@@ -151,21 +152,10 @@
               </div>
             </div>
             <div class="flex items-center gap-2">
-              {% if im.content and im.content.startswith('/') %}
-              <a href="{{ im.content }}" class="neo-btn neo-btn-primary text-xs py-2 px-3 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">rocket_launch</span>
-                <span>Launch App</span>
-              </a>
-              {% if im.external_url %}
-              <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-white text-xs py-2 px-3 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">code</span>
-                <span>Repo</span>
-              </a>
-              {% endif %}
-              {% elif im.external_url %}
-              <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-xs py-2 px-3 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">open_in_new</span>
-                <span>Open Project</span>
+              {% if out %}
+              <a href="{{ out.url }}" {% if out.external %}target="_blank" rel="noopener"{% endif %} class="neo-btn neo-btn-primary text-xs py-2 px-3 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">{{ out.icon }}</span>
+                <span>{{ out.label }}</span>
               </a>
               {% endif %}
               <a href="/day/{{ day.date }}" class="neo-btn neo-btn-yellow text-xs py-2 px-3">
@@ -236,7 +226,7 @@
             </div>
           </div>
 
-          <!-- 5. INTERACTIVE / OTHER IMPLEMENTATION -->
+          <!-- 5. ANYTHING ELSE -->
           {% else %}
           <div class="bg-white border-[3px] border-ink p-4 font-mono text-xs">
             <pre class="whitespace-pre-wrap">{{ im.content }}</pre>

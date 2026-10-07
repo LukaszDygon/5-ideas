@@ -82,8 +82,8 @@ def test_no_unprefixed_static_urls_in_assets(built):
     ("html", "expected"),
     [
         ('<a href="/">', '<a href="/5-ideas/">'),
-        ('<a href="/calendar">', '<a href="/5-ideas/calendar/">'),
-        ('<a href="/calendar?year=2026&month=8">', '<a href="/5-ideas/calendar/?year=2026&month=8">'),
+        ('<a href="/stream">', '<a href="/5-ideas/stream/">'),
+        ('<a href="/stream?type=webapp">', '<a href="/5-ideas/stream/?type=webapp">'),
         ('<a href="/day/2026-09-29#impl">', '<a href="/5-ideas/day/2026-09-29/#impl">'),
         ('<link href="/static/style.css">', '<link href="/5-ideas/static/style.css">'),
         ('<img src="/static/a.png">', '<img src="/5-ideas/static/a.png">'),
@@ -102,7 +102,7 @@ def test_rewrite_html_links(html, expected):
 
 
 def test_rewrite_is_a_no_op_at_the_root():
-    html = '<a href="/calendar"><img src="/static/a.png">'
+    html = '<a href="/stream"><img src="/static/a.png">'
     assert rewrite_html_links(html, "/") == html
     assert rewrite_asset_links("fetch('/static/a.json')", "/") == "fetch('/static/a.json')"
 

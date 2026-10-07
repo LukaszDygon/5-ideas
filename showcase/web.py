@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import ChoiceLoader
 
-from showcase import admin, api, db, pages, registry, streak
+from showcase import admin, api, db, pages, registry
 from showcase.config import STATIC_DIR, TEMPLATES_DIR, Settings
 
 
@@ -23,9 +23,8 @@ def create_templates(settings: Settings, prototypes: list[registry.Prototype]) -
     templates.env.loader = ChoiceLoader([templates.env.loader, registry.template_loader(prototypes)])
     templates.env.globals["is_hosted"] = settings.hosted
     templates.env.globals["all_published_dates"] = lambda: db.get_published_dates(settings.db_file)
-    templates.env.globals["get_streak"] = lambda: streak.get_streak_data(
-        settings.db_file, settings.streak_file
-    )["streak"]
+    templates.env.globals["project_totals"] = lambda: db.get_totals(settings.db_file)
+    templates.env.globals["output_link"] = pages.output_link
     return templates
 
 

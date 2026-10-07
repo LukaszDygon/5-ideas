@@ -14,7 +14,7 @@ from starlette.testclient import TestClient
 from showcase.config import Settings
 from showcase.web import create_app
 
-COMMANDS = ("sparks", "new-day", "save-impl", "capture", "new-prototype", "build", "seed")
+COMMANDS = ("sparks", "new-day", "save-impl", "capture", "new-prototype", "rank", "tags", "build", "seed")
 IDEAS = [f"Spark {n}|Tagline {n}|Description {n}|tag{n}, cli" for n in range(1, 6)]
 
 
@@ -131,6 +131,46 @@ def test_new_prototype_scaffold_renders_in_the_app(cli, tmp_path, settings):
         page = client.get("/interactive/demo")
     assert page.status_code == 200
     assert "Demo Thing" in page.text and "IDEAS DAILY" in page.text
+
+
+def ranking(cli):
+    result = cli("rank")
+    assert result.returncode == 0, result.stderr
+    return [line.split()[1] for line in result.stdout.splitlines()]
+
+
+def test_rank_puts_the_listed_days_first_and_keeps_the_rest_in_order(cli):
+    before = ranking(cli)
+    picks = [before[-1], before[0]]
+    result = cli("rank", *picks)
+    assert result.returncode == 0, result.stderr
+    assert ranking(cli) == picks + [d for d in before if d not in picks]
+    ranks = [int(line.split(".")[0]) for line in cli("rank").stdout.splitlines()]
+    assert ranks == list(range(1, len(before) + 1))
+
+
+def test_rank_rejects_unknown_and_repeated_days(cli):
+    before = ranking(cli)
+    unknown = cli("rank", "1999-01-01")
+    assert unknown.returncode == 1 and "1999-01-01" in unknown.stderr
+    repeated = cli("rank", before[0], before[0])
+    assert repeated.returncode == 1 and "more than once" in repeated.stderr
+    assert ranking(cli) == before
+
+
+def test_tags_applies_a_mapping_and_counts_tags(cli, tmp_path):
+    new_day(cli)
+    mapping = tmp_path / "tags.json"
+    mapping.write_text(json.dumps({"2031-01-02": {"1": " Game ,Horror", "5": "Tool"}}))
+    result = cli("tags", "--apply", str(mapping))
+    assert result.returncode == 0, result.stderr
+    assert "Retagged 2 ideas" in result.stdout and "Horror" in result.stdout
+    ideas = json.loads(cli("sparks", "--date", "2031-01-02", "--json").stdout)["ideas"]
+    assert [ideas[0]["tags"], ideas[4]["tags"]] == ["Game, Horror", "Tool"]
+
+    mapping.write_text(json.dumps({"2031-01-02": {"9": "Nope"}}))
+    unknown = cli("tags", "--apply", str(mapping))
+    assert unknown.returncode == 1 and "no idea #9 on 2031-01-02" in unknown.stderr
 
 
 def test_seed_requires_yes(cli):

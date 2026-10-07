@@ -17,8 +17,7 @@ def main() -> None:
 
     base = f"http://{args.host}:{args.port}"
     print(f"🚀 Starting 5 Ideas Daily Showcase on {base}")
-    print(f"   • Front Page & Top Picks: {base}/")
-    print(f"   • Calendar (Biggest View): {base}/calendar")
+    print(f"   • Front Page & Final Ranking: {base}/")
     print(f"   • Day-by-Day Stream: {base}/stream")
     print(f"   • Design System Gallery: {base}/design-system")
     print(f"   • Admin Dashboard: {base}/admin")

@@ -1,59 +1,178 @@
 {% extends "base.html" %}
 
-{% block title %}{{ day.theme }} - {{ day.date }} - 5 Ideas Showcase{% endblock %}
+{% set im = impl.implementation if impl and impl.implementation else none %}
+{% set out = output_link(im, 2) %}
+{% set source_url = im.external_url if im and (im.external_url or '').startswith('http') and (not out or im.external_url != out.url) else '' %}
+
+{% block title %}{{ im.title ~ ' - ' if im else '' }}{{ day.theme }} - {{ day.date }} - 5 Ideas Showcase{% endblock %}
 
 {% block content %}
 <div class="flex flex-col gap-8">
 
-  <!-- DAY HEADER STRIP -->
-  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-    <div class="flex items-center gap-4">
-      <div class="bg-primary-magenta text-white p-3 border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] font-display font-black text-2xl -rotate-2">
-        {{ day.date }}
-      </div>
-      <div>
-        <div class="inline-flex items-center gap-2">
-          <span class="neo-badge bg-tertiary-yellow text-ink text-xs font-black">
-            STREAK #{{ day.streak_count }}
-          </span>
-          <span class="font-mono text-xs font-bold text-gray-600">DAILY LOG</span>
+  <!-- PROJECT HEADER: what shipped, and the way straight to it -->
+  <div class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-5">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+      <div class="flex flex-col sm:flex-row items-start gap-4">
+        <div class="shrink-0 bg-primary-magenta text-white p-3 border-[3px] border-ink shadow-[3px_3px_0px_#1c1b1b] font-display font-black text-xl sm:text-2xl -rotate-2">
+          {{ day.date }}
         </div>
-        <h1 class="font-display font-black text-3xl sm:text-4xl uppercase text-ink leading-tight mt-0.5">
-          {{ day.theme }}
-        </h1>
-        <p class="font-body text-sm text-gray-700 mt-1">
-          {{ day.subtitle }}
-        </p>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="neo-badge bg-tertiary-yellow text-ink text-xs font-black">DAY {{ day_number }} OF {{ total_days }}</span>
+            {% if im %}
+            <span class="neo-badge bg-acid-lime text-ink text-xs font-black">RANK #{{ im.rank }}</span>
+            <span class="neo-badge bg-electric-cyan text-ink text-xs font-bold">{{ im.build_type | upper }}</span>
+            {% endif %}
+          </div>
+          <div class="font-mono text-xs font-bold text-primary-magenta uppercase mt-2">Theme: {{ day.theme }}</div>
+          <h1 class="font-display font-black text-3xl sm:text-4xl uppercase text-ink leading-tight">
+            {{ im.title if im else day.theme }}
+          </h1>
+          <p class="font-body text-sm text-gray-800 mt-1 max-w-3xl">
+            {{ im.summary if im else day.subtitle }}
+          </p>
+        </div>
       </div>
-    </div>
 
-    <!-- Navigation & Admin Edit button -->
-    <div class="flex items-center gap-2">
-      <a href="/stream" class="neo-btn neo-btn-white text-xs py-2 px-3">
-        <span class="material-symbols-outlined text-sm">view_stream</span>
-        <span>Stream</span>
-      </a>
-      <a href="/calendar" class="neo-btn neo-btn-yellow text-xs py-2 px-3">
-        <span class="material-symbols-outlined text-sm">calendar_month</span>
-        <span>Calendar</span>
-      </a>
-      {% if not is_hosted %}
-      <a href="/admin/day/{{ day.date }}/edit" class="neo-btn neo-btn-primary text-xs py-2 px-3">
-        <span class="material-symbols-outlined text-sm">edit</span>
-        <span>Edit in Admin</span>
-      </a>
+      {% if out or source_url %}
+      <div class="flex flex-wrap items-center gap-3 shrink-0">
+        {% if out %}
+        <a href="{{ out.url }}" {% if out.external %}target="_blank" rel="noopener"{% endif %} class="neo-btn neo-btn-primary text-base py-3 px-5">
+          <span class="material-symbols-outlined">{{ out.icon }}</span>
+          <span>{{ out.label }}</span>
+        </a>
+        {% endif %}
+        {% if source_url %}
+        <a href="{{ source_url }}" target="_blank" rel="noopener" class="neo-btn neo-btn-white text-sm py-2.5 px-4">
+          <span class="material-symbols-outlined text-sm">code</span>
+          <span>Source Repo</span>
+        </a>
+        {% endif %}
+      </div>
       {% endif %}
     </div>
+
+    <!-- Jump links -->
+    <nav aria-label="On this page" class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t-[3px] border-ink">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="font-mono text-xs font-bold uppercase text-gray-700">Jump to:</span>
+        {% if im %}
+        <a href="#output" class="neo-btn neo-btn-yellow text-xs py-1 px-2.5">
+          <span class="material-symbols-outlined text-sm">play_arrow</span><span>The Prototype</span>
+        </a>
+        {% endif %}
+        <a href="#sparks" class="neo-btn neo-btn-white text-xs py-1 px-2.5">The 5 Sparks</a>
+        {% if im and im.process_steps %}
+        <a href="#process" class="neo-btn neo-btn-white text-xs py-1 px-2.5">How It Was Built</a>
+        {% endif %}
+        {% if im and (im.what_rocked or im.what_broke) %}
+        <a href="#retro" class="neo-btn neo-btn-white text-xs py-1 px-2.5">Retro</a>
+        {% endif %}
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="/#ranking" class="neo-btn neo-btn-white text-xs py-1 px-2.5">
+          <span class="material-symbols-outlined text-sm">military_tech</span><span>Ranking</span>
+        </a>
+        {% if not is_hosted %}
+        <a href="/admin/day/{{ day.date }}/edit" class="neo-btn neo-btn-white text-xs py-1 px-2.5 text-primary-magenta">
+          <span class="material-symbols-outlined text-sm">edit</span><span>Edit in Admin</span>
+        </a>
+        {% endif %}
+      </div>
+    </nav>
   </div>
 
+  {% if im %}
+  <!-- THE PROTOTYPE (MAIN OUTPUT) -->
+  <section id="output" class="scroll-mt-32 bg-primary-magenta text-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-5">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 bg-tertiary-yellow text-ink px-3 py-1 font-mono text-xs font-black uppercase shadow-[3px_3px_0px_#1c1b1b] -rotate-1 mb-3">
+          ⚡ The Prototype // Idea #{{ impl.idea_number }}
+        </div>
+        <h2 class="font-display font-black text-2xl sm:text-3xl uppercase leading-tight">{{ im.title }}</h2>
+        <div class="font-mono text-xs font-bold text-yellow-fixed mt-1">
+          Built in {{ im.time_spent_hours }}h{% if im.ai_tools_used %} with {{ im.ai_tools_used }}{% endif %}
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 shrink-0">
+        {% if out %}
+        <a href="{{ out.url }}" {% if out.external %}target="_blank" rel="noopener"{% endif %} class="neo-btn neo-btn-yellow text-base py-3 px-5">
+          <span class="material-symbols-outlined">{{ out.icon }}</span>
+          <span>{{ out.label }}</span>
+        </a>
+        {% endif %}
+        {% if im.content == '/interactive/campfire' %}
+        <a href="/interactive/campfire/hardware" class="neo-btn neo-btn-white text-sm py-2.5 px-4">
+          <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
+          <span>Physical Build Guide</span>
+        </a>
+        {% endif %}
+        {% if im.build_type == 'song' %}
+        <button type="button" onclick="toggleSongPreview(this)" class="neo-btn neo-btn-lime text-sm py-2.5 px-4">
+          <span class="material-symbols-outlined text-sm">play_arrow</span><span>PLAY CHIPTUNE</span>
+        </button>
+        {% elif im.build_type == 'image' and im.content %}
+        <a href="{{ im.content }}" download class="neo-btn neo-btn-white text-sm py-2.5 px-4">
+          <span class="material-symbols-outlined text-sm">download</span><span>Download</span>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% set content = im.content or '' %}
+    {% if im.build_type in ('webapp', 'interactive') %}
+      {% if content and not content.startswith('/') and not content.startswith('http') %}
+      <div class="bg-white text-ink border-[3px] border-ink p-4 font-mono text-sm">{{ content }}</div>
+      {% elif '.png' in content or '.jpg' in content or '.webp' in content %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for img_path in content.split(',') %}
+        <div class="border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] bg-white p-2">
+          <img src="{{ img_path.strip() }}" alt="{{ im.title }} screenshot" class="w-full h-auto border-2 border-ink"/>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% elif im.build_type == 'poetry' %}
+      <div class="poetry-box text-ink w-full max-w-2xl font-mono text-sm leading-relaxed">
+{{ content }}
+      </div>
+    {% elif im.build_type == 'song' %}
+      <div class="cassette-player w-full max-w-xl flex items-end gap-2 h-16">
+        <div class="eq-bar eq-bar-anim h-4 bg-acid-lime"></div>
+        <div class="eq-bar eq-bar-anim h-8 bg-electric-cyan"></div>
+        <div class="eq-bar eq-bar-anim h-12 bg-tertiary-yellow"></div>
+        <div class="eq-bar eq-bar-anim h-14 bg-neon-pink"></div>
+        <div class="eq-bar eq-bar-anim h-10 bg-acid-lime"></div>
+        <div class="eq-bar eq-bar-anim h-5 bg-electric-cyan"></div>
+      </div>
+    {% elif im.build_type == 'image' %}
+      <div class="w-full max-w-lg border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] bg-white">
+        <img src="{{ content }}" alt="{{ im.title }}" class="w-full h-auto"/>
+      </div>
+    {% endif %}
+  </section>
+  {% else %}
+  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-8 text-center flex flex-col items-center gap-3">
+    <h2 class="font-display font-black text-3xl uppercase text-ink">No Prototype Shipped</h2>
+    <p class="font-body text-sm text-gray-700 max-w-lg">Only the five morning sparks were logged for this day.</p>
+    {% if not is_hosted %}
+    <a href="/admin/day/{{ day.date }}/edit" class="neo-btn neo-btn-primary text-xs py-2 px-4 mt-2">
+      <span class="material-symbols-outlined text-sm">rocket_launch</span>
+      <span>Record a Prototype</span>
+    </a>
+    {% endif %}
+  </section>
+  {% endif %}
+
   <!-- THE 5 IDEAS ROW -->
-  <section class="flex flex-col gap-3">
-    <div class="flex items-center justify-between border-b-2 border-ink pb-2">
+  <section id="sparks" class="scroll-mt-32 flex flex-col gap-3">
+    <div class="flex items-center justify-between border-b-[3px] border-ink pb-2">
       <h2 class="font-display font-black text-xl uppercase text-ink flex items-center gap-2">
         <span class="material-symbols-outlined text-primary-magenta">tips_and_updates</span>
         <span>The 5 Morning Sparks</span>
       </h2>
-      <span class="font-mono text-xs text-gray-600 font-bold">{% if impl and impl.implementation %}1 Shipped Prototype{% else %}Prototype In Progress{% endif %}</span>
+      <span class="font-mono text-xs text-gray-600 font-bold">{{ day.subtitle if im else '' }}</span>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -76,14 +195,12 @@
             {{ idea.description }}
           </p>
         </div>
-        <div class="pt-2 border-t {% if idea.is_implemented %}border-white/30{% else %}border-ink/20{% endif %} flex items-center justify-between">
+        <div class="pt-2 border-t {% if idea.is_implemented %}border-white/30{% else %}border-ink/20{% endif %} flex items-center justify-between gap-2">
           <span class="font-mono text-[10px] truncate {% if idea.is_implemented %}text-white/80{% else %}text-gray-500{% endif %}">
             {{ idea.tags }}
           </span>
           {% if idea.is_implemented %}
-          <span class="neo-badge bg-tertiary-yellow text-ink text-[9px] font-black">
-            SHIPPED
-          </span>
+          <span class="neo-badge bg-tertiary-yellow text-ink text-[9px] font-black">SHIPPED</span>
           {% endif %}
         </div>
       </div>
@@ -91,255 +208,68 @@
     </div>
   </section>
 
-  <!-- SHIPPED PROTOTYPE SHOWCASE -->
-  {% if impl and impl.implementation %}
-  {% set im = impl.implementation %}
-  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-6">
-    
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b-[3px] border-ink pb-4">
-      <div>
-        <div class="flex items-center gap-2 mb-1">
-          <span class="neo-badge bg-primary-magenta text-white text-xs font-black">
-            ★ IMPLEMENTATION SHOWCASE
-          </span>
-          <span class="neo-badge bg-tertiary-yellow text-ink text-xs font-black">
-            RANK #{{ im.rank }}
-          </span>
-          <span class="neo-badge bg-electric-cyan text-ink text-xs font-bold">
-            {{ im.build_type | upper }}
-          </span>
-        </div>
-        <h2 class="font-display font-black text-3xl uppercase text-ink leading-tight">
-          {{ im.title }}
-        </h2>
-        <p class="font-body text-sm text-gray-800 mt-1 max-w-3xl">
-          {{ im.summary }}
-        </p>
-      </div>
-
-      <div class="flex items-center gap-2">
-        {% if im.build_type in ('webapp', 'interactive') %}
-        {% if im.content and im.content.startswith('/') %}
-        <a href="{{ im.content }}" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">open_in_new</span>
-          <span>Open Fullscreen</span>
-        </a>
-        {% if im.content == '/interactive/campfire' %}
-        <a href="/interactive/campfire/hardware" class="neo-btn neo-btn-cyan text-xs py-2 px-4 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
-          <span>Physical Build Guide</span>
-        </a>
-        {% endif %}
-        {% if im.external_url %}
-        <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-white text-xs py-2 px-4 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">code</span>
-          <span>Source Repo</span>
-        </a>
-        {% endif %}
-        {% elif im.external_url %}
-        <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">open_in_new</span>
-          <span>Open Project</span>
-        </a>
-        {% endif %}
-        {% elif im.build_type == 'song' %}
-        <button onclick="toggleSongPreview(this)" class="neo-btn neo-btn-lime text-xs py-2 px-4 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">play_arrow</span>
-          <span>Play Synthesizer</span>
-        </button>
-        {% elif im.build_type == 'image' %}
-        <a href="{{ im.content }}" download class="neo-btn neo-btn-primary text-xs py-2 px-4 flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">download</span>
-          <span>Download SVG</span>
-        </a>
-        {% endif %}
-      </div>
+  {% if im %}
+  <!-- HOW IT WAS BUILT WITH AI (PROCESS STEPS) -->
+  {% if im.process_steps %}
+  <section id="process" class="scroll-mt-32 bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-6 flex flex-col gap-3">
+    <div class="flex items-center gap-2 border-b-[3px] border-ink pb-2">
+      <span class="material-symbols-outlined text-primary-magenta">construction</span>
+      <h2 class="font-display font-black text-xl uppercase text-ink">
+        How It Was Built With AI in {{ im.time_spent_hours }} Hours
+      </h2>
     </div>
-
-    <!-- Live Preview Container -->
-    <div class="border-[3px] border-ink bg-canvas p-6 flex flex-col items-center justify-center">
-      {% if im.build_type in ('webapp', 'interactive') %}
-        <div class="w-full bg-white border-2 border-ink p-8 flex flex-col items-center text-center gap-4">
-          <div class="w-20 h-20 bg-primary-magenta text-white border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] flex items-center justify-center -rotate-3">
-            <span class="material-symbols-outlined text-4xl">terminal</span>
-          </div>
-          <div>
-            <h3 class="font-display font-black text-2xl uppercase text-ink">{{ im.title }}</h3>
-            <p class="font-body text-sm text-gray-700 max-w-md mt-1">
-              {{ im.summary }}
-            </p>
-            {% if im.content and not im.content.startswith('/') %}
-            <div class="font-mono text-xs text-primary-magenta mt-2 bg-yellow-50 p-2 border border-ink/30 inline-block">
-              {{ im.content }}
-            </div>
-            {% endif %}
-          </div>
-          <div class="flex items-center gap-2">
-            {% if im.content and im.content.startswith('/') and not '.png' in im.content %}
-            <a href="{{ im.content }}" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">rocket_launch</span>
-              <span>Launch Live App</span>
-            </a>
-            {% if im.content == '/interactive/campfire' %}
-            <a href="/interactive/campfire/hardware" class="neo-btn neo-btn-cyan text-sm py-2 px-5 flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">precision_manufacturing</span>
-              <span>Physical Build Guide</span>
-            </a>
-            {% endif %}
-            {% if im.external_url %}
-            <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-white text-sm py-2 px-5 flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">code</span>
-              <span>Source Repo</span>
-            </a>
-            {% endif %}
-            {% elif im.external_url %}
-            <a href="{{ im.external_url }}" target="_blank" class="neo-btn neo-btn-primary text-sm py-2 px-5 flex items-center gap-2">
-              <span class="material-symbols-outlined text-sm">code</span>
-              <span>Source Repo</span>
-            </a>
-            {% endif %}
-          </div>
-          {% if im.content and ('.png' in im.content or '.jpg' in im.content or '.webp' in im.content) %}
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 w-full max-w-5xl">
-            {% for img_path in im.content.split(',') %}
-            <div class="border-[3px] border-ink shadow-[4px_4px_0px_#1c1b1b] bg-white p-2">
-              <img src="{{ img_path.strip() }}" alt="UI Screenshot" class="w-full h-auto border border-ink" />
-            </div>
-            {% endfor %}
-          </div>
-          {% endif %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {% for step in im.process_steps %}
+      <div class="bg-canvas border-2 border-ink p-4 shadow-[3px_3px_0px_#1c1b1b]">
+        <div class="w-7 h-7 bg-primary-magenta text-white border-2 border-ink flex items-center justify-center font-display font-black text-sm mb-2">
+          {{ step.step or loop.index }}
         </div>
-      {% elif im.build_type == 'poetry' %}
-        <div class="poetry-box w-full max-w-2xl font-mono text-sm leading-relaxed">
-{{ im.content }}
-        </div>
-      {% elif im.build_type == 'song' %}
-        <div class="cassette-player w-full max-w-xl flex flex-col items-center gap-4">
-          <div class="font-display font-black text-xl text-tertiary-yellow uppercase">
-            {{ im.title }}
-          </div>
-          <div class="flex items-end gap-2 h-16">
-            <div class="eq-bar eq-bar-anim h-4 bg-acid-lime"></div>
-            <div class="eq-bar eq-bar-anim h-8 bg-electric-cyan"></div>
-            <div class="eq-bar eq-bar-anim h-12 bg-tertiary-yellow"></div>
-            <div class="eq-bar eq-bar-anim h-14 bg-neon-pink"></div>
-            <div class="eq-bar eq-bar-anim h-10 bg-acid-lime"></div>
-            <div class="eq-bar eq-bar-anim h-5 bg-electric-cyan"></div>
-          </div>
-          <button onclick="toggleSongPreview(this)" class="neo-btn neo-btn-lime text-xs py-2 px-6">
-            <span class="material-symbols-outlined text-sm">play_arrow</span> PLAY CHIPTUNE
-          </button>
-        </div>
-      {% elif im.build_type == 'image' %}
-        <div class="w-full max-w-lg border-2 border-ink shadow-[4px_4px_0px_#1c1b1b]">
-          <img src="{{ im.content }}" alt="{{ im.title }}" class="w-full h-auto"/>
-        </div>
-      {% else %}
-        <pre class="font-mono text-xs bg-white p-4 border border-ink w-full">{{ im.content }}</pre>
-      {% endif %}
-    </div>
-
-    <!-- HOW IT WAS BUILT WITH AI (PROCESS STEPS) -->
-    {% if im.process_steps %}
-    <div class="flex flex-col gap-3 pt-4 border-t-2 border-ink">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary-magenta">construction</span>
-        <h3 class="font-display font-black text-xl uppercase text-ink">
-          How It Was Built With AI in {{ im.time_spent_hours }} Hours
-        </h3>
+        <h3 class="font-display font-bold text-sm uppercase text-ink mb-1">{{ step.title }}</h3>
+        <p class="font-body text-xs text-gray-700 leading-snug">{{ step.desc }}</p>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {% for step in im.process_steps %}
-        <div class="bg-canvas border-2 border-ink p-4 shadow-[3px_3px_0px_#1c1b1b] flex flex-col justify-between">
-          <div>
-            <div class="w-7 h-7 bg-primary-magenta text-white border-2 border-ink flex items-center justify-center font-display font-black text-sm mb-2">
-              {{ step.step or loop.index }}
-            </div>
-            <h4 class="font-display font-bold text-sm uppercase text-ink mb-1">
-              {{ step.title }}
-            </h4>
-            <p class="font-body text-xs text-gray-700 leading-snug">
-              {{ step.desc }}
-            </p>
-          </div>
-        </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- WHAT ROCKED VS WHAT BROKE -->
+  {% if im.what_rocked or im.what_broke %}
+  <section id="retro" class="scroll-mt-32 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-emerald-50 border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b]">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-emerald-700 font-bold">thumb_up</span>
+        <h2 class="font-display font-black text-lg uppercase text-emerald-900">What Rocked</h2>
+      </div>
+      <ul class="flex flex-col gap-2 font-body text-xs text-emerald-950">
+        {% for item in im.what_rocked %}
+        <li class="flex items-start gap-2"><span class="font-mono font-bold text-emerald-700">✓</span><span>{{ item }}</span></li>
         {% endfor %}
-      </div>
+      </ul>
     </div>
-    {% endif %}
-
-    <!-- WHAT ROCKED VS WHAT BROKE -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t-2 border-ink">
-      <!-- What Rocked -->
-      <div class="bg-emerald-50 border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b]">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="material-symbols-outlined text-emerald-700 font-bold">thumb_up</span>
-          <h4 class="font-display font-black text-lg uppercase text-emerald-900">What Rocked</h4>
-        </div>
-        <ul class="flex flex-col gap-2 font-body text-xs text-emerald-950">
-          {% for item in im.what_rocked %}
-          <li class="flex items-start gap-2">
-            <span class="font-mono font-bold text-emerald-700">✓</span>
-            <span>{{ item }}</span>
-          </li>
-          {% endfor %}
-        </ul>
+    <div class="bg-rose-50 border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b]">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="material-symbols-outlined text-rose-700 font-bold">bug_report</span>
+        <h2 class="font-display font-black text-lg uppercase text-rose-900">What Broke & Fixed</h2>
       </div>
-
-      <!-- What Broke -->
-      <div class="bg-rose-50 border-[3px] border-ink p-5 shadow-[4px_4px_0px_#1c1b1b]">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="material-symbols-outlined text-rose-700 font-bold">bug_report</span>
-          <h4 class="font-display font-black text-lg uppercase text-rose-900">What Broke & Fixed</h4>
-        </div>
-        <ul class="flex flex-col gap-2 font-body text-xs text-rose-950">
-          {% for item in im.what_broke %}
-          <li class="flex items-start gap-2">
-            <span class="font-mono font-bold text-rose-700">✗</span>
-            <span>{{ item }}</span>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
+      <ul class="flex flex-col gap-2 font-body text-xs text-rose-950">
+        {% for item in im.what_broke %}
+        <li class="flex items-start gap-2"><span class="font-mono font-bold text-rose-700">✗</span><span>{{ item }}</span></li>
+        {% endfor %}
+      </ul>
     </div>
-
-    <!-- AI INTERACTION SUMMARY -->
-    {% if im.prompt_transcript %}
-    <div class="pt-4 border-t-2 border-ink">
-      <details class="bg-canvas border-2 border-ink p-4">
-        <summary class="font-display font-black text-sm uppercase text-ink cursor-pointer flex items-center gap-2">
-          <span class="material-symbols-outlined text-sm">smart_toy</span>
-          <span>AI Interaction Summary</span>
-        </summary>
-        <pre class="mt-3 p-4 bg-ink text-acid-lime font-mono text-xs whitespace-pre-wrap overflow-x-auto border-2 border-ink">{{ im.prompt_transcript }}</pre>
-      </details>
-    </div>
-    {% endif %}
-
   </section>
-  {% else %}
-  <section class="bg-white border-[4px] border-ink shadow-[6px_6px_0px_#1c1b1b] p-8 text-center flex flex-col items-center gap-3">
-    <div class="inline-flex items-center gap-2">
-      <span class="neo-badge bg-tertiary-yellow text-ink text-xs font-black animate-pulse">
-        ⚡ IN PROGRESS
-      </span>
-      <span class="font-mono text-xs font-bold text-gray-600 uppercase">
-        Morning Sparks Logged
-      </span>
-    </div>
-    <h2 class="font-display font-black text-3xl uppercase text-ink">
-      Prototype Not Shipped Yet
-    </h2>
-    <p class="font-body text-sm text-gray-700 max-w-lg">
-      The 5 morning sparks are live for today! One prototype is currently being forged and will be deployed before sundown.
-    </p>
-    {% if not is_hosted %}
-    <a href="/admin/day/{{ day.date }}/edit" class="neo-btn neo-btn-primary text-xs py-2 px-4 mt-2 inline-flex items-center gap-1.5">
-      <span class="material-symbols-outlined text-sm">rocket_launch</span>
-      <span>Implement & Ship Prototype Now</span>
-    </a>
-    {% endif %}
-  </section>
+  {% endif %}
+
+  <!-- AI INTERACTION SUMMARY -->
+  {% if im.prompt_transcript %}
+  <details class="bg-canvas border-[3px] border-ink p-4">
+    <summary class="font-display font-black text-sm uppercase text-ink cursor-pointer flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">smart_toy</span>
+      <span>AI Interaction Summary</span>
+    </summary>
+    <pre class="mt-3 p-4 bg-ink text-acid-lime font-mono text-xs whitespace-pre-wrap overflow-x-auto border-2 border-ink">{{ im.prompt_transcript }}</pre>
+  </details>
+  {% endif %}
   {% endif %}
 
 </div>

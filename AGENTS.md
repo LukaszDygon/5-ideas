@@ -7,6 +7,7 @@ Single source of truth for AI agents working in the **5 Ideas Daily Showcase** r
 Every day: 5 idea "sparks" on a theme, 1 prototype shipped before sundown, all shown on a Radical Memphis Pop site.
 FastAPI serves the public site, the JSON API and the admin at `/admin`; data lives in SQLite (stdlib `sqlite3`).
 The site is frozen to static HTML and deployed to GitHub Pages under `/5-ideas/`.
+The daily run is complete (2026-09-10 to 2026-10-03): the home page broadcasts that and shows the final ranking.
 
 ## Commands
 
@@ -21,6 +22,7 @@ uv run five-ideas sparks --date today                      # show a day's sparks
 uv run five-ideas new-prototype --slug my-idea --title "My Idea"
 uv run five-ideas save-impl --idea N ...                   # record the shipped prototype
 uv run five-ideas capture --title "Name"                   # leak-free AI interaction summary
+uv run five-ideas rank 2026-10-03 2026-09-13 ...           # set the ranking, best first (no dates: show it)
 uv run five-ideas build --base-path /5-ideas/              # freeze the site into dist/
 uv run five-ideas seed --yes                               # wipe the DB and reload data/ideas.json
 ```
@@ -31,11 +33,11 @@ uv run five-ideas seed --yes                               # wipe the DB and rel
 | :--- | :--- |
 | `showcase/config.py` | `Settings` (data dir, secrets) read from the environment |
 | `showcase/web.py` | `create_app()` FastAPI factory: templates, registry, static, admin mounts |
-| `showcase/pages.py` | Public HTML pages (home, calendar, stream, day, design system) |
+| `showcase/pages.py` | Public HTML pages (home ranking, stream, day, design system) and `output_link` |
 | `showcase/api.py` | Core JSON API under `/api` |
 | `showcase/admin.py` | Admin router at `/admin` (CRUD, rankings, streak; cookie flash messages) |
 | `showcase/db.py` | SQLite schema and queries; auto-exports `ideas.json` on write |
-| `showcase/cli.py` | `five-ideas` CLI: sparks, new-day, save-impl, capture, new-prototype, build, seed |
+| `showcase/cli.py` | `five-ideas` CLI: sparks, new-day, save-impl, capture, new-prototype, rank, tags, build, seed |
 | `showcase/capture.py` | Transcript parsing for leak-free AI interaction summaries |
 | `showcase/streak.py` | Publishing streak (consecutive days) and the `data/streak.json` override |
 | `showcase/registry.py` | Discovers `prototypes/<slug>/prototype.toml` and serves `/interactive/<slug>` |

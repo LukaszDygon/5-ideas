@@ -2,13 +2,17 @@
 
 A modern web application and general-purpose design system inspired by the 90s Radical Memphis Pop aesthetic (Milan Memphis geometry, MTV-era pop typography, comic-book pitch black borders, and hard zero-blur offset shadows).
 
+> **Project complete.** The daily run ended on 2026-10-03 after 23 themes, 115 ideas and 23 shipped prototypes.
+
 Every day:
 1. Sparks **5 wild ideas** based on a morning theme.
 2. **1 prototype is shipped** before sundown (webapp, poetry zine, 8-bit chiptune song, generative image, or interactive widget).
-3. **Top-Ranked Implementations** welcome visitors in order of builder preference.
-4. **Calendar View** provides interactive monthly archive navigation.
-5. **Day-By-Day Stream** displays chronological ideas with flexible embedded renderers.
-6. **Admin** (`/admin`) provides full CRUD content management and one-click ranking reordering.
+
+On the site:
+1. **The Final Ranking** on the front page lists every shipped prototype in order of builder preference.
+2. **Day pages** open with the shipped prototype and a launch button, then the 5 sparks and how it was built.
+3. **Day-By-Day Stream** displays chronological ideas with flexible embedded renderers.
+4. **Admin** (`/admin`) provides full CRUD content management and one-click ranking reordering.
 
 ---
 
@@ -45,9 +49,13 @@ uv run five-ideas sparks --date today --idea 2
 uv run five-ideas new-prototype --slug my-idea --title "My Idea"
 uv run five-ideas save-impl --date today --idea 2 --title "Prototype" --type webapp
 uv run five-ideas capture --title "Prototype Name" --type webapp
+uv run five-ideas rank 2026-10-03 2026-09-13  # ranking, best first; unlisted prototypes follow in their current order
 uv run five-ideas build --base-path /5-ideas/
 uv run five-ideas seed --yes  # wipes data/ideas.db and reloads data/ideas.json
 ```
+
+Idea tags share one Title Case vocabulary (1-3 per idea, e.g. "Game, Horror"). `five-ideas tags` counts every tag in use;
+`five-ideas tags --apply FILE` retags ideas from JSON shaped like `{"2026-10-03": {"1": "Game, Writing, Horror"}}`.
 
 ---
 
@@ -55,10 +63,9 @@ uv run five-ideas seed --yes  # wipes data/ideas.db and reloads data/ideas.json
 
 | URL | Description | Engine |
 | :--- | :--- | :--- |
-| `/` | Front page with Top Picks showcase & today's drop | FastAPI |
-| `/calendar` | Interactive full-month archive calendar (The Biggest View) | FastAPI |
+| `/` | Project-complete broadcast and the final ranking of every shipped prototype | FastAPI |
 | `/stream` | Continuous scroll feed with flexible media viewers | FastAPI |
-| `/day/{date}` | Daily deep-dive with retrospective and prompt logs | FastAPI |
+| `/day/{date}` | Shipped prototype first (launch button, jump links), then the sparks, process and retro | FastAPI |
 | `/design-system` | Reusable Memphis Pop UI component reference & sandbox | FastAPI |
 | `/interactive/<slug>` | One page per prototype, discovered from [prototypes/](prototypes/) (`prototype.toml`) | FastAPI registry |
 | `/admin` | Admin dashboard & ranking manager | FastAPI |

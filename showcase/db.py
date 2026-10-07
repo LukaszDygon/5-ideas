@@ -226,25 +226,33 @@ def get_ranked_implementations(db_path: DbPath = None) -> list[dict[str, Any]]:
         return [row_to_dict(r) for r in conn.execute(query)]
 
 
-def get_calendar_days(year: int, month: int, db_path: DbPath = None) -> list[dict[str, Any]]:
-    """Returns day entries for a given year & month for calendar rendering."""
-    query = """
-        SELECT
-            d.date, d.theme, d.streak_count,
-            COUNT(i.id) AS idea_count,
-            MAX(CASE WHEN i.is_implemented = 1 THEN 1 ELSE 0 END) AS has_implementation,
-            MAX(CASE WHEN i.is_implemented = 1 THEN imp.title ELSE NULL END) AS impl_title,
-            MAX(CASE WHEN i.is_implemented = 1 THEN imp.build_type ELSE NULL END) AS impl_type,
-            MAX(CASE WHEN i.is_implemented = 1 THEN imp.rank ELSE NULL END) AS impl_rank
-        FROM days d
-        LEFT JOIN ideas i ON d.id = i.day_id
-        LEFT JOIN implementations imp ON i.id = imp.idea_id
-        WHERE d.date LIKE ?
-        GROUP BY d.id
-        ORDER BY d.date ASC
-    """
+def get_totals(db_path: DbPath = None) -> dict[str, int]:
+    """Counts of days, ideas and shipped implementations (cheap: three COUNTs)."""
     with connect(db_path) as conn:
-        return [dict(r) for r in conn.execute(query, (f"{year:04d}-{month:02d}-%",))]
+        return {
+            table: conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            for table in ("days", "ideas", "implementations")
+        }
+
+
+def set_idea_tags(tags_by_idea: dict[tuple[str, int], str], db_path: DbPath = None) -> int:
+    """Replaces the tags of ideas keyed by (date, idea_number) in one transaction.
+
+    Raises KeyError naming the first (date, idea_number) that does not exist; nothing is written then.
+    """
+    with connect(db_path) as conn, conn:
+        for (date_str, idea_number), tags in tags_by_idea.items():
+            cursor = conn.execute(
+                """
+                UPDATE ideas SET tags = ?
+                WHERE idea_number = ? AND day_id = (SELECT id FROM days WHERE date = ?)
+                """,
+                (tags, idea_number, date_str),
+            )
+            if cursor.rowcount != 1:
+                raise KeyError(f"no idea #{idea_number} on {date_str}")
+    export_to_json(db_path=db_path)
+    return len(tags_by_idea)
 
 
 def save_day(

@@ -62,13 +62,9 @@
 
       <!-- Navigation Links -->
       <nav class="hidden md:flex items-center gap-2">
-        <a href="/" class="neo-btn neo-btn-white text-xs py-1.5 px-3">
-          <span class="material-symbols-outlined text-sm">home</span>
-          Top Picks
-        </a>
-        <a href="/calendar" class="neo-btn neo-btn-yellow text-xs py-1.5 px-3">
-          <span class="material-symbols-outlined text-sm">calendar_month</span>
-          Calendar
+        <a href="/" class="neo-btn neo-btn-yellow text-xs py-1.5 px-3">
+          <span class="material-symbols-outlined text-sm">military_tech</span>
+          Ranking
         </a>
         <a href="/stream" class="neo-btn neo-btn-secondary text-xs py-1.5 px-3">
           <span class="material-symbols-outlined text-sm">view_stream</span>
@@ -96,18 +92,18 @@
 
     </div>
 
-    <!-- Running Marquee Ticker -->
+    <!-- Project-complete banner: a running ticker with the final totals -->
+    {% set totals = project_totals() if project_totals is defined else {} %}
     <div class="marquee-container">
-      <div class="marquee-content">
-        ★ 5 FRESH BRAINWAVES DAILY &nbsp;&nbsp;&nbsp;
-        ★ 1 PROTOTYPE SHIPPED BEFORE SUNDOWN &nbsp;&nbsp;&nbsp;
-        ★ ZERO FLUFF, 100% PURE HACKING &nbsp;&nbsp;&nbsp;
-        ★ UNBROKEN STREAK: {{ get_streak() if get_streak is defined else (current_streak if current_streak is defined else 0) }} DAYS &nbsp;&nbsp;&nbsp;
-        ★ CODE • POETRY • SYNTHS • GENERATIVE ART &nbsp;&nbsp;&nbsp;
-        ★ 5 FRESH BRAINWAVES DAILY &nbsp;&nbsp;&nbsp;
-        ★ 1 PROTOTYPE SHIPPED BEFORE SUNDOWN &nbsp;&nbsp;&nbsp;
-        ★ ZERO FLUFF, 100% PURE HACKING &nbsp;&nbsp;&nbsp;
-        ★ UNBROKEN STREAK: {{ get_streak() if get_streak is defined else (current_streak if current_streak is defined else 0) }} DAYS &nbsp;&nbsp;&nbsp;
+      <span class="sr-only">Project complete: {{ totals.ideas }} ideas sparked, {{ totals.implementations }} prototypes shipped.</span>
+      <div class="marquee-content" aria-hidden="true">
+        {% for _ in range(2) %}
+        ★ PROJECT COMPLETE &nbsp;&nbsp;&nbsp;
+        ★ {{ totals.ideas }} IDEAS SPARKED &nbsp;&nbsp;&nbsp;
+        ★ {{ totals.implementations }} PROTOTYPES SHIPPED &nbsp;&nbsp;&nbsp;
+        ★ {{ totals.days }} THEMES, 5 SPARKS EACH &nbsp;&nbsp;&nbsp;
+        ★ THANKS FOR FOLLOWING ALONG &nbsp;&nbsp;&nbsp;
+        {% endfor %}
       </div>
     </div>
   </header>
@@ -128,7 +124,7 @@
         Built with Python 3.14 • uv • FastAPI • Flask Admin • SQLite stdlib
       </div>
       <div class="flex items-center gap-3">
-        <a href="/calendar" class="font-display font-bold text-xs uppercase hover:underline">Calendar</a>
+        <a href="/" class="font-display font-bold text-xs uppercase hover:underline">Ranking</a>
         <span>•</span>
         <a href="/stream" class="font-display font-bold text-xs uppercase hover:underline">Stream</a>
         <span>•</span>
